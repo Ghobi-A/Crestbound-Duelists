@@ -1,3 +1,14 @@
+"""
+Crestbound Duelists — Main Runner (v2.1)
+==========================================
+Run the full simulation suite:
+  1. Greedy AI 6×6 win-rate matrix
+  2. Lookahead AI 6×6 win-rate matrix
+  3. Policy comparison: Greedy vs Lookahead mirror matches
+  4. Balance delta analysis
+  5. Export sample battle logs for Jupyter
+"""
+
 import time
 from models import ClassName
 from simulation import (
@@ -58,11 +69,11 @@ def main():
     separator("5. SAMPLE LOG EXPORT")
     export_battle_logs(
         ClassName.SORCERER, ClassName.GUARDIAN, SIMS_LOG_EXPORT,
-        "greedy", "/home/claude/crestbound/sample_logs_sor_vs_gua.csv"
+        "greedy", "results/sample_logs_sor_vs_gua.csv"
     )
     export_battle_logs(
         ClassName.ASSASSIN, ClassName.WARRIOR, SIMS_LOG_EXPORT,
-        "greedy", "/home/claude/crestbound/sample_logs_ass_vs_war.csv"
+        "greedy", "results/sample_logs_ass_vs_war.csv"
     )
 
     # ── Summary ──────────────────────────────────────────────────────

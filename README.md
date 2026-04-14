@@ -1,65 +1,138 @@
 # Crestbound Duelists
 
-Crestbound Duelists is a turn-based combat simulation engine built in Python, with a React frontend prototype for playtesting and in-browser simulation.
+**Optimal decision-making under uncertainty in adversarial turn-based systems.**
 
-## What it is
+A turn-based class combat engine designed as a data science portfolio piece. Six classes, three move archetypes, probabilistic speed resolution, and a compressed damage formula — all fully automatable for Monte Carlo simulation and AI policy comparison.
 
-This project models a 1v1 tactical combat system with six classes, class-specific move sets, cooldowns, status effects, temporary stat modifiers, probabilistic turn order, and a compressed damage formula designed for balance stability.
+The game is the domain. The data science is the product.
 
-It also includes a Monte Carlo simulation harness for evaluating matchup balance and comparing AI policies.
+---
 
-## Core mechanics
+## What This Project Does
 
-- 6 playable classes:
-  - Warrior
-  - Mage
-  - Assassin
-  - Guardian
-  - Neutral
-  - Sorcerer
+Pits six combat classes against each other across thousands of simulated battles, comparing how different AI decision policies perform under uncertainty. Every action, damage roll, and decision is logged to CSV for analysis.
 
-- 3 move archetypes per class:
-  - Basic
-  - Signature
-  - Gambit
+**Core question:** *How much does strategic depth matter when outcomes are stochastic?*
 
-- Combat features:
-  - compressed damage formula
-  - probabilistic speed resolution
-  - Brace passive for second actor
-  - cooldowns
-  - stat-modifier decay
-  - status effects such as Hex
+### Key Results (v2.1, 10k sims/matchup)
 
-## AI policies
+| Class | Avg Win Rate | Delta |
+|-------|-------------|-------|
+| Mage | ~55% | +5 |
+| Warrior | ~53% | +3 |
+| Neutral | ~49% | -1 |
+| Guardian | ~49% | -1 |
+| Sorcerer | ~49% | -1 |
+| Assassin | ~46% | -4 |
 
-The engine includes three policy tiers:
+Balance spread: **~9pp** — all classes viable, no class below 45% or above 55%.
 
-- Random
-- Greedy
-- Lookahead
+---
 
-These policies can be benchmarked against one another through large-scale automated battle simulation.
+## Architecture
 
-## Monte Carlo analysis
+```
+crestbound/
+├── models.py        # Unit, Move, StatusEffect dataclasses. 6-class × 3-move table.
+├── combat.py        # Damage calc, speed resolution, Brace passive, battle loop.
+├── ai.py            # Random, Greedy, Lookahead AI policies.
+├── simulation.py    # Monte Carlo harness, 6×6 matrix, CSV export.
+├── main.py          # Runner: matrices, policy comparison, log export.
+├── analysis.ipynb   # Jupyter notebook with heatmaps and visualisations.
+└── results/         # Generated PNGs and CSV battle logs.
+```
 
-The simulation layer supports:
+### Combat System
 
-- class-vs-class win-rate matrices
-- average win-rate ranking by class
-- mirror-match policy comparison
-- battle-log export for downstream notebook analysis
+| Mechanic | Implementation |
+|----------|---------------|
+| **Damage** | `floor(Power × 2·ATK/(ATK+DEF) × v)`, v ~ U(0.85, 1.0) |
+| **Speed** | Probabilistic band (B=7), guaranteed at 2× ratio |
+| **Brace** | Second actor gets 1.05× DEF/RES |
+| **Cooldowns** | Signature/Gambit on 1-turn cooldown after use |
+| **Stat decay** | All modifiers expire after 3 turns |
+| **Hex** | Blocks self-buff moves for 2 turns |
 
-## Files
+### Move System
 
-- `models.py` — data models, class definitions, unit factory
-- `combat.py` — combat engine and battle loop
-- `ai.py` — policy implementations
-- `simulation.py` — Monte Carlo harness and log export
-- `main.py` — full runner
-- `frontend/crestbound_duelists.jsx` — React GUI prototype
+Each class has three moves:
 
-## Run the Python engine
+- **Basic** — 24 power, 100% accuracy, no cooldown. Reliable fallback.
+- **Signature** — 16–18 power with a secondary effect (debuff/buff/status). Defines class identity.
+- **Gambit** — 28–32 power, 70–80% accuracy. High-risk/high-reward.
+
+### AI Policies
+
+| Policy | Strategy | Use |
+|--------|----------|-----|
+| **Random** | Uniform random from available moves | Baseline |
+| **Greedy** | Highest expected damage this turn | Balance testing |
+| **Lookahead** | 1-step minimax (my EV − 0.5 × opp best response) | Strategic depth measurement |
+
+---
+
+## Quick Start
 
 ```bash
+# Clone
+git clone https://github.com/Ghobi-A/Crestbound-Duelists.git
+cd Crestbound-Duelists
+
+# Run the full simulation suite (takes a few minutes at 100k sims)
 python main.py
+
+# Or quick test at 10k sims — edit SIMS_MATRIX in main.py
+```
+
+**Requirements:** Python 3.10+ (stdlib only — no external dependencies for the engine).
+
+For the notebook: `pip install matplotlib seaborn jupyter pandas numpy`
+
+---
+
+## Class Stats (v2.1)
+
+| Class | HP | ATK | DEF | MAG | RES | SPD | Role |
+|-------|---:|----:|----:|----:|----:|----:|------|
+| Warrior | 85 | 75 | 70 | 30 | 35 | 40 | Physical bruiser |
+| Mage | 75 | 30 | 35 | 80 | 75 | 42 | Magical specialist |
+| Assassin | 70 | 70 | 35 | 38 | 55 | 80 | Fast glass cannon |
+| Guardian | 85 | 40 | 75 | 40 | 75 | 35 | Dual-defence tank |
+| Neutral | 78 | 55 | 50 | 55 | 50 | 50 | Adaptive generalist |
+| Sorcerer | 72 | 40 | 30 | 80 | 48 | 80 | Fast magical cannon |
+
+---
+
+## Design Decisions
+
+**Compressed damage formula** — Raw ATK/DEF ratio created 2.5× multipliers and 2HKO determinism. `2·ATK/(ATK+DEF)` bounds the multiplier to [0, 2], extending fights to 3–4 turns where move choices actually matter.
+
+**Brace at 1.05×** — Compensates slow units for always taking the first hit. 1.1× was tested and caused Guardian to hit 90%+ win rates.
+
+**3-turn stat decay** — Prevents infinite debuff stacking. Creates timing pressure: you must capitalise on Armor Break before it expires.
+
+**Hex as buff counter** — Instead of giving Sorcerer raw stat superiority, Hex blocks Guardian's Fortify for 2 turns. Strategic tool with clear counterplay.
+
+---
+
+## Known Issues / Next Steps
+
+- **Mage vs Assassin** is a near-deterministic matchup (~100/0) — structural type mismatch with no current workaround
+- **Nash equilibrium solver** — mixed-strategy optimal play (planned)
+- **3v3 team composition** — switching, TFT-style synergy traits (planned)
+- **Streamlit web demo** — interactive version for non-technical users (planned)
+
+---
+
+## Version History
+
+| Version | Changes |
+|---------|---------|
+| v2.0 | Compressed formula, Brace passive, 3-move system, Greedy + Lookahead AI |
+| v2.1 | Balance pass: Neutral buffs (HP 78, Hybrid Strike 23p, Focus Shift +5/+5), Assassin tuning (RES 55, Cripple -5/-5), Guardian ATK 40, Sorcerer HP 72. CSV export. Spread reduced from 36pp to 9pp. |
+
+---
+
+## License
+
+MIT
