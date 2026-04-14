@@ -58,11 +58,11 @@ def main():
     separator("5. SAMPLE LOG EXPORT")
     export_battle_logs(
         ClassName.SORCERER, ClassName.GUARDIAN, SIMS_LOG_EXPORT,
-        "greedy", "/home/claude/crestbound/sample_logs_sor_vs_gua.csv"
+        "greedy", "results/sample_logs_sor_vs_gua.csv"
     )
     export_battle_logs(
         ClassName.ASSASSIN, ClassName.WARRIOR, SIMS_LOG_EXPORT,
-        "greedy", "/home/claude/crestbound/sample_logs_ass_vs_war.csv"
+        "greedy", "results/sample_logs_ass_vs_war.csv"
     )
 
     # ── Summary ──────────────────────────────────────────────────────

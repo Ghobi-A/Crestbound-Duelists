@@ -1,5 +1,5 @@
 """
-Crestbound Duelists — Simulation Harness (v2.0)
+Crestbound Duelists — Simulation Harness (v2.1)
 =================================================
 Monte Carlo simulation for:
   - 6×6 win-rate matrices
@@ -9,11 +9,10 @@ Monte Carlo simulation for:
 
 from __future__ import annotations
 import csv
-import time
-from typing import Optional
+from pathlib import Path
 
-from models import Unit, Move, ClassName, create_unit
-from combat import battle_1v1, BattleResult
+from models import ClassName, create_unit
+from combat import battle_1v1
 from ai import POLICIES
 
 ALL_CLASSES = list(ClassName)
@@ -78,5 +77,49 @@ def compare_policies(a, b, n_sims=10000):
         print(cls.value, round(100 * wins / n_sims, 1))
 
 
-def export_battle_logs(*args, **kwargs):
-    pass
+def export_battle_logs(class_a, class_b, n_sims=1000, policy_name="greedy", output_path="results/battle_logs.csv"):
+    policy = POLICIES[policy_name]
+    output_file = Path(output_path)
+    output_file.parent.mkdir(parents=True, exist_ok=True)
+
+    with output_file.open("w", newline="", encoding="utf-8") as f:
+        writer = csv.writer(f)
+        writer.writerow([
+            "sim", "turn", "actor", "actor_class", "target", "target_class",
+            "move_name", "move_slot", "move_type", "raw_damage", "variance_roll",
+            "hit", "final_damage", "target_hp_before", "target_hp_after",
+            "actor_braced", "target_braced", "stat_mods_applied", "status_applied",
+            "blocked_by_hex", "winner", "winner_class", "turns"
+        ])
+
+        for sim_idx in range(1, n_sims + 1):
+            unit_a = create_unit(class_a, "A")
+            unit_b = create_unit(class_b, "B")
+            result = battle_1v1(unit_a, unit_b, policy, policy, log_actions=True)
+
+            for log in result.logs:
+                writer.writerow([
+                    sim_idx,
+                    log.turn,
+                    log.actor,
+                    log.actor_class,
+                    log.target,
+                    log.target_class,
+                    log.move_name,
+                    log.move_slot,
+                    log.move_type,
+                    log.raw_damage,
+                    round(log.variance_roll, 4),
+                    log.hit,
+                    log.final_damage,
+                    log.target_hp_before,
+                    log.target_hp_after,
+                    log.actor_braced,
+                    log.target_braced,
+                    "|".join(log.stat_mods_applied),
+                    log.status_applied or "",
+                    log.blocked_by_hex,
+                    result.winner,
+                    result.winner_class,
+                    result.turns,
+                ])
