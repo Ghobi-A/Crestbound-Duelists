@@ -28,7 +28,7 @@ func _ready() -> void:
 		return
 	_class_list = GameData.class_ids()
 	_menu_options = ["New Game"]
-	if SaveManager.has_save():
+	if SaveManager.has_compatible_save():
 		_menu_options.append("Continue")
 	_refresh()
 

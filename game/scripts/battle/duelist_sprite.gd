@@ -22,6 +22,7 @@ var _has_sheet := false
 var _state := "idle"
 var _frame := 0
 var _frame_clock := 0.0
+var _holding := false   # a non-looping animation finished; hold last frame
 var _entity_clock := 0.0
 var _entity_frame := 0
 var _tween: Tween
@@ -94,7 +95,7 @@ func _process(delta: float) -> void:
 			_entity_frame = 1 - _entity_frame
 			_entity_sprite.region_rect = Rect2(_entity_frame * 32, 0, 32, 32)
 
-	if not _has_sheet:
+	if not _has_sheet or _holding:
 		return
 	var state: Dictionary = _manifest.get("states", {}).get(_state, {})
 	if state.is_empty():
@@ -109,14 +110,14 @@ func _process(delta: float) -> void:
 			_frame = 0
 		else:
 			_frame = int(state.get("count", 1)) - 1
-			if _state != "defeat":
+			if _state == "defeat":
+				_holding = true  # stay collapsed
+				animation_finished.emit("defeat")
+			else:
 				var finished := _state
 				_state = "idle"
 				_frame = 0
 				animation_finished.emit(finished)
-			else:
-				animation_finished.emit("defeat")
-				set_process(_entity_sprite != null)
 	_apply_frame()
 
 
@@ -139,6 +140,7 @@ func play(state: String) -> void:
 	_state = state
 	_frame = 0
 	_frame_clock = 0.0
+	_holding = false
 	if _tween != null and _tween.is_running():
 		_tween.kill()
 	if _has_sheet:
