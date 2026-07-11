@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128">
+  <!-- Crestbound Duelists placeholder icon: an original crest sigil. -->
+  <rect width="128" height="128" fill="#1a1a2e"/>
+  <path d="M64 12 L104 32 L104 72 L64 116 L24 72 L24 32 Z" fill="#16213e" stroke="#4a9eff" stroke-width="4"/>
+  <path d="M64 30 L88 42 L88 68 L64 96 L40 68 L40 42 Z" fill="#0f3460" stroke="#4a9eff" stroke-width="2"/>
+  <circle cx="64" cy="56" r="10" fill="#e2b04a"/>
+  <path d="M64 70 L64 84" stroke="#e2b04a" stroke-width="4"/>
+</svg>
