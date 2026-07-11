@@ -64,6 +64,15 @@ func _draw() -> void:
 	var body := PlaceholderPalette.class_color(unit.class_id)
 	var outline := PlaceholderPalette.PLAYER_OUTLINE if unit.team == "player" else PlaceholderPalette.ENEMY_TINT
 
+	# Bonded Entity manifestation: a spectral silhouette behind the
+	# Duelist (placeholder shape; real entity sprites arrive with the
+	# pixel-art milestone).
+	if not unit.entity_record.is_empty():
+		var entity_color := EntityRuntime.manifestation_color(unit.entity_record)
+		var offset := Vector2(10, -14) if unit.team == "player" else Vector2(-10, 10)
+		draw_circle(offset, 6.0, entity_color)
+		draw_circle(offset + Vector2(0, -4), 3.5, entity_color)
+
 	if unit.awakened and unit.awakening_rounds_left > 0:
 		draw_rect(Rect2(-9, -14, 18, 26), Color(1.0, 0.85, 0.3, 0.85), false, 1.0)
 

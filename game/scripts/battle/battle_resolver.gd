@@ -84,6 +84,12 @@ func damage_multipliers(attacker: BattleUnit, defender: BattleUnit, move: Dictio
 			multiplier *= BACK_ROW_MELEE_MULTIPLIER
 		if defender.position == "back":
 			multiplier *= BACK_ROW_MELEE_MULTIPLIER
+	# Ash Seraph-style entity: stronger on matching battlefield ground.
+	if attacker.entity_passive_type() == "terrain_damage_bonus":
+		for tag in attacker.entity_passive().get("terrain_tags", []):
+			if runtime.has_battlefield_tag(tag):
+				multiplier += float(attacker.entity_passive().get("amount", 0.0))
+				break
 	return multiplier
 
 
