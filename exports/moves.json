@@ -1,0 +1,587 @@
+{
+  "arcane_bolt": {
+    "accuracy": 1.0,
+    "ai_tags": [
+      "damage"
+    ],
+    "animation_key": "cast",
+    "area_shape": "single",
+    "class_id": "mage",
+    "cooldown_turns": 0,
+    "id": "arcane_bolt",
+    "is_buff_move": false,
+    "move_type": "magical",
+    "name": "Arcane Bolt",
+    "power": 24,
+    "range": 3,
+    "resource_cost": 0,
+    "self_stat_mods": [],
+    "slot": "basic",
+    "status_effects": [],
+    "tags": [
+      "reliable",
+      "ranged"
+    ],
+    "target_rule": "enemy",
+    "target_stat_mods": [],
+    "terrain_effects": [],
+    "vfx_key": "arcane_bolt"
+  },
+  "armor_break": {
+    "accuracy": 1.0,
+    "ai_tags": [
+      "damage",
+      "debuff"
+    ],
+    "animation_key": "heavy_slash",
+    "area_shape": "single",
+    "class_id": "warrior",
+    "cooldown_turns": 1,
+    "id": "armor_break",
+    "is_buff_move": false,
+    "move_type": "physical",
+    "name": "Armor Break",
+    "power": 18,
+    "range": 1,
+    "resource_cost": 0,
+    "self_stat_mods": [],
+    "slot": "signature",
+    "status_effects": [],
+    "tags": [
+      "guard_break",
+      "debuff"
+    ],
+    "target_rule": "enemy",
+    "target_stat_mods": [
+      {
+        "amount": -5,
+        "stat": "def"
+      }
+    ],
+    "terrain_effects": [],
+    "vfx_key": "armor_shatter"
+  },
+  "avalanche": {
+    "accuracy": 0.8,
+    "ai_tags": [
+      "damage",
+      "risky"
+    ],
+    "animation_key": "slam",
+    "area_shape": "single",
+    "class_id": "guardian",
+    "cooldown_turns": 1,
+    "id": "avalanche",
+    "is_buff_move": false,
+    "move_type": "physical",
+    "name": "Avalanche",
+    "power": 28,
+    "range": 1,
+    "resource_cost": 0,
+    "self_stat_mods": [],
+    "slot": "gambit",
+    "status_effects": [],
+    "tags": [
+      "risky",
+      "heavy"
+    ],
+    "target_rule": "enemy",
+    "target_stat_mods": [],
+    "terrain_effects": [],
+    "vfx_key": "avalanche_rocks"
+  },
+  "cripple": {
+    "accuracy": 1.0,
+    "ai_tags": [
+      "damage",
+      "debuff"
+    ],
+    "animation_key": "stab_low",
+    "area_shape": "single",
+    "class_id": "assassin",
+    "cooldown_turns": 1,
+    "id": "cripple",
+    "is_buff_move": false,
+    "move_type": "physical",
+    "name": "Cripple",
+    "power": 18,
+    "range": 1,
+    "resource_cost": 0,
+    "self_stat_mods": [],
+    "slot": "signature",
+    "status_effects": [],
+    "tags": [
+      "debuff",
+      "setup"
+    ],
+    "target_rule": "enemy",
+    "target_stat_mods": [
+      {
+        "amount": -5,
+        "stat": "def"
+      },
+      {
+        "amount": -5,
+        "stat": "res"
+      }
+    ],
+    "terrain_effects": [],
+    "vfx_key": "cripple_slash"
+  },
+  "flame": {
+    "accuracy": 1.0,
+    "ai_tags": [
+      "damage"
+    ],
+    "animation_key": "cast",
+    "area_shape": "single",
+    "class_id": "sorcerer",
+    "cooldown_turns": 0,
+    "id": "flame",
+    "is_buff_move": false,
+    "move_type": "magical",
+    "name": "Flame",
+    "power": 24,
+    "range": 3,
+    "resource_cost": 0,
+    "self_stat_mods": [],
+    "slot": "basic",
+    "status_effects": [],
+    "tags": [
+      "reliable",
+      "ranged"
+    ],
+    "target_rule": "enemy",
+    "target_stat_mods": [],
+    "terrain_effects": [],
+    "vfx_key": "flame_burst"
+  },
+  "focus_shift": {
+    "accuracy": 1.0,
+    "ai_tags": [
+      "damage",
+      "buff",
+      "risky"
+    ],
+    "animation_key": "stance_shift",
+    "area_shape": "single",
+    "class_id": "neutral",
+    "cooldown_turns": 1,
+    "id": "focus_shift",
+    "is_buff_move": false,
+    "move_type": "magical",
+    "name": "Focus Shift",
+    "power": 18,
+    "range": 2,
+    "resource_cost": 0,
+    "self_stat_mods": [
+      {
+        "amount": 5,
+        "stat": "atk"
+      },
+      {
+        "amount": 5,
+        "stat": "mag"
+      },
+      {
+        "amount": -4,
+        "stat": "def"
+      },
+      {
+        "amount": -4,
+        "stat": "res"
+      }
+    ],
+    "slot": "signature",
+    "status_effects": [],
+    "tags": [
+      "stance",
+      "tradeoff"
+    ],
+    "target_rule": "enemy",
+    "target_stat_mods": [],
+    "terrain_effects": [],
+    "vfx_key": "focus_aura"
+  },
+  "fortify": {
+    "accuracy": 1.0,
+    "ai_tags": [
+      "damage",
+      "buff"
+    ],
+    "animation_key": "guard_up",
+    "area_shape": "single",
+    "class_id": "guardian",
+    "cooldown_turns": 1,
+    "id": "fortify",
+    "is_buff_move": true,
+    "move_type": "magical",
+    "name": "Fortify",
+    "power": 16,
+    "range": 1,
+    "resource_cost": 0,
+    "self_stat_mods": [
+      {
+        "amount": 4,
+        "stat": "def"
+      },
+      {
+        "amount": 4,
+        "stat": "res"
+      }
+    ],
+    "slot": "signature",
+    "status_effects": [],
+    "tags": [
+      "buff",
+      "defensive"
+    ],
+    "target_rule": "enemy",
+    "target_stat_mods": [],
+    "terrain_effects": [],
+    "vfx_key": "fortify_glow"
+  },
+  "hex": {
+    "accuracy": 1.0,
+    "ai_tags": [
+      "damage",
+      "status"
+    ],
+    "animation_key": "curse",
+    "area_shape": "single",
+    "class_id": "sorcerer",
+    "cooldown_turns": 1,
+    "id": "hex",
+    "is_buff_move": false,
+    "move_type": "magical",
+    "name": "Hex",
+    "power": 18,
+    "range": 3,
+    "resource_cost": 0,
+    "self_stat_mods": [],
+    "slot": "signature",
+    "status_effects": [
+      {
+        "duration": 2,
+        "status": "hexed",
+        "target": "enemy"
+      }
+    ],
+    "tags": [
+      "curse",
+      "anti_buff",
+      "ranged"
+    ],
+    "target_rule": "enemy",
+    "target_stat_mods": [],
+    "terrain_effects": [],
+    "vfx_key": "hex_sigil"
+  },
+  "hybrid_strike": {
+    "accuracy": 1.0,
+    "ai_tags": [
+      "damage"
+    ],
+    "animation_key": "strike",
+    "area_shape": "single",
+    "class_id": "neutral",
+    "cooldown_turns": 0,
+    "id": "hybrid_strike",
+    "is_buff_move": false,
+    "move_type": "adaptive",
+    "name": "Hybrid Strike",
+    "power": 23,
+    "range": 1,
+    "resource_cost": 0,
+    "self_stat_mods": [],
+    "slot": "basic",
+    "status_effects": [],
+    "tags": [
+      "reliable",
+      "adaptive"
+    ],
+    "target_rule": "enemy",
+    "target_stat_mods": [],
+    "terrain_effects": [],
+    "vfx_key": "hybrid_spark"
+  },
+  "lethal_edge": {
+    "accuracy": 0.7,
+    "ai_tags": [
+      "damage",
+      "risky",
+      "finisher"
+    ],
+    "animation_key": "lunge",
+    "area_shape": "single",
+    "class_id": "assassin",
+    "cooldown_turns": 1,
+    "id": "lethal_edge",
+    "is_buff_move": false,
+    "move_type": "physical",
+    "name": "Lethal Edge",
+    "power": 32,
+    "range": 1,
+    "resource_cost": 0,
+    "self_stat_mods": [],
+    "slot": "gambit",
+    "status_effects": [],
+    "tags": [
+      "risky",
+      "finisher"
+    ],
+    "target_rule": "enemy",
+    "target_stat_mods": [],
+    "terrain_effects": [],
+    "vfx_key": "lethal_gleam"
+  },
+  "mind_pierce": {
+    "accuracy": 1.0,
+    "ai_tags": [
+      "damage",
+      "debuff"
+    ],
+    "animation_key": "cast",
+    "area_shape": "single",
+    "class_id": "mage",
+    "cooldown_turns": 1,
+    "id": "mind_pierce",
+    "is_buff_move": false,
+    "move_type": "magical",
+    "name": "Mind Pierce",
+    "power": 18,
+    "range": 3,
+    "resource_cost": 0,
+    "self_stat_mods": [],
+    "slot": "signature",
+    "status_effects": [],
+    "tags": [
+      "resistance_break",
+      "debuff",
+      "ranged"
+    ],
+    "target_rule": "enemy",
+    "target_stat_mods": [
+      {
+        "amount": -5,
+        "stat": "res"
+      }
+    ],
+    "terrain_effects": [],
+    "vfx_key": "mind_shards"
+  },
+  "overload": {
+    "accuracy": 0.75,
+    "ai_tags": [
+      "damage",
+      "risky"
+    ],
+    "animation_key": "cast_heavy",
+    "area_shape": "single",
+    "class_id": "mage",
+    "cooldown_turns": 1,
+    "id": "overload",
+    "is_buff_move": false,
+    "move_type": "magical",
+    "name": "Overload",
+    "power": 30,
+    "range": 3,
+    "resource_cost": 0,
+    "self_stat_mods": [
+      {
+        "amount": -4,
+        "stat": "res"
+      }
+    ],
+    "slot": "gambit",
+    "status_effects": [],
+    "tags": [
+      "risky",
+      "ranged"
+    ],
+    "target_rule": "enemy",
+    "target_stat_mods": [],
+    "terrain_effects": [],
+    "vfx_key": "overload_burst"
+  },
+  "power_slash": {
+    "accuracy": 1.0,
+    "ai_tags": [
+      "damage"
+    ],
+    "animation_key": "slash",
+    "area_shape": "single",
+    "class_id": "warrior",
+    "cooldown_turns": 0,
+    "id": "power_slash",
+    "is_buff_move": false,
+    "move_type": "physical",
+    "name": "Power Slash",
+    "power": 24,
+    "range": 1,
+    "resource_cost": 0,
+    "self_stat_mods": [],
+    "slot": "basic",
+    "status_effects": [],
+    "tags": [
+      "reliable"
+    ],
+    "target_rule": "enemy",
+    "target_stat_mods": [],
+    "terrain_effects": [],
+    "vfx_key": "slash_arc"
+  },
+  "quick_strike": {
+    "accuracy": 1.0,
+    "ai_tags": [
+      "damage"
+    ],
+    "animation_key": "stab",
+    "area_shape": "single",
+    "class_id": "assassin",
+    "cooldown_turns": 0,
+    "id": "quick_strike",
+    "is_buff_move": false,
+    "move_type": "physical",
+    "name": "Quick Strike",
+    "power": 24,
+    "range": 1,
+    "resource_cost": 0,
+    "self_stat_mods": [],
+    "slot": "basic",
+    "status_effects": [],
+    "tags": [
+      "reliable",
+      "fast"
+    ],
+    "target_rule": "enemy",
+    "target_stat_mods": [],
+    "terrain_effects": [],
+    "vfx_key": "quick_flash"
+  },
+  "reckless_charge": {
+    "accuracy": 0.75,
+    "ai_tags": [
+      "damage",
+      "risky"
+    ],
+    "animation_key": "charge",
+    "area_shape": "single",
+    "class_id": "warrior",
+    "cooldown_turns": 1,
+    "id": "reckless_charge",
+    "is_buff_move": false,
+    "move_type": "physical",
+    "name": "Reckless Charge",
+    "power": 30,
+    "range": 2,
+    "resource_cost": 0,
+    "self_stat_mods": [
+      {
+        "amount": -4,
+        "stat": "def"
+      }
+    ],
+    "slot": "gambit",
+    "status_effects": [],
+    "tags": [
+      "risky",
+      "charge"
+    ],
+    "target_rule": "enemy",
+    "target_stat_mods": [],
+    "terrain_effects": [],
+    "vfx_key": "dust_trail"
+  },
+  "shield_bash": {
+    "accuracy": 1.0,
+    "ai_tags": [
+      "damage"
+    ],
+    "animation_key": "bash",
+    "area_shape": "single",
+    "class_id": "guardian",
+    "cooldown_turns": 0,
+    "id": "shield_bash",
+    "is_buff_move": false,
+    "move_type": "adaptive",
+    "name": "Shield Bash",
+    "power": 23,
+    "range": 1,
+    "resource_cost": 0,
+    "self_stat_mods": [],
+    "slot": "basic",
+    "status_effects": [],
+    "tags": [
+      "reliable",
+      "adaptive"
+    ],
+    "target_rule": "enemy",
+    "target_stat_mods": [],
+    "terrain_effects": [],
+    "vfx_key": "shield_impact"
+  },
+  "voidfire": {
+    "accuracy": 0.75,
+    "ai_tags": [
+      "damage",
+      "risky"
+    ],
+    "animation_key": "cast_heavy",
+    "area_shape": "single",
+    "class_id": "sorcerer",
+    "cooldown_turns": 1,
+    "id": "voidfire",
+    "is_buff_move": false,
+    "move_type": "magical",
+    "name": "Voidfire",
+    "power": 30,
+    "range": 3,
+    "resource_cost": 0,
+    "self_stat_mods": [
+      {
+        "amount": -4,
+        "stat": "res"
+      }
+    ],
+    "slot": "gambit",
+    "status_effects": [],
+    "tags": [
+      "risky",
+      "ranged"
+    ],
+    "target_rule": "enemy",
+    "target_stat_mods": [],
+    "terrain_effects": [],
+    "vfx_key": "voidfire_pillar"
+  },
+  "wild_card": {
+    "accuracy": 0.75,
+    "ai_tags": [
+      "damage",
+      "risky"
+    ],
+    "animation_key": "flourish",
+    "area_shape": "single",
+    "class_id": "neutral",
+    "cooldown_turns": 1,
+    "id": "wild_card",
+    "is_buff_move": false,
+    "move_type": "adaptive",
+    "name": "Wild Card",
+    "power": 30,
+    "range": 2,
+    "resource_cost": 0,
+    "self_stat_mods": [],
+    "slot": "gambit",
+    "status_effects": [],
+    "tags": [
+      "risky",
+      "adaptive"
+    ],
+    "target_rule": "enemy",
+    "target_stat_mods": [],
+    "terrain_effects": [],
+    "vfx_key": "wild_shimmer"
+  }
+}

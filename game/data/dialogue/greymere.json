@@ -1,0 +1,96 @@
+{
+  "elara_intro": [
+    {
+      "speaker": "Warden Elara Thorne",
+      "lines": [
+        "The Hollow Court has been sealed longer than anyone in Greymere can remember.",
+        "If that seal has opened, do not assume what is inside has been waiting peacefully.",
+        "Stay away from the north arch. That is not a request I enjoy repeating."
+      ]
+    }
+  ],
+  "mira_intro": [
+    {
+      "speaker": "Mira Solen",
+      "lines": [
+        "The official records say the Court is empty.",
+        "Which usually means the interesting records are somewhere we are not allowed to read.",
+        "If you do go down there... I want to hear everything."
+      ]
+    }
+  ],
+  "notice_board": [
+    {
+      "speaker": "Royal Notice",
+      "lines": [
+        "BY ORDER OF THE CROWN OF AVELAINE:",
+        "Unsanctioned Crest possession, use, or study is forbidden under the Veiled Accord.",
+        "Resonance events must be reported to Warden Thorne without delay."
+      ]
+    }
+  ],
+  "locked_door": [
+    {
+      "speaker": "",
+      "lines": [
+        "The door is barred from the inside. Greymere keeps early nights."
+      ]
+    }
+  ],
+  "south_exit": [
+    {
+      "speaker": "",
+      "lines": [
+        "The south road runs toward Veyrhold.",
+        "Whatever is happening at the Hollow Court feels more urgent than leaving town."
+      ]
+    }
+  ],
+  "court_entrance": [
+    {
+      "speaker": "",
+      "lines": [
+        "The ancient arch stands open. Cold air drifts up from the dark below.",
+        "The seal on the Hollow Court is broken."
+      ]
+    },
+    {
+      "speaker": "Warden Elara Thorne",
+      "lines": [
+        "Wait. If you are going in regardless, you will not do it alone.",
+        "Mira — stay behind me. And you: touch nothing that hums."
+      ]
+    },
+    {
+      "speaker": "Mira Solen",
+      "lines": [
+        "Everything down there hums, Warden. That is rather the point."
+      ]
+    }
+  ],
+  "court_entrance_cleared": [
+    {
+      "speaker": "",
+      "lines": [
+        "The Hollow Court is silent now. The dormant Crest below still remembers you."
+      ]
+    }
+  ],
+  "post_battle": [
+    {
+      "speaker": "Warden Elara Thorne",
+      "lines": [
+        "Everyone still standing? Good.",
+        "Those were not looters. Someone sent them, and they knew the seal would be open.",
+        "This goes to Veyrhold. All of it — including what that Crest just did."
+      ]
+    },
+    {
+      "speaker": "Mira Solen",
+      "lines": [
+        "It answered you. Crests are not supposed to answer anyone anymore.",
+        "...What exactly did you touch down there?"
+      ]
+    }
+  ]
+}

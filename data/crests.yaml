@@ -1,0 +1,189 @@
+# Crestbound Duelists — Crest definitions.
+#
+# Crests are fragments of the dead god Eidros. Each has an innate nature
+# that amplifies compatible traits in its bearer. Passives are designed
+# to alter behaviour (reward Bracing, flanking, statuses, risk-taking),
+# not just add flat stats.
+#
+# passive_modifier / awakening_condition / awakening_effect are typed
+# records interpreted by the battle layer. The Godot prototype implements
+# crimson_crest and azure_crest awakenings first; the rest are schema-
+# complete and reserved for later battle-layer work.
+#
+# resonance_gain maps canonical battle events to Resonance gained (0-100
+# meter). Canonical events: hit_landed, gambit_used, gambit_hit,
+# magical_hit, damage_taken, braced, ally_protected, status_applied,
+# hit_debuffed_target, hit_hexed_target, low_hp_action, varied_move.
+# awakening_condition.min_resonance gates awakening on the meter.
+
+crests:
+  - id: crimson_crest
+    name: Crimson Crest
+    affinity: force
+    rarity: common
+    description: >-
+      A fragment of Eidros' conviction. It burns brightest in bearers who
+      refuse to fall, rewarding those who keep fighting through injury.
+    compatible_classes: [warrior, assassin, guardian]
+    passive_modifier:
+      type: low_hp_damage_bonus
+      threshold: 0.5          # active while HP is below 50%
+      amount: 0.15            # +15% damage dealt
+    resonance_gain:
+      low_hp_action: 15       # acting while below the HP threshold
+      gambit_used: 10
+      damage_taken: 5
+    awakening_condition:
+      type: hp_below
+      threshold: 0.5
+      min_resonance: 50
+    awakening_effect:
+      type: empowered_gambit  # next Gambit gains power and lifesteal
+      power_bonus: 0.25
+      lifesteal: 0.5
+      duration: 2
+    visual_theme:
+      palette: crimson
+      glow: ember_red
+    tags: [aggression, survival, gambit_synergy]
+
+  - id: azure_crest
+    name: Azure Crest
+    affinity: ward
+    rarity: common
+    description: >-
+      A fragment of Eidros' protection. It answers patience and endurance,
+      turning absorbed blows into retaliatory force.
+    compatible_classes: [guardian, warrior, neutral]
+    passive_modifier:
+      type: brace_bonus       # Brace grants extra defence value
+      brace_multiplier_bonus: 0.05
+    resonance_gain:
+      braced: 15
+      damage_taken: 10
+      ally_protected: 12
+    awakening_condition:
+      type: hits_taken
+      count: 3
+      min_resonance: 50
+    awakening_effect:
+      type: counter_stance    # temporary defensive/counter power spike
+      counter_damage: 0.3     # reflect 30% of damage taken
+      defense_bonus: 4
+      duration: 3
+    visual_theme:
+      palette: azure
+      glow: tide_blue
+    tags: [protection, brace_synergy, counter]
+
+  - id: eclipse_crest
+    name: Eclipse Crest
+    affinity: umbral
+    rarity: rare
+    description: >-
+      A fragment of Eidros' control, dimmed by centuries of sealed dark.
+      It deepens curses and starves enemy magic of its setup.
+    compatible_classes: [sorcerer, mage, assassin]
+    passive_modifier:
+      type: status_duration_bonus   # statuses the bearer applies last longer
+      extra_turns: 1
+    resonance_gain:
+      status_applied: 15
+      hit_hexed_target: 8
+    awakening_condition:
+      type: statuses_applied
+      count: 3
+      min_resonance: 60
+    awakening_effect:
+      type: hex_saturation    # Hex also raises the target's cooldowns
+      cooldown_penalty: 1
+      duration: 3
+    visual_theme:
+      palette: violet_black
+      glow: eclipse_purple
+    tags: [curse, anti_buff, control]
+
+  - id: ember_crest
+    name: Ember Crest
+    affinity: flame
+    rarity: common
+    description: >-
+      A fragment of Eidros' curiosity, restless and spreading. Its fire
+      clings to broken ground and punishes weakened foes.
+    compatible_classes: [mage, sorcerer, neutral]
+    passive_modifier:
+      type: bonus_vs_debuffed   # extra damage to stat-debuffed targets
+      amount: 0.10
+    resonance_gain:
+      magical_hit: 8
+      hit_debuffed_target: 8
+    awakening_condition:
+      type: debuffs_applied
+      count: 3
+      min_resonance: 60
+    awakening_effect:
+      type: scorched_ground   # attacks scorch the target's tile
+      tile_effect: scorched
+      tile_damage: 4
+      duration: 3
+    visual_theme:
+      palette: ember
+      glow: cinder_orange
+    tags: [pressure, terrain, debuff_synergy]
+
+  - id: glass_crest
+    name: Glass Crest
+    affinity: edge
+    rarity: rare
+    description: >-
+      A fragment of Eidros' decisiveness, honed to a sliver. Everything it
+      grants is sharper — and more brittle.
+    compatible_classes: [assassin, warrior, sorcerer]
+    passive_modifier:
+      type: glass_edge        # deal more, take more
+      damage_dealt_bonus: 0.10
+      damage_taken_penalty: 0.10
+    resonance_gain:
+      gambit_hit: 20
+      hit_landed: 5
+    awakening_condition:
+      type: gambits_landed
+      count: 2
+      min_resonance: 60
+    awakening_effect:
+      type: perfect_edge      # brief guaranteed accuracy and crit pressure
+      accuracy_override: 1.0
+      power_bonus: 0.15
+      duration: 2
+    visual_theme:
+      palette: pale_glass
+      glow: prism_white
+    tags: [risk_reward, precision, gambit_synergy]
+
+  - id: verdant_crest
+    name: Verdant Crest
+    affinity: growth
+    rarity: uncommon
+    description: >-
+      A fragment of Eidros' adaptation. It refuses fixed shapes, feeding on
+      variety and rewarding bearers who never repeat themselves.
+    compatible_classes: [neutral, mage, guardian]
+    passive_modifier:
+      type: variety_bonus     # bonus after using a different move each turn
+      amount: 0.12
+    resonance_gain:
+      varied_move: 12
+      braced: 5
+    awakening_condition:
+      type: unique_moves_used
+      count: 3
+      min_resonance: 60
+    awakening_effect:
+      type: overgrowth        # extra movement and a rolling stat bloom
+      movement_bonus: 1
+      stat_bloom: {stat: cycle, amount: 3}
+      duration: 3
+    visual_theme:
+      palette: verdant
+      glow: moss_green
+    tags: [adaptation, movement, variety]

@@ -1,0 +1,70 @@
+# Crestbound Duelists — narrative location reference (lightweight).
+# Canon lives in docs/LORE_BIBLE.md and docs/STORY_OUTLINE.md.
+
+locations:
+  - id: greymere
+    name: Greymere
+    region: Kingdom of Avelaine
+    description: >-
+      The protagonist's starting town — a peaceful, slightly isolated
+      border settlement where ordinary life continues over an ancient
+      sealed Crest site.
+    tags: [starting_town, act_1]
+
+  - id: hollow_court
+    name: The Hollow Court
+    region: Kingdom of Avelaine
+    description: >-
+      An ancient ruined duelling site beneath Greymere. Publicly an empty
+      historical ruin; in truth a sealed Crest site holding dormant divine
+      fragments and forbidden records. The opening incident happens here.
+    tags: [dungeon, crest_site, act_1]
+
+  - id: veyrhold
+    name: Veyrhold
+    region: Kingdom of Avelaine
+    description: >-
+      A major Avelainian city housing one of the recognised Duelist trial
+      institutions. Aren is brought here after becoming Crestbound.
+    tags: [city, trial, act_1]
+
+  - id: bellgrave
+    name: Bellgrave
+    region: Dominion of Dravenn
+    description: >-
+      A heavily fortified frontier city of the militarised Dominion, where
+      political tension and sanctioned Duelist power are openly visible.
+    tags: [city, frontier, act_2]
+
+  - id: caer_lumen
+    name: Caer Lumen
+    region: Republic of Caelune
+    description: >-
+      The great archive city of the scholarly Republic — home to one of
+      the world's largest surviving collections of Crest records, much of
+      it restricted.
+    tags: [city, archive, act_2]
+
+  - id: solharbor
+    name: Solharbor
+    region: Crown of Solmere
+    description: >-
+      A wealthy maritime trade city: political meetings, smugglers,
+      illegal Crest markets, and factions negotiating over all of it.
+    tags: [city, trade, act_2]
+
+  - id: evershade
+    name: Evershade
+    region: Unaligned
+    description: >-
+      An ancient settlement outside the modern power blocs, preserving
+      Crest traditions that predate the kingdoms. Important later.
+    tags: [settlement, ancient, act_3]
+
+  - id: first_vault
+    name: The First Vault
+    region: Unknown
+    description: >-
+      A late-game ancient site tied to the fragmentation of Eidros.
+      A long-term narrative destination — not used in the prototype.
+    tags: [dungeon, endgame, act_4]

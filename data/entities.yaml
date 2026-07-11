@@ -1,0 +1,146 @@
+# Crestbound Duelists — Bonded Entity definitions.
+#
+# Bonded Entities are manifestations produced by the relationship between
+# a Duelist and their Crest — spirits, relic avatars, living weapons,
+# masks, ancestral beings, machines. The same Crest bonded to a different
+# person can produce a different Entity.
+#
+# granted_move ids reference future tactical moves; they are reserved
+# identifiers for the battle layer, not entries in moves.yaml (the 1v1
+# balance sim intentionally excludes entity moves for now).
+
+entities:
+  - id: storm_lion
+    name: Storm Lion
+    category: beast
+    affinity: ward
+    rarity: uncommon
+    description: >-
+      A thunder-maned guardian beast that manifests for bearers who stand
+      their ground. It paces the front line and answers violence in kind.
+    compatible_classes: [guardian, warrior]
+    passive_effect:
+      type: intercept_adjacent   # may absorb a hit aimed at an adjacent ally
+      chance: 0.25
+    granted_move: lionfall_verdict
+    awakening_form: Tempest Regent
+    awakening_effect:
+      type: aoe_counter          # awakened counters strike all adjacent enemies
+      counter_damage: 0.35
+    visual_theme:
+      palette: storm_blue
+      silhouette: maned_beast
+    tags: [frontline, protective, counter]
+
+  - id: glass_mantis
+    name: Glass Mantis
+    category: spirit
+    affinity: edge
+    rarity: rare
+    description: >-
+      A translucent blade-limbed spirit drawn to precise, decisive bearers.
+      It mirrors killing intent — and shatters if wielded carelessly.
+    compatible_classes: [assassin, sorcerer]
+    passive_effect:
+      type: flanking_bonus       # extra damage when attacking from behind/side
+      amount: 0.15
+    granted_move: prism_severance
+    awakening_form: Shardwing Mantis
+    awakening_effect:
+      type: guaranteed_first_strike  # awakened bearer always acts first briefly
+      duration: 2
+    visual_theme:
+      palette: pale_glass
+      silhouette: bladed_insect
+    tags: [flanker, precision, fragile]
+
+  - id: ash_seraph
+    name: Ash Seraph
+    category: mythic_avatar
+    affinity: flame
+    rarity: rare
+    description: >-
+      A winged figure of cooled cinder and slow-burning memory. It gathers
+      around scholars and burns brightest over ruined ground.
+    compatible_classes: [mage, sorcerer]
+    passive_effect:
+      type: terrain_damage_bonus  # stronger on scorched/ruined tiles
+      amount: 0.20
+      terrain_tags: [scorched, ruin]
+    granted_move: cinder_benediction
+    awakening_form: Pyre Seraph
+    awakening_effect:
+      type: aoe_ignite            # awakened casts scorch a plus-shaped area
+      tile_effect: scorched
+      duration: 2
+    visual_theme:
+      palette: ash_grey
+      silhouette: winged_figure
+    tags: [terrain, area_control, slow_burn]
+
+  - id: iron_tortoise
+    name: Iron Tortoise
+    category: machine
+    affinity: ward
+    rarity: common
+    description: >-
+      An ancient Crest-powered relic engine shaped like a fortress turtle.
+      Nobody knows who built it. It remembers how to hold a line.
+    compatible_classes: [guardian, neutral]
+    passive_effect:
+      type: brace_extension      # Brace persists one extra turn
+      extra_turns: 1
+    granted_move: bulwark_protocol
+    awakening_form: Citadel Engine
+    awakening_effect:
+      type: ally_damage_reduction  # adjacent allies take reduced damage
+      reduction: 0.25
+      duration: 3
+    visual_theme:
+      palette: iron_green
+      silhouette: fortress_shell
+    tags: [tank, relic, brace_synergy]
+
+  - id: mirror_fox
+    name: Mirror Fox
+    category: spirit
+    affinity: growth
+    rarity: uncommon
+    description: >-
+      A quicksilver trickster that copies what it admires. It bonds with
+      adaptable bearers and refuses to show the same face twice.
+    compatible_classes: [neutral, mage, assassin]
+    passive_effect:
+      type: copy_last_buff       # copies the last buff an enemy gained
+      duration: 2
+    granted_move: vulpine_refraction
+    awakening_form: Ninefold Fox
+    awakening_effect:
+      type: stat_mirror          # briefly mirrors the target's best stat
+      duration: 2
+    visual_theme:
+      palette: quicksilver
+      silhouette: sleek_fox
+    tags: [adaptive, trickster, anti_buff]
+
+  - id: grave_stag
+    name: Grave Stag
+    category: ancestral_being
+    affinity: umbral
+    rarity: rare
+    description: >-
+      An antlered shade said to carry the memory of every Duelist who died
+      bonded. It walks beside the marked and lends weight to their curses.
+    compatible_classes: [sorcerer, guardian]
+    passive_effect:
+      type: hex_amplifier        # hexed enemies deal reduced damage
+      amount: 0.10
+    granted_move: procession_of_antlers
+    awakening_form: Mourning Herald
+    awakening_effect:
+      type: curse_spread         # Hex spreads to enemies adjacent to target
+      duration: 2
+    visual_theme:
+      palette: grave_violet
+      silhouette: antlered_shade
+    tags: [curse, memory, control]

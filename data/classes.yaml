@@ -1,0 +1,64 @@
+# Crestbound Duelists — class definitions (single source of truth).
+# Stats are the v2.1 balance baseline. Edit here, then run
+# `python -m pytest` and `python export_game_data.py`.
+
+classes:
+  - id: warrior
+    name: Warrior
+    description: >-
+      A frontline bruiser whose Crest expression favours direct action and
+      guard-breaking pressure. Associated with conviction and confrontation.
+    role: physical_bruiser
+    base_stats: {hp: 85, atk: 75, def: 70, mag: 30, res: 35, spd: 40}
+    move_ids: [power_slash, armor_break, reckless_charge]
+    tags: [frontline, physical, guard_break]
+
+  - id: mage
+    name: Mage
+    description: >-
+      A magical specialist with structured control over Crest resonance.
+      Mages trade raw force for a wider, more technical toolkit.
+    role: magical_specialist
+    base_stats: {hp: 75, atk: 30, def: 35, mag: 80, res: 75, spd: 42}
+    move_ids: [arcane_bolt, mind_pierce, overload]
+    tags: [backline, magical, resistance_break]
+
+  - id: assassin
+    name: Assassin
+    description: >-
+      A fast striker who exploits openings with precision and decisiveness.
+      Excels at flanking and finishing weakened targets.
+    role: fast_striker
+    base_stats: {hp: 70, atk: 70, def: 35, mag: 38, res: 55, spd: 80}
+    move_ids: [quick_strike, cripple, lethal_edge]
+    tags: [flanker, physical, debuff_finisher]
+
+  - id: guardian
+    name: Guardian
+    description: >-
+      A defensive anchor bound to protection and endurance. Guardians hold
+      ground, absorb pressure, and reward patient Brace play.
+    role: defensive_tank
+    base_stats: {hp: 85, atk: 40, def: 75, mag: 40, res: 75, spd: 35}
+    move_ids: [shield_bash, fortify, avalanche]
+    tags: [frontline, tank, brace_synergy]
+
+  - id: neutral
+    name: Neutral
+    description: >-
+      An extremely rare adaptive generalist whose Crest expression refuses to
+      settle. Unpredictable, flexible, and politically valuable.
+    role: adaptive_generalist
+    base_stats: {hp: 78, atk: 55, def: 50, mag: 55, res: 50, spd: 50}
+    move_ids: [hybrid_strike, focus_shift, wild_card]
+    tags: [flexible, adaptive, stance_shift]
+
+  - id: sorcerer
+    name: Sorcerer
+    description: >-
+      A fast curse specialist channelling instinctive, aggressive magic.
+      Sorcerers deny buffs and control fights through Hex.
+    role: curse_specialist
+    base_stats: {hp: 72, atk: 40, def: 30, mag: 80, res: 48, spd: 80}
+    move_ids: [flame, hex, voidfire]
+    tags: [backline, magical, status_control, anti_buff]

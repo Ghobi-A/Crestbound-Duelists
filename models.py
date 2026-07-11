@@ -2,20 +2,17 @@
 Crestbound Duelists — Data Models (v2.1)
 =========================================
 Dataclasses for units, moves, and status effects.
-Full 6-class × 3-move table with Brace passive,
-cooldowns, and stat-modifier decay.
 
-v2.1 balance changes:
-  - Neutral: HP 75→80, Hybrid Strike 22→24p, Focus Shift +4/+4→+6/+6,
-    Wild Card 70%→75% accuracy
-  - Assassin: RES 50→55, Cripple -4/-4→-5/-5
+Class stats and move kits are defined in data/classes.yaml and
+data/moves.yaml (v2.1 balance baseline) and loaded via loaders.py.
+This module keeps the engine types plus the backward-compatible
+create_unit / CLASS_STATS / MOVE_FACTORIES / STAT_DECAY API.
 """
 
 from __future__ import annotations
 from dataclasses import dataclass, field
 from enum import Enum, auto
 from typing import Optional
-import copy
 
 
 # ── Enums ────────────────────────────────────────────────────────────
@@ -194,107 +191,34 @@ class Unit:
         self.cooldowns.clear()
 
 
-# ── Move Definitions ─────────────────────────────────────────────────
-
-STAT_DECAY = 3
-
-
-def _moves_warrior() -> list[Move]:
-    return [
-        Move("Power Slash", MoveType.PHYSICAL, MoveSlot.BASIC, 24, 1.0),
-        Move("Armor Break", MoveType.PHYSICAL, MoveSlot.SIGNATURE, 18, 1.0,
-             target_stat_mods=[("def", -5)]),
-        Move("Reckless Charge", MoveType.PHYSICAL, MoveSlot.GAMBIT, 30, 0.75,
-             self_stat_mods=[("def", -4)]),
-    ]
-
-
-def _moves_mage() -> list[Move]:
-    return [
-        Move("Arcane Bolt", MoveType.MAGICAL, MoveSlot.BASIC, 24, 1.0),
-        Move("Mind Pierce", MoveType.MAGICAL, MoveSlot.SIGNATURE, 18, 1.0,
-             target_stat_mods=[("res", -5)]),
-        Move("Overload", MoveType.MAGICAL, MoveSlot.GAMBIT, 30, 0.75,
-             self_stat_mods=[("res", -4)]),
-    ]
-
-
-def _moves_assassin() -> list[Move]:
-    return [
-        Move("Quick Strike", MoveType.PHYSICAL, MoveSlot.BASIC, 24, 1.0),
-        # v2.1: Cripple buffed from -4/-4 to -5/-5
-        Move("Cripple", MoveType.PHYSICAL, MoveSlot.SIGNATURE, 18, 1.0,
-             target_stat_mods=[("def", -5), ("res", -5)]),
-        Move("Lethal Edge", MoveType.PHYSICAL, MoveSlot.GAMBIT, 32, 0.70),
-    ]
-
-
-def _moves_guardian() -> list[Move]:
-    return [
-        Move("Shield Bash", MoveType.ADAPTIVE, MoveSlot.BASIC, 23, 1.0),
-        Move("Fortify", MoveType.MAGICAL, MoveSlot.SIGNATURE, 16, 1.0,
-             self_stat_mods=[("def", 4), ("res", 4)], is_buff_move=True),
-        Move("Avalanche", MoveType.PHYSICAL, MoveSlot.GAMBIT, 28, 0.80),
-    ]
-
-
-def _moves_neutral() -> list[Move]:
-    return [
-        # v2.1: Hybrid Strike 22→23 power (slight adaptive premium)
-        Move("Hybrid Strike", MoveType.ADAPTIVE, MoveSlot.BASIC, 23, 1.0),
-        # v2.1: Focus Shift +4/+4→+5/+5 ATK/MAG
-        Move("Focus Shift", MoveType.MAGICAL, MoveSlot.SIGNATURE, 18, 1.0,
-             self_stat_mods=[("atk", 5), ("mag", 5), ("def", -4), ("res", -4)]),
-        # v2.1: Wild Card 70%→75% accuracy
-        Move("Wild Card", MoveType.ADAPTIVE, MoveSlot.GAMBIT, 30, 0.75),
-    ]
-
-
-def _moves_sorcerer() -> list[Move]:
-    return [
-        Move("Flame", MoveType.MAGICAL, MoveSlot.BASIC, 24, 1.0),
-        Move("Hex", MoveType.MAGICAL, MoveSlot.SIGNATURE, 18, 1.0,
-             applies_status="hexed", status_duration=2),
-        Move("Voidfire", MoveType.MAGICAL, MoveSlot.GAMBIT, 30, 0.75,
-             self_stat_mods=[("res", -4)]),
-    ]
-
-
-# ── Class Factory ────────────────────────────────────────────────────
-
-CLASS_STATS: dict[ClassName, dict] = {
-    ClassName.WARRIOR:  {"hp": 85, "atk": 75, "def": 70, "mag": 30, "res": 35, "spd": 40},
-    ClassName.MAGE:     {"hp": 75, "atk": 30, "def": 35, "mag": 80, "res": 75, "spd": 42},
-    # v2.1: Assassin RES 50→55, MAG 30→38
-    ClassName.ASSASSIN: {"hp": 70, "atk": 70, "def": 35, "mag": 38, "res": 55, "spd": 80},
-    ClassName.GUARDIAN: {"hp": 85, "atk": 40, "def": 75, "mag": 40, "res": 75, "spd": 35},
-    # v2.1: Neutral HP 75→78
-    ClassName.NEUTRAL:  {"hp": 78, "atk": 55, "def": 50, "mag": 55, "res": 50, "spd": 50},
-    ClassName.SORCERER: {"hp": 72, "atk": 40, "def": 30, "mag": 80, "res": 48, "spd": 80},
-}
-
-MOVE_FACTORIES: dict[ClassName, callable] = {
-    ClassName.WARRIOR:  _moves_warrior,
-    ClassName.MAGE:     _moves_mage,
-    ClassName.ASSASSIN: _moves_assassin,
-    ClassName.GUARDIAN: _moves_guardian,
-    ClassName.NEUTRAL:  _moves_neutral,
-    ClassName.SORCERER: _moves_sorcerer,
-}
+# ── Data-backed definitions ──────────────────────────────────────────
+# Class stats, move kits, and STAT_DECAY live in data/*.yaml and are
+# loaded through loaders.py. The names below are kept for backward
+# compatibility (analysis.ipynb imports CLASS_STATS directly) and are
+# resolved lazily to avoid a models <-> loaders import cycle.
 
 
 def create_unit(class_name: ClassName, name: Optional[str] = None) -> Unit:
     """Factory: create a fresh unit of the given class."""
-    stats = CLASS_STATS[class_name]
-    return Unit(
-        name=name or class_name.value,
-        class_name=class_name,
-        base_hp=stats["hp"],
-        base_atk=stats["atk"],
-        base_def=stats["def"],
-        base_mag=stats["mag"],
-        base_res=stats["res"],
-        base_spd=stats["spd"],
-        hp=stats["hp"],
-        moves=MOVE_FACTORIES[class_name](),
-    )
+    from loaders import create_unit_from_data
+
+    return create_unit_from_data(class_name.value.lower(), name=name)
+
+
+def __getattr__(attr: str):
+    if attr == "CLASS_STATS":
+        from loaders import legacy_class_stats
+
+        value = legacy_class_stats()
+    elif attr == "MOVE_FACTORIES":
+        from loaders import legacy_move_factories
+
+        value = legacy_move_factories()
+    elif attr == "STAT_DECAY":
+        from loaders import load_combat_config
+
+        value = int(load_combat_config()["stat_decay_duration"])
+    else:
+        raise AttributeError(f"module 'models' has no attribute {attr!r}")
+    globals()[attr] = value  # cache for subsequent access
+    return value

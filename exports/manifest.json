@@ -1,0 +1,28 @@
+{
+  "datasets": [
+    "battle_objectives",
+    "characters",
+    "classes",
+    "combat_config",
+    "crests",
+    "encounters",
+    "entities",
+    "locations",
+    "moves",
+    "terrain"
+  ],
+  "exported_at": "2026-07-11T21:26:46+00:00",
+  "record_counts": {
+    "battle_objectives": 4,
+    "characters": 6,
+    "classes": 6,
+    "combat_config": 7,
+    "crests": 6,
+    "encounters": 4,
+    "entities": 6,
+    "locations": 8,
+    "moves": 18,
+    "terrain": 8
+  },
+  "schema_version": "1.1.0"
+}

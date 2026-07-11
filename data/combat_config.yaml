@@ -1,0 +1,22 @@
+# Crestbound Duelists — global combat constants (single source of truth).
+# Loaded by loaders.load_combat_config() and consumed by combat.py,
+# ai.py, nash.py, and the Godot client (via exports/combat_config.json).
+
+# Turn order: speed differences inside the band are probabilistic;
+# at or beyond the band (or at guaranteed_speed_ratio × slower speed)
+# the faster unit always acts first.
+speed_band: 7
+guaranteed_speed_ratio: 2.0
+
+# Damage roll: final damage = power × 2·ATK/(ATK+DEF) × U(variance_low, variance_high)
+variance_low: 0.85
+variance_high: 1.0
+
+# Brace: acting second multiplies the defender's relevant defence stat.
+brace_multiplier: 1.05
+
+# Hard cap on battle length; ties resolve by remaining HP.
+max_turns: 100
+
+# Temporary stat modifiers expire after this many turns.
+stat_decay_duration: 3

@@ -9,6 +9,7 @@ Run the full simulation suite:
   5. Export sample battle logs for Jupyter
 """
 
+import argparse
 import time
 from models import ClassName
 from simulation import (
@@ -24,6 +25,11 @@ SIMS_MATRIX = 100_000      # per matchup for the 6×6 matrix
 SIMS_POLICY = 10_000       # per class for policy comparison
 SIMS_LOG_EXPORT = 1_000    # for CSV export (keep manageable)
 
+# --quick mode: same pipeline, small counts, finishes in seconds.
+QUICK_SIMS_MATRIX = 1_000
+QUICK_SIMS_POLICY = 500
+QUICK_SIMS_LOG_EXPORT = 50
+
 
 def separator(title: str):
     print(f"\n{'='*60}")
@@ -31,7 +37,15 @@ def separator(title: str):
     print(f"{'='*60}\n")
 
 
-def main():
+def main(quick: bool = False):
+    global SIMS_MATRIX, SIMS_POLICY, SIMS_LOG_EXPORT
+    if quick:
+        SIMS_MATRIX = QUICK_SIMS_MATRIX
+        SIMS_POLICY = QUICK_SIMS_POLICY
+        SIMS_LOG_EXPORT = QUICK_SIMS_LOG_EXPORT
+        print("Running in --quick development mode "
+              f"({SIMS_MATRIX} sims/matchup instead of 100,000).")
+
     t_start = time.time()
 
     # ── 1. Greedy AI Matrix ──────────────────────────────────────────
@@ -82,4 +96,10 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser(description="Run the full Crestbound simulation suite.")
+    parser.add_argument(
+        "--quick", action="store_true",
+        help="fast development mode with reduced simulation counts",
+    )
+    args = parser.parse_args()
+    main(quick=args.quick)

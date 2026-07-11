@@ -1,0 +1,146 @@
+{
+  "archive_ambush": {
+    "battlefield_effect": {
+      "decay_penalty": 1,
+      "description": "Ancient wards smother lingering magic — stat changes fade faster.",
+      "name": "Restricted Sigils",
+      "tags": [
+        "archive"
+      ],
+      "type": "modifier_decay"
+    },
+    "defeat_dialogue": "",
+    "enemy_party": [
+      {
+        "class_id": "assassin",
+        "crest_id": "",
+        "entity_id": "",
+        "name": "Masked Duelist",
+        "position": "front"
+      },
+      {
+        "class_id": "assassin",
+        "crest_id": "",
+        "entity_id": "",
+        "name": "Masked Duelist",
+        "position": "front"
+      },
+      {
+        "class_id": "sorcerer",
+        "crest_id": "eclipse_crest",
+        "entity_id": "",
+        "name": "Archivist Renegade",
+        "position": "back"
+      }
+    ],
+    "enemy_slots": 3,
+    "id": "archive_ambush",
+    "intro_dialogue": "",
+    "location": "caer_lumen",
+    "name": "Archive Ambush",
+    "objective": "defeat_all",
+    "player_slots": 2,
+    "pre_battle_positioning": true,
+    "victory_dialogue": ""
+  },
+  "hollow_court_battle": {
+    "battlefield_effect": {
+      "after_round": 3,
+      "description": "The sleeping node stirs — Resonance flows faster after round 3.",
+      "multiplier": 1.5,
+      "name": "Dormant Crest Node",
+      "tags": [
+        "ruin",
+        "ancient"
+      ],
+      "type": "resonance_surge"
+    },
+    "defeat_dialogue": "battle_defeat",
+    "enemy_party": [
+      {
+        "class_id": "warrior",
+        "crest_id": "",
+        "entity_id": "",
+        "name": "Riven-touched Raider",
+        "position": "front",
+        "sprite_key": "riven_raider"
+      },
+      {
+        "class_id": "sorcerer",
+        "crest_id": "",
+        "entity_id": "",
+        "name": "Hexbound Adept",
+        "position": "back",
+        "sprite_key": "hexbound_adept"
+      },
+      {
+        "class_id": "neutral",
+        "crest_id": "",
+        "entity_id": "",
+        "name": "Unbound Mercenary",
+        "position": "front",
+        "sprite_key": "unbound_mercenary"
+      }
+    ],
+    "enemy_slots": 3,
+    "id": "hollow_court_battle",
+    "intro_dialogue": "battle_intro",
+    "location": "hollow_court",
+    "name": "The Hollow Court",
+    "objective": "defeat_all",
+    "player_slots": 3,
+    "pre_battle_positioning": true,
+    "victory_dialogue": "battle_victory"
+  },
+  "serin_first_duel": {
+    "battlefield_effect": {},
+    "defeat_dialogue": "",
+    "enemy_party": [
+      {
+        "class_id": "assassin",
+        "crest_id": "glass_crest",
+        "entity_id": "",
+        "name": "Serin Dain",
+        "position": "front"
+      }
+    ],
+    "enemy_slots": 1,
+    "id": "serin_first_duel",
+    "intro_dialogue": "",
+    "location": "veyrhold",
+    "name": "Duelist Trial: Serin Dain",
+    "objective": "defeat_all",
+    "player_slots": 1,
+    "pre_battle_positioning": false,
+    "victory_dialogue": ""
+  },
+  "veyrhold_pair_trial": {
+    "battlefield_effect": {},
+    "defeat_dialogue": "",
+    "enemy_party": [
+      {
+        "class_id": "guardian",
+        "crest_id": "azure_crest",
+        "entity_id": "",
+        "name": "Trial Warden",
+        "position": "front"
+      },
+      {
+        "class_id": "mage",
+        "crest_id": "ember_crest",
+        "entity_id": "",
+        "name": "Trial Adept",
+        "position": "back"
+      }
+    ],
+    "enemy_slots": 2,
+    "id": "veyrhold_pair_trial",
+    "intro_dialogue": "",
+    "location": "veyrhold",
+    "name": "Paired Trial",
+    "objective": "defeat_all",
+    "player_slots": 2,
+    "pre_battle_positioning": true,
+    "victory_dialogue": ""
+  }
+}

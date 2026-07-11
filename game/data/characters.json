@@ -1,0 +1,56 @@
+{
+  "aren_vale": {
+    "class": null,
+    "default_crest": null,
+    "description": "A twenty-year-old from Greymere: meek, trusting, conflict-averse, and unusually willing to see good in people. Every attempt to stay out of trouble pulls them deeper into it. Not a chosen one — the Crest under the Hollow Court simply answered.",
+    "home": "greymere",
+    "id": "aren_vale",
+    "name": "Aren Vale",
+    "role": "protagonist"
+  },
+  "cassian_orre": {
+    "class": null,
+    "default_crest": null,
+    "description": "A former strategist and Crest critic, publicly presumed dead. Known early only as a historical figure of anti-Crest thought. His aim — destroy every Crest and end the arms race — is revealed much later.",
+    "home": null,
+    "id": "cassian_orre",
+    "name": "Cassian Orre",
+    "role": "antagonist"
+  },
+  "elara_thorne": {
+    "class": "guardian",
+    "default_crest": "azure_crest",
+    "description": "An experienced sanctioned Duelist stationed near Greymere. She understands why Crest restrictions exist, disagrees with some of the policies she enforces, and believes reform beats rebellion.",
+    "home": "veyrhold",
+    "id": "elara_thorne",
+    "name": "Warden Elara Thorne",
+    "role": "mentor"
+  },
+  "mara_vale": {
+    "class": null,
+    "default_crest": null,
+    "description": "One of Aren's parents. Once worked alongside Cassian Orre on forbidden Crest research before they split over the future of Crests. Raised Aren away from the consequences of that history.",
+    "home": "greymere",
+    "id": "mara_vale",
+    "name": "Mara Vale",
+    "role": "background"
+  },
+  "mira_solen": {
+    "class": "mage",
+    "default_crest": "ember_crest",
+    "description": "A young archive assistant: practical, curious, more socially confident than Aren, and sceptical of official history. A bridge into Crest lore and the records nobody is allowed to read.",
+    "home": "greymere",
+    "id": "mira_solen",
+    "name": "Mira Solen",
+    "role": "companion"
+  },
+  "serin_dain": {
+    "class": "assassin",
+    "default_crest": "glass_crest",
+    "description": "A sanctioned Duelist the protagonist's age: trained, observant, suspicious, decisive, and fundamentally moral. Believes trust must be earned before it is given. Often right about that.",
+    "home": "veyrhold",
+    "id": "serin_dain",
+    "name": "Serin Dain",
+    "role": "rival"
+  }
+}

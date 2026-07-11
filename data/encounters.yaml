@@ -1,0 +1,86 @@
+# Crestbound Duelists — encounter definitions.
+#
+# The battle engine reads encounter structure from this file instead of
+# assuming a fixed 3v3. player_slots / enemy_slots are 1-3 per side and
+# may be asymmetric. battlefield_effect applies to the whole encounter
+# (no grid/tile mechanics).
+#
+# Resonance event names used by battlefield effects and crests are the
+# canonical runtime events listed in data/crests.yaml.
+
+encounters:
+  - id: hollow_court_battle
+    name: The Hollow Court
+    location: hollow_court
+    player_slots: 3
+    enemy_slots: 3
+    pre_battle_positioning: true
+    objective: defeat_all
+    battlefield_effect:
+      name: Dormant Crest Node
+      description: The sleeping node stirs — Resonance flows faster after round 3.
+      type: resonance_surge
+      after_round: 3
+      multiplier: 1.5
+      tags: [ruin, ancient]
+    enemy_party:
+      - {name: Riven-touched Raider, class_id: warrior, crest_id: "", entity_id: "", position: front, sprite_key: riven_raider}
+      - {name: Hexbound Adept, class_id: sorcerer, crest_id: "", entity_id: "", position: back, sprite_key: hexbound_adept}
+      - {name: Unbound Mercenary, class_id: neutral, crest_id: "", entity_id: "", position: front, sprite_key: unbound_mercenary}
+    intro_dialogue: battle_intro
+    victory_dialogue: battle_victory
+    defeat_dialogue: battle_defeat
+
+  # 1v1 formal duel — demonstrates the smallest encounter size.
+  # Not reachable in the prototype story yet; used by tests/debug.
+  - id: serin_first_duel
+    name: "Duelist Trial: Serin Dain"
+    location: veyrhold
+    player_slots: 1
+    enemy_slots: 1
+    pre_battle_positioning: false
+    objective: defeat_all
+    battlefield_effect: {}
+    enemy_party:
+      - {name: Serin Dain, class_id: assassin, crest_id: glass_crest, entity_id: "", position: front}
+    intro_dialogue: ""
+    victory_dialogue: ""
+    defeat_dialogue: ""
+
+  # 2v2 partnership battle — demonstrates paired encounters.
+  - id: veyrhold_pair_trial
+    name: Paired Trial
+    location: veyrhold
+    player_slots: 2
+    enemy_slots: 2
+    pre_battle_positioning: true
+    objective: defeat_all
+    battlefield_effect: {}
+    enemy_party:
+      - {name: Trial Warden, class_id: guardian, crest_id: azure_crest, entity_id: "", position: front}
+      - {name: Trial Adept, class_id: mage, crest_id: ember_crest, entity_id: "", position: back}
+    intro_dialogue: ""
+    victory_dialogue: ""
+    defeat_dialogue: ""
+
+  # 2v3 asymmetric ambush — demonstrates uneven sides.
+  - id: archive_ambush
+    name: Archive Ambush
+    location: caer_lumen
+    player_slots: 2
+    enemy_slots: 3
+    pre_battle_positioning: true
+    objective: defeat_all
+    battlefield_effect:
+      name: Restricted Sigils
+      description: Ancient wards smother lingering magic — stat changes fade faster.
+      type: modifier_decay
+      decay_penalty: 1
+      tags: [archive]
+    enemy_party:
+      - {name: Masked Duelist, class_id: assassin, crest_id: "", entity_id: "", position: front}
+      - {name: Masked Duelist, class_id: assassin, crest_id: "", entity_id: "", position: front}
+      - {name: Archivist Renegade, class_id: sorcerer, crest_id: eclipse_crest, entity_id: "", position: back}
+    intro_dialogue: ""
+    victory_dialogue: ""
+    defeat_dialogue: ""

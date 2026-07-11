@@ -1,0 +1,48 @@
+{
+  "frame_width": 24,
+  "frame_height": 32,
+  "frame_count": 11,
+  "states": {
+    "idle": {
+      "start": 0,
+      "count": 2,
+      "fps": 3,
+      "loop": true
+    },
+    "attack": {
+      "start": 2,
+      "count": 3,
+      "fps": 10,
+      "loop": false
+    },
+    "hit": {
+      "start": 5,
+      "count": 1,
+      "fps": 8,
+      "loop": false
+    },
+    "defeat": {
+      "start": 6,
+      "count": 2,
+      "fps": 4,
+      "loop": false
+    },
+    "brace": {
+      "start": 8,
+      "count": 1,
+      "fps": 4,
+      "loop": false
+    },
+    "awaken": {
+      "start": 9,
+      "count": 2,
+      "fps": 5,
+      "loop": true
+    }
+  },
+  "overworld": {
+    "frame_width": 16,
+    "frame_height": 24,
+    "frames": 2
+  }
+}

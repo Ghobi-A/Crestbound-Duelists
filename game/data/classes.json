@@ -1,0 +1,147 @@
+{
+  "assassin": {
+    "base_stats": {
+      "atk": 70,
+      "def": 35,
+      "hp": 70,
+      "mag": 38,
+      "res": 55,
+      "spd": 80
+    },
+    "description": "A fast striker who exploits openings with precision and decisiveness. Excels at flanking and finishing weakened targets.",
+    "id": "assassin",
+    "move_ids": [
+      "quick_strike",
+      "cripple",
+      "lethal_edge"
+    ],
+    "name": "Assassin",
+    "role": "fast_striker",
+    "tags": [
+      "flanker",
+      "physical",
+      "debuff_finisher"
+    ]
+  },
+  "guardian": {
+    "base_stats": {
+      "atk": 40,
+      "def": 75,
+      "hp": 85,
+      "mag": 40,
+      "res": 75,
+      "spd": 35
+    },
+    "description": "A defensive anchor bound to protection and endurance. Guardians hold ground, absorb pressure, and reward patient Brace play.",
+    "id": "guardian",
+    "move_ids": [
+      "shield_bash",
+      "fortify",
+      "avalanche"
+    ],
+    "name": "Guardian",
+    "role": "defensive_tank",
+    "tags": [
+      "frontline",
+      "tank",
+      "brace_synergy"
+    ]
+  },
+  "mage": {
+    "base_stats": {
+      "atk": 30,
+      "def": 35,
+      "hp": 75,
+      "mag": 80,
+      "res": 75,
+      "spd": 42
+    },
+    "description": "A magical specialist with structured control over Crest resonance. Mages trade raw force for a wider, more technical toolkit.",
+    "id": "mage",
+    "move_ids": [
+      "arcane_bolt",
+      "mind_pierce",
+      "overload"
+    ],
+    "name": "Mage",
+    "role": "magical_specialist",
+    "tags": [
+      "backline",
+      "magical",
+      "resistance_break"
+    ]
+  },
+  "neutral": {
+    "base_stats": {
+      "atk": 55,
+      "def": 50,
+      "hp": 78,
+      "mag": 55,
+      "res": 50,
+      "spd": 50
+    },
+    "description": "An extremely rare adaptive generalist whose Crest expression refuses to settle. Unpredictable, flexible, and politically valuable.",
+    "id": "neutral",
+    "move_ids": [
+      "hybrid_strike",
+      "focus_shift",
+      "wild_card"
+    ],
+    "name": "Neutral",
+    "role": "adaptive_generalist",
+    "tags": [
+      "flexible",
+      "adaptive",
+      "stance_shift"
+    ]
+  },
+  "sorcerer": {
+    "base_stats": {
+      "atk": 40,
+      "def": 30,
+      "hp": 72,
+      "mag": 80,
+      "res": 48,
+      "spd": 80
+    },
+    "description": "A fast curse specialist channelling instinctive, aggressive magic. Sorcerers deny buffs and control fights through Hex.",
+    "id": "sorcerer",
+    "move_ids": [
+      "flame",
+      "hex",
+      "voidfire"
+    ],
+    "name": "Sorcerer",
+    "role": "curse_specialist",
+    "tags": [
+      "backline",
+      "magical",
+      "status_control",
+      "anti_buff"
+    ]
+  },
+  "warrior": {
+    "base_stats": {
+      "atk": 75,
+      "def": 70,
+      "hp": 85,
+      "mag": 30,
+      "res": 35,
+      "spd": 40
+    },
+    "description": "A frontline bruiser whose Crest expression favours direct action and guard-breaking pressure. Associated with conviction and confrontation.",
+    "id": "warrior",
+    "move_ids": [
+      "power_slash",
+      "armor_break",
+      "reckless_charge"
+    ],
+    "name": "Warrior",
+    "role": "physical_bruiser",
+    "tags": [
+      "frontline",
+      "physical",
+      "guard_break"
+    ]
+  }
+}
