@@ -1,0 +1,44 @@
+{
+  "battle_intro": [
+    {
+      "speaker": "",
+      "lines": [
+        "The Hollow Court opens into a drowned amphitheatre of broken stone.",
+        "At its centre, a dormant Crest node pulses — faint, but awake.",
+        "Figures move between the pillars. They were here first."
+      ]
+    },
+    {
+      "speaker": "Warden Elara Thorne",
+      "lines": [
+        "Raiders. And that one carries a Riven mark — do not let it corner you.",
+        "Formation. We hold, we do not chase."
+      ]
+    },
+    {
+      "speaker": "Mira Solen",
+      "lines": [
+        "They are between us and the node. Of course they are."
+      ]
+    }
+  ],
+  "battle_victory": [
+    {
+      "speaker": "",
+      "lines": [
+        "The last raider drops. The Court is still again — almost.",
+        "The dormant node flares once, bright and deliberate, turned toward you.",
+        "Something beneath the Hollow Court has made its choice."
+      ]
+    }
+  ],
+  "battle_defeat": [
+    {
+      "speaker": "",
+      "lines": [
+        "The party is driven back into the dark of the stairway...",
+        "The Hollow Court keeps its secrets. For now."
+      ]
+    }
+  ]
+}
