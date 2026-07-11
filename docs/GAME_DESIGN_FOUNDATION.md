@@ -2,27 +2,33 @@
 
 ## What Crestbound Duelists is
 
-A pixel-art tactical RPG where human Duelists bind themselves to
-**Crests** (fragments of a dead god) and **Bonded Entities**
+A pixel-art turn-based party RPG where human Duelists bind themselves
+to **Crests** (fragments of a dead god) and **Bonded Entities**
 (manifestations of the Duelist–Crest relationship), producing distinct
-builds, tactical roles, and awakening paths.
+builds, battle roles, and awakening paths — fought in variable-size
+encounters (1v1 duels through 3v3 party battles and asymmetric fights).
 
-Inspirations — collection/progression (Pokémon), grid tactics/terrain
-(Fire Emblem), classes/Gambits/awakenings (Final Fantasy) — inform the
-shape, not the content. Nothing is copied; Crestbound is not
-"Pokémon with different names".
+Inspirations — collection/team-building readability (Pokémon),
+party combat and spectacle (Final Fantasy) — inform the shape, not
+the content. Nothing is copied; Crestbound is not "Pokémon with
+different names", and after the combat pivot it deliberately no longer
+plays like "Fire Emblem with Crests": there is no movement grid.
 
 ## Core pillars
 
 1. **Builds over creatures.** A unit is
    `Character + Class + Crest + Bonded Entity + Trait + Move Kit`.
    Same class + different Crest/Entity = meaningfully different unit.
-2. **Tactics over stats.** Positioning, terrain, initiative, Brace,
-   Hex, cooldowns, and objectives decide battles.
+2. **Commitment over movement.** The tactical questions are: who do I
+   bring, where do I position them before the fight, which action do
+   I commit, who do I target, what will the enemy do, do I attack,
+   Brace, set up, or gamble — and can I trigger my Crest?
 3. **Simulation-backed balance.** Every number in the game is exported
    from a Balance Lab that can Monte Carlo it first.
 4. **A world with weight.** Crests are politically dangerous; battles
    have narrative context (see LORE_BIBLE.md).
+
+Battle mechanics in detail: `docs/BATTLE_SYSTEM.md`.
 
 ## Move identity: Basic / Signature / Gambit
 
@@ -69,12 +75,18 @@ They grant passives and (later) moves; awakened forms exist in data.
 Collection comes from Crests, Crest fragments, Entities, build
 combinations, and rare synergies — not from filling a monster box.
 
-## Tactical mechanics (prototype scope)
+## Battle mechanics (prototype scope)
 
-- 8x6 grid, 3v3, phase-based rounds (player phase / enemy phase)
-- Movement by points over terrain costs; terrain grants DEF/RES
-- **Brace**: a visible defensive action — defence multiplied until the
-  unit's next activation (Azure improves it)
+- Variable-size encounters (1v1 / 2v2 / 3v3 / asymmetric), data-defined
+- Round-based: commit actions for the whole party, then resolution by
+  initiative (Brace first, then probabilistic speed)
+- Pre-battle **front/back positioning** with clear row rules — no
+  in-battle movement, no grid
+- **Brace**: a visible defensive commitment — defence multiplied for
+  the round (Azure improves it, Iron Tortoise extends it)
 - **Hex**: blocks buff actions and self-strengthening while active
+- **Resonance**: per-crest 0-100 meter fed by crest-specific behaviour;
+  gates awakening together with the crest's condition
 - Cooldowns gate Signature/Gambit reuse
-- Objective-driven wins (defeat-all now; hold-the-node and others in data)
+- Battlefield conditions affect the whole encounter (never tiles)
+- Objective-driven wins (defeat-all now; hold/survive/protect in data)

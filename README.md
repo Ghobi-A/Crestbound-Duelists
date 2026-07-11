@@ -1,12 +1,14 @@
 # Crestbound Duelists
 
-**A tested, data-driven RPG Balance Lab — and the beginnings of an
-original pixel-art tactical RPG built on top of it.**
+**A tested, data-driven RPG Balance Lab — and an original pixel-art
+turn-based party RPG built on top of it.**
 
 Human Duelists bind themselves to **Crests** (fragments of a dead god)
 and **Bonded Entities**, creating distinct class builds, abilities,
-awakenings, and team compositions. Battles are tactical: positioning,
-terrain, initiative, Brace, Hex, cooldowns, and objectives.
+awakenings, and team compositions. Battles are variable-size Duelist
+encounters (1v1 duels, 2v2 partnerships, 3v3 party fights, asymmetric
+ambushes) decided by initiative, cooldowns, Brace, Hex, pre-battle
+positioning, Resonance, and Crest awakening — not by moving on a grid.
 
 ---
 
@@ -15,7 +17,7 @@ terrain, initiative, Brace, Hex, cooldowns, and objectives.
 | Layer | Status | What it does |
 |-------|--------|--------------|
 | **Balance Lab** (Python) | Stable, tested | Combat engine, Monte Carlo simulation, AI policies, Nash/maximin analysis, YAML-driven game data, JSON export |
-| **Game Client** (Godot 4) | First playable prototype | 320x180 pixel-art client: class selection, Greymere overworld, dialogue, and a 3v3 tactical battle in the Hollow Court |
+| **Game Client** (Godot 4) | First playable prototype | 320x180 pixel-art client: class selection, Greymere overworld, dialogue, pre-battle party setup, and a round-based 3v3 party battle in the Hollow Court with original sprite art |
 
 **What it was:** a stochastic combat simulation and decision-system
 case study (that work is preserved — see
@@ -62,9 +64,10 @@ python export_game_data.py    # export JSON for the game client
 
 Controls: WASD/arrows to move, **Z/Enter/Space** to interact/confirm,
 **X/Esc** to cancel. Flow: title → class selection → Greymere → talk
-to Warden Elara Thorne / Mira Solen → the Hollow Court arch → 3v3
-tactical battle → post-battle scene. Setup details:
-`docs/GODOT_SETUP.md`.
+to Warden Elara Thorne / Mira Solen → the Hollow Court arch →
+pre-battle party setup (front/back formation) → round-based 3v3 party
+battle → post-battle scene. Battle rules: `docs/BATTLE_SYSTEM.md`;
+setup details: `docs/GODOT_SETUP.md`.
 
 ## Data workflow
 
@@ -109,8 +112,11 @@ Sorcerer — each with exactly three moves:
 | Sorcerer | 72 | 40 | 30 | 80 | 48 | 80 | Fast curse specialist |
 
 On top of this, the RPG layer adds **Crests** (behaviour-altering
-passives + earned awakenings) and **Bonded Entities** — same class,
-different Crest/Entity, meaningfully different unit.
+passives, per-crest **Resonance** gains, and earned awakenings) and
+**Bonded Entities** — same class, different Crest/Entity,
+meaningfully different unit. Encounters are data-defined
+(`data/encounters.yaml`) and may be 1v1, 2v2, 3v3, or asymmetric;
+the battle engine, UI, and AI scale to whatever the data declares.
 
 ## Simulation findings
 
@@ -132,15 +138,18 @@ Reproduce with `python nash.py` and `analysis.ipynb`
 ```text
 Crestbound-Duelists/
 ├── data/                  # YAML source of truth (classes, moves, config,
-│                          #   crests, entities, terrain, objectives, narrative)
+│                          #   crests, entities, encounters, terrain,
+│                          #   objectives, narrative)
 ├── models.py combat.py ai.py simulation.py nash.py main.py
 ├── loaders.py rpg_models.py export_game_data.py balance_report.py
 ├── tests/                 # pytest regression suite
 ├── exports/               # generated JSON (build artifact, committed)
-├── game/                  # Godot 4 client (scenes, scripts, exported data)
-├── tools/                 # static validation for the Godot project
+├── game/                  # Godot 4 client (scenes, scripts, exported data,
+│                          #   generated original pixel art)
+├── tools/                 # Godot static validation + pixel-art generator
 ├── docs/                  # ARCHITECTURE, GAME_DESIGN_FOUNDATION,
-│                          #   DATA_PIPELINE, GODOT_SETUP, LORE_BIBLE, STORY_OUTLINE
+│                          #   BATTLE_SYSTEM, DATA_PIPELINE, GODOT_SETUP,
+│                          #   LORE_BIBLE, STORY_OUTLINE
 └── analysis.ipynb         # original data-science notebook
 ```
 

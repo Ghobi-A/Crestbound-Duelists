@@ -24,8 +24,9 @@ Launch Godot                  # client reads game/data/*.json
 | `classes.yaml` | 6 classes: stats, roles, move kits | `load_classes()` |
 | `moves.yaml` | 18 moves: power, accuracy, slots, effects, tactical fields | `load_moves()` |
 | `combat_config.yaml` | Speed band, variance, Brace multiplier, decay | `load_combat_config()` |
-| `crests.yaml` | 6 Crests: passives, awakening conditions/effects | `load_crests()` |
+| `crests.yaml` | 6 Crests: passives, Resonance gain rules, awakening conditions/effects | `load_crests()` |
 | `entities.yaml` | 6 Bonded Entities: passives, granted moves, awakened forms | `load_entities()` |
+| `encounters.yaml` | Battle definitions: 1-3 slots per side, enemy parties, battlefield effects, objectives | `load_encounters()` |
 | `terrain.yaml` | Tile types: move cost, passability, DEF/RES bonuses | `load_terrain()` |
 | `battle_objectives.yaml` | Win/loss condition definitions | `load_battle_objectives()` |
 | `characters.yaml`, `locations.yaml` | Lightweight narrative references | `load_characters()`, `load_locations()` |

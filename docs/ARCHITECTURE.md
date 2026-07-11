@@ -17,7 +17,7 @@ Crestbound Duelists is two connected layers with one source of truth.
 
 | File | Responsibility |
 |------|----------------|
-| `data/*.yaml` | Single source of truth: classes, moves, combat constants, Crests, Bonded Entities, terrain, objectives, narrative references |
+| `data/*.yaml` | Single source of truth: classes, moves, combat constants, Crests (incl. Resonance rules), Bonded Entities, encounters, terrain, objectives, narrative references |
 | `loaders.py` | Loads, validates, and caches YAML; `create_unit_from_data()` |
 | `models.py` | Engine dataclasses (`Unit`, `Move`, statuses); backward-compatible `create_unit`, `CLASS_STATS` |
 | `combat.py` | Damage formula, speed resolution, Brace, Hex, 1v1 battle loop |
@@ -35,13 +35,15 @@ Crestbound Duelists is two connected layers with one source of truth.
 | Path | Responsibility |
 |------|----------------|
 | `scripts/data/game_data.gd` | Autoload; loads exported JSON with readable errors; the only data access path |
-| `scripts/core/game_state.gd` | Autoload; current run: build, party, position, flags |
-| `scripts/save/save_manager.gd` | Autoload; JSON save/load in `user://` |
-| `scenes/boot/` + `scripts/ui/boot_screen.gd` | Title, continue, class selection |
+| `scripts/core/game_state.gd` | Autoload; current run: build, party + formation, pending encounter, flags |
+| `scripts/save/save_manager.gd` | Autoload; versioned JSON save/load in `user://` |
+| `scenes/boot/` + `scripts/ui/boot_screen.gd` | Title, continue, class selection with sprite preview |
 | `scenes/overworld/` + `scripts/overworld/` | Greymere: grid movement, collision, NPCs, interactions |
 | `scripts/ui/dialogue_box.gd` | Reusable JSON-driven dialogue |
-| `scenes/battle/` + `scripts/battle/` | Hollow Court 3v3 tactical battle |
-| `assets/placeholders/` | Programmer-art palette (no final art yet) |
+| `scripts/ui/battle/` | Party setup screen, HUD, action menu, target info, round preview |
+| `scenes/battle/` + `scripts/battle/` | Variable-size party battles: `encounter_runtime` (party building), `battle_resolver` (combat rules), `crest_runtime` (Resonance/awakening), `entity_runtime` (entity passives), `enemy_ai`, `battle_controller` (flow + presentation), `duelist_sprite` (sheet animation) |
+| `assets/characters/`, `assets/enemies/`, `assets/entities/`, `assets/battle/` | Generated original pixel art (`tools/generate_sprites.py`) |
+| `assets/placeholders/` | Programmer-art palette + fallback rendering rules |
 
 ## Rules
 
