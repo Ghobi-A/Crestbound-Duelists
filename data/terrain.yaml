@@ -1,0 +1,86 @@
+# Crestbound Duelists — terrain tile definitions for the tactical layer.
+# move_cost is in movement points; defense/resistance bonuses are flat
+# additions while a unit stands on the tile.
+
+terrain:
+  - id: plains
+    name: Plains
+    description: Open ground. No modifiers.
+    move_cost: 1
+    passable: true
+    defense_bonus: 0
+    resistance_bonus: 0
+    tile_key: plains
+    tags: [open]
+
+  - id: road
+    name: Road
+    description: Packed earth and old paving. Fast, exposed travel.
+    move_cost: 1
+    passable: true
+    defense_bonus: 0
+    resistance_bonus: 0
+    tile_key: road
+    tags: [open, path]
+
+  - id: forest
+    name: Forest
+    description: Dense cover. Slower to cross, easier to defend from.
+    move_cost: 2
+    passable: true
+    defense_bonus: 2
+    resistance_bonus: 1
+    tile_key: forest
+    tags: [cover]
+
+  - id: ruin
+    name: Ruin
+    description: Crumbled Court stonework. Broken footing, partial cover.
+    move_cost: 2
+    passable: true
+    defense_bonus: 1
+    resistance_bonus: 2
+    tile_key: ruin
+    tags: [cover, ancient]
+
+  - id: wall
+    name: Wall
+    description: Intact Court masonry. Impassable.
+    move_cost: 99
+    passable: false
+    defense_bonus: 0
+    resistance_bonus: 0
+    tile_key: wall
+    tags: [blocking]
+
+  - id: water
+    name: Deep Water
+    description: Still black water below the Court. Impassable on foot.
+    move_cost: 99
+    passable: false
+    defense_bonus: 0
+    resistance_bonus: 0
+    tile_key: water
+    tags: [blocking, hazard]
+
+  - id: crest_node
+    name: Crest Node
+    description: >-
+      A dormant resonance node. Standing here matters to certain battle
+      objectives and future awakening conditions.
+    move_cost: 1
+    passable: true
+    defense_bonus: 0
+    resistance_bonus: 1
+    tile_key: crest_node
+    tags: [objective, resonant]
+
+  - id: scorched
+    name: Scorched Ground
+    description: Ember-marked ground that harms units that end a turn on it.
+    move_cost: 1
+    passable: true
+    defense_bonus: 0
+    resistance_bonus: 0
+    tile_key: scorched
+    tags: [hazard, temporary]

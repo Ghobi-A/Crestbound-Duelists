@@ -1,0 +1,72 @@
+# Crestbound Duelists — narrative character reference (lightweight).
+# Canon lives in docs/LORE_BIBLE.md and docs/STORY_OUTLINE.md.
+# "Aren Vale" is the development placeholder name — the player names
+# the protagonist and picks their class (class: null here).
+
+characters:
+  - id: aren_vale
+    name: Aren Vale
+    role: protagonist
+    class: null
+    default_crest: null   # determined by the player's class choice
+    home: greymere
+    description: >-
+      A twenty-year-old from Greymere: meek, trusting, conflict-averse,
+      and unusually willing to see good in people. Every attempt to stay
+      out of trouble pulls them deeper into it. Not a chosen one — the
+      Crest under the Hollow Court simply answered.
+
+  - id: serin_dain
+    name: Serin Dain
+    role: rival
+    class: assassin
+    default_crest: glass_crest
+    home: veyrhold
+    description: >-
+      A sanctioned Duelist the protagonist's age: trained, observant,
+      suspicious, decisive, and fundamentally moral. Believes trust must
+      be earned before it is given. Often right about that.
+
+  - id: cassian_orre
+    name: Cassian Orre
+    role: antagonist
+    class: null
+    default_crest: null
+    home: null
+    description: >-
+      A former strategist and Crest critic, publicly presumed dead. Known
+      early only as a historical figure of anti-Crest thought. His aim —
+      destroy every Crest and end the arms race — is revealed much later.
+
+  - id: elara_thorne
+    name: Warden Elara Thorne
+    role: mentor
+    class: guardian
+    default_crest: azure_crest
+    home: veyrhold
+    description: >-
+      An experienced sanctioned Duelist stationed near Greymere. She
+      understands why Crest restrictions exist, disagrees with some of
+      the policies she enforces, and believes reform beats rebellion.
+
+  - id: mira_solen
+    name: Mira Solen
+    role: companion
+    class: mage
+    default_crest: ember_crest
+    home: greymere
+    description: >-
+      A young archive assistant: practical, curious, more socially
+      confident than Aren, and sceptical of official history. A bridge
+      into Crest lore and the records nobody is allowed to read.
+
+  - id: mara_vale
+    name: Mara Vale
+    role: background
+    class: null
+    default_crest: null
+    home: greymere
+    description: >-
+      One of Aren's parents. Once worked alongside Cassian Orre on
+      forbidden Crest research before they split over the future of
+      Crests. Raised Aren away from the consequences of that history.
