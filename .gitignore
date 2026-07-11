@@ -20,3 +20,6 @@ env/
 
 # Generated simulation logs
 results/*.csv
+
+# Godot editor cache
+game/.godot/

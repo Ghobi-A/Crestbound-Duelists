@@ -1,180 +1,149 @@
 # Crestbound Duelists
 
-**A data science case study in adversarial decision-making under stochastic execution.**
+**A tested, data-driven RPG Balance Lab — and the beginnings of an
+original pixel-art tactical RPG built on top of it.**
 
-*When does randomness fail to produce randomness in optimal strategy?*
-
----
-
-## Key Results (TL;DR)
-
-Across all 15 class matchups using single-turn payoff analysis:
-
-- **All equilibria converge to pure strategies**
-- **Execution stochasticity alone does not induce mixed-strategy optimal play**
-- **Immediate expected damage dominates decision-making**
-- **Strategic randomness only emerges in multi-turn stateful systems**
-
-**Implication:**  
-Uncertainty in execution ≠ uncertainty in optimal policy.
+Human Duelists bind themselves to **Crests** (fragments of a dead god)
+and **Bonded Entities**, creating distinct class builds, abilities,
+awakenings, and team compositions. Battles are tactical: positioning,
+terrain, initiative, Brace, Hex, cooldowns, and objectives.
 
 ---
 
-## Overview
+## What this repository is
 
-Crestbound Duelists is a turn-based combat simulator used as a controlled environment to study decision-making under uncertainty.
+| Layer | Status | What it does |
+|-------|--------|--------------|
+| **Balance Lab** (Python) | Stable, tested | Combat engine, Monte Carlo simulation, AI policies, Nash/maximin analysis, YAML-driven game data, JSON export |
+| **Game Client** (Godot 4) | First playable prototype | 320x180 pixel-art client: class selection, Greymere overworld, dialogue, and a 3v3 tactical battle in the Hollow Court |
 
-The system includes:
-- Six asymmetric classes
-- Three move types per class
-- Probabilistic turn order
-- Damage variance
-- Cooldowns, buffs, and status effects
+**What it was:** a stochastic combat simulation and decision-system
+case study (that work is preserved — see
+[Simulation findings](#simulation-findings) below).
 
-This is not a game project.  
-It is a **decision system experiment**.
-
-The focus is:
-- Policy evaluation under stochastic dynamics  
-- Monte Carlo simulation at scale  
-- Game-theoretic stability analysis  
+**What it is becoming:** an original tactical RPG (design:
+`docs/GAME_DESIGN_FOUNDATION.md`, world: `docs/LORE_BIBLE.md`,
+story: `docs/STORY_OUTLINE.md`).
 
 ---
 
-## Core Question
+## Architecture
 
-> When does stochastic execution force optimal strategies to become mixed rather than deterministic?
+```text
+data/*.yaml  ──▶  loaders.py (validate)  ──▶  combat engine + simulations
+     │                                              │
+     │                                              ▼
+     │                                    tests / balance reports
+     ▼
+export_game_data.py  ──▶  exports/*.json + game/data/*.json  ──▶  Godot client
+```
 
----
+One source of truth: the YAML in `data/`. The Godot client hardcodes
+no balance values. Details: `docs/ARCHITECTURE.md` and
+`docs/DATA_PIPELINE.md`.
 
-## Findings
+## Running the Python side
 
-The `nash.py` module models each class pairing as a **single-turn normal form game**, where:
+```bash
+pip install -r requirements.txt
 
-- Each player selects one of three actions  
-- Payoff = expected damage dealt − expected damage received  
+python -m pytest              # 133 regression tests (fast)
+python balance_report.py      # quick balance smell check (~1s)
+python main.py --quick        # reduced simulation suite (~10s)
+python main.py                # full 100k-sims-per-matchup suite
+python nash.py                # game-theoretic analysis
+python export_game_data.py    # export JSON for the game client
+```
 
-### Results
+## Running the game
 
-| Question | Answer |
-|----------|--------|
-| Do single-turn matchups require mixed strategies? | No |
-| Does stochastic execution induce mixed strategies? | No |
-| Why? | Immediate expected damage dominates |
-| What’s missing? | Multi-turn state (cooldowns, buffs, status effects) |
+1. Install **Godot 4.2+** (https://godotengine.org/download).
+2. Open `game/project.godot` in the editor and press **F5**.
 
-### Interpretation
+Controls: WASD/arrows to move, **Z/Enter/Space** to interact/confirm,
+**X/Esc** to cancel. Flow: title → class selection → Greymere → talk
+to Warden Elara Thorne / Mira Solen → the Hollow Court arch → 3v3
+tactical battle → post-battle scene. Setup details:
+`docs/GODOT_SETUP.md`.
 
-Despite:
-- Damage randomness  
-- Probabilistic speed resolution  
+## Data workflow
 
-The system **collapses to deterministic optimal play**.
+```text
+Edit YAML → run tests → run simulations → export JSON → launch Godot
+```
 
-This occurs because:
-- Secondary mechanics (buffs, cooldowns, status effects)  
-  only provide value across multiple turns  
-- The single-turn abstraction overweights immediate payoff  
-
----
-
-## Methodology
-
-### Simulation Layer
-
-Monte Carlo simulations are used to evaluate policies across repeated matchups:
-
-- 1v1 class combinations (15 pairings)
-- Metrics tracked:
-  - Win rate  
-  - Fight duration  
-  - Move usage  
-  - Optional action logs  
-
----
-
-### Policy Comparison
-
-| Policy | Description | Role |
-|--------|------------|------|
-| Random | Uniform move selection | Baseline |
-| Greedy | Max immediate expected damage | Myopic benchmark |
-| Lookahead | One-step minimax heuristic | Short-horizon strategy |
+Every combat number the game uses (class stats, move powers, accuracy,
+Brace multiplier, damage variance, Crest passives and awakenings)
+lives in `data/*.yaml`, is validated by `loaders.py`, is testable by
+simulation, and reaches the game only through `export_game_data.py`.
 
 ---
 
-### Game-Theoretic Analysis
+## The combat system
 
-For each matchup:
+Six asymmetric classes — Warrior, Mage, Assassin, Guardian, Neutral,
+Sorcerer — each with exactly three moves:
 
-- Construct 3×3 payoff matrix  
-- Solve maximin strategy via linear programming  
-- Compute entropy of resulting policy  
-
-**Observation:**  
-Low entropy → pure strategy dominance
-
----
-
-## Combat Model
+| Slot | Identity |
+|------|----------|
+| **Basic** | Reliable, repeatable (100% accuracy, no cooldown) |
+| **Signature** | Class-defining tactical action (debuffs, buffs, Hex) |
+| **Gambit** | High-impact, higher-risk (more power, less accuracy) |
 
 | Mechanic | Implementation |
-|----------|--------------|
-| Damage | Scaled ratio with 0.85–1.0 random variance |
-| Speed | Probabilistic turn order, deterministic at 2× ratio |
-| Brace | Defensive modifier for second mover |
-| Cooldowns | Signature/Gambit moves gated |
-| Stat Decay | Temporary modifiers expire |
-| Hex | Prevents buff usage temporarily |
-
-Each class has:
-- Basic move  
-- Signature move  
-- Gambit  
-
-This constrains the action space while preserving strategic depth.
-
----
-
-## Class Roster
+|----------|----------------|
+| Damage | `power × 2·ATK/(ATK+DEF) × U(0.85, 1.0)`, minimum 1 |
+| Speed | Probabilistic turn order inside a 7-point band; deterministic beyond it |
+| Brace | Defensive multiplier for the second mover / a visible tactical stance in grid battles |
+| Hex | Blocks buff actions while active |
+| Cooldowns | Gate Signature/Gambit reuse |
+| Stat decay | Temporary modifiers expire after 3 turns |
 
 | Class | HP | ATK | DEF | MAG | RES | SPD | Role |
 |-------|---:|----:|----:|----:|----:|----:|------|
 | Warrior | 85 | 75 | 70 | 30 | 35 | 40 | Physical bruiser |
 | Mage | 75 | 30 | 35 | 80 | 75 | 42 | Magical specialist |
-| Assassin | 70 | 70 | 35 | 38 | 55 | 80 | Fast attacker |
+| Assassin | 70 | 70 | 35 | 38 | 55 | 80 | Fast striker |
 | Guardian | 85 | 40 | 75 | 40 | 75 | 35 | Defensive tank |
-| Neutral | 78 | 55 | 50 | 55 | 50 | 50 | Generalist |
-| Sorcerer | 72 | 40 | 30 | 80 | 48 | 80 | Fast caster |
+| Neutral | 78 | 55 | 50 | 55 | 50 | 50 | Adaptive generalist |
+| Sorcerer | 72 | 40 | 30 | 80 | 48 | 80 | Fast curse specialist |
 
----
+On top of this, the RPG layer adds **Crests** (behaviour-altering
+passives + earned awakenings) and **Bonded Entities** — same class,
+different Crest/Entity, meaningfully different unit.
 
-## Outputs
+## Simulation findings
 
-The repository includes generated analysis artifacts:
+The original research question — *when does stochastic execution force
+optimal strategies to become mixed?* — and its answer are preserved:
 
-- `greedy_heatmap.png` → policy preference patterns  
-- `class_rankings.png` → matchup strength distribution  
-- `policy_comparison.png` → performance differences  
-- `fight_duration.png` → convergence dynamics  
-- `move_usage.png` → behavioural tendencies  
+- Across all 15 matchups, single-turn equilibria are **pure**:
+  execution randomness (damage variance, probabilistic speed) does
+  **not** by itself induce mixed-strategy optimal play.
+- Immediate expected damage dominates single-turn decisions; strategic
+  randomness needs multi-turn state (cooldowns, buffs, statuses).
 
-These are **derived outputs**, not static benchmarks.
+Reproduce with `python nash.py` and `analysis.ipynb`
+(`greedy_heatmap.png`, `class_rankings.png`, `policy_comparison.png`,
+`fight_duration.png`, `move_usage.png` are generated artifacts).
 
----
-
-## Repository Structure
+## Repository structure
 
 ```text
 Crestbound-Duelists/
-|-- models.py
-|-- combat.py
-|-- ai.py
-|-- simulation.py
-|-- nash.py
-|-- main.py
-|-- analysis.ipynb
-|-- requirements.txt
-|-- *.png
-|-- README.md
-`-- LICENSE
+├── data/                  # YAML source of truth (classes, moves, config,
+│                          #   crests, entities, terrain, objectives, narrative)
+├── models.py combat.py ai.py simulation.py nash.py main.py
+├── loaders.py rpg_models.py export_game_data.py balance_report.py
+├── tests/                 # pytest regression suite
+├── exports/               # generated JSON (build artifact, committed)
+├── game/                  # Godot 4 client (scenes, scripts, exported data)
+├── tools/                 # static validation for the Godot project
+├── docs/                  # ARCHITECTURE, GAME_DESIGN_FOUNDATION,
+│                          #   DATA_PIPELINE, GODOT_SETUP, LORE_BIBLE, STORY_OUTLINE
+└── analysis.ipynb         # original data-science notebook
+```
+
+## License
+
+MIT — see `LICENSE`.
