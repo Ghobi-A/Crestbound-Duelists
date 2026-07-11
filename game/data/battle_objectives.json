@@ -1,0 +1,37 @@
+{
+  "defeat_all": {
+    "description": "The battle is won when every enemy unit has fallen.",
+    "id": "defeat_all",
+    "name": "Defeat All Enemies",
+    "objective_type": "eliminate",
+    "params": {}
+  },
+  "hold_crest_node": {
+    "description": "Keep a friendly unit on the dormant Crest node for the required number of consecutive turns.",
+    "id": "hold_crest_node",
+    "name": "Hold the Crest Node",
+    "objective_type": "hold_tile",
+    "params": {
+      "terrain_id": "crest_node",
+      "turns_required": 3
+    }
+  },
+  "protect_ally": {
+    "description": "The battle is lost if the marked ally falls.",
+    "id": "protect_ally",
+    "name": "Protect the Marked Ally",
+    "objective_type": "protect",
+    "params": {
+      "unit_tag": "protected"
+    }
+  },
+  "survive_assault": {
+    "description": "Keep at least one friendly unit alive for the given turns.",
+    "id": "survive_assault",
+    "name": "Survive the Assault",
+    "objective_type": "survive",
+    "params": {
+      "turns_required": 6
+    }
+  }
+}

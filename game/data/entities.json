@@ -1,0 +1,195 @@
+{
+  "ash_seraph": {
+    "affinity": "flame",
+    "awakening_effect": {
+      "duration": 2,
+      "tile_effect": "scorched",
+      "type": "aoe_ignite"
+    },
+    "awakening_form": "Pyre Seraph",
+    "category": "mythic_avatar",
+    "compatible_classes": [
+      "mage",
+      "sorcerer"
+    ],
+    "description": "A winged figure of cooled cinder and slow-burning memory. It gathers around scholars and burns brightest over ruined ground.",
+    "granted_move": "cinder_benediction",
+    "id": "ash_seraph",
+    "name": "Ash Seraph",
+    "passive_effect": {
+      "amount": 0.2,
+      "terrain_tags": [
+        "scorched",
+        "ruin"
+      ],
+      "type": "terrain_damage_bonus"
+    },
+    "rarity": "rare",
+    "tags": [
+      "terrain",
+      "area_control",
+      "slow_burn"
+    ],
+    "visual_theme": {
+      "palette": "ash_grey",
+      "silhouette": "winged_figure"
+    }
+  },
+  "glass_mantis": {
+    "affinity": "edge",
+    "awakening_effect": {
+      "duration": 2,
+      "type": "guaranteed_first_strike"
+    },
+    "awakening_form": "Shardwing Mantis",
+    "category": "spirit",
+    "compatible_classes": [
+      "assassin",
+      "sorcerer"
+    ],
+    "description": "A translucent blade-limbed spirit drawn to precise, decisive bearers. It mirrors killing intent — and shatters if wielded carelessly.",
+    "granted_move": "prism_severance",
+    "id": "glass_mantis",
+    "name": "Glass Mantis",
+    "passive_effect": {
+      "amount": 0.15,
+      "type": "flanking_bonus"
+    },
+    "rarity": "rare",
+    "tags": [
+      "flanker",
+      "precision",
+      "fragile"
+    ],
+    "visual_theme": {
+      "palette": "pale_glass",
+      "silhouette": "bladed_insect"
+    }
+  },
+  "grave_stag": {
+    "affinity": "umbral",
+    "awakening_effect": {
+      "duration": 2,
+      "type": "curse_spread"
+    },
+    "awakening_form": "Mourning Herald",
+    "category": "ancestral_being",
+    "compatible_classes": [
+      "sorcerer",
+      "guardian"
+    ],
+    "description": "An antlered shade said to carry the memory of every Duelist who died bonded. It walks beside the marked and lends weight to their curses.",
+    "granted_move": "procession_of_antlers",
+    "id": "grave_stag",
+    "name": "Grave Stag",
+    "passive_effect": {
+      "amount": 0.1,
+      "type": "hex_amplifier"
+    },
+    "rarity": "rare",
+    "tags": [
+      "curse",
+      "memory",
+      "control"
+    ],
+    "visual_theme": {
+      "palette": "grave_violet",
+      "silhouette": "antlered_shade"
+    }
+  },
+  "iron_tortoise": {
+    "affinity": "ward",
+    "awakening_effect": {
+      "duration": 3,
+      "reduction": 0.25,
+      "type": "ally_damage_reduction"
+    },
+    "awakening_form": "Citadel Engine",
+    "category": "machine",
+    "compatible_classes": [
+      "guardian",
+      "neutral"
+    ],
+    "description": "An ancient Crest-powered relic engine shaped like a fortress turtle. Nobody knows who built it. It remembers how to hold a line.",
+    "granted_move": "bulwark_protocol",
+    "id": "iron_tortoise",
+    "name": "Iron Tortoise",
+    "passive_effect": {
+      "extra_turns": 1,
+      "type": "brace_extension"
+    },
+    "rarity": "common",
+    "tags": [
+      "tank",
+      "relic",
+      "brace_synergy"
+    ],
+    "visual_theme": {
+      "palette": "iron_green",
+      "silhouette": "fortress_shell"
+    }
+  },
+  "mirror_fox": {
+    "affinity": "growth",
+    "awakening_effect": {
+      "duration": 2,
+      "type": "stat_mirror"
+    },
+    "awakening_form": "Ninefold Fox",
+    "category": "spirit",
+    "compatible_classes": [
+      "neutral",
+      "mage",
+      "assassin"
+    ],
+    "description": "A quicksilver trickster that copies what it admires. It bonds with adaptable bearers and refuses to show the same face twice.",
+    "granted_move": "vulpine_refraction",
+    "id": "mirror_fox",
+    "name": "Mirror Fox",
+    "passive_effect": {
+      "duration": 2,
+      "type": "copy_last_buff"
+    },
+    "rarity": "uncommon",
+    "tags": [
+      "adaptive",
+      "trickster",
+      "anti_buff"
+    ],
+    "visual_theme": {
+      "palette": "quicksilver",
+      "silhouette": "sleek_fox"
+    }
+  },
+  "storm_lion": {
+    "affinity": "ward",
+    "awakening_effect": {
+      "counter_damage": 0.35,
+      "type": "aoe_counter"
+    },
+    "awakening_form": "Tempest Regent",
+    "category": "beast",
+    "compatible_classes": [
+      "guardian",
+      "warrior"
+    ],
+    "description": "A thunder-maned guardian beast that manifests for bearers who stand their ground. It paces the front line and answers violence in kind.",
+    "granted_move": "lionfall_verdict",
+    "id": "storm_lion",
+    "name": "Storm Lion",
+    "passive_effect": {
+      "chance": 0.25,
+      "type": "intercept_adjacent"
+    },
+    "rarity": "uncommon",
+    "tags": [
+      "frontline",
+      "protective",
+      "counter"
+    ],
+    "visual_theme": {
+      "palette": "storm_blue",
+      "silhouette": "maned_beast"
+    }
+  }
+}

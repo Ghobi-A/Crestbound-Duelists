@@ -1,0 +1,216 @@
+{
+  "azure_crest": {
+    "affinity": "ward",
+    "awakening_condition": {
+      "count": 3,
+      "type": "hits_taken"
+    },
+    "awakening_effect": {
+      "counter_damage": 0.3,
+      "defense_bonus": 4,
+      "duration": 3,
+      "type": "counter_stance"
+    },
+    "compatible_classes": [
+      "guardian",
+      "warrior",
+      "neutral"
+    ],
+    "description": "A fragment of Eidros' protection. It answers patience and endurance, turning absorbed blows into retaliatory force.",
+    "id": "azure_crest",
+    "name": "Azure Crest",
+    "passive_modifier": {
+      "brace_multiplier_bonus": 0.05,
+      "type": "brace_bonus"
+    },
+    "rarity": "common",
+    "tags": [
+      "protection",
+      "brace_synergy",
+      "counter"
+    ],
+    "visual_theme": {
+      "glow": "tide_blue",
+      "palette": "azure"
+    }
+  },
+  "crimson_crest": {
+    "affinity": "force",
+    "awakening_condition": {
+      "threshold": 0.5,
+      "type": "hp_below"
+    },
+    "awakening_effect": {
+      "duration": 2,
+      "lifesteal": 0.5,
+      "power_bonus": 0.25,
+      "type": "empowered_gambit"
+    },
+    "compatible_classes": [
+      "warrior",
+      "assassin",
+      "guardian"
+    ],
+    "description": "A fragment of Eidros' conviction. It burns brightest in bearers who refuse to fall, rewarding those who keep fighting through injury.",
+    "id": "crimson_crest",
+    "name": "Crimson Crest",
+    "passive_modifier": {
+      "amount": 0.15,
+      "threshold": 0.5,
+      "type": "low_hp_damage_bonus"
+    },
+    "rarity": "common",
+    "tags": [
+      "aggression",
+      "survival",
+      "gambit_synergy"
+    ],
+    "visual_theme": {
+      "glow": "ember_red",
+      "palette": "crimson"
+    }
+  },
+  "eclipse_crest": {
+    "affinity": "umbral",
+    "awakening_condition": {
+      "count": 3,
+      "type": "statuses_applied"
+    },
+    "awakening_effect": {
+      "cooldown_penalty": 1,
+      "duration": 3,
+      "type": "hex_saturation"
+    },
+    "compatible_classes": [
+      "sorcerer",
+      "mage",
+      "assassin"
+    ],
+    "description": "A fragment of Eidros' control, dimmed by centuries of sealed dark. It deepens curses and starves enemy magic of its setup.",
+    "id": "eclipse_crest",
+    "name": "Eclipse Crest",
+    "passive_modifier": {
+      "extra_turns": 1,
+      "type": "status_duration_bonus"
+    },
+    "rarity": "rare",
+    "tags": [
+      "curse",
+      "anti_buff",
+      "control"
+    ],
+    "visual_theme": {
+      "glow": "eclipse_purple",
+      "palette": "violet_black"
+    }
+  },
+  "ember_crest": {
+    "affinity": "flame",
+    "awakening_condition": {
+      "count": 3,
+      "type": "debuffs_applied"
+    },
+    "awakening_effect": {
+      "duration": 3,
+      "tile_damage": 4,
+      "tile_effect": "scorched",
+      "type": "scorched_ground"
+    },
+    "compatible_classes": [
+      "mage",
+      "sorcerer",
+      "neutral"
+    ],
+    "description": "A fragment of Eidros' curiosity, restless and spreading. Its fire clings to broken ground and punishes weakened foes.",
+    "id": "ember_crest",
+    "name": "Ember Crest",
+    "passive_modifier": {
+      "amount": 0.1,
+      "type": "bonus_vs_debuffed"
+    },
+    "rarity": "common",
+    "tags": [
+      "pressure",
+      "terrain",
+      "debuff_synergy"
+    ],
+    "visual_theme": {
+      "glow": "cinder_orange",
+      "palette": "ember"
+    }
+  },
+  "glass_crest": {
+    "affinity": "edge",
+    "awakening_condition": {
+      "count": 2,
+      "type": "gambits_landed"
+    },
+    "awakening_effect": {
+      "accuracy_override": 1.0,
+      "duration": 2,
+      "power_bonus": 0.15,
+      "type": "perfect_edge"
+    },
+    "compatible_classes": [
+      "assassin",
+      "warrior",
+      "sorcerer"
+    ],
+    "description": "A fragment of Eidros' decisiveness, honed to a sliver. Everything it grants is sharper — and more brittle.",
+    "id": "glass_crest",
+    "name": "Glass Crest",
+    "passive_modifier": {
+      "damage_dealt_bonus": 0.1,
+      "damage_taken_penalty": 0.1,
+      "type": "glass_edge"
+    },
+    "rarity": "rare",
+    "tags": [
+      "risk_reward",
+      "precision",
+      "gambit_synergy"
+    ],
+    "visual_theme": {
+      "glow": "prism_white",
+      "palette": "pale_glass"
+    }
+  },
+  "verdant_crest": {
+    "affinity": "growth",
+    "awakening_condition": {
+      "count": 3,
+      "type": "unique_moves_used"
+    },
+    "awakening_effect": {
+      "duration": 3,
+      "movement_bonus": 1,
+      "stat_bloom": {
+        "amount": 3,
+        "stat": "cycle"
+      },
+      "type": "overgrowth"
+    },
+    "compatible_classes": [
+      "neutral",
+      "mage",
+      "guardian"
+    ],
+    "description": "A fragment of Eidros' adaptation. It refuses fixed shapes, feeding on variety and rewarding bearers who never repeat themselves.",
+    "id": "verdant_crest",
+    "name": "Verdant Crest",
+    "passive_modifier": {
+      "amount": 0.12,
+      "type": "variety_bonus"
+    },
+    "rarity": "uncommon",
+    "tags": [
+      "adaptation",
+      "movement",
+      "variety"
+    ],
+    "visual_theme": {
+      "glow": "moss_green",
+      "palette": "verdant"
+    }
+  }
+}

@@ -1,0 +1,111 @@
+{
+  "crest_node": {
+    "defense_bonus": 0,
+    "description": "A dormant resonance node. Standing here matters to certain battle objectives and future awakening conditions.",
+    "id": "crest_node",
+    "move_cost": 1,
+    "name": "Crest Node",
+    "passable": true,
+    "resistance_bonus": 1,
+    "tags": [
+      "objective",
+      "resonant"
+    ],
+    "tile_key": "crest_node"
+  },
+  "forest": {
+    "defense_bonus": 2,
+    "description": "Dense cover. Slower to cross, easier to defend from.",
+    "id": "forest",
+    "move_cost": 2,
+    "name": "Forest",
+    "passable": true,
+    "resistance_bonus": 1,
+    "tags": [
+      "cover"
+    ],
+    "tile_key": "forest"
+  },
+  "plains": {
+    "defense_bonus": 0,
+    "description": "Open ground. No modifiers.",
+    "id": "plains",
+    "move_cost": 1,
+    "name": "Plains",
+    "passable": true,
+    "resistance_bonus": 0,
+    "tags": [
+      "open"
+    ],
+    "tile_key": "plains"
+  },
+  "road": {
+    "defense_bonus": 0,
+    "description": "Packed earth and old paving. Fast, exposed travel.",
+    "id": "road",
+    "move_cost": 1,
+    "name": "Road",
+    "passable": true,
+    "resistance_bonus": 0,
+    "tags": [
+      "open",
+      "path"
+    ],
+    "tile_key": "road"
+  },
+  "ruin": {
+    "defense_bonus": 1,
+    "description": "Crumbled Court stonework. Broken footing, partial cover.",
+    "id": "ruin",
+    "move_cost": 2,
+    "name": "Ruin",
+    "passable": true,
+    "resistance_bonus": 2,
+    "tags": [
+      "cover",
+      "ancient"
+    ],
+    "tile_key": "ruin"
+  },
+  "scorched": {
+    "defense_bonus": 0,
+    "description": "Ember-marked ground that harms units that end a turn on it.",
+    "id": "scorched",
+    "move_cost": 1,
+    "name": "Scorched Ground",
+    "passable": true,
+    "resistance_bonus": 0,
+    "tags": [
+      "hazard",
+      "temporary"
+    ],
+    "tile_key": "scorched"
+  },
+  "wall": {
+    "defense_bonus": 0,
+    "description": "Intact Court masonry. Impassable.",
+    "id": "wall",
+    "move_cost": 99,
+    "name": "Wall",
+    "passable": false,
+    "resistance_bonus": 0,
+    "tags": [
+      "blocking"
+    ],
+    "tile_key": "wall"
+  },
+  "water": {
+    "defense_bonus": 0,
+    "description": "Still black water below the Court. Impassable on foot.",
+    "id": "water",
+    "move_cost": 99,
+    "name": "Deep Water",
+    "passable": false,
+    "resistance_bonus": 0,
+    "tags": [
+      "blocking",
+      "hazard"
+    ],
+    "tile_key": "water"
+  }
+}
