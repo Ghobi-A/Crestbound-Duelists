@@ -17,6 +17,7 @@ enum State { INTRO, SELECT_MENU, SELECT_TARGET, PREVIEW, RESOLVING, RESULT }
 
 var runtime: EncounterRuntime
 var resolver: BattleResolver
+var crest_runtime: CrestRuntime
 var hud: BattleHud
 var dialogue: DialogueBox
 var target_selector := TargetSelector.new()
@@ -32,6 +33,7 @@ var pending_move: Dictionary = {}
 func _ready() -> void:
 	runtime = EncounterRuntime.start(GameState.pending_encounter, GameData, GameState)
 	resolver = BattleResolver.new(runtime, GameData)
+	crest_runtime = CrestRuntime.new(runtime)
 	_stage_units()
 	_build_hud()
 	_build_dialogue()
@@ -251,7 +253,7 @@ func _resolve_round() -> void:
 		await get_tree().create_timer(0.3).timeout
 
 	resolver.end_round()
-	_after_round_tick()
+	await _after_round_tick()
 	hud.refresh_rows()
 	for sprite in sprites.values():
 		sprite.refresh()
@@ -265,9 +267,8 @@ func _resolve_round() -> void:
 
 
 func _after_round_tick() -> void:
-	## Hook for round-end systems (Crest/Resonance runtime attaches in
-	## a later milestone).
-	pass
+	for unit in crest_runtime.end_of_round_awakenings():
+		await _play_awakening(unit)
 
 
 func _play_events(action: Dictionary, events: Array) -> void:
@@ -321,9 +322,41 @@ func _play_events(action: Dictionary, events: Array) -> void:
 			"status":
 				_popup(sprites[event.target].home_position + Vector2(0, -8), str(event.status).to_upper(), PlaceholderPalette.TILE_CREST_NODE.lightened(0.4))
 			"crest":
-				pass  # consumed by the Crest runtime milestone
+				var result: Dictionary = crest_runtime.process_event(event.unit, event.event)
+				if result.gained >= 10:
+					_popup(sprites[event.unit].home_position + Vector2(10, -4), "R+%d" % result.gained, PlaceholderPalette.TILE_CREST_NODE.lightened(0.45))
+				if result.awakened:
+					await _play_awakening(event.unit)
 		for sprite in sprites.values():
 			sprite.refresh()
+
+
+func _play_awakening(unit: BattleUnit) -> void:
+	var theme: Dictionary = unit.crest_record.get("visual_theme", {})
+	var accent := _palette_accent(theme.get("palette", ""))
+	hud.play_awakening_banner(CrestRuntime.awakening_banner_text(unit), accent)
+	hud.set_message("%s's Crest answers!" % unit.display_name)
+	sprites[unit].play("awaken")
+	hud.refresh_rows()
+	await get_tree().create_timer(1.2).timeout
+
+
+func _palette_accent(palette: String) -> Color:
+	match palette:
+		"crimson":
+			return Color("c94f4f")
+		"azure":
+			return Color("4a9eff")
+		"ember":
+			return Color("d3743f")
+		"violet_black":
+			return Color("7c5fd3")
+		"pale_glass":
+			return Color("cfe6ef")
+		"verdant":
+			return Color("57c26b")
+		_:
+			return Color(1.0, 0.85, 0.3)
 
 
 func _popup(world_position: Vector2, text: String, color: Color) -> void:

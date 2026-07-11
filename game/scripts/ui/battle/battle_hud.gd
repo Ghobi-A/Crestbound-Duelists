@@ -13,6 +13,8 @@ var _message_label: Label
 var _info_label: Label
 var _rows: Dictionary = {}   # BattleUnit -> UnitStatusPanel
 var _rows_container: VBoxContainer
+var _flash_rect: ColorRect
+var _banner_label: Label
 
 
 func _ready() -> void:
@@ -55,6 +57,17 @@ func _ready() -> void:
 	round_preview = RoundPreview.new()
 	round_preview.position = Vector2(70, 16)
 	add_child(round_preview)
+
+	_flash_rect = ColorRect.new()
+	_flash_rect.color = Color(1, 1, 1, 0)
+	_flash_rect.size = Vector2(320, 180)
+	_flash_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(_flash_rect)
+
+	_banner_label = _label(self, Vector2(0, 46), Vector2(320, 20), Color(1.0, 0.85, 0.3))
+	_banner_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_banner_label.add_theme_font_size_override("font_size", 12)
+	_banner_label.visible = false
 
 
 func _label(parent: Node, top_left: Vector2, size_: Vector2, color: Color) -> Label:
@@ -123,3 +136,22 @@ func show_info(text: String) -> void:
 
 func hide_info() -> void:
 	_info_label.visible = false
+
+
+func play_awakening_banner(text: String, accent: Color) -> void:
+	## Screen flash + banner used when a Crest awakens.
+	_flash_rect.color = Color(accent.r, accent.g, accent.b, 0.0)
+	var flash_tween := create_tween()
+	flash_tween.tween_property(_flash_rect, "color:a", 0.45, 0.08)
+	flash_tween.tween_property(_flash_rect, "color:a", 0.0, 0.35)
+
+	_banner_label.text = text
+	_banner_label.add_theme_color_override("font_color", accent.lightened(0.3))
+	_banner_label.visible = true
+	_banner_label.scale = Vector2(1.0, 0.2)
+	_banner_label.pivot_offset = Vector2(160, 10)
+	var banner_tween := create_tween()
+	banner_tween.tween_property(_banner_label, "scale:y", 1.0, 0.12)
+	banner_tween.tween_interval(1.0)
+	banner_tween.tween_property(_banner_label, "scale:y", 0.0, 0.1)
+	banner_tween.tween_callback(func(): _banner_label.visible = false)
