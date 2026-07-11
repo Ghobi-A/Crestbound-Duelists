@@ -9,6 +9,12 @@
 # records interpreted by the battle layer. The Godot prototype implements
 # crimson_crest and azure_crest awakenings first; the rest are schema-
 # complete and reserved for later battle-layer work.
+#
+# resonance_gain maps canonical battle events to Resonance gained (0-100
+# meter). Canonical events: hit_landed, gambit_used, gambit_hit,
+# magical_hit, damage_taken, braced, ally_protected, status_applied,
+# hit_debuffed_target, hit_hexed_target, low_hp_action, varied_move.
+# awakening_condition.min_resonance gates awakening on the meter.
 
 crests:
   - id: crimson_crest
@@ -23,9 +29,14 @@ crests:
       type: low_hp_damage_bonus
       threshold: 0.5          # active while HP is below 50%
       amount: 0.15            # +15% damage dealt
+    resonance_gain:
+      low_hp_action: 15       # acting while below the HP threshold
+      gambit_used: 10
+      damage_taken: 5
     awakening_condition:
       type: hp_below
       threshold: 0.5
+      min_resonance: 50
     awakening_effect:
       type: empowered_gambit  # next Gambit gains power and lifesteal
       power_bonus: 0.25
@@ -47,9 +58,14 @@ crests:
     passive_modifier:
       type: brace_bonus       # Brace grants extra defence value
       brace_multiplier_bonus: 0.05
+    resonance_gain:
+      braced: 15
+      damage_taken: 10
+      ally_protected: 12
     awakening_condition:
       type: hits_taken
       count: 3
+      min_resonance: 50
     awakening_effect:
       type: counter_stance    # temporary defensive/counter power spike
       counter_damage: 0.3     # reflect 30% of damage taken
@@ -71,9 +87,13 @@ crests:
     passive_modifier:
       type: status_duration_bonus   # statuses the bearer applies last longer
       extra_turns: 1
+    resonance_gain:
+      status_applied: 15
+      hit_hexed_target: 8
     awakening_condition:
       type: statuses_applied
       count: 3
+      min_resonance: 60
     awakening_effect:
       type: hex_saturation    # Hex also raises the target's cooldowns
       cooldown_penalty: 1
@@ -94,9 +114,13 @@ crests:
     passive_modifier:
       type: bonus_vs_debuffed   # extra damage to stat-debuffed targets
       amount: 0.10
+    resonance_gain:
+      magical_hit: 8
+      hit_debuffed_target: 8
     awakening_condition:
       type: debuffs_applied
       count: 3
+      min_resonance: 60
     awakening_effect:
       type: scorched_ground   # attacks scorch the target's tile
       tile_effect: scorched
@@ -119,9 +143,13 @@ crests:
       type: glass_edge        # deal more, take more
       damage_dealt_bonus: 0.10
       damage_taken_penalty: 0.10
+    resonance_gain:
+      gambit_hit: 20
+      hit_landed: 5
     awakening_condition:
       type: gambits_landed
       count: 2
+      min_resonance: 60
     awakening_effect:
       type: perfect_edge      # brief guaranteed accuracy and crit pressure
       accuracy_override: 1.0
@@ -143,9 +171,13 @@ crests:
     passive_modifier:
       type: variety_bonus     # bonus after using a different move each turn
       amount: 0.12
+    resonance_gain:
+      varied_move: 12
+      braced: 5
     awakening_condition:
       type: unique_moves_used
       count: 3
+      min_resonance: 60
     awakening_effect:
       type: overgrowth        # extra movement and a rolling stat bloom
       movement_bonus: 1

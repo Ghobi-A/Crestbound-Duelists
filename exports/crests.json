@@ -3,6 +3,7 @@
     "affinity": "ward",
     "awakening_condition": {
       "count": 3,
+      "min_resonance": 50,
       "type": "hits_taken"
     },
     "awakening_effect": {
@@ -24,6 +25,11 @@
       "type": "brace_bonus"
     },
     "rarity": "common",
+    "resonance_gain": {
+      "ally_protected": 12,
+      "braced": 15,
+      "damage_taken": 10
+    },
     "tags": [
       "protection",
       "brace_synergy",
@@ -37,6 +43,7 @@
   "crimson_crest": {
     "affinity": "force",
     "awakening_condition": {
+      "min_resonance": 50,
       "threshold": 0.5,
       "type": "hp_below"
     },
@@ -60,6 +67,11 @@
       "type": "low_hp_damage_bonus"
     },
     "rarity": "common",
+    "resonance_gain": {
+      "damage_taken": 5,
+      "gambit_used": 10,
+      "low_hp_action": 15
+    },
     "tags": [
       "aggression",
       "survival",
@@ -74,6 +86,7 @@
     "affinity": "umbral",
     "awakening_condition": {
       "count": 3,
+      "min_resonance": 60,
       "type": "statuses_applied"
     },
     "awakening_effect": {
@@ -94,6 +107,10 @@
       "type": "status_duration_bonus"
     },
     "rarity": "rare",
+    "resonance_gain": {
+      "hit_hexed_target": 8,
+      "status_applied": 15
+    },
     "tags": [
       "curse",
       "anti_buff",
@@ -108,6 +125,7 @@
     "affinity": "flame",
     "awakening_condition": {
       "count": 3,
+      "min_resonance": 60,
       "type": "debuffs_applied"
     },
     "awakening_effect": {
@@ -129,6 +147,10 @@
       "type": "bonus_vs_debuffed"
     },
     "rarity": "common",
+    "resonance_gain": {
+      "hit_debuffed_target": 8,
+      "magical_hit": 8
+    },
     "tags": [
       "pressure",
       "terrain",
@@ -143,6 +165,7 @@
     "affinity": "edge",
     "awakening_condition": {
       "count": 2,
+      "min_resonance": 60,
       "type": "gambits_landed"
     },
     "awakening_effect": {
@@ -165,6 +188,10 @@
       "type": "glass_edge"
     },
     "rarity": "rare",
+    "resonance_gain": {
+      "gambit_hit": 20,
+      "hit_landed": 5
+    },
     "tags": [
       "risk_reward",
       "precision",
@@ -179,6 +206,7 @@
     "affinity": "growth",
     "awakening_condition": {
       "count": 3,
+      "min_resonance": 60,
       "type": "unique_moves_used"
     },
     "awakening_effect": {
@@ -203,6 +231,10 @@
       "type": "variety_bonus"
     },
     "rarity": "uncommon",
+    "resonance_gain": {
+      "braced": 5,
+      "varied_move": 12
+    },
     "tags": [
       "adaptation",
       "movement",

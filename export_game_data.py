@@ -30,6 +30,7 @@ from loaders import (
     load_combat_config,
     load_crests,
     load_entities,
+    load_encounters,
     load_locations,
     load_moves,
     load_terrain,
@@ -39,7 +40,7 @@ ROOT = Path(__file__).resolve().parent
 EXPORTS_DIR = ROOT / "exports"
 GAME_DATA_DIR = ROOT / "game" / "data"
 
-SCHEMA_VERSION = "1.0.0"
+SCHEMA_VERSION = "1.1.0"
 
 # Dataset name -> loader. Record datasets return dict[id, record];
 # combat_config returns a flat settings mapping.
@@ -51,6 +52,7 @@ DATASETS: dict[str, Callable[[], dict[str, Any]]] = {
     "entities": load_entities,
     "terrain": load_terrain,
     "battle_objectives": load_battle_objectives,
+    "encounters": load_encounters,
     "characters": load_characters,
     "locations": load_locations,
 }

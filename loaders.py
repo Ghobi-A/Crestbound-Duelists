@@ -366,10 +366,43 @@ def _validate_compatible_classes(filename: str, records: dict[str, dict]) -> Non
             )
 
 
+# Canonical battle events a crest may gain Resonance from.
+RESONANCE_EVENTS = (
+    "hit_landed", "gambit_used", "gambit_hit", "magical_hit",
+    "damage_taken", "braced", "ally_protected", "status_applied",
+    "hit_debuffed_target", "hit_hexed_target", "low_hp_action", "varied_move",
+)
+
+
 @lru_cache(maxsize=1)
 def _crests() -> dict[str, dict]:
     records = _load_records("crests.yaml", "crests", _CREST_REQUIRED)
     _validate_compatible_classes("crests.yaml", records)
+    for crest_id, record in records.items():
+        where = f"crests.yaml crest '{crest_id}'"
+        gains = record.get("resonance_gain", {})
+        if not isinstance(gains, dict) or not gains:
+            raise DataValidationError(
+                f"{where}: resonance_gain must map at least one battle event "
+                f"to a gain amount."
+            )
+        for event, amount in gains.items():
+            if event not in RESONANCE_EVENTS:
+                raise DataValidationError(
+                    f"{where}: unknown resonance event '{event}'. "
+                    f"Known events: {', '.join(RESONANCE_EVENTS)}."
+                )
+            if not isinstance(amount, int) or not 0 < amount <= 100:
+                raise DataValidationError(
+                    f"{where}: resonance gain for '{event}' must be an "
+                    f"integer in (0, 100]."
+                )
+        min_resonance = record.get("awakening_condition", {}).get("min_resonance", 0)
+        if not isinstance(min_resonance, int) or not 0 <= min_resonance <= 100:
+            raise DataValidationError(
+                f"{where}: awakening_condition.min_resonance must be an "
+                f"integer in [0, 100]."
+            )
     return records
 
 
@@ -438,6 +471,64 @@ def _locations() -> dict[str, dict]:
 def load_locations() -> dict[str, dict]:
     """Return all narrative location records keyed by id (deep copy)."""
     return copy.deepcopy(_locations())
+
+
+_ENCOUNTER_REQUIRED = (
+    "name", "location", "player_slots", "enemy_slots",
+    "pre_battle_positioning", "objective", "enemy_party",
+)
+_POSITIONS = ("front", "back")
+
+
+@lru_cache(maxsize=1)
+def _encounters() -> dict[str, dict]:
+    records = _load_records("encounters.yaml", "encounters", _ENCOUNTER_REQUIRED)
+    classes = _classes()
+    crests = _crests()
+    entities = _entities()
+    objectives = _battle_objectives()
+    for encounter_id, record in records.items():
+        where = f"encounters.yaml encounter '{encounter_id}'"
+        for key in ("player_slots", "enemy_slots"):
+            if not isinstance(record[key], int) or not 1 <= record[key] <= 3:
+                raise DataValidationError(f"{where}: {key} must be an integer 1-3.")
+        if record["objective"] not in objectives:
+            raise DataValidationError(
+                f"{where}: unknown objective '{record['objective']}'. "
+                f"Known: {', '.join(objectives)}."
+            )
+        party = record["enemy_party"]
+        if not isinstance(party, list) or len(party) != record["enemy_slots"]:
+            raise DataValidationError(
+                f"{where}: enemy_party must list exactly enemy_slots "
+                f"({record['enemy_slots']}) builds."
+            )
+        for build in party:
+            if build.get("class_id") not in classes:
+                raise DataValidationError(
+                    f"{where}: enemy build has unknown class "
+                    f"'{build.get('class_id')}'."
+                )
+            crest_id = build.get("crest_id", "")
+            if crest_id and crest_id not in crests:
+                raise DataValidationError(
+                    f"{where}: enemy build has unknown crest '{crest_id}'."
+                )
+            entity_id = build.get("entity_id", "")
+            if entity_id and entity_id not in entities:
+                raise DataValidationError(
+                    f"{where}: enemy build has unknown entity '{entity_id}'."
+                )
+            if build.get("position", "front") not in _POSITIONS:
+                raise DataValidationError(
+                    f"{where}: enemy build position must be one of {_POSITIONS}."
+                )
+    return records
+
+
+def load_encounters() -> dict[str, dict]:
+    """Return all encounter records keyed by id (deep copy)."""
+    return copy.deepcopy(_encounters())
 
 
 def clear_caches() -> None:

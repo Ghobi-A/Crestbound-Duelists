@@ -9,7 +9,7 @@ extends Node
 const DATA_DIR := "res://data"
 const REQUIRED_DATASETS: Array[String] = [
 	"classes", "moves", "combat_config", "crests", "entities",
-	"terrain", "battle_objectives",
+	"terrain", "battle_objectives", "encounters",
 ]
 const OPTIONAL_DATASETS: Array[String] = ["characters", "locations", "manifest"]
 
@@ -94,6 +94,10 @@ func get_terrain(terrain_id: String) -> Dictionary:
 
 func get_objective(objective_id: String) -> Dictionary:
 	return _get_record("battle_objectives", objective_id)
+
+
+func get_encounter(encounter_id: String) -> Dictionary:
+	return _get_record("encounters", encounter_id)
 
 
 func class_ids() -> Array:

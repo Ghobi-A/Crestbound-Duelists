@@ -11,7 +11,7 @@ def test_export_produces_all_datasets(tmp_path):
     manifest = export_all(tmp_path)
     expected = {
         "classes", "moves", "combat_config", "crests", "entities",
-        "terrain", "battle_objectives", "characters", "locations",
+        "terrain", "battle_objectives", "encounters", "characters", "locations",
     }
     assert set(manifest["datasets"]) == expected
     for name in expected:
@@ -36,6 +36,7 @@ def test_manifest_contents(tmp_path):
     assert manifest["record_counts"]["moves"] == 18
     assert manifest["record_counts"]["crests"] == 6
     assert manifest["record_counts"]["entities"] == 6
+    assert manifest["record_counts"]["encounters"] >= 4
 
 
 def test_export_is_deterministic_apart_from_timestamp(tmp_path):

@@ -9,7 +9,7 @@ extends Node2D
 ##   n notice board   S south exit (step-on trigger)
 
 const TILE := 16
-const BATTLE_SCENE := "res://scenes/battle/hollow_court.tscn"
+const PARTY_SETUP_SCENE := "res://scenes/ui/party_setup.tscn"
 const SPAWN_DEFAULT := Vector2i(11, 9)
 const SPAWN_FROM_COURT := Vector2i(11, 2)
 
@@ -216,7 +216,8 @@ func _on_dialogue_finished(key: String) -> void:
 	if key == "court_entrance":
 		GameState.player_tile = SPAWN_FROM_COURT
 		GameState.set_flag("entered_hollow_court")
-		get_tree().change_scene_to_file(BATTLE_SCENE)
+		GameState.pending_encounter = "hollow_court_battle"
+		get_tree().change_scene_to_file(PARTY_SETUP_SCENE)
 
 
 func _on_player_stepped(tile: Vector2i) -> void:
