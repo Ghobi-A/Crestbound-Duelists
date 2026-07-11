@@ -65,7 +65,7 @@ for path in GAME.rglob("*.gd"):
 dialogue = {}
 for path in (GAME / "data" / "dialogue").glob("*.json"):
     dialogue.update(json.loads(path.read_text(encoding="utf-8")))
-key_use = re.compile(r'(?:play|_play_dialogue|has_key)\("([a-z_]+)"\)')
+key_use = re.compile(r'(?:dialogue\.play|_play_dialogue|dialogue\.has_key)\("([a-z_]+)"\)')
 for path in GAME.rglob("*.gd"):
     for key in key_use.findall(path.read_text(encoding="utf-8")):
         if key not in dialogue:
