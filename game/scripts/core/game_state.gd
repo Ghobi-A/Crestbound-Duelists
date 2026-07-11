@@ -58,6 +58,7 @@ func _build_default_party() -> void:
 			"crest_id": player_crest_id,
 			"entity_id": "",
 			"position": default_position_for(player_class_id),
+			"sprite_key": "aren/%s" % player_class_id,
 		},
 		{
 			"name": "Warden Elara Thorne",
@@ -65,6 +66,7 @@ func _build_default_party() -> void:
 			"crest_id": "azure_crest",
 			"entity_id": "storm_lion",
 			"position": "front",
+			"sprite_key": "elara",
 		},
 		{
 			"name": "Mira Solen",
@@ -72,6 +74,7 @@ func _build_default_party() -> void:
 			"crest_id": "ember_crest",
 			"entity_id": "ash_seraph",
 			"position": "back",
+			"sprite_key": "mira",
 		},
 	]
 

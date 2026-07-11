@@ -12,6 +12,7 @@ var entity_id := ""
 var team := "player"        # "player" | "enemy"
 var position := "front"     # "front" | "back"
 var slot_index := 0
+var _sprite_key := ""       # art sheet key ("aren/mage", "riven_raider", ...)
 
 var class_record: Dictionary = {}
 var crest_record: Dictionary = {}
@@ -46,6 +47,7 @@ static func create(build: Dictionary, team_: String, game_data: Node) -> BattleU
 	unit.entity_id = build.get("entity_id", "")
 	unit.team = team_
 	unit.position = build.get("position", "front")
+	unit._sprite_key = build.get("sprite_key", "")
 	unit.class_record = game_data.get_class_record(unit.class_id)
 	if unit.crest_id != "":
 		unit.crest_record = game_data.get_crest(unit.crest_id)
@@ -84,6 +86,10 @@ func is_braced() -> bool:
 
 func hp_ratio() -> float:
 	return float(hp) / max_hp
+
+
+func sprite_key() -> String:
+	return _sprite_key
 
 
 func has_status(status_name: String) -> bool:

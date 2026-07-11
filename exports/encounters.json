@@ -62,21 +62,24 @@
         "crest_id": "",
         "entity_id": "",
         "name": "Riven-touched Raider",
-        "position": "front"
+        "position": "front",
+        "sprite_key": "riven_raider"
       },
       {
         "class_id": "sorcerer",
         "crest_id": "",
         "entity_id": "",
         "name": "Hexbound Adept",
-        "position": "back"
+        "position": "back",
+        "sprite_key": "hexbound_adept"
       },
       {
         "class_id": "neutral",
         "crest_id": "",
         "entity_id": "",
         "name": "Unbound Mercenary",
-        "position": "front"
+        "position": "front",
+        "sprite_key": "unbound_mercenary"
       }
     ],
     "enemy_slots": 3,

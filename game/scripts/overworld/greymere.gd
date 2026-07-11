@@ -139,12 +139,12 @@ func _build_dialogue() -> void:
 
 func _build_npcs() -> void:
 	var elara := OverworldNPC.new()
-	elara.setup("Warden Elara Thorne", _find_tile("E"), "elara_intro", PlaceholderPalette.NPC_COLOR)
+	elara.setup("Warden Elara Thorne", _find_tile("E"), "elara_intro", PlaceholderPalette.NPC_COLOR, "elara")
 	add_child(elara)
 	_npc_tiles[elara.tile] = elara
 
 	var mira := OverworldNPC.new()
-	mira.setup("Mira Solen", _find_tile("M"), "mira_intro", PlaceholderPalette.NPC_COLOR_ALT)
+	mira.setup("Mira Solen", _find_tile("M"), "mira_intro", PlaceholderPalette.NPC_COLOR_ALT, "mira")
 	add_child(mira)
 	_npc_tiles[mira.tile] = mira
 

@@ -24,9 +24,9 @@ encounters:
       multiplier: 1.5
       tags: [ruin, ancient]
     enemy_party:
-      - {name: Riven-touched Raider, class_id: warrior, crest_id: "", entity_id: "", position: front}
-      - {name: Hexbound Adept, class_id: sorcerer, crest_id: "", entity_id: "", position: back}
-      - {name: Unbound Mercenary, class_id: neutral, crest_id: "", entity_id: "", position: front}
+      - {name: Riven-touched Raider, class_id: warrior, crest_id: "", entity_id: "", position: front, sprite_key: riven_raider}
+      - {name: Hexbound Adept, class_id: sorcerer, crest_id: "", entity_id: "", position: back, sprite_key: hexbound_adept}
+      - {name: Unbound Mercenary, class_id: neutral, crest_id: "", entity_id: "", position: front, sprite_key: unbound_mercenary}
     intro_dialogue: battle_intro
     victory_dialogue: battle_victory
     defeat_dialogue: battle_defeat

@@ -28,12 +28,16 @@ var selection_order: Array = []   # living player units, selection sequence
 var selection_index := 0
 var planned_actions: Array = []
 var pending_move: Dictionary = {}
+var stage: Node2D                 # background + unit sprites (shakeable)
 
 
 func _ready() -> void:
 	runtime = EncounterRuntime.start(GameState.pending_encounter, GameData, GameState)
 	resolver = BattleResolver.new(runtime, GameData)
 	crest_runtime = CrestRuntime.new(runtime)
+	stage = Node2D.new()
+	add_child(stage)
+	_stage_background()
 	_stage_units()
 	_build_hud()
 	_build_dialogue()
@@ -47,26 +51,51 @@ func _ready() -> void:
 		_start_selection()
 
 
+func _stage_background() -> void:
+	var location: String = runtime.encounter.get("location", "")
+	var path := "res://assets/battle/backgrounds/%s.png" % location
+	if ResourceLoader.exists(path):
+		var background := Sprite2D.new()
+		background.texture = load(path)
+		background.centered = false
+		stage.add_child(background)
+	else:
+		var fallback := ColorRect.new()
+		fallback.color = PlaceholderPalette.BG_DARK
+		fallback.size = Vector2(320, 122)
+		stage.add_child(fallback)
+
+
 func _stage_units() -> void:
 	for unit in runtime.all_units():
 		var sprite := DuelistSprite.new()
-		add_child(sprite)
+		stage.add_child(sprite)
 		sprite.configure(unit, stage_position(unit))
 		sprites[unit] = sprite
 
 
+func _shake(strength: float = 2.0) -> void:
+	var tween := create_tween()
+	tween.tween_property(stage, "position", Vector2(strength, 0), 0.04)
+	tween.tween_property(stage, "position", Vector2(-strength, 1), 0.05)
+	tween.tween_property(stage, "position", Vector2.ZERO, 0.06)
+
+
 func stage_position(unit: BattleUnit) -> Vector2:
-	## Dynamic staging: enemies across the top, players across the
-	## bottom, spread by party width, front/back rows offset toward or
-	## away from the opposing side.
+	## Dynamic staging: enemies upper-right, players lower-left in a
+	## classic diagonal, spread by party width, with front/back rows
+	## offset toward or away from the opposing side.
 	var team_units: Array = runtime.player_units if unit.team == "player" else runtime.enemy_units
 	var count := team_units.size()
-	var x := 160.0 + (unit.slot_index - (count - 1) / 2.0) * (64.0 if count < 3 else 56.0)
+	var spread := 64.0 if count < 3 else 56.0
+	var x := 160.0 + (unit.slot_index - (count - 1) / 2.0) * spread
 	var y: float
 	if unit.team == "enemy":
-		y = 56.0 if unit.position == "front" else 40.0
+		x += 26.0
+		y = 64.0 if unit.position == "front" else 48.0
 	else:
-		y = 84.0 if unit.position == "front" else 98.0
+		x -= 18.0
+		y = 88.0 if unit.position == "front" else 100.0
 	return Vector2(x, y)
 
 
@@ -302,6 +331,10 @@ func _play_events(action: Dictionary, events: Array) -> void:
 				var target: BattleUnit = event.target
 				_popup(sprites[target].home_position, str(event.amount), Color.WHITE)
 				sprites[target].play("defeat" if event.ko else "hit")
+				if action.kind == "move" and action.move.get("slot", "") == "gambit":
+					_shake(3.0)
+				elif event.amount >= 24:
+					_shake(2.0)
 				hud.set_message("%s takes %d." % [target.display_name, event.amount])
 				await get_tree().create_timer(0.3).timeout
 				if event.ko:
@@ -336,6 +369,7 @@ func _play_awakening(unit: BattleUnit) -> void:
 	var accent := _palette_accent(theme.get("palette", ""))
 	hud.play_awakening_banner(CrestRuntime.awakening_banner_text(unit), accent)
 	hud.set_message("%s's Crest answers!" % unit.display_name)
+	_shake(2.0)
 	sprites[unit].play("awaken")
 	hud.refresh_rows()
 	await get_tree().create_timer(1.2).timeout

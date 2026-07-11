@@ -18,6 +18,7 @@ var _list_label: Label
 var _detail_label: Label
 var _hint_label: Label
 var _error_label: Label
+var _preview: TextureRect
 
 
 func _ready() -> void:
@@ -43,9 +44,16 @@ func _build_ui() -> void:
 	_subtitle_label = _make_label(Vector2(0, 34), 8, PlaceholderPalette.TEXT_DIM)
 	_subtitle_label.text = "The Crest at Greymere — prototype"
 	_list_label = _make_label(Vector2(0, 62), 8, PlaceholderPalette.TEXT_MAIN)
-	_detail_label = _make_label(Vector2(0, 96), 8, PlaceholderPalette.TEXT_DIM)
+	_detail_label = _make_label(Vector2(30, 96), 8, PlaceholderPalette.TEXT_DIM)
 	_hint_label = _make_label(Vector2(0, 164), 8, PlaceholderPalette.TEXT_DIM)
 	_error_label = _make_label(Vector2(0, 80), 8, PlaceholderPalette.TEXT_DANGER)
+
+	_preview = TextureRect.new()
+	_preview.position = Vector2(232, 88)
+	_preview.size = Vector2(48, 64)  # 24x32 frame at 2x
+	_preview.stretch_mode = TextureRect.STRETCH_SCALE
+	_preview.visible = false
+	add_child(_preview)
 
 
 func _make_label(top_left: Vector2, font_size: int, color: Color) -> Label:
@@ -76,6 +84,7 @@ func _refresh() -> void:
 				lines.append(cursor + _menu_options[i])
 			_list_label.text = "\n".join(lines)
 			_detail_label.text = ""
+			_preview.visible = false
 			_hint_label.text = "Arrows: choose   Z/Enter: confirm"
 		Screen.CLASS_SELECT:
 			var class_id: String = _class_list[_class_index]
@@ -94,6 +103,19 @@ func _refresh() -> void:
 				]
 			)
 			_hint_label.text = "Left/Right: class   Z/Enter: begin   X: back"
+			_update_preview(class_id)
+
+
+func _update_preview(class_id: String) -> void:
+	var path := "res://assets/characters/aren/%s/battle.png" % class_id
+	if not ResourceLoader.exists(path):
+		_preview.visible = false
+		return
+	var atlas := AtlasTexture.new()
+	atlas.atlas = load(path)
+	atlas.region = Rect2(0, 0, 24, 32)  # idle frame
+	_preview.texture = atlas
+	_preview.visible = true
 
 
 func _unhandled_input(event: InputEvent) -> void:
