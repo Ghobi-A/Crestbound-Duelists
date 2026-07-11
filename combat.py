@@ -18,13 +18,18 @@ from models import (
 
 
 # ── Configuration ────────────────────────────────────────────────────
+# Values come from data/combat_config.yaml; edit there, not here.
 
-SPEED_BAND: int = 7
-GUARANTEED_RATIO: float = 2.0
-VARIANCE_LO: float = 0.85
-VARIANCE_HI: float = 1.0
-BRACE_MULTIPLIER: float = 1.05
-MAX_TURNS: int = 100
+from loaders import load_combat_config as _load_combat_config
+
+_config = _load_combat_config()
+
+SPEED_BAND: int = int(_config["speed_band"])
+GUARANTEED_RATIO: float = float(_config["guaranteed_speed_ratio"])
+VARIANCE_LO: float = float(_config["variance_low"])
+VARIANCE_HI: float = float(_config["variance_high"])
+BRACE_MULTIPLIER: float = float(_config["brace_multiplier"])
+MAX_TURNS: int = int(_config["max_turns"])
 
 
 # ── Logging ──────────────────────────────────────────────────────────
