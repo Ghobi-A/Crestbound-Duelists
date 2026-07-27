@@ -3,8 +3,15 @@ extends Control
 ## Class data (names, roles, stats) comes entirely from GameData.
 
 const OVERWORLD_SCENE := "res://scenes/overworld/greymere.tscn"
+const PARTY_SETUP_SCENE := "res://scenes/ui/party_setup.tscn"
 
-enum Screen { MENU, CLASS_SELECT }
+# Quick Battle skips class selection with a sensible, balanced default
+# so a recruiter reaches gameplay in one press.
+const QUICK_BATTLE_CLASS := "warrior"
+
+const CONTROLS_TEXT := "MOVE        WASD / Arrow keys\nCONFIRM     Z / Enter / Space\nBACK        X / Escape\n\nObjective: speak to Warden Elara, then investigate the Hollow Court."
+
+enum Screen { MENU, CLASS_SELECT, CONTROLS }
 
 var _screen: Screen = Screen.MENU
 var _menu_options: Array[String] = []
@@ -27,9 +34,10 @@ func _ready() -> void:
 		_show_data_error()
 		return
 	_class_list = GameData.class_ids()
-	_menu_options = ["New Game"]
+	_menu_options = ["Play Story Demo", "Quick Battle"]
 	if SaveManager.has_compatible_save():
 		_menu_options.append("Continue")
+	_menu_options.append("Controls")
 	_refresh()
 
 
@@ -76,6 +84,7 @@ func _show_data_error() -> void:
 
 
 func _refresh() -> void:
+	_detail_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	match _screen:
 		Screen.MENU:
 			var lines: Array[String] = []
@@ -104,6 +113,12 @@ func _refresh() -> void:
 			)
 			_hint_label.text = "Left/Right: class   Z/Enter: begin   X: back"
 			_update_preview(class_id)
+		Screen.CONTROLS:
+			_list_label.text = "Controls"
+			_detail_label.text = CONTROLS_TEXT
+			_detail_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+			_preview.visible = false
+			_hint_label.text = "X/Escape: back"
 
 
 func _update_preview(class_id: String) -> void:
@@ -126,6 +141,8 @@ func _unhandled_input(event: InputEvent) -> void:
 			_menu_input()
 		Screen.CLASS_SELECT:
 			_class_select_input()
+		Screen.CONTROLS:
+			_controls_input()
 
 
 func _menu_input() -> void:
@@ -134,12 +151,33 @@ func _menu_input() -> void:
 	elif Input.is_action_just_pressed("move_down"):
 		_menu_index = wrapi(_menu_index + 1, 0, _menu_options.size())
 	elif Input.is_action_just_pressed("interact"):
-		if _menu_options[_menu_index] == "New Game":
-			_screen = Screen.CLASS_SELECT
-		else:
-			if SaveManager.load_game():
-				get_tree().change_scene_to_file(GameState.current_scene)
+		match _menu_options[_menu_index]:
+			"Play Story Demo":
+				_screen = Screen.CLASS_SELECT
+			"Quick Battle":
+				_start_quick_battle()
 				return
+			"Continue":
+				if SaveManager.load_game():
+					get_tree().change_scene_to_file(GameState.current_scene)
+					return
+			"Controls":
+				_screen = Screen.CONTROLS
+	_refresh()
+
+
+func _start_quick_battle() -> void:
+	## Recruiter shortcut: sensible default class, the existing opening
+	## party, straight to party setup for the Hollow Court battle —
+	## no need to explore Greymere first. The full story flow is
+	## untouched and still reachable via Play Story Demo.
+	GameState.start_new_game(QUICK_BATTLE_CLASS)
+	get_tree().change_scene_to_file(PARTY_SETUP_SCENE)
+
+
+func _controls_input() -> void:
+	if Input.is_action_just_pressed("cancel") or Input.is_action_just_pressed("interact"):
+		_screen = Screen.MENU
 	_refresh()
 
 

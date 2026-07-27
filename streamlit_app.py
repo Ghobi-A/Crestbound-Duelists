@@ -25,8 +25,10 @@ from simulation import ALL_CLASSES, run_matchup
 
 # ── Links ────────────────────────────────────────────────────────────
 GITHUB_URL = "https://github.com/Ghobi-A/Crestbound-Duelists"
-# Set once the Godot web build is published (GitHub Pages / itch.io).
-GODOT_WEB_URL = ""
+# Published by .github/workflows/godot-web-deploy.yml on every push to
+# main once GitHub Pages is enabled for this repo (Settings > Pages >
+# Source: GitHub Actions). Blank this out again if Pages is ever disabled.
+GODOT_WEB_URL = "https://ghobi-a.github.io/Crestbound-Duelists/"
 
 REPO_ROOT = Path(__file__).resolve().parent
 SNAPSHOT_PATH = REPO_ROOT / "results" / "recruiter_snapshot.json"

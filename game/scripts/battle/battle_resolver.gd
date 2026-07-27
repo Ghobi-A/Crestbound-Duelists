@@ -34,7 +34,7 @@ func order_actions(actions: Array) -> Array:
 	## probabilistic speed: score = SPD + U(0, speed_band). A speed gap
 	## of at least the band guarantees order (preserving the Balance
 	## Lab's speed-band spirit); close speeds stay uncertain.
-	var band := game_data.config_value("speed_band")
+	var band: float = game_data.config_value("speed_band")
 	var scored: Array = []
 	for action in actions:
 		var actor: BattleUnit = action.actor
@@ -60,7 +60,7 @@ func resolve_move_type(move: Dictionary, attacker: BattleUnit, defender: BattleU
 func defence_value(defender: BattleUnit, stat_name: String) -> float:
 	var value := float(defender.stat(stat_name))
 	if defender.is_braced():
-		var multiplier := game_data.config_value("brace_multiplier") + defender.brace_multiplier_bonus()
+		var multiplier: float = game_data.config_value("brace_multiplier") + defender.brace_multiplier_bonus()
 		value = floorf(value * multiplier)
 	return value
 

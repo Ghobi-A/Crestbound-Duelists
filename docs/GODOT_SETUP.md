@@ -2,8 +2,10 @@
 
 ## Engine version
 
-**Godot 4.2 or newer** (standard build; no C#/Mono required).
-Download from https://godotengine.org/download.
+**Godot 4.3 or newer** (standard build; no C#/Mono required). 4.3+ is
+required for the Web export's single-threaded variant
+(`variant/thread_support=false`, no COOP/COEP headers needed) used by
+`game/export_presets.cfg`. Download from https://godotengine.org/download.
 
 ## Opening and running
 
@@ -82,3 +84,16 @@ performs full GDScript parsing.
 | move_up/down/left/right | WASD + arrow keys |
 | interact | Z, Enter, Space |
 | cancel | X, Esc |
+
+## Web export
+
+`export_presets.cfg` defines a single "Web" preset: single-threaded
+(`variant/thread_support=false`, so no COOP/COEP headers are needed on
+the host), the project's Compatibility renderer, canvas resize policy
+`None` with an explicit 1280×720 (16:9) `<canvas>` size in
+`web/shell.html` (Godot does not size the canvas itself under `None`),
+and a custom shell with a loading bar and controls note.
+
+To export locally: `godot --headless --path . --export-release "Web" ../build/web/index.html`
+(requires the matching export templates installed). CI builds and
+deploys this automatically — see `.github/workflows/godot-web-deploy.yml`.
