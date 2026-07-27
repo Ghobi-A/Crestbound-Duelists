@@ -1,0 +1,61 @@
+name: Balance snapshot
+
+# Regenerates results/recruiter_snapshot.json whenever the balance data or the
+# engine that consumes it changes, so the Streamlit Balance Lab can never drift
+# from the YAML source of truth.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "data/**"
+      - "combat.py"
+      - "models.py"
+      - "loaders.py"
+      - "ai.py"
+      - "simulation.py"
+      - "nash.py"
+      - "tools/generate_snapshot.py"
+      - ".github/workflows/balance-snapshot.yml"
+  workflow_dispatch:
+    inputs:
+      sims:
+        description: "Simulations per matchup"
+        default: "100000"
+
+permissions:
+  contents: write
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install pyyaml numpy scipy pytest
+
+      - name: Run test suite
+        run: python -m pytest -q
+
+      - name: Regenerate snapshot
+        run: |
+          python tools/generate_snapshot.py \
+            --sims "${{ github.event.inputs.sims || '100000' }}"
+
+      - name: Commit if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if git diff --quiet -- results/recruiter_snapshot.json; then
+            echo "Snapshot unchanged."
+            exit 0
+          fi
+          git add results/recruiter_snapshot.json
+          git commit -m "chore: regenerate balance snapshot"
+          git push

@@ -1,7 +1,19 @@
 # Crestbound Duelists
 
-**A tested, data-driven RPG Balance Lab — and an original pixel-art
-turn-based party RPG built on top of it.**
+**A tested Monte Carlo balance laboratory powering an original Godot
+tactical RPG.**
+
+### ▶ [Launch the interactive Balance Lab](https://crestbound-balance-lab.streamlit.app)
+
+*(Play the browser prototype — Godot web build, link to follow)*
+· [Read the technical case study](docs/ARCHITECTURE.md)
+· [Browse the source](https://github.com/Ghobi-A/Crestbound-Duelists)
+
+**Technical highlights:** 140 regression tests · YAML-driven game data ·
+Monte Carlo simulation (100,000 battles per matchup) · three AI decision
+policies · Nash/maximin analysis · Godot 4 client
+
+---
 
 Human Duelists bind themselves to **Crests** (fragments of a dead god)
 and **Bonded Entities**, creating distinct class builds, abilities,
@@ -49,13 +61,38 @@ no balance values. Details: `docs/ARCHITECTURE.md` and
 ```bash
 pip install -r requirements.txt
 
-python -m pytest              # 133 regression tests (fast)
+python -m pytest              # 140 regression tests (fast)
 python balance_report.py      # quick balance smell check (~1s)
 python main.py --quick        # reduced simulation suite (~10s)
 python main.py                # full 100k-sims-per-matchup suite
 python nash.py                # game-theoretic analysis
 python export_game_data.py    # export JSON for the game client
 ```
+
+## Running the Balance Lab web app
+
+```bash
+pip install -r requirements.txt
+streamlit run streamlit_app.py
+```
+
+`streamlit_app.py` is the Streamlit Community Cloud entrypoint. It has
+four tabs: a **Live Duel** simulator that runs the real engine on
+request (100–5,000 battles, cached), the **Balance Matrix** heatmap and
+ranked class win rates, an **AI Policy Comparison** with the Nash
+agreement check, and the **Engineering Architecture** walkthrough.
+
+The expensive figures come from a committed snapshot rather than being
+computed per page load:
+
+```bash
+python tools/generate_snapshot.py              # 100k sims per matchup (~5 min)
+python tools/generate_snapshot.py --sims 5000  # quick local refresh
+```
+
+`.github/workflows/balance-snapshot.yml` reruns that generator whenever
+`data/` or the engine changes and commits the result, so the dashboard
+cannot drift from the YAML source of truth.
 
 ## Running the game
 
@@ -142,11 +179,15 @@ Crestbound-Duelists/
 │                          #   objectives, narrative)
 ├── models.py combat.py ai.py simulation.py nash.py main.py
 ├── loaders.py rpg_models.py export_game_data.py balance_report.py
+├── streamlit_app.py       # Balance Lab web app (Streamlit entrypoint)
+├── .streamlit/config.toml # app theme
+├── results/               # committed recruiter_snapshot.json (precomputed)
 ├── tests/                 # pytest regression suite
 ├── exports/               # generated JSON (build artifact, committed)
 ├── game/                  # Godot 4 client (scenes, scripts, exported data,
 │                          #   generated original pixel art)
-├── tools/                 # Godot static validation + pixel-art generator
+├── tools/                 # Godot static validation, pixel-art generator,
+│                          #   balance snapshot generator
 ├── docs/                  # ARCHITECTURE, GAME_DESIGN_FOUNDATION,
 │                          #   BATTLE_SYSTEM, DATA_PIPELINE, GODOT_SETUP,
 │                          #   LORE_BIBLE, STORY_OUTLINE
