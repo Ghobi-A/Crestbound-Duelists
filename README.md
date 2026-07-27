@@ -4,6 +4,7 @@
 tactical RPG.**
 
 ### ▶ [Launch the interactive Balance Lab](https://crestbound-balance-lab.streamlit.app)
+### ▶ [Play the browser prototype](https://ghobi-a.github.io/Crestbound-Duelists/) — Quick Battle reaches gameplay in one click, no install
 
 [Read the technical case study](docs/ARCHITECTURE.md)
 · [Browse the source](https://github.com/Ghobi-A/Crestbound-Duelists)
@@ -100,15 +101,41 @@ cannot drift from the YAML source of truth.
 
 ## Running the game
 
-1. Install **Godot 4.2+** (https://godotengine.org/download).
-2. Open `game/project.godot` in the editor and press **F5**.
+**In the browser:** [ghobi-a.github.io/Crestbound-Duelists](https://ghobi-a.github.io/Crestbound-Duelists/)
+— no install. From the title screen:
+
+- **Play Story Demo** — full flow: class selection → Greymere → talk to
+  Warden Elara Thorne / Mira Solen → the Hollow Court arch → party
+  setup → battle.
+- **Quick Battle** — recruiter shortcut. Skips Greymere entirely: picks
+  a default class (Warrior), loads the existing opening party, and
+  drops straight into party setup for the Hollow Court battle.
+- **Continue** — appears once a compatible save exists.
+- **Controls** — shows the key bindings below at any time.
 
 Controls: WASD/arrows to move, **Z/Enter/Space** to interact/confirm,
-**X/Esc** to cancel. Flow: title → class selection → Greymere → talk
-to Warden Elara Thorne / Mira Solen → the Hollow Court arch →
-pre-battle party setup (front/back formation) → round-based 3v3 party
-battle → post-battle scene. Battle rules: `docs/BATTLE_SYSTEM.md`;
-setup details: `docs/GODOT_SETUP.md`.
+**X/Esc** to cancel. Party setup: Up/Down select, Left/Right toggle
+front/back row, Z swap/confirm. A dismissible onboarding panel explains
+controls and the objective the first time you enter Greymere, and
+battle basics the first time you enter a battle. Battle rules:
+`docs/BATTLE_SYSTEM.md`; setup details: `docs/GODOT_SETUP.md`.
+
+**Locally (Godot editor):**
+
+1. Install **Godot 4.3+** (https://godotengine.org/download).
+2. Open `game/project.godot` in the editor and press **F5**.
+
+**Web export:** `game/export_presets.cfg` defines a single "Web" export
+preset — single-threaded (`variant/thread_support=false`, no
+Cross-Origin-Opener/Embedder-Policy headers required), the project's
+Compatibility (`gl_compatibility`) renderer, a fixed 1280×720 (16:9)
+canvas, and a custom loading shell (`game/web/shell.html`) with a
+controls note and no audio before the first click.
+`.github/workflows/godot-web-deploy.yml` builds and publishes it to
+GitHub Pages on every push to `main` that touches `game/` (requires
+Pages enabled once under Settings → Pages → Source: GitHub Actions).
+The build output (`build/web/`) is generated, not committed — see
+`.gitignore`.
 
 ## Data workflow
 

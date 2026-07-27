@@ -32,8 +32,13 @@ const MAP: Array[String] = [
 
 const BLOCKING_TILES := ["#", "R", "H", "D", "~", "C", "n"]
 
+const ONBOARDING_FLAG := "overworld_onboarding_seen"
+const ONBOARDING_TITLE := "GETTING STARTED"
+const ONBOARDING_BODY := "MOVE        WASD / Arrow keys\nCONFIRM     Z / Enter / Space\nBACK        X / Escape\n\nObjective: speak to Warden Elara, then investigate the Hollow Court."
+
 var _player: OverworldPlayer
 var _dialogue: DialogueBox
+var _onboarding: OnboardingPanel
 var _npc_tiles: Dictionary = {}       # Vector2i -> OverworldNPC
 var _exit_dialogue_armed := true
 
@@ -45,6 +50,8 @@ func _ready() -> void:
 	_build_npcs()
 	_build_player()
 	_build_camera()
+	_build_indicators()
+	_build_onboarding()
 	GameState.current_scene = scene_file_path
 	if GameState.has_flag("post_battle_scene_pending"):
 		GameState.set_flag("post_battle_scene_pending", false)
@@ -93,37 +100,63 @@ func _draw_map(layer: Node2D) -> void:
 		for x in map_width():
 			var rect := Rect2(x * TILE, y * TILE, TILE, TILE)
 			var symbol := MAP[y][x]
+			var speck := (x * 7 + y * 13) % 5  # deterministic per-tile texture variation
 			match symbol:
 				"#":
 					layer.draw_rect(rect, PlaceholderPalette.TILE_WALL)
 					layer.draw_rect(Rect2(rect.position + Vector2(1, 1), Vector2(14, 14)), PlaceholderPalette.TILE_WALL.darkened(0.25))
+					layer.draw_rect(Rect2(rect.position + Vector2(1, 7), Vector2(14, 1)), PlaceholderPalette.TILE_WALL.darkened(0.4))
 				".":
 					layer.draw_rect(rect, PlaceholderPalette.TILE_GRASS)
+					if speck == 0:
+						layer.draw_rect(Rect2(rect.position + Vector2(4, 5), Vector2(2, 2)), PlaceholderPalette.TILE_GRASS.darkened(0.2))
+					elif speck == 2:
+						layer.draw_rect(Rect2(rect.position + Vector2(9, 9), Vector2(2, 2)), PlaceholderPalette.TILE_GRASS.lightened(0.12))
 				",":
 					layer.draw_rect(rect, PlaceholderPalette.TILE_GRASS_ALT)
-				":":
+					if speck == 1:
+						layer.draw_rect(Rect2(rect.position + Vector2(6, 3), Vector2(2, 2)), PlaceholderPalette.TILE_GRASS_ALT.darkened(0.2))
+				":", "S":
 					layer.draw_rect(rect, PlaceholderPalette.TILE_PATH)
-				"S":
-					layer.draw_rect(rect, PlaceholderPalette.TILE_PATH)
+					layer.draw_rect(Rect2(rect.position + Vector2(1, 1), Vector2(14, 14)), PlaceholderPalette.TILE_PATH.darkened(0.08))
+					if speck != 3:
+						layer.draw_rect(Rect2(rect.position + Vector2(3 + speck, 10), Vector2(3, 2)), PlaceholderPalette.TILE_PATH.darkened(0.22))
 				"~":
 					layer.draw_rect(rect, PlaceholderPalette.TILE_WATER)
-					layer.draw_rect(Rect2(rect.position + Vector2(2, 6), Vector2(6, 1)), PlaceholderPalette.TILE_WATER.lightened(0.3))
+					layer.draw_rect(Rect2(rect.position + Vector2(0, 0), Vector2(TILE, 2)), PlaceholderPalette.TILE_WATER.darkened(0.15))
+					var wave_y := 5 if speck % 2 == 0 else 9
+					layer.draw_rect(Rect2(rect.position + Vector2(2, wave_y), Vector2(8, 1)), PlaceholderPalette.TILE_WATER.lightened(0.35))
+					layer.draw_rect(Rect2(rect.position + Vector2(4, wave_y + 3), Vector2(5, 1)), PlaceholderPalette.TILE_WATER.lightened(0.2))
 				"R":
 					layer.draw_rect(rect, PlaceholderPalette.TILE_ROOF)
-					layer.draw_rect(Rect2(rect.position, Vector2(TILE, 3)), PlaceholderPalette.TILE_ROOF.lightened(0.15))
+					layer.draw_rect(Rect2(rect.position, Vector2(TILE, 3)), PlaceholderPalette.TILE_ROOF.lightened(0.18))
+					layer.draw_rect(Rect2(rect.position + Vector2(0, 5), Vector2(TILE, 1)), PlaceholderPalette.TILE_ROOF.darkened(0.2))
+					layer.draw_rect(Rect2(rect.position + Vector2(0, 11), Vector2(TILE, 1)), PlaceholderPalette.TILE_ROOF.darkened(0.2))
 				"H":
 					layer.draw_rect(rect, PlaceholderPalette.TILE_WALL.lightened(0.2))
+					layer.draw_rect(Rect2(rect.position + Vector2(0, 8), Vector2(TILE, 1)), PlaceholderPalette.TILE_WALL.darkened(0.05))
+					layer.draw_rect(Rect2(rect.position + Vector2(3, 3), Vector2(4, 4)), PlaceholderPalette.TILE_DOOR.darkened(0.35))
 				"D":
 					layer.draw_rect(rect, PlaceholderPalette.TILE_WALL.lightened(0.2))
+					layer.draw_rect(Rect2(rect.position + Vector2(3, 2), Vector2(10, 14)), PlaceholderPalette.TILE_DOOR.darkened(0.25))
 					layer.draw_rect(Rect2(rect.position + Vector2(4, 4), Vector2(8, 12)), PlaceholderPalette.TILE_DOOR)
+					layer.draw_rect(Rect2(rect.position + Vector2(10, 9), Vector2(1, 1)), Color("3a2a10"))
 				"C":
-					layer.draw_rect(rect, PlaceholderPalette.TILE_COURT)
-					layer.draw_rect(Rect2(rect.position + Vector2(3, 2), Vector2(10, 14)), Color.BLACK)
-					layer.draw_rect(Rect2(rect.position + Vector2(6, 6), Vector2(4, 4)), PlaceholderPalette.TILE_CREST_NODE.lightened(0.4))
+					layer.draw_rect(rect, PlaceholderPalette.TILE_COURT.darkened(0.1))
+					layer.draw_rect(Rect2(rect.position + Vector2(0, 0), Vector2(3, TILE)), PlaceholderPalette.TILE_COURT.lightened(0.15))
+					layer.draw_rect(Rect2(rect.position + Vector2(TILE - 3, 0), Vector2(3, TILE)), PlaceholderPalette.TILE_COURT.lightened(0.15))
+					layer.draw_rect(Rect2(rect.position + Vector2(0, 0), Vector2(TILE, 3)), PlaceholderPalette.TILE_COURT.lightened(0.2))
+					layer.draw_rect(Rect2(rect.position + Vector2(3, 3), Vector2(10, 13)), Color.BLACK)
+					layer.draw_rect(Rect2(rect.position + Vector2(5, 6), Vector2(6, 6)), PlaceholderPalette.TILE_CREST_NODE.lightened(0.45))
+					layer.draw_rect(Rect2(rect.position + Vector2(7, 8), Vector2(2, 2)), Color.WHITE)
 				"n":
 					layer.draw_rect(rect, PlaceholderPalette.TILE_GRASS)
-					layer.draw_rect(Rect2(rect.position + Vector2(3, 3), Vector2(10, 9)), Color("6a5030"))
-					layer.draw_rect(Rect2(rect.position + Vector2(4, 4), Vector2(8, 6)), Color("d8cfae"))
+					layer.draw_rect(Rect2(rect.position + Vector2(3, 1), Vector2(1, 12)), Color("4a3520"))
+					layer.draw_rect(Rect2(rect.position + Vector2(12, 1), Vector2(1, 12)), Color("4a3520"))
+					layer.draw_rect(Rect2(rect.position + Vector2(2, 2), Vector2(12, 10)), Color("6a5030"))
+					layer.draw_rect(Rect2(rect.position + Vector2(3, 3), Vector2(10, 8)), Color("d8cfae"))
+					layer.draw_rect(Rect2(rect.position + Vector2(4, 5), Vector2(8, 1)), Color("9a8f6a"))
+					layer.draw_rect(Rect2(rect.position + Vector2(4, 7), Vector2(6, 1)), Color("9a8f6a"))
 				"E", "M":
 					layer.draw_rect(rect, PlaceholderPalette.TILE_GRASS)
 				_:
@@ -168,6 +201,24 @@ func _build_player() -> void:
 	_player.stepped_onto.connect(_on_player_stepped)
 
 
+const INDICATOR_TILES := ["n", "D", "C"]
+
+
+func _build_indicators() -> void:
+	for y in map_height():
+		for x in map_width():
+			if INDICATOR_TILES.has(MAP[y][x]):
+				_add_indicator(Vector2i(x, y))
+	for tile in _npc_tiles:
+		_add_indicator(tile)
+
+
+func _add_indicator(tile: Vector2i) -> void:
+	var indicator := InteractionIndicator.new()
+	add_child(indicator)
+	indicator.setup(Vector2(tile * TILE) + Vector2(TILE / 2.0, -6))
+
+
 func _build_camera() -> void:
 	var camera := Camera2D.new()
 	camera.limit_left = 0
@@ -180,10 +231,25 @@ func _build_camera() -> void:
 	camera.make_current()
 
 
+func _build_onboarding() -> void:
+	_onboarding = OnboardingPanel.new()
+	add_child(_onboarding)
+	if GameState.has_flag(ONBOARDING_FLAG):
+		return
+	_player.movement_locked = true
+	_onboarding.dismissed.connect(_on_onboarding_dismissed)
+	_onboarding.show_panel(ONBOARDING_TITLE, ONBOARDING_BODY)
+
+
+func _on_onboarding_dismissed() -> void:
+	GameState.set_flag(ONBOARDING_FLAG)
+	_player.movement_locked = false
+
+
 # ── Interaction ──────────────────────────────────────────────────────
 
 func _unhandled_input(event: InputEvent) -> void:
-	if _dialogue.active or _player.is_moving():
+	if (_onboarding != null and _onboarding.active) or _dialogue.active or _player.is_moving():
 		return
 	if event.is_action_pressed("interact"):
 		_try_interact()

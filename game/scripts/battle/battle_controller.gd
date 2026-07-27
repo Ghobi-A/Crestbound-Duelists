@@ -12,6 +12,9 @@ extends Node2D
 const OVERWORLD_SCENE := "res://scenes/overworld/greymere.tscn"
 const BOOT_SCENE := "res://scenes/boot/boot.tscn"
 const COURT_RETURN_TILE := Vector2i(11, 2)
+const ONBOARDING_FLAG := "battle_onboarding_seen"
+const ONBOARDING_TITLE := "BATTLE BASICS"
+const ONBOARDING_BODY := "Choose each Duelist's action and target.\nBrace acts first and reduces incoming damage.\nBuild Resonance to awaken your Crest."
 
 enum State { INTRO, SELECT_MENU, SELECT_TARGET, PREVIEW, RESOLVING, RESULT }
 
@@ -29,6 +32,7 @@ var selection_index := 0
 var planned_actions: Array = []
 var pending_move: Dictionary = {}
 var stage: Node2D                 # background + unit sprites (shakeable)
+var onboarding: OnboardingPanel
 
 
 func _ready() -> void:
@@ -41,9 +45,30 @@ func _ready() -> void:
 	_stage_units()
 	_build_hud()
 	_build_dialogue()
+	_build_onboarding()
 	var objective: Dictionary = GameData.get_objective(runtime.encounter.get("objective", "defeat_all"))
 	hud.set_objective(objective.get("name", "Defeat all enemies"))
 	hud.set_phase(str(runtime.encounter.get("name", "Battle")))
+	if onboarding.active:
+		return
+	_start_intro()
+
+
+func _build_onboarding() -> void:
+	onboarding = OnboardingPanel.new()
+	add_child(onboarding)
+	if GameState.has_flag(ONBOARDING_FLAG):
+		return
+	onboarding.dismissed.connect(_on_onboarding_dismissed)
+	onboarding.show_panel(ONBOARDING_TITLE, ONBOARDING_BODY)
+
+
+func _on_onboarding_dismissed() -> void:
+	GameState.set_flag(ONBOARDING_FLAG)
+	_start_intro()
+
+
+func _start_intro() -> void:
 	var intro_key: String = runtime.encounter.get("intro_dialogue", "")
 	if intro_key != "" and dialogue.has_key(intro_key):
 		dialogue.play(intro_key)
@@ -184,6 +209,8 @@ func _reopen_last_selection() -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
+	if onboarding != null and onboarding.active:
+		return
 	if dialogue != null and dialogue.active:
 		return
 	if not event.is_pressed() or event.is_echo():
