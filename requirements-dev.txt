@@ -1,0 +1,12 @@
+# Development, testing and analysis dependencies.
+# Includes everything the deployed app needs, plus the toolchain for the
+# test suite, the Nash solver and the analysis notebook.
+#   pip install -r requirements-dev.txt
+
+-r requirements.txt
+
+pytest>=7.0
+matplotlib>=3.7
+seaborn>=0.12
+scipy>=1.10
+jupyter>=1.0

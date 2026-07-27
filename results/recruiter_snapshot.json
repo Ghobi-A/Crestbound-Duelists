@@ -1,0 +1,894 @@
+{
+  "generated_at": "2026-07-27T11:47:22+00:00",
+  "git_commit": "2327e22",
+  "seed": 42,
+  "sims_per_matchup": 100000,
+  "policy_sims_per_class": 20000,
+  "matrix_policy": "greedy",
+  "classes": [
+    "Warrior",
+    "Mage",
+    "Assassin",
+    "Guardian",
+    "Neutral",
+    "Sorcerer"
+  ],
+  "win_matrix": {
+    "Warrior": {
+      "Warrior": 50.0,
+      "Mage": 36.1,
+      "Assassin": 91.6,
+      "Guardian": 58.3,
+      "Neutral": 56.6,
+      "Sorcerer": 24.9
+    },
+    "Mage": {
+      "Warrior": 63.9,
+      "Mage": 50.0,
+      "Assassin": 0.0,
+      "Guardian": 88.3,
+      "Neutral": 27.3,
+      "Sorcerer": 93.8
+    },
+    "Assassin": {
+      "Warrior": 8.4,
+      "Mage": 100.0,
+      "Assassin": 50.0,
+      "Guardian": 24.0,
+      "Neutral": 40.2,
+      "Sorcerer": 54.9
+    },
+    "Guardian": {
+      "Warrior": 41.7,
+      "Mage": 11.7,
+      "Assassin": 76.0,
+      "Guardian": 50.0,
+      "Neutral": 54.3,
+      "Sorcerer": 59.9
+    },
+    "Neutral": {
+      "Warrior": 43.4,
+      "Mage": 72.7,
+      "Assassin": 59.8,
+      "Guardian": 45.7,
+      "Neutral": 50.0,
+      "Sorcerer": 22.5
+    },
+    "Sorcerer": {
+      "Warrior": 75.1,
+      "Mage": 6.2,
+      "Assassin": 45.1,
+      "Guardian": 40.1,
+      "Neutral": 77.5,
+      "Sorcerer": 50.0
+    }
+  },
+  "avg_turns": {
+    "Warrior|Mage": 3.0,
+    "Warrior|Assassin": 3.0,
+    "Warrior|Guardian": 4.0,
+    "Warrior|Neutral": 3.2,
+    "Warrior|Sorcerer": 2.8,
+    "Mage|Assassin": 3.0,
+    "Mage|Guardian": 3.9,
+    "Mage|Neutral": 3.0,
+    "Mage|Sorcerer": 3.0,
+    "Assassin|Guardian": 3.5,
+    "Assassin|Neutral": 3.0,
+    "Assassin|Sorcerer": 2.7,
+    "Guardian|Neutral": 4.6,
+    "Guardian|Sorcerer": 3.4,
+    "Neutral|Sorcerer": 3.0
+  },
+  "class_averages": {
+    "Warrior": 53.5,
+    "Mage": 54.7,
+    "Assassin": 45.5,
+    "Guardian": 48.7,
+    "Neutral": 48.8,
+    "Sorcerer": 48.8
+  },
+  "policy_comparison": {
+    "greedy_vs_random": {
+      "Warrior": {
+        "win_rate_a": 75.7,
+        "win_rate_b": 24.3
+      },
+      "Mage": {
+        "win_rate_a": 61.3,
+        "win_rate_b": 38.7
+      },
+      "Assassin": {
+        "win_rate_a": 55.3,
+        "win_rate_b": 44.7
+      },
+      "Guardian": {
+        "win_rate_a": 69.1,
+        "win_rate_b": 30.9
+      },
+      "Neutral": {
+        "win_rate_a": 62.7,
+        "win_rate_b": 37.3
+      },
+      "Sorcerer": {
+        "win_rate_a": 69.5,
+        "win_rate_b": 30.5
+      }
+    },
+    "lookahead_vs_random": {
+      "Warrior": {
+        "win_rate_a": 37.6,
+        "win_rate_b": 62.4
+      },
+      "Mage": {
+        "win_rate_a": 47.5,
+        "win_rate_b": 52.5
+      },
+      "Assassin": {
+        "win_rate_a": 59.2,
+        "win_rate_b": 40.8
+      },
+      "Guardian": {
+        "win_rate_a": 15.3,
+        "win_rate_b": 84.7
+      },
+      "Neutral": {
+        "win_rate_a": 63.4,
+        "win_rate_b": 36.6
+      },
+      "Sorcerer": {
+        "win_rate_a": 69.3,
+        "win_rate_b": 30.7
+      }
+    },
+    "lookahead_vs_greedy": {
+      "Warrior": {
+        "win_rate_a": 3.0,
+        "win_rate_b": 97.0
+      },
+      "Mage": {
+        "win_rate_a": 33.1,
+        "win_rate_b": 66.9
+      },
+      "Assassin": {
+        "win_rate_a": 51.2,
+        "win_rate_b": 48.8
+      },
+      "Guardian": {
+        "win_rate_a": 0.9,
+        "win_rate_b": 99.1
+      },
+      "Neutral": {
+        "win_rate_a": 50.2,
+        "win_rate_b": 49.8
+      },
+      "Sorcerer": {
+        "win_rate_a": 50.0,
+        "win_rate_b": 50.0
+      }
+    }
+  },
+  "nash": [
+    {
+      "class_a": "Warrior",
+      "class_b": "Mage",
+      "moves_a": [
+        "Power Slash",
+        "Armor Break",
+        "Reckless Charge"
+      ],
+      "moves_b": [
+        "Arcane Bolt",
+        "Mind Pierce",
+        "Overload"
+      ],
+      "payoff": [
+        [
+          -0.6142292490118564,
+          7.107509881422928,
+          1.3162055335968361
+        ],
+        [
+          -8.182411067193677,
+          -0.4606719367588923,
+          -6.251976284584984
+        ],
+        [
+          -2.5062747035573096,
+          5.215464426877475,
+          -0.5758399209486171
+        ]
+      ],
+      "strategy_a": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "strategy_b": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "entropy_a": -0.0,
+      "entropy_b": -0.0,
+      "value_a": -0.6142,
+      "is_pure_a": true,
+      "greedy_move": "Power Slash",
+      "nash_dominant": "Power Slash",
+      "greedy_matches_nash": true
+    },
+    {
+      "class_a": "Warrior",
+      "class_b": "Assassin",
+      "moves_a": [
+        "Power Slash",
+        "Armor Break",
+        "Reckless Charge"
+      ],
+      "moves_b": [
+        "Quick Strike",
+        "Cripple",
+        "Lethal Edge"
+      ],
+      "payoff": [
+        [
+          8.07272727272727,
+          13.622727272727271,
+          9.552727272727275
+        ],
+        [
+          0.5045454545454504,
+          6.054545454545451,
+          1.9845454545454544
+        ],
+        [
+          6.180681818181817,
+          11.730681818181818,
+          7.660681818181821
+        ]
+      ],
+      "strategy_a": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "strategy_b": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "entropy_a": -0.0,
+      "entropy_b": -0.0,
+      "value_a": 8.0727,
+      "is_pure_a": true,
+      "greedy_move": "Power Slash",
+      "nash_dominant": "Power Slash",
+      "greedy_matches_nash": true
+    },
+    {
+      "class_a": "Warrior",
+      "class_b": "Guardian",
+      "moves_a": [
+        "Power Slash",
+        "Armor Break",
+        "Reckless Charge"
+      ],
+      "moves_b": [
+        "Shield Bash",
+        "Fortify",
+        "Avalanche"
+      ],
+      "payoff": [
+        [
+          -0.49333333333332874,
+          6.413333333333336,
+          7.130909090909093
+        ],
+        [
+          -6.0433333333333294,
+          0.8633333333333351,
+          1.580909090909092
+        ],
+        [
+          -1.8808333333333316,
+          5.025833333333333,
+          5.74340909090909
+        ]
+      ],
+      "strategy_a": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "strategy_b": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "entropy_a": -0.0,
+      "entropy_b": -0.0,
+      "value_a": -0.4933,
+      "is_pure_a": true,
+      "greedy_move": "Power Slash",
+      "nash_dominant": "Power Slash",
+      "greedy_matches_nash": true
+    },
+    {
+      "class_a": "Warrior",
+      "class_b": "Neutral",
+      "moves_a": [
+        "Power Slash",
+        "Armor Break",
+        "Reckless Charge"
+      ],
+      "moves_b": [
+        "Hybrid Strike",
+        "Focus Shift",
+        "Wild Card"
+      ],
+      "payoff": [
+        [
+          0.6372222222222135,
+          6.289999999999996,
+          1.2024999999999935
+        ],
+        [
+          -6.022777777777783,
+          -0.370000000000001,
+          -5.457500000000003
+        ],
+        [
+          -1.0277777777777821,
+          4.625,
+          -0.46250000000000213
+        ]
+      ],
+      "strategy_a": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "strategy_b": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "entropy_a": -0.0,
+      "entropy_b": -0.0,
+      "value_a": 0.6372,
+      "is_pure_a": true,
+      "greedy_move": "Power Slash",
+      "nash_dominant": "Power Slash",
+      "greedy_matches_nash": true
+    },
+    {
+      "class_a": "Warrior",
+      "class_b": "Sorcerer",
+      "moves_a": [
+        "Power Slash",
+        "Armor Break",
+        "Reckless Charge"
+      ],
+      "moves_b": [
+        "Flame",
+        "Hex",
+        "Voidfire"
+      ],
+      "payoff": [
+        [
+          0.8273291925465855,
+          8.54906832298137,
+          2.757763975155278
+        ],
+        [
+          -7.1012422360248415,
+          0.6204968944099427,
+          -5.170807453416149
+        ],
+        [
+          -1.1548136645962686,
+          6.566925465838516,
+          0.775621118012424
+        ]
+      ],
+      "strategy_a": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "strategy_b": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "entropy_a": -0.0,
+      "entropy_b": -0.0,
+      "value_a": 0.8273,
+      "is_pure_a": true,
+      "greedy_move": "Power Slash",
+      "nash_dominant": "Power Slash",
+      "greedy_matches_nash": true
+    },
+    {
+      "class_a": "Mage",
+      "class_b": "Assassin",
+      "moves_a": [
+        "Arcane Bolt",
+        "Mind Pierce",
+        "Overload"
+      ],
+      "moves_b": [
+        "Quick Strike",
+        "Cripple",
+        "Lethal Edge"
+      ],
+      "payoff": [
+        [
+          -3.2888888888888914,
+          4.111111111111107,
+          -1.3155555555555551
+        ],
+        [
+          -9.866666666666667,
+          -2.4666666666666686,
+          -7.893333333333331
+        ],
+        [
+          -4.93333333333333,
+          2.4666666666666686,
+          -2.9599999999999937
+        ]
+      ],
+      "strategy_a": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "strategy_b": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "entropy_a": -0.0,
+      "entropy_b": -0.0,
+      "value_a": -3.2889,
+      "is_pure_a": true,
+      "greedy_move": "Arcane Bolt",
+      "nash_dominant": "Arcane Bolt",
+      "greedy_matches_nash": true
+    },
+    {
+      "class_a": "Mage",
+      "class_b": "Guardian",
+      "moves_a": [
+        "Arcane Bolt",
+        "Mind Pierce",
+        "Overload"
+      ],
+      "moves_b": [
+        "Shield Bash",
+        "Fortify",
+        "Avalanche"
+      ],
+      "payoff": [
+        [
+          0.2227956989247346,
+          12.620476858345022,
+          0.8147956989247298
+        ],
+        [
+          -5.506236559139783,
+          6.891444600280504,
+          -4.914236559139788
+        ],
+        [
+          -1.2094623655913956,
+          11.188218793828892,
+          -0.6174623655914004
+        ]
+      ],
+      "strategy_a": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "strategy_b": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "entropy_a": -0.0,
+      "entropy_b": -0.0,
+      "value_a": 0.2228,
+      "is_pure_a": true,
+      "greedy_move": "Arcane Bolt",
+      "nash_dominant": "Arcane Bolt",
+      "greedy_matches_nash": true
+    },
+    {
+      "class_a": "Mage",
+      "class_b": "Neutral",
+      "moves_a": [
+        "Arcane Bolt",
+        "Mind Pierce",
+        "Overload"
+      ],
+      "moves_b": [
+        "Hybrid Strike",
+        "Focus Shift",
+        "Wild Card"
+      ],
+      "payoff": [
+        [
+          1.320299145299142,
+          13.234615384615386,
+          1.885576923076922
+        ],
+        [
+          -5.510470085470089,
+          6.403846153846155,
+          -4.945192307692309
+        ],
+        [
+          -0.38739316239316324,
+          11.526923076923081,
+          0.17788461538461675
+        ]
+      ],
+      "strategy_a": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "strategy_b": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "entropy_a": -0.0,
+      "entropy_b": -0.0,
+      "value_a": 1.3203,
+      "is_pure_a": true,
+      "greedy_move": "Arcane Bolt",
+      "nash_dominant": "Arcane Bolt",
+      "greedy_matches_nash": true
+    },
+    {
+      "class_a": "Mage",
+      "class_b": "Sorcerer",
+      "moves_a": [
+        "Arcane Bolt",
+        "Mind Pierce",
+        "Overload"
+      ],
+      "moves_b": [
+        "Flame",
+        "Hex",
+        "Voidfire"
+      ],
+      "payoff": [
+        [
+          4.833870967741934,
+          10.562903225806451,
+          6.266129032258064
+        ],
+        [
+          -2.103629032258066,
+          3.6254032258064512,
+          -0.6713709677419359
+        ],
+        [
+          3.099495967741934,
+          8.828528225806451,
+          4.531754032258064
+        ]
+      ],
+      "strategy_a": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "strategy_b": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "entropy_a": -0.0,
+      "entropy_b": -0.0,
+      "value_a": 4.8339,
+      "is_pure_a": true,
+      "greedy_move": "Arcane Bolt",
+      "nash_dominant": "Arcane Bolt",
+      "greedy_matches_nash": true
+    },
+    {
+      "class_a": "Assassin",
+      "class_b": "Guardian",
+      "moves_a": [
+        "Quick Strike",
+        "Cripple",
+        "Lethal Edge"
+      ],
+      "moves_b": [
+        "Shield Bash",
+        "Fortify",
+        "Avalanche"
+      ],
+      "payoff": [
+        [
+          -1.258850574712639,
+          8.97132486388385,
+          -0.6668505747126439
+        ],
+        [
+          -6.617471264367811,
+          3.6127041742286785,
+          -6.025471264367816
+        ],
+        [
+          -2.6878160919540193,
+          7.5423593466424705,
+          -2.095816091954024
+        ]
+      ],
+      "strategy_a": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "strategy_b": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "entropy_a": -0.0,
+      "entropy_b": -0.0,
+      "value_a": -1.2589,
+      "is_pure_a": true,
+      "greedy_move": "Quick Strike",
+      "nash_dominant": "Quick Strike",
+      "greedy_matches_nash": true
+    },
+    {
+      "class_a": "Assassin",
+      "class_b": "Neutral",
+      "moves_a": [
+        "Quick Strike",
+        "Cripple",
+        "Lethal Edge"
+      ],
+      "moves_b": [
+        "Hybrid Strike",
+        "Focus Shift",
+        "Wild Card"
+      ],
+      "payoff": [
+        [
+          -0.10277777777778141,
+          9.25,
+          0.4624999999999986
+        ],
+        [
+          -6.577777777777783,
+          2.7749999999999986,
+          -6.012500000000003
+        ],
+        [
+          -1.829444444444448,
+          7.523333333333333,
+          -1.264166666666668
+        ]
+      ],
+      "strategy_a": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "strategy_b": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "entropy_a": -0.0,
+      "entropy_b": -0.0,
+      "value_a": -0.1028,
+      "is_pure_a": true,
+      "greedy_move": "Quick Strike",
+      "nash_dominant": "Quick Strike",
+      "greedy_matches_nash": true
+    },
+    {
+      "class_a": "Assassin",
+      "class_b": "Sorcerer",
+      "moves_a": [
+        "Quick Strike",
+        "Cripple",
+        "Lethal Edge"
+      ],
+      "moves_b": [
+        "Flame",
+        "Hex",
+        "Voidfire"
+      ],
+      "payoff": [
+        [
+          4.768888888888885,
+          11.34666666666666,
+          6.413333333333323
+        ],
+        [
+          -3.0011111111111113,
+          3.5766666666666644,
+          -1.3566666666666727
+        ],
+        [
+          2.6968888888888856,
+          9.274666666666661,
+          4.341333333333324
+        ]
+      ],
+      "strategy_a": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "strategy_b": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "entropy_a": -0.0,
+      "entropy_b": -0.0,
+      "value_a": 4.7689,
+      "is_pure_a": true,
+      "greedy_move": "Quick Strike",
+      "nash_dominant": "Quick Strike",
+      "greedy_matches_nash": true
+    },
+    {
+      "class_a": "Guardian",
+      "class_b": "Neutral",
+      "moves_a": [
+        "Shield Bash",
+        "Fortify",
+        "Avalanche"
+      ],
+      "moves_b": [
+        "Hybrid Strike",
+        "Focus Shift",
+        "Wild Card"
+      ],
+      "payoff": [
+        [
+          0.9091880341880341,
+          4.822649572649572,
+          1.300534188034188
+        ],
+        [
+          -4.846367521367522,
+          -0.932905982905984,
+          -4.455021367521368
+        ],
+        [
+          0.4158547008547018,
+          4.32931623931624,
+          0.8072008547008558
+        ]
+      ],
+      "strategy_a": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "strategy_b": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "entropy_a": -0.0,
+      "entropy_b": -0.0,
+      "value_a": 0.9092,
+      "is_pure_a": true,
+      "greedy_move": "Shield Bash",
+      "nash_dominant": "Shield Bash",
+      "greedy_matches_nash": true
+    },
+    {
+      "class_a": "Guardian",
+      "class_b": "Sorcerer",
+      "moves_a": [
+        "Shield Bash",
+        "Fortify",
+        "Avalanche"
+      ],
+      "moves_b": [
+        "Flame",
+        "Hex",
+        "Voidfire"
+      ],
+      "payoff": [
+        [
+          1.398156682027647,
+          7.127188940092164,
+          2.8304147465437772
+        ],
+        [
+          -9.461583577712611,
+          -3.7325513196480937,
+          -8.029325513196481
+        ],
+        [
+          0.7638709677419371,
+          6.4929032258064545,
+          2.1961290322580673
+        ]
+      ],
+      "strategy_a": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "strategy_b": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "entropy_a": -0.0,
+      "entropy_b": -0.0,
+      "value_a": 1.3982,
+      "is_pure_a": true,
+      "greedy_move": "Shield Bash",
+      "nash_dominant": "Shield Bash",
+      "greedy_matches_nash": true
+    },
+    {
+      "class_a": "Neutral",
+      "class_b": "Sorcerer",
+      "moves_a": [
+        "Hybrid Strike",
+        "Focus Shift",
+        "Wild Card"
+      ],
+      "moves_b": [
+        "Flame",
+        "Hex",
+        "Voidfire"
+      ],
+      "payoff": [
+        [
+          0.20927601809954766,
+          7.040045248868779,
+          1.9169683257918528
+        ],
+        [
+          -9.541523525018672,
+          -2.7107542942494405,
+          -7.833831217326367
+        ],
+        [
+          -0.38925339366515743,
+          6.441515837104074,
+          1.3184389140271477
+        ]
+      ],
+      "strategy_a": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "strategy_b": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "entropy_a": -0.0,
+      "entropy_b": -0.0,
+      "value_a": 0.2093,
+      "is_pure_a": true,
+      "greedy_move": "Hybrid Strike",
+      "nash_dominant": "Hybrid Strike",
+      "greedy_matches_nash": true
+    }
+  ],
+  "runtime_seconds": 437.7
+}
