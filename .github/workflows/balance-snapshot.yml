@@ -22,6 +22,9 @@ on:
       sims:
         description: "Simulations per matchup"
         default: "100000"
+      seed:
+        description: "Random seed (fixed, for reproducible results)"
+        default: "42"
 
 permissions:
   contents: write
@@ -38,24 +41,36 @@ jobs:
           cache: pip
 
       - name: Install dependencies
-        run: pip install pyyaml numpy scipy pytest
+        run: pip install -r requirements-dev.txt
 
       - name: Run test suite
         run: python -m pytest -q
 
       - name: Regenerate snapshot
         run: |
+          cp results/recruiter_snapshot.json /tmp/previous.json 2>/dev/null || true
           python tools/generate_snapshot.py \
-            --sims "${{ github.event.inputs.sims || '100000' }}"
+            --sims "${{ github.event.inputs.sims || '100000' }}" \
+            --seed "${{ github.event.inputs.seed || '42' }}"
 
-      - name: Commit if changed
+      - name: Commit if the analysis changed
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          if git diff --quiet -- results/recruiter_snapshot.json; then
-            echo "Snapshot unchanged."
+
+          # generated_at, runtime_seconds and git_commit change on every run,
+          # so compare only the analytical payload. The generator is seeded,
+          # so identical inputs really do produce an identical payload.
+          strip() { jq -S 'del(.generated_at, .runtime_seconds, .git_commit)' "$1"; }
+
+          if [ -f /tmp/previous.json ] && \
+             diff -q <(strip /tmp/previous.json) \
+                     <(strip results/recruiter_snapshot.json) >/dev/null; then
+            echo "Analysis unchanged — discarding metadata-only diff."
+            git checkout -- results/recruiter_snapshot.json
             exit 0
           fi
+
           git add results/recruiter_snapshot.json
           git commit -m "chore: regenerate balance snapshot"
           git push

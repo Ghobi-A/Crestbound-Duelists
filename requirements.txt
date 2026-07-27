@@ -1,17 +1,9 @@
-# Core engine + Balance Lab data layer:
+# Runtime dependencies for the deployed Balance Lab app.
+# Streamlit Community Cloud entrypoint: streamlit_app.py
+# Development/analysis tooling lives in requirements-dev.txt.
+
 pyyaml>=6.0
-
-# Test suite:
-pytest>=7.0
-
-# For the analysis notebook and Nash solver:
-matplotlib>=3.7
-seaborn>=0.12
-pandas>=2.0
 numpy>=1.24
-scipy>=1.10
-jupyter>=1.0
-
-# Balance Lab web app (Streamlit Community Cloud entrypoint: streamlit_app.py):
+pandas>=2.0
 streamlit>=1.40
 plotly>=5.0

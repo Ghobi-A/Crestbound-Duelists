@@ -1,6 +1,7 @@
 {
-  "generated_at": "2026-07-27T11:31:01+00:00",
-  "git_commit": "63ef6e3",
+  "generated_at": "2026-07-27T11:47:22+00:00",
+  "git_commit": "2327e22",
+  "seed": 42,
   "sims_per_matchup": 100000,
   "policy_sims_per_class": 20000,
   "matrix_policy": "greedy",
@@ -15,50 +16,50 @@
   "win_matrix": {
     "Warrior": {
       "Warrior": 50.0,
-      "Mage": 36.0,
+      "Mage": 36.1,
       "Assassin": 91.6,
-      "Guardian": 58.2,
+      "Guardian": 58.3,
       "Neutral": 56.6,
-      "Sorcerer": 24.7
+      "Sorcerer": 24.9
     },
     "Mage": {
-      "Warrior": 64.0,
+      "Warrior": 63.9,
       "Mage": 50.0,
       "Assassin": 0.0,
       "Guardian": 88.3,
-      "Neutral": 27.2,
-      "Sorcerer": 93.9
+      "Neutral": 27.3,
+      "Sorcerer": 93.8
     },
     "Assassin": {
       "Warrior": 8.4,
       "Mage": 100.0,
       "Assassin": 50.0,
       "Guardian": 24.0,
-      "Neutral": 40.1,
-      "Sorcerer": 55.1
+      "Neutral": 40.2,
+      "Sorcerer": 54.9
     },
     "Guardian": {
-      "Warrior": 41.8,
+      "Warrior": 41.7,
       "Mage": 11.7,
       "Assassin": 76.0,
       "Guardian": 50.0,
-      "Neutral": 54.2,
-      "Sorcerer": 60.0
+      "Neutral": 54.3,
+      "Sorcerer": 59.9
     },
     "Neutral": {
       "Warrior": 43.4,
-      "Mage": 72.8,
-      "Assassin": 59.9,
-      "Guardian": 45.8,
+      "Mage": 72.7,
+      "Assassin": 59.8,
+      "Guardian": 45.7,
       "Neutral": 50.0,
-      "Sorcerer": 22.9
+      "Sorcerer": 22.5
     },
     "Sorcerer": {
-      "Warrior": 75.3,
-      "Mage": 6.1,
-      "Assassin": 44.9,
-      "Guardian": 40.0,
-      "Neutral": 77.1,
+      "Warrior": 75.1,
+      "Mage": 6.2,
+      "Assassin": 45.1,
+      "Guardian": 40.1,
+      "Neutral": 77.5,
       "Sorcerer": 50.0
     }
   },
@@ -80,90 +81,90 @@
     "Neutral|Sorcerer": 3.0
   },
   "class_averages": {
-    "Warrior": 53.4,
+    "Warrior": 53.5,
     "Mage": 54.7,
     "Assassin": 45.5,
     "Guardian": 48.7,
-    "Neutral": 49.0,
-    "Sorcerer": 48.7
+    "Neutral": 48.8,
+    "Sorcerer": 48.8
   },
   "policy_comparison": {
     "greedy_vs_random": {
       "Warrior": {
-        "win_rate_a": 76.3,
-        "win_rate_b": 23.7
+        "win_rate_a": 75.7,
+        "win_rate_b": 24.3
       },
       "Mage": {
-        "win_rate_a": 61.0,
-        "win_rate_b": 39.0
+        "win_rate_a": 61.3,
+        "win_rate_b": 38.7
       },
       "Assassin": {
-        "win_rate_a": 56.4,
-        "win_rate_b": 43.6
+        "win_rate_a": 55.3,
+        "win_rate_b": 44.7
       },
       "Guardian": {
-        "win_rate_a": 69.9,
-        "win_rate_b": 30.1
+        "win_rate_a": 69.1,
+        "win_rate_b": 30.9
       },
       "Neutral": {
-        "win_rate_a": 63.4,
-        "win_rate_b": 36.6
+        "win_rate_a": 62.7,
+        "win_rate_b": 37.3
       },
       "Sorcerer": {
-        "win_rate_a": 69.9,
-        "win_rate_b": 30.1
+        "win_rate_a": 69.5,
+        "win_rate_b": 30.5
       }
     },
     "lookahead_vs_random": {
       "Warrior": {
-        "win_rate_a": 37.8,
-        "win_rate_b": 62.2
+        "win_rate_a": 37.6,
+        "win_rate_b": 62.4
       },
       "Mage": {
-        "win_rate_a": 48.3,
-        "win_rate_b": 51.7
+        "win_rate_a": 47.5,
+        "win_rate_b": 52.5
       },
       "Assassin": {
-        "win_rate_a": 59.5,
-        "win_rate_b": 40.5
+        "win_rate_a": 59.2,
+        "win_rate_b": 40.8
       },
       "Guardian": {
-        "win_rate_a": 16.3,
-        "win_rate_b": 83.7
+        "win_rate_a": 15.3,
+        "win_rate_b": 84.7
       },
       "Neutral": {
         "win_rate_a": 63.4,
         "win_rate_b": 36.6
       },
       "Sorcerer": {
-        "win_rate_a": 69.7,
-        "win_rate_b": 30.3
+        "win_rate_a": 69.3,
+        "win_rate_b": 30.7
       }
     },
     "lookahead_vs_greedy": {
       "Warrior": {
-        "win_rate_a": 3.1,
-        "win_rate_b": 96.9
+        "win_rate_a": 3.0,
+        "win_rate_b": 97.0
       },
       "Mage": {
-        "win_rate_a": 33.5,
-        "win_rate_b": 66.5
+        "win_rate_a": 33.1,
+        "win_rate_b": 66.9
       },
       "Assassin": {
-        "win_rate_a": 51.1,
-        "win_rate_b": 48.9
+        "win_rate_a": 51.2,
+        "win_rate_b": 48.8
       },
       "Guardian": {
         "win_rate_a": 0.9,
         "win_rate_b": 99.1
       },
       "Neutral": {
-        "win_rate_a": 50.6,
-        "win_rate_b": 49.4
+        "win_rate_a": 50.2,
+        "win_rate_b": 49.8
       },
       "Sorcerer": {
-        "win_rate_a": 49.3,
-        "win_rate_b": 50.7
+        "win_rate_a": 50.0,
+        "win_rate_b": 50.0
       }
     }
   },
@@ -889,5 +890,5 @@
       "greedy_matches_nash": true
     }
   ],
-  "runtime_seconds": 439.7
+  "runtime_seconds": 437.7
 }

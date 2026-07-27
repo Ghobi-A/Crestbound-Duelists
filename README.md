@@ -5,8 +5,7 @@ tactical RPG.**
 
 ### ▶ [Launch the interactive Balance Lab](https://crestbound-balance-lab.streamlit.app)
 
-*(Play the browser prototype — Godot web build, link to follow)*
-· [Read the technical case study](docs/ARCHITECTURE.md)
+[Read the technical case study](docs/ARCHITECTURE.md)
 · [Browse the source](https://github.com/Ghobi-A/Crestbound-Duelists)
 
 **Technical highlights:** 140 regression tests · YAML-driven game data ·
@@ -59,7 +58,7 @@ no balance values. Details: `docs/ARCHITECTURE.md` and
 ## Running the Python side
 
 ```bash
-pip install -r requirements.txt
+pip install -r requirements-dev.txt   # app + tests + notebook/Nash toolchain
 
 python -m pytest              # 140 regression tests (fast)
 python balance_report.py      # quick balance smell check (~1s)
@@ -72,7 +71,7 @@ python export_game_data.py    # export JSON for the game client
 ## Running the Balance Lab web app
 
 ```bash
-pip install -r requirements.txt
+pip install -r requirements.txt   # lean runtime deps only
 streamlit run streamlit_app.py
 ```
 
@@ -86,9 +85,14 @@ The expensive figures come from a committed snapshot rather than being
 computed per page load:
 
 ```bash
-python tools/generate_snapshot.py              # 100k sims per matchup (~5 min)
+python tools/generate_snapshot.py              # 100k sims per matchup (~7 min)
 python tools/generate_snapshot.py --sims 5000  # quick local refresh
 ```
+
+The generator seeds Python's global `random` (default `--seed 42`), which
+is what the combat engine draws initiative and damage variance from, so
+the committed snapshot is reproducible rather than merely statistically
+similar — re-running it on the same data yields an identical payload.
 
 `.github/workflows/balance-snapshot.yml` reruns that generator whenever
 `data/` or the engine changes and commits the result, so the dashboard
@@ -181,6 +185,8 @@ Crestbound-Duelists/
 ├── loaders.py rpg_models.py export_game_data.py balance_report.py
 ├── streamlit_app.py       # Balance Lab web app (Streamlit entrypoint)
 ├── .streamlit/config.toml # app theme
+├── requirements.txt       # lean runtime deps for the deployed app
+├── requirements-dev.txt   # + pytest, scipy, notebook toolchain
 ├── results/               # committed recruiter_snapshot.json (precomputed)
 ├── tests/                 # pytest regression suite
 ├── exports/               # generated JSON (build artifact, committed)

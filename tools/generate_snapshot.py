@@ -19,6 +19,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import random
 import subprocess
 import sys
 import time
@@ -151,11 +152,21 @@ def main() -> None:
                         help="simulations per class for each policy pairing")
     parser.add_argument("--policy", default="greedy", help="policy used for the matrix")
     parser.add_argument("--output", type=Path, default=OUTPUT_PATH)
+    parser.add_argument(
+        "--seed",
+        type=int,
+        default=42,
+        help="Random seed for reproducible Monte Carlo results",
+    )
     parser.add_argument("--quiet", action="store_true")
     args = parser.parse_args()
 
     verbose = not args.quiet
     start = time.time()
+
+    # The combat engine draws initiative and damage variance from the global
+    # `random` module, so seeding here makes the whole snapshot reproducible.
+    random.seed(args.seed)
 
     if verbose:
         print(f"\nWin matrix — {args.sims:,} sims per matchup ({args.policy}):")
@@ -174,6 +185,7 @@ def main() -> None:
     snapshot = {
         "generated_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "git_commit": _git_commit(),
+        "seed": args.seed,
         "sims_per_matchup": args.sims,
         "policy_sims_per_class": args.policy_sims,
         "matrix_policy": args.policy,

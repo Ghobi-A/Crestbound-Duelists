@@ -165,8 +165,9 @@ tab_duel, tab_matrix, tab_policy, tab_arch = st.tabs(
 with tab_duel:
     st.subheader("Live Duel Simulator")
     st.write(
-        "Runs the real combat engine in this browser session — every battle "
-        "rolls damage variance, accuracy, Brace and Hex from the YAML data."
+        "Runs the real combat engine on demand in the deployed application — "
+        "every battle rolls damage variance, accuracy, Brace and Hex from "
+        "the YAML data."
     )
 
     left, right = st.columns(2)
@@ -421,18 +422,53 @@ with tab_policy:
             "wins more than half its mirror matches against the second."
         )
 
+        # Derive the headline figures from the snapshot so the prose can
+        # never drift from the committed numbers.
+        vs_greedy = comparison.get("lookahead_vs_greedy", {})
+        worst = sorted(
+            ((c, d["win_rate_a"]) for c, d in vs_greedy.items()),
+            key=lambda kv: kv[1],
+        )[:2]
+        worst_text = " and ".join(f"{v:.1f}% ({c})" for c, v in worst)
+
+        vs_random = comparison.get("lookahead_vs_random", {})
+        also_loses_to_random = [
+            c for c, _ in worst
+            if vs_random.get(c, {}).get("win_rate_a", 100) < 50
+        ]
+        random_clause = (
+            f", and loses to `random` in "
+            + (
+                "those same two classes"
+                if len(also_loses_to_random) == len(worst)
+                else " and ".join(also_loses_to_random)
+            )
+            if also_loses_to_random
+            else ""
+        )
+        median_turns = (
+            sorted(snapshot["avg_turns"].values())[len(snapshot["avg_turns"]) // 2]
+            if snapshot.get("avg_turns")
+            else 3
+        )
+
         st.info(
-            "**The deeper policy is the weaker one.** `lookahead` loses to "
-            "`greedy` in every class it does not tie, and drops to 3.1% "
-            "(Warrior) and 0.9% (Guardian). It even loses to `random` in "
-            "those two classes.\n\n"
-            "This is a real result, not a bug. `lookahead` spends turns on "
-            "buffs, debuffs and Hex that its heuristic overvalues, while "
-            "battles here resolve in about three turns — far too fast for "
-            "tempo investments to pay off. Depth of search does not help "
-            "when the horizon is shorter than the payback period, and the "
-            "effect is worst for the classes whose kits offer the most "
-            "utility moves to be tempted by."
+            "**Diagnostic finding: the deeper policy is systematically "
+            "miscalibrated for the current combat horizon.** `lookahead` "
+            "loses to `greedy` in every class it does not tie, falling to "
+            f"{worst_text}{random_clause}.\n\n"
+            "The one-step lookahead heuristic overvalues buffs, debuffs and "
+            f"Hex in battles that typically resolve in approximately "
+            f"{median_turns:.0f} turns. Its search depth therefore adds "
+            "computation without "
+            "improving decisions, because its evaluation function assigns "
+            "value to effects whose payback period exceeds the remaining "
+            "horizon. The failure is concentrated in the classes whose kits "
+            "offer the most utility moves for that evaluation function to "
+            "overweight.\n\n"
+            "The actionable fix is in the evaluation function, not the "
+            "search: discount stat modifiers and status effects by the "
+            "expected number of turns left in which they can still pay off."
         )
 
         with st.expander("Policy comparison as a table"):
@@ -564,5 +600,7 @@ Godot client                game/ — 320x180 pixel-art RPG, gl_compatibility
         st.caption(
             f"Snapshot generated {snapshot['generated_at']} "
             f"(commit `{snapshot.get('git_commit') or 'unknown'}`) in "
-            f"{snapshot['runtime_seconds']}s."
+            f"{snapshot['runtime_seconds']}s with seed "
+            f"`{snapshot.get('seed', 'unset')}` — re-running the generator "
+            f"on the same data reproduces these figures exactly."
         )
