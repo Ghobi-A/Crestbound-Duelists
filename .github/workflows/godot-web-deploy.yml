@@ -23,7 +23,11 @@ concurrency:
   cancel-in-progress: false
 
 env:
+  # GitHub release tags/assets use a hyphen, while Godot's export-template
+  # directory uses a dot (4.3.stable). Keep both explicit to avoid installing
+  # valid templates into a directory the editor never checks.
   GODOT_VERSION: "4.3-stable"
+  GODOT_TEMPLATE_VERSION: "4.3.stable"
 
 jobs:
   export:
@@ -37,26 +41,38 @@ jobs:
         with:
           path: |
             ~/godot/Godot
-            ~/.local/share/godot/export_templates/${{ env.GODOT_VERSION }}
-          key: godot-${{ env.GODOT_VERSION }}
+            ~/.local/share/godot/export_templates/${{ env.GODOT_TEMPLATE_VERSION }}
+          # v2 invalidates the previous cache, which stored templates under
+          # the incorrect 4.3-stable directory.
+          key: godot-${{ env.GODOT_VERSION }}-${{ env.GODOT_TEMPLATE_VERSION }}-v2
 
-      - name: Download Godot editor and export templates
-        if: steps.godot-cache.outputs.cache-hit != 'true'
+      - name: Install Godot editor and export templates
         run: |
           set -euo pipefail
-          mkdir -p ~/godot
-          curl -sSL -o /tmp/godot.zip \
-            "https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}/Godot_v${GODOT_VERSION}_linux.x86_64.zip"
-          unzip -q /tmp/godot.zip -d ~/godot
-          mv ~/godot/Godot_v${GODOT_VERSION}_linux.x86_64 ~/godot/Godot
-          chmod +x ~/godot/Godot
 
-          mkdir -p ~/.local/share/godot/export_templates/${GODOT_VERSION}
-          curl -sSL -o /tmp/templates.tpz \
-            "https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}/Godot_v${GODOT_VERSION}_export_templates.tpz"
-          unzip -q /tmp/templates.tpz -d /tmp/templates
-          cp -r /tmp/templates/templates/* ~/.local/share/godot/export_templates/${GODOT_VERSION}/
-          rm -rf /tmp/godot.zip /tmp/templates.tpz /tmp/templates
+          mkdir -p ~/godot
+          if [[ ! -x ~/godot/Godot ]]; then
+            curl -fsSL -o /tmp/godot.zip \
+              "https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}/Godot_v${GODOT_VERSION}_linux.x86_64.zip"
+            unzip -q /tmp/godot.zip -d ~/godot
+            mv ~/godot/Godot_v${GODOT_VERSION}_linux.x86_64 ~/godot/Godot
+            chmod +x ~/godot/Godot
+            rm -f /tmp/godot.zip
+          fi
+
+          TEMPLATE_DIR="$HOME/.local/share/godot/export_templates/${GODOT_TEMPLATE_VERSION}"
+          mkdir -p "$TEMPLATE_DIR"
+          if [[ ! -f "$TEMPLATE_DIR/web_release.zip" ]]; then
+            rm -rf /tmp/godot-templates
+            curl -fsSL -o /tmp/templates.tpz \
+              "https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}/Godot_v${GODOT_VERSION}_export_templates.tpz"
+            unzip -q /tmp/templates.tpz -d /tmp/godot-templates
+            cp -r /tmp/godot-templates/templates/. "$TEMPLATE_DIR/"
+            rm -rf /tmp/templates.tpz /tmp/godot-templates
+          fi
+
+          ~/godot/Godot --headless --version
+          test -f "$TEMPLATE_DIR/web_release.zip"
 
       - name: Import project
         run: ~/godot/Godot --headless --path game --import
