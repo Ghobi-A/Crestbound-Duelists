@@ -3,7 +3,7 @@ Crestbound Duelists — Original Pixel Art Generator
 ====================================================
 Authors every prototype sprite as hand-placed pixel clusters via a
 small parametric chibi framework: compact late-16-bit-style Duelists
-(24x32 battle frames, 16x24 overworld frames), spectral Bonded Entity
+(24x32 battle frames; overworld frames in overworld_sprites.py), spectral Bonded Entity
 manifestations, and the Hollow Court battle background.
 
 All designs are original to Crestbound Duelists. Run:
@@ -12,7 +12,7 @@ All designs are original to Crestbound Duelists. Run:
 
 Outputs (committed as build artifacts, regenerable):
     game/assets/characters/<who>[/<class>]/battle.png   11-frame strip
-    game/assets/characters/<who>[/<class>]/overworld.png 2-frame strip
+    game/assets/characters/<who>[/<class>]/overworld.png 12-frame walk
     game/assets/enemies/<id>/battle.png
     game/assets/entities/<id>/idle.png                   2-frame strip
     game/assets/battle/backgrounds/hollow_court.png
@@ -27,20 +27,19 @@ from pathlib import Path
 
 from PIL import Image
 
+import overworld_sprites as ow
+from px_canvas import OUTLINE, Px, c, shade
+
 ROOT = Path(__file__).resolve().parent.parent
 ASSETS = ROOT / "game" / "assets"
 
 FRAME_W, FRAME_H = 24, 32
-OW_W, OW_H = 20, 28
-GROUND_Y = 24  # the row a character's boots rest on within a frame
 
-# Overworld walk sheet layout: three drawn directions, four frames each.
-# West reuses the side frames mirrored, which is why it is absent here.
-OW_DIRECTIONS = ("down", "up", "side")
-OW_WALK_FRAMES = 4
-# Frame pixel that lands on the sprite node's origin, so callers position
-# characters by their feet instead of guessing an offset.
-OW_ANCHOR = (OW_W // 2, GROUND_Y - 2)
+# Overworld walking sprites live in their own module — see
+# tools/overworld_sprites.py for the per-class silhouette builds.
+
+SKIN = c("e8c8a0")
+SKIN_SHADOW = c("c79c72")
 
 # Frame strip layout shared by every battle sheet.
 BATTLE_STATES = {
@@ -52,54 +51,6 @@ BATTLE_STATES = {
     "awaken": {"start": 9, "count": 2, "fps": 5, "loop": True},
 }
 FRAME_COUNT = 11
-
-OUTLINE = (20, 20, 31, 255)
-SKIN = (232, 200, 160, 255)
-SKIN_SHADOW = (199, 156, 114, 255)
-
-
-def c(hexcode: str, alpha: int = 255) -> tuple:
-    hexcode = hexcode.lstrip("#")
-    return (int(hexcode[0:2], 16), int(hexcode[2:4], 16), int(hexcode[4:6], 16), alpha)
-
-
-class Px:
-    """Tiny pixel canvas helper around a PIL RGBA image."""
-
-    def __init__(self, width: int, height: int):
-        self.img = Image.new("RGBA", (width, height), (0, 0, 0, 0))
-        self.w, self.h = width, height
-
-    def dot(self, x: int, y: int, color: tuple):
-        if 0 <= x < self.w and 0 <= y < self.h:
-            self.img.putpixel((int(x), int(y)), color)
-
-    def rect(self, x: int, y: int, w: int, h: int, color: tuple):
-        for yy in range(y, y + h):
-            for xx in range(x, x + w):
-                self.dot(xx, yy, color)
-
-    def hline(self, x: int, y: int, w: int, color: tuple):
-        self.rect(x, y, w, 1, color)
-
-    def vline(self, x: int, y: int, h: int, color: tuple):
-        self.rect(x, y, 1, h, color)
-
-    def outline_solid(self):
-        """Draw a 1px dark outline around every opaque cluster."""
-        src = self.img.load()
-        edges = []
-        for y in range(self.h):
-            for x in range(self.w):
-                if src[x, y][3] == 0:
-                    for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)):
-                        nx, ny = x + dx, y + dy
-                        if 0 <= nx < self.w and 0 <= ny < self.h and src[nx, ny][3] > 200:
-                            edges.append((x, y))
-                            break
-        for x, y in edges:
-            src[x, y] = OUTLINE
-
 
 # ── Character specs ──────────────────────────────────────────────────
 # Every entry is an original Crestbound design. `build` controls
@@ -165,10 +116,6 @@ POSES = [
 ]
 
 
-def shade(color: tuple, factor: float) -> tuple:
-    return (max(0, min(255, int(color[0] * factor))),
-            max(0, min(255, int(color[1] * factor))),
-            max(0, min(255, int(color[2] * factor))), color[3])
 
 
 def draw_duelist(spec: dict, pose: dict) -> Image.Image:
@@ -377,223 +324,6 @@ def _draw_collapsed(p: Px, spec: dict) -> Image.Image:
 
 # ── Overworld sprites (16x24, 2-frame bob) ───────────────────────────
 
-def draw_overworld(spec: dict, direction: str, frame: int) -> Image.Image:
-    """One 20x28 overworld frame.
-
-    Roughly three heads tall, which is enough room for a readable
-    silhouette — hood versus bun versus ponytail, robe versus legs,
-    shield on the back — at the 16px tile scale the town is built from.
-
-    `direction` is "down", "up" or "side"; the renderer mirrors "side"
-    for westward movement. `frame` runs a four-step walk cycle where 0
-    and 2 are the neutral stance, so a standing character can simply
-    hold frame 0.
-    """
-    p = Px(OW_W, OW_H)
-    ground = GROUND_Y
-    top, top2, skin = spec["top"], spec["top2"], spec["skin"]
-    legs_c = spec["legs"]
-    robe = spec["build"] == "robe"
-    slim = spec["build"] == "slim"
-    bulky = spec["build"] == "bulky"
-
-    # Stride: frames 1 and 3 are the contact poses of the walk cycle.
-    stride = (0, 1, 0, -1)[frame % 4]
-    bob = 1 if frame % 2 else 0
-
-    half = 5 if bulky else (3 if slim else 4)
-    torso_top = ground - 14 + bob
-    head_top = ground - 22 + bob
-
-    _ow_legs(p, spec, direction, stride, ground, robe, half, legs_c, top)
-    _ow_torso(p, spec, direction, torso_top, half, top, top2, bulky)
-    _ow_arms(p, spec, direction, torso_top, half, stride, top, skin)
-    _ow_head(p, spec, direction, head_top, skin)
-    _ow_gear(p, spec, direction, torso_top, half, stride)
-
-    p.outline_solid()
-    _ow_shadow(p, ground)
-    return p.img
-
-
-def _ow_legs(p, spec, direction, stride, ground, robe, half, legs_c, top):
-    if robe:
-        # A hem sways instead of stepping; the stride shifts the flare.
-        for i, yy in enumerate(range(ground - 8, ground + 1)):
-            width = half * 2 - 2 + i // 2
-            x = OW_W // 2 - width // 2 + (stride if i > 5 else 0)
-            p.rect(x, yy, width, 1, top if i % 2 == 0 else shade(top, 0.82))
-        p.hline(OW_W // 2 - 3 + stride, ground, 6, shade(top, 0.6))
-        return
-    boot = c("2e2620")
-    if direction == "side":
-        front, back = 9 + stride, 9 - stride
-        p.rect(front, ground - 7, 3, 6, legs_c)
-        p.rect(back, ground - 7, 3, 6, shade(legs_c, 0.75))
-        p.rect(front, ground - 1, 4, 2, boot)
-        p.rect(back - 1, ground - 1, 4, 2, shade(boot, 0.8))
-    else:
-        left = OW_W // 2 - half + 1
-        right = OW_W // 2 + half - 3
-        p.rect(left, ground - 7, 3, 6 + stride, legs_c)
-        p.rect(right, ground - 7, 3, 6 - stride, legs_c)
-        p.rect(left, ground - 1 + stride, 3, 2, boot)
-        p.rect(right, ground - 1 - stride, 3, 2, boot)
-
-
-def _ow_torso(p, spec, direction, torso_top, half, top, top2, bulky):
-    width = half * 2
-    x = OW_W // 2 - half
-    p.rect(x, torso_top, width, 8, top)
-    p.vline(x, torso_top, 8, shade(top, 0.78))
-    p.vline(x + width - 1, torso_top, 8, shade(top, 0.78))
-    if direction == "down":
-        # Tabard/trim reads as the character's colour signature.
-        p.rect(OW_W // 2 - 1, torso_top + 1, 2, 6, top2)
-    elif direction == "up":
-        p.rect(x + 1, torso_top + 1, width - 2, 2, shade(top, 0.88))
-    else:
-        p.rect(x + 1, torso_top + 1, 2, 6, top2)
-    if spec.get("pauldrons"):
-        p.rect(x - 1, torso_top, 3, 3, shade(top2, 1.05))
-        p.rect(x + width - 2, torso_top, 3, 3, shade(top2, 1.05))
-    if bulky:
-        p.hline(x, torso_top + 4, width, shade(top, 0.7))
-
-
-def _ow_arms(p, spec, direction, torso_top, half, stride, top, skin):
-    x = OW_W // 2 - half
-    width = half * 2
-    sleeve = shade(top, 0.9)
-    if direction == "side":
-        # Arms swing opposite the legs.
-        p.rect(x + width - 3, torso_top + 2 - stride, 3, 5, sleeve)
-        p.dot(x + width - 2, torso_top + 7 - stride, skin)
-    else:
-        p.rect(x - 1, torso_top + 2 + stride, 2, 5, sleeve)
-        p.rect(x + width - 1, torso_top + 2 - stride, 2, 5, sleeve)
-        p.dot(x - 1, torso_top + 7 + stride, skin)
-        p.dot(x + width, torso_top + 7 - stride, skin)
-
-
-def _ow_head(p, spec, direction, head_top, skin):
-    hair_c = spec["hair_color"]
-    style = spec["hair"]
-    hooded = style in ("hood", "horns")
-    cx = OW_W // 2
-    if direction == "side":
-        # Profile: the skull sits back, the face reads as a narrower mass
-        # with hair filling the rear half and a brow/nose break in front.
-        p.rect(cx - 3, head_top, 7, 8, skin)
-        p.vline(cx - 3, head_top, 8, shade(skin, 0.85))
-        p.rect(cx - 3, head_top + 1, 4, 6, hair_c)
-        p.dot(cx + 1, head_top + 4, spec["eyes"])
-        p.dot(cx + 4, head_top + 4, skin)          # nose
-        p.dot(cx + 4, head_top + 5, shade(skin, 0.85))
-        p.dot(cx + 3, head_top + 7, shade(skin, 0.9))  # chin
-    else:
-        p.rect(cx - 4, head_top, 8, 8, skin)
-        p.vline(cx - 4, head_top, 8, shade(skin, 0.85))
-        if direction == "up":
-            # Back of the head: all hair, no face.
-            p.rect(cx - 4, head_top, 8, 7, hair_c)
-        else:
-            p.dot(cx - 2, head_top + 4, spec["eyes"])
-            p.dot(cx + 1, head_top + 4, spec["eyes"])
-
-    if direction != "up":
-        _ow_hair(p, style, hair_c, head_top, direction)
-    else:
-        _ow_hair_back(p, style, hair_c, head_top)
-    if hooded and direction != "up":
-        p.rect(OW_W // 2 - 5, head_top + 1, 2, 6, shade(hair_c, 0.8))
-        p.rect(OW_W // 2 + 3, head_top + 1, 2, 6, shade(hair_c, 0.8))
-
-
-def _ow_hair(p, style, hair_c, head_top, direction):
-    cx = OW_W // 2
-    p.rect(cx - 4, head_top - 1, 8, 3, hair_c)
-    if style == "hood":
-        p.rect(cx - 5, head_top - 2, 10, 4, hair_c)
-        p.rect(cx - 5, head_top + 1, 1, 5, shade(hair_c, 0.85))
-        p.rect(cx + 4, head_top + 1, 1, 5, shade(hair_c, 0.85))
-    elif style == "bun":
-        p.rect(cx - 2, head_top - 4, 4, 3, hair_c)
-        p.dot(cx - 3, head_top - 3, shade(hair_c, 1.1))
-    elif style == "ponytail":
-        tail_x = cx + 4 if direction == "side" else cx + 4
-        p.rect(tail_x, head_top, 2, 7, hair_c)
-        p.dot(tail_x + 1, head_top + 7, shade(hair_c, 0.85))
-    elif style == "horns":
-        p.dot(cx - 5, head_top - 2, c("d8d0c0"))
-        p.dot(cx + 4, head_top - 2, c("d8d0c0"))
-        p.dot(cx - 5, head_top - 3, c("d8d0c0"))
-        p.dot(cx + 4, head_top - 3, c("d8d0c0"))
-    elif style == "bandana":
-        p.rect(cx - 4, head_top, 8, 2, shade(hair_c, 1.3))
-    else:  # messy
-        p.dot(cx - 4, head_top - 2, hair_c)
-        p.dot(cx + 1, head_top - 2, hair_c)
-        p.dot(cx + 3, head_top - 1, hair_c)
-
-
-def _ow_hair_back(p, style, hair_c, head_top):
-    cx = OW_W // 2
-    p.rect(cx - 4, head_top - 1, 8, 3, hair_c)
-    if style == "bun":
-        p.rect(cx - 2, head_top - 4, 4, 3, hair_c)
-        p.rect(cx - 2, head_top + 1, 4, 3, shade(hair_c, 0.85))
-    elif style == "ponytail":
-        p.rect(cx - 1, head_top + 2, 2, 8, hair_c)
-    elif style == "hood":
-        p.rect(cx - 5, head_top - 2, 10, 9, hair_c)
-
-
-def _ow_gear(p, spec, direction, torso_top, half, stride):
-    """Weapons and packs — the props that make a silhouette identifiable."""
-    x = OW_W // 2 - half
-    width = half * 2
-    weapon = spec.get("weapon", "")
-
-    if spec.get("shield"):
-        if direction == "up":
-            p.rect(x + 1, torso_top + 1, width - 2, 6, c("8a94a6"))
-            p.rect(x + 2, torso_top + 2, width - 4, 4, c("6a7486"))
-            p.dot(OW_W // 2, torso_top + 3, c("d8d8e0"))
-        elif direction == "side":
-            p.rect(x - 1, torso_top + 2, 2, 5, c("8a94a6"))
-    if spec.get("scarf"):
-        p.rect(x, torso_top - 1, width, 2, spec["scarf"])
-        p.rect(x - 1, torso_top + 1 - stride, 2, 3, shade(spec["scarf"], 0.85))
-    if spec.get("satchel"):
-        side = x + width - 1 if direction != "side" else x + width - 2
-        p.rect(side, torso_top + 5, 3, 4, c("6a4a30"))
-        p.hline(side, torso_top + 5, 3, c("8a6a48"))
-
-    if weapon in ("staff", "tome") and direction != "up":
-        if weapon == "staff":
-            rod = x - 2 if direction != "side" else x + width
-            p.vline(rod, torso_top - 4, 16, c("6a4a30"))
-            p.dot(rod, torso_top - 5, c("e0a83a"))
-            p.dot(rod, torso_top - 6, c("ffd977"))
-    elif weapon in ("sword", "dagger", "axe", "mace") and direction != "up":
-        # Sheathed at the hip: a short angled shape, not a drawn blade.
-        hip = x + width - 1 if direction != "side" else x + 1
-        length = 4 if weapon == "dagger" else 6
-        p.vline(hip, torso_top + 6, length, c("7a7a88"))
-        p.dot(hip, torso_top + 5, c("caa24a"))
-
-
-def _ow_shadow(p, ground):
-    """Contact shadow, drawn last and only into empty pixels so it never
-    eats the outline. Fixed height, so it does not bob with the walk."""
-    rows = ((ground + 1, 6, 60), (ground + 2, 4, 40))
-    for y, inset, alpha in rows:
-        for x in range(inset, OW_W - inset):
-            if 0 <= y < OW_H and p.img.getpixel((x, y))[3] == 0:
-                p.dot(x, y, (10, 10, 20, alpha))
-
-
 # ── Bonded Entity manifestations (32x32, 2 frames, translucent) ──────
 
 def draw_entity(entity_id: str, frame: int) -> Image.Image:
@@ -733,22 +463,15 @@ def save_battle_sheet(spec: dict, out_path: Path):
     sheet.save(out_path)
 
 
-def save_overworld_sheet(spec: dict, out_path: Path):
+def save_overworld_sheet(key: str, out_path: Path):
     """One row of frames: down x4, up x4, side x4."""
-    columns = len(OW_DIRECTIONS) * OW_WALK_FRAMES
-    sheet = Image.new("RGBA", (OW_W * columns, OW_H), (0, 0, 0, 0))
-    for d, direction in enumerate(OW_DIRECTIONS):
-        for frame in range(OW_WALK_FRAMES):
-            index = d * OW_WALK_FRAMES + frame
-            sheet.paste(draw_overworld(spec, direction, frame), (index * OW_W, 0))
-    out_path.parent.mkdir(parents=True, exist_ok=True)
-    sheet.save(out_path)
+    ow.save_sheet(key, out_path)
 
 
 def main():
     for key, spec in CHARACTERS.items():
         save_battle_sheet(spec, ASSETS / "characters" / key / "battle.png")
-        save_overworld_sheet(spec, ASSETS / "characters" / key / "overworld.png")
+        save_overworld_sheet(key, ASSETS / "characters" / key / "overworld.png")
     for key, spec in ENEMIES.items():
         save_battle_sheet(spec, ASSETS / "enemies" / key / "battle.png")
 
@@ -769,19 +492,7 @@ def main():
         "frame_height": FRAME_H,
         "frame_count": FRAME_COUNT,
         "states": BATTLE_STATES,
-        "overworld": {
-            "frame_width": OW_W,
-            "frame_height": OW_H,
-            "walk_frames": OW_WALK_FRAMES,
-            # Starting column of each direction's four-frame run. "west"
-            # is "side" mirrored horizontally.
-            "directions": {
-                name: index * OW_WALK_FRAMES for index, name in enumerate(OW_DIRECTIONS)
-            },
-            "mirror_side_for_west": True,
-            "anchor": list(OW_ANCHOR),
-            "frames": len(OW_DIRECTIONS) * OW_WALK_FRAMES,
-        },
+        "overworld": ow.manifest_section(),
     }
     (ASSETS / "battle" / "sheet_manifest.json").write_text(
         json.dumps(manifest, indent=2) + "\n", encoding="utf-8"

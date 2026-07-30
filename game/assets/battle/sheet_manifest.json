@@ -41,8 +41,8 @@
     }
   },
   "overworld": {
-    "frame_width": 20,
-    "frame_height": 28,
+    "frame_width": 24,
+    "frame_height": 32,
     "walk_frames": 4,
     "directions": {
       "down": 0,
@@ -51,8 +51,8 @@
     },
     "mirror_side_for_west": true,
     "anchor": [
-      10,
-      22
+      12,
+      26
     ],
     "frames": 12
   }
