@@ -190,9 +190,25 @@ func _emit_done(state: String) -> void:
 	animation_finished.emit(state)
 
 
+func _draw_contact_shadow() -> void:
+	## Grounds every unit on the arena floor. Sized from the manifest's
+	## frame width rather than a fixed constant, so a future sprite-size
+	## migration (Phase 3B) does not require touching this.
+	var frame_w := float(_manifest.get("frame_width", 24))
+	var half_w := frame_w * 0.4
+	var half_h := frame_w * 0.16
+	var feet_y := 6.0  # roughly where the sprite's feet sit below home_position
+	var points := PackedVector2Array()
+	for i in 16:
+		var angle := TAU * float(i) / 16.0
+		points.append(Vector2(cos(angle) * half_w, feet_y + sin(angle) * half_h))
+	draw_colored_polygon(points, Color(0.04, 0.04, 0.08, 0.4))
+
+
 func _draw() -> void:
 	if unit == null:
 		return
+	_draw_contact_shadow()
 	if not _has_sheet:
 		# Original placeholder chip for builds without generated art.
 		var body := PlaceholderPalette.class_color(unit.class_id)

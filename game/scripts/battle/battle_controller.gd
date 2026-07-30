@@ -12,6 +12,20 @@ extends Node2D
 const OVERWORLD_SCENE := "res://scenes/overworld/greymere.tscn"
 const BOOT_SCENE := "res://scenes/boot/boot.tscn"
 const COURT_RETURN_TILE := Vector2i(11, 2)
+
+## Background height must match where the HUD's opaque bottom panel
+## starts (battle_hud.gd) or a seam shows between the floor and the
+## panel. tools/generate_sprites.py generates backgrounds at this size.
+const BACKGROUND_HEIGHT := 122
+
+## Formation staging. Two clear halves rather than a shared diagonal, so
+## the sides read as opposing at a glance; front/back use one shared
+## depth convention for both teams — front is always closer to the
+## camera (larger Y) — so the read is consistent instead of mirrored.
+const PLAYER_CENTER_X := 88.0
+const ENEMY_CENTER_X := 232.0
+const FRONT_Y := 92.0
+const BACK_Y := 68.0
 const ONBOARDING_FLAG := "battle_onboarding_seen"
 const ONBOARDING_TITLE := "BATTLE BASICS"
 const ONBOARDING_BODY := "Choose each Duelist's action and target.\nBrace acts first and reduces incoming damage.\nBuild Resonance to awaken your Crest."
@@ -87,7 +101,7 @@ func _stage_background() -> void:
 	else:
 		var fallback := ColorRect.new()
 		fallback.color = PlaceholderPalette.BG_DARK
-		fallback.size = Vector2(320, 122)
+		fallback.size = Vector2(320, BACKGROUND_HEIGHT)
 		stage.add_child(fallback)
 
 
@@ -95,7 +109,12 @@ func _stage_units() -> void:
 	for unit in runtime.all_units():
 		var sprite := DuelistSprite.new()
 		stage.add_child(sprite)
-		sprite.configure(unit, stage_position(unit))
+		var home := stage_position(unit)
+		sprite.configure(unit, home)
+		# Back-row units must draw behind front-row units regardless of
+		# team or add order, so the depth the Y position implies is
+		# never contradicted by draw order.
+		sprite.z_index = int(home.y)
 		sprites[unit] = sprite
 
 
@@ -107,20 +126,23 @@ func _shake(strength: float = 2.0) -> void:
 
 
 func stage_position(unit: BattleUnit) -> Vector2:
-	## Dynamic staging: enemies upper-right, players lower-left in a
-	## classic diagonal, spread by party width, with front/back rows
-	## offset toward or away from the opposing side.
+	## Dynamic staging: players occupy the left half, enemies the right,
+	## so the two sides read as opposing formations at a glance. Front
+	## and back rows use one shared depth convention for both teams —
+	## front is always closer to the camera — rather than a convention
+	## that reversed between sides. Back rows draw slightly narrower
+	## than front rows, a shallow wedge that reinforces "protected" depth
+	## without any grid or movement implication.
 	var team_units: Array = runtime.player_units if unit.team == "player" else runtime.enemy_units
 	var count := team_units.size()
-	var spread := 64.0 if count < 3 else 56.0
-	var x := 160.0 + (unit.slot_index - (count - 1) / 2.0) * spread
-	var y: float
-	if unit.team == "enemy":
-		x += 26.0
-		y = 64.0 if unit.position == "front" else 48.0
-	else:
-		x -= 18.0
-		y = 88.0 if unit.position == "front" else 100.0
+	var center_x := PLAYER_CENTER_X if unit.team == "player" else ENEMY_CENTER_X
+	var is_front := unit.position == "front"
+
+	var spread := 46.0 if count < 3 else 40.0
+	if not is_front:
+		spread *= 0.7
+	var x := center_x + (unit.slot_index - (count - 1) / 2.0) * spread
+	var y := FRONT_Y if is_front else BACK_Y
 	return Vector2(x, y)
 
 

@@ -398,59 +398,228 @@ def draw_entity(entity_id: str, frame: int) -> Image.Image:
 
 # ── Hollow Court battle background (320x112) ─────────────────────────
 
+BATTLE_BG_W, BATTLE_BG_H = 320, 122
+## 122, not 112: the battle HUD's opaque bottom panel starts at y=122
+## (battle_hud.gd), so the background must reach exactly that line or a
+## dark seam shows between the floor and the panel.
+
+
 def draw_background() -> Image.Image:
+    """The Hollow Court: a sealed Crest site beneath Greymere.
+
+    Three depth layers, far to near, so the arena reads as an authored
+    place rather than flat colour bands:
+      far    (0-34)   void sky and a suspended dead-god fragment
+      mid    (34-58)  broken colonnade and the sealed Crest seat — the
+                       one focal point the whole composition points to
+      near   (58-122) the dueling floor itself, where both parties stand
+
+    Moonlight falls from the upper left, matching Greymere's night
+    lighting, so the two locations read as the same world.
+    """
     rng = random.Random(41)
-    W, H = 320, 112
+    W, H = BATTLE_BG_W, BATTLE_BG_H
     p = Px(W, H)
-    sky = c("14121e")
-    wall = c("2a2836")
-    wall_dark = c("221f2c")
-    floor = c("3a3644")
-    floor_dark = c("322e3c")
-    accent = c("6a4a9a")
 
-    p.rect(0, 0, W, 30, sky)                       # upper dark
-    for i in range(50):                            # dust motes
-        p.dot(rng.randrange(W), rng.randrange(28), c("3a3450"))
+    void = c("0a0812")
+    void_glow = c("221c38")
+    wall = c("3a3448")
+    wall_lit = c("4c4460")
+    wall_dark = c("221e30")
+    floor = c("4a4258")
+    floor_lit = c("5c5270")
+    floor_dark = c("332c40")
+    violet = c("6a4a9a")
+    violet_bright = c("9b74d6")
+    spectral_white = c("d9c4ff")
+    gold = c("caa24a")
 
-    p.rect(0, 30, W, 22, wall)                     # far wall
-    for arch_x in range(20, W, 60):                # broken arches
-        p.rect(arch_x, 33, 18, 19, wall_dark)
-        p.rect(arch_x + 2, 36, 14, 16, sky)
-        if rng.random() < 0.5:
-            p.rect(arch_x + 2, 33, 14, rng.randrange(2, 7), wall_dark)
-    p.hline(0, 30, W, shade(wall, 1.2))
-
-    # Broken pillars standing at the floor line.
-    for px_x, ph in ((36, 16), (120, 11), (204, 17), (282, 13)):
-        p.rect(px_x, 52 - ph, 10, ph, wall_dark)
-        p.rect(px_x + 1, 52 - ph, 3, ph, shade(wall_dark, 1.25))
-        p.hline(px_x - 1, 52 - ph, 12, shade(wall_dark, 1.35))
-
-    # Floor (large — both parties stand here).
-    p.rect(0, 52, W, H - 52, floor)
-    for yy in range(52, H, 4):                     # stone courses
-        for xx in range((yy // 4) % 2 * 8, W, 16):
-            p.dot(xx, yy, floor_dark)
-    for i in range(46):                            # rubble
-        x, y = rng.randrange(W), rng.randrange(54, H)
-        p.rect(x, y, rng.randrange(1, 3), 1, floor_dark)
-
-    # Central dueling ring + dormant crest node.
-    cx, cy = 160, 78
-    for t in range(360):
-        import math
-        x = int(cx + 52 * math.cos(math.radians(t)))
-        y = int(cy + 16 * math.sin(math.radians(t)))
-        if t % 3 == 0:
-            p.dot(x, y, c("4a4458"))
-    p.rect(cx - 4, cy - 3, 8, 5, wall_dark)        # node base
-    p.rect(cx - 2, cy - 6, 4, 4, accent)           # dormant crest node
-    p.dot(cx - 1, cy - 5, c("9a7ad8"))
-    for dx, dy in ((-8, -2), (7, -4), (-3, 4), (9, 2)):
-        p.dot(cx + dx, cy + dy, c("5a4a7a"))
+    _bg_far(p, rng, W, void, void_glow, violet, violet_bright)
+    _bg_mid(p, rng, W, wall, wall_lit, wall_dark, violet, violet_bright, spectral_white, gold)
+    _bg_floor(p, rng, W, H, floor, floor_lit, floor_dark, violet)
+    _bg_moonlight(p, W, H)
 
     return p.img
+
+
+def _bg_far(p, rng, W, void, void_glow, violet, violet_bright):
+    """The void beyond the broken roof, and Eidros's suspended fragment."""
+    p.rect(0, 0, W, 34, void)
+    for _ in range(60):
+        x, y = rng.randrange(W), rng.randrange(30)
+        p.dot(x, y, void_glow if rng.random() < 0.7 else shade(void_glow, 1.4))
+
+    # A fragment of the dead god drifts in the dark above the seat: the
+    # single most story-specific image in the arena, kept small and
+    # distant so it reads as atmosphere, not a prop.
+    fx, fy = 172, 12
+    for dx, dy, tone in (
+        (0, 0, violet_bright), (1, 0, violet), (-1, 1, violet),
+        (0, 2, shade(violet, 0.8)), (2, 1, shade(violet, 0.9)),
+    ):
+        p.dot(fx + dx, fy + dy, tone)
+    p.dot(fx, fy - 1, (216, 196, 255, 90))
+    for dx, dy in ((-4, 3), (5, -2), (-2, -3), (6, 4)):
+        if rng.random() < 0.6:
+            p.dot(fx + dx, fy + dy, (154, 116, 214, 70))
+
+
+def _bg_mid(p, rng, W, wall, wall_lit, wall_dark, violet, violet_bright, spectral_white, gold):
+    """Broken colonnade and the sealed Crest seat, the composition's focal point."""
+    p.rect(0, 30, W, 28, wall)
+    p.hline(0, 30, W, shade(wall_lit, 1.15))
+    # Coursed masonry blocks give the wall a built structure instead of
+    # a flat fill.
+    for row, yy in enumerate(range(32, 58, 6)):
+        offset = (row % 2) * 10
+        for xx in range(offset, W, 20):
+            p.vline(xx, yy, 6, wall_dark)
+        p.hline(0, yy, W, shade(wall, 0.85))
+
+    for arch_x in range(14, W, 58):
+        if 128 < arch_x < 212:
+            continue  # cleared for the seat at centre
+        p.rect(arch_x, 32, 20, 26, wall_dark)
+        p.rect(arch_x + 1, 32, 18, 3, shade(wall_lit, 1.2))  # lintel catches the moon
+        p.rect(arch_x + 3, 36, 14, 22, void_black())
+        p.vline(arch_x + 3, 36, 22, shade(wall_dark, 0.7))
+        p.vline(arch_x + 16, 36, 22, shade(wall_lit, 1.1))
+        if rng.random() < 0.6:
+            p.rect(arch_x + 3, 32, 14, rng.randrange(2, 8), wall_dark)  # rubble collapse
+
+    for px_x, ph in ((36, 22), (272, 20)):
+        p.rect(px_x, 58 - ph, 11, ph, wall_dark)
+        p.vline(px_x + 1, 58 - ph, ph, shade(wall_lit, 1.15))
+        p.vline(px_x + 9, 58 - ph, ph, shade(wall_dark, 0.75))
+        p.hline(px_x - 1, 58 - ph, 13, shade(wall_lit, 1.25))
+
+    # The sealed Crest seat: a stepped dais raising the dormant fragment
+    # above the dueling floor, centred where both formations converge.
+    cx, base_y = 160, 58
+    for i, width in enumerate((28, 22, 16)):
+        y = base_y - 3 * (i + 1)
+        step = shade(wall, 1.0 + i * 0.12)
+        p.rect(cx - width // 2, y, width, 3, step)
+        p.hline(cx - width // 2, y, width, shade(step, 1.25))
+        p.vline(cx - width // 2, y, 3, shade(step, 0.7))
+        p.vline(cx + width // 2 - 1, y, 3, shade(step, 0.7))
+    seat_top = base_y - 9
+    p.rect(cx - 6, seat_top - 6, 12, 7, wall_dark)
+    p.hline(cx - 6, seat_top - 6, 12, shade(wall_lit, 1.2))
+    p.vline(cx - 6, seat_top - 6, 7, shade(wall_dark, 0.7))
+    p.vline(cx + 5, seat_top - 6, 7, shade(wall_dark, 0.7))
+    # The fragment itself, suspended just above the seat.
+    p.rect(cx - 2, seat_top - 11, 4, 6, violet)
+    p.rect(cx - 1, seat_top - 10, 2, 4, violet_bright)
+    p.dot(cx, seat_top - 9, spectral_white)
+    p.dot(cx, seat_top - 5, spectral_white)
+    for dx, dy in ((-7, -2), (7, -3), (-4, 4), (6, 3), (0, -8), (-2, 6)):
+        p.dot(cx + dx, seat_top + dy - 2, shade(violet, 0.7))
+    # Wardens' gold seal set into the dais face — the only warm note
+    # this close to the seat, so the eye still finds the fragment first.
+    p.dot(cx - 5, base_y - 1, gold)
+    p.dot(cx + 4, base_y - 1, gold)
+    p.dot(cx - 5, base_y - 2, shade(gold, 0.8))
+    p.dot(cx + 4, base_y - 2, shade(gold, 0.8))
+
+
+def void_black() -> tuple:
+    return c("0a0812")
+
+
+def _bg_floor(p, rng, W, H, floor, floor_lit, floor_dark, violet):
+    """The dueling floor: flagstones, worn pale where feet have stood."""
+    p.rect(0, 58, W, H - 58, floor)
+    # Large flagstones with visible grout lines — the floor equivalent
+    # of the wall's masonry courses.
+    stone_w, stone_h = 22, 12
+    for row, yy in enumerate(range(58, H, stone_h)):
+        offset = (row % 2) * (stone_w // 2)
+        p.hline(0, yy, W, floor_dark)
+        for xx in range(offset - stone_w, W, stone_w):
+            p.vline(xx, yy, min(stone_h, H - yy), floor_dark)
+    for _ in range(40):
+        x, y = rng.randrange(W), rng.randrange(60, H)
+        p.rect(x, y, rng.randrange(1, 3), 1, floor_dark)
+
+    # A worn duel ring: two concentric broken arcs, not a single noisy
+    # ellipse, so it reads as deliberate flooring rather than scribble.
+    cx, cy = 160, 90
+    _arc_ring(p, cx, cy, 70, 16, floor_lit, gap_every=9)
+    _arc_ring(p, cx, cy, 46, 10, shade(floor_lit, 0.9), gap_every=7)
+
+    # A single crack, drawn as one connected line so it reads as damage
+    # rather than noise, running from the dais down into the floor.
+    _crack_line(p, cx - 3, 58, angle=205, length=26, colour=floor_dark)
+    _crack_line(p, cx + 4, 58, angle=340, length=20, colour=floor_dark)
+
+    # Floor darkens toward the side edges, keeping the centre — where
+    # both formations meet — the brightest, best-read part of the arena.
+    for x in range(W):
+        edge = min(x, W - 1 - x) / (W / 2.0)
+        if edge < 0.3:
+            factor = 1.0 - (0.3 - edge) / 0.3 * 0.3
+            for y in range(58, H):
+                existing = p.img.getpixel((x, y))
+                if existing[3] > 0:
+                    p.dot(x, y, shade(existing, factor))
+
+
+def _arc_ring(p, cx, cy, radius_x, radius_y, colour, gap_every: int) -> None:
+    """A broken ring: solid arcs with regular gaps, like worn-in flagstones."""
+    for t in range(0, 360, 2):
+        if (t // 18) % gap_every == 0:
+            continue
+        x = int(cx + radius_x * _cos(t))
+        y = int(cy + radius_y * _sin(t))
+        if 0 <= y < p.h:
+            p.dot(x, y, colour)
+
+
+def _crack_line(p, x0: int, y0: int, angle: int, length: int, colour: tuple) -> None:
+    x, y = float(x0), float(y0)
+    dx, dy = _cos(angle), _sin(angle)
+    for step in range(length):
+        x += dx
+        y += dy
+        # A slight wander keeps the crack from reading as a ruled line.
+        if step % 5 == 0:
+            dx += (_cos(angle + 25) - dx) * 0.3
+        if 0 <= int(y) < p.h:
+            p.dot(int(x), int(y), colour)
+
+
+def _bg_moonlight(p, W, H) -> None:
+    """Two soft diagonal shafts, upper-left light matching Greymere.
+
+    Each shaft is several pixels wide with a bright core so it reads as
+    a beam at 4x scale rather than a faint dither that disappears.
+    """
+    for offset, width in ((30, 5), (240, 6)):
+        for i in range(H - 20):
+            cx = offset + int(i * 0.4)
+            y = 14 + i
+            if y >= H:
+                break
+            for w in range(-width // 2, width // 2 + 1):
+                x = cx + w
+                if not (0 <= x < W):
+                    continue
+                current = p.img.getpixel((x, y))
+                if current[3] == 0:
+                    continue
+                core = 1.0 - abs(w) / (width / 2.0 + 1)
+                p.dot(x, y, shade(current, 1.0 + 0.35 * core))
+
+
+def _cos(degrees: int) -> float:
+    import math
+    return math.cos(math.radians(degrees))
+
+
+def _sin(degrees: int) -> float:
+    import math
+    return math.sin(math.radians(degrees))
 
 
 # ── Sheet assembly / output ──────────────────────────────────────────
