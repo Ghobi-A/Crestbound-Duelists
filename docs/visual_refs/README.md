@@ -51,17 +51,17 @@ and font rasterisation differences can shift a few pixels between machines, so
 These pass on identical renders and on the same scene re-rendered by a
 different Mesa build, while failing on any real art change.
 
-## 2. External art-direction references (supplied manually — not in git yet)
+## 2. External art-direction references (supplied manually)
 
-| Expected file | Purpose |
+| File | Purpose |
 | --- | --- |
-| `battle_composition_reference.png` | Battle scale, opposing formations, grounding, depth layering, attack-effect readability, HUD hierarchy |
-| `overworld_composition_reference.png` | Environmental density, tile variation, terrain transitions, building readability, layering, character-to-environment scale, lighting |
+| `battle_art_style_reference.png` | Battle scale, opposing formations, grounding, depth layering, attack-effect readability, HUD hierarchy |
+| `overworld_art_style_reference.png` | Environmental density, tile variation, terrain transitions, building readability, layering, character-to-environment scale, lighting |
 
-**These files are not present.** They were supplied as conversation
-attachments and cannot be written to disk from the build environment; no
-placeholder images have been fabricated in their place. Add the real images at
-these paths before the Phase 1 and Phase 3 art passes.
+These are third-party commercial screenshots kept purely as quality
+benchmarks for the Phase 1 and Phase 3 art passes. They are **not** project
+assets: never redistribute them as part of the game, and never copy any pixel
+of either into it.
 
 ### Rules for using the references
 
