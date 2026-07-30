@@ -28,12 +28,17 @@ func refresh() -> void:
 func _draw() -> void:
 	if unit == null:
 		return
-	var background := PlaceholderPalette.BG_PANEL
+	var background := PlaceholderPalette.MOON_INDIGO
 	if highlighted:
-		background = background.lightened(0.12)
+		background = PlaceholderPalette.MOON_SLATE.lightened(0.15)
 	draw_rect(Rect2(Vector2.ZERO, ROW_SIZE), background)
 	if highlighted:
-		draw_rect(Rect2(Vector2.ZERO, ROW_SIZE), PlaceholderPalette.OVERLAY_SELECTED, false, 1.0)
+		draw_rect(Rect2(Vector2.ZERO, ROW_SIZE), PlaceholderPalette.CREST_GOLD, false, 1.0)
+	elif acted_marker:
+		# A planned-but-not-active unit gets a quieter accent than the
+		# acting unit's full gold border — a real visual, not just the
+		# name's "*" suffix below.
+		draw_rect(Rect2(Vector2.ZERO, Vector2(2, ROW_SIZE.y)), PlaceholderPalette.CREST_GOLD.darkened(0.35))
 
 	var font := get_theme_default_font()
 	var name_color := PlaceholderPalette.TEXT_MAIN if unit.is_alive() else PlaceholderPalette.TEXT_DIM

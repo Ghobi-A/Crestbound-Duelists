@@ -52,6 +52,19 @@ const PLAYER_OUTLINE := Color("e8e8f0")
 const NPC_COLOR := Color("d8b46a")
 const NPC_COLOR_ALT := Color("6ab4d8")
 
+# Battle HUD colour grammar (Phase 4): gold marks the acting unit and its
+# command menu, violet marks the target and anything reviewing/affecting
+# it. Values match tools/generate_sprites.py's Hollow Court background
+# and dais exactly, so the HUD and the battlefield read as one palette
+# rather than a coincidentally similar one.
+const MOON_SLATE := Color("2a2836")
+const MOON_SLATE_DIM := Color("1e1c28")
+const MOON_INDIGO := Color("342f40")
+const CREST_GOLD := Color("caa24a")
+const CREST_GOLD_BRIGHT := Color("f2cf7a")
+const SPECTRAL_VIOLET := Color("9b74d6")
+const SPECTRAL_VIOLET_DIM := Color("6a4a9a")
+
 
 static func class_color(class_id: String) -> Color:
 	return CLASS_COLORS.get(class_id, Color.WHITE)

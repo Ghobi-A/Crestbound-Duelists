@@ -79,19 +79,28 @@ func current_entry() -> Dictionary:
 
 
 func _draw() -> void:
-	draw_rect(Rect2(Vector2.ZERO, MENU_SIZE), PlaceholderPalette.BG_PANEL)
-	draw_rect(Rect2(Vector2.ZERO, Vector2(MENU_SIZE.x, 1)), PlaceholderPalette.PANEL_BORDER)
+	BattlePanelStyle.draw_panel(
+		self, Rect2(Vector2.ZERO, MENU_SIZE), PlaceholderPalette.MOON_SLATE, PlaceholderPalette.CREST_GOLD
+	)
 	var font := get_theme_default_font()
 	for i in entries.size():
 		var entry: Dictionary = entries[i]
 		var y := 8 + i * 9
+		if i == cursor:
+			# A filled band, not just a "> " prefix, for real contrast
+			# between the selected and unselected rows.
+			draw_rect(Rect2(1, y - 7, MENU_SIZE.x - 2, 9), PlaceholderPalette.MOON_INDIGO)
 		var color := PlaceholderPalette.TEXT_MAIN if entry.enabled else PlaceholderPalette.TEXT_DIM
 		var text: String = ("> " if i == cursor else "  ") + str(entry.label)
 		if entry.note != "":
 			text += "  [%s]" % entry.note
 		draw_string(font, Vector2(3, y), text, HORIZONTAL_ALIGNMENT_LEFT, 118, 8, color)
+	# A thin divider separates the entry list from the description, so
+	# the description reads as its own region rather than trailing text.
+	var divider_y := 8 + entries.size() * 9 + 2
+	draw_rect(Rect2(3, divider_y, MENU_SIZE.x - 6, 1), PlaceholderPalette.SPECTRAL_VIOLET_DIM)
 	# Description of highlighted entry.
 	var description: String = str(entries[cursor].description)
 	var lines := description.split("\n")
 	for i in lines.size():
-		draw_string(font, Vector2(3, 46 + i * 7), lines[i], HORIZONTAL_ALIGNMENT_LEFT, 118, 6, PlaceholderPalette.TEXT_DIM)
+		draw_string(font, Vector2(3, divider_y + 8 + i * 7), lines[i], HORIZONTAL_ALIGNMENT_LEFT, 118, 6, PlaceholderPalette.TEXT_DIM)

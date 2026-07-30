@@ -192,10 +192,50 @@ func _current_unit() -> BattleUnit:
 
 func _open_menu_for_current() -> void:
 	state = State.SELECT_MENU
+	_clear_all_highlights()
 	var unit := _current_unit()
 	hud.highlight_unit(unit)
 	hud.show_menu(unit)
+	if sprites.has(unit):
+		sprites[unit].set_highlighted("selected")
 	queue_redraw()
+
+
+# ── Target highlighting (presentation only; target_selector.gd,
+# battle_resolver.gd, battle_unit.gd and encounter_runtime.gd are never
+# touched by any of this) ─────────────────────────────────────────────
+
+func _clear_all_highlights() -> void:
+	for u in sprites:
+		sprites[u].clear_highlight()
+	_clear_target_dim()
+
+
+func _clear_target_dim() -> void:
+	for u in sprites:
+		sprites[u].modulate = Color.WHITE
+
+
+func _clear_target_side() -> void:
+	for u in target_selector.targets:
+		if sprites.has(u):
+			sprites[u].clear_highlight()
+	_clear_target_dim()
+
+
+func _refresh_target_highlights() -> void:
+	var current := target_selector.current()
+	for u in target_selector.targets:
+		if sprites.has(u):
+			sprites[u].set_highlighted("target" if u == current else "")
+	_apply_target_dim()
+
+
+func _apply_target_dim() -> void:
+	var current := target_selector.current()
+	for u in target_selector.targets:
+		if sprites.has(u):
+			sprites[u].modulate = Color.WHITE if u == current else Color(0.55, 0.55, 0.65)
 
 
 func _commit_action(action: Dictionary) -> void:
@@ -215,6 +255,7 @@ func _open_preview() -> void:
 	hud.highlight_unit(null)
 	hud.hide_menu()
 	hud.hide_info()
+	_clear_all_highlights()
 	hud.round_preview.open(planned_actions)
 	queue_redraw()
 
@@ -266,6 +307,7 @@ func _menu_input(event: InputEvent) -> void:
 		if target_selector.open(unit, runtime):
 			state = State.SELECT_TARGET
 			_refresh_target_info()
+			_refresh_target_highlights()
 			queue_redraw()
 
 
@@ -273,19 +315,25 @@ func _target_input(event: InputEvent) -> void:
 	if event.is_action_pressed("move_left") or event.is_action_pressed("move_up"):
 		target_selector.cycle(-1)
 		_refresh_target_info()
+		_refresh_target_highlights()
 		queue_redraw()
 	elif event.is_action_pressed("move_right") or event.is_action_pressed("move_down"):
 		target_selector.cycle(1)
 		_refresh_target_info()
+		_refresh_target_highlights()
 		queue_redraw()
 	elif event.is_action_pressed("cancel"):
 		hud.hide_info()
+		_clear_target_side()
 		_open_menu_for_current()
 	elif event.is_action_pressed("interact"):
 		var unit := _current_unit()
+		var target := target_selector.current()
+		if sprites.has(target):
+			sprites[target].flash_confirm()
 		_commit_action({
 			"actor": unit, "kind": "move",
-			"move": pending_move, "target": target_selector.current(),
+			"move": pending_move, "target": target,
 		})
 		queue_redraw()
 
@@ -313,6 +361,7 @@ func _resolve_round() -> void:
 	state = State.RESOLVING
 	hud.set_phase("ROUND %d — resolution" % runtime.round_number)
 	hud.highlight_unit(null)
+	_clear_all_highlights()
 	queue_redraw()
 
 	var all_actions := planned_actions.duplicate()
@@ -491,17 +540,7 @@ func _leave_after_victory() -> void:
 	get_tree().change_scene_to_file(OVERWORLD_SCENE)
 
 
-# ── Overlay drawing (selection + target markers) ─────────────────────
-
-func _draw() -> void:
-	if state == State.SELECT_MENU or state == State.SELECT_TARGET:
-		if selection_index < selection_order.size():
-			var actor := _current_unit()
-			var home: Vector2 = sprites[actor].home_position
-			draw_rect(Rect2(home + Vector2(-10, -16), Vector2(20, 30)), PlaceholderPalette.OVERLAY_SELECTED, false, 1.0)
-	if state == State.SELECT_TARGET:
-		var target := target_selector.current()
-		if target != null:
-			var home: Vector2 = sprites[target].home_position
-			draw_rect(Rect2(home + Vector2(-10, -16), Vector2(20, 30)), PlaceholderPalette.OVERLAY_CURSOR, false, 1.0)
-			draw_rect(Rect2(home + Vector2(-2, -22), Vector2(4, 4)), PlaceholderPalette.TEXT_DANGER)
+# Selection/target markers now live on DuelistSprite itself
+# (set_highlighted/flash_confirm), sized from the sprite's own manifest
+# instead of a hardcoded box here — see _clear_all_highlights and
+# _refresh_target_highlights above.
