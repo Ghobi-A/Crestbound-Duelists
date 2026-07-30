@@ -13,22 +13,23 @@ var tile := Vector2i.ZERO
 var _has_sheet := false
 
 
-func setup(name_: String, tile_: Vector2i, dialogue_key_: String, color: Color, sprite_key := "") -> void:
+func setup(
+	name_: String,
+	tile_: Vector2i,
+	dialogue_key_: String,
+	color: Color,
+	sprite_key := "",
+	facing := Vector2i(0, 1)
+) -> void:
 	npc_name = name_
 	tile = tile_
 	dialogue_key = dialogue_key_
 	body_color = color
 	position = Vector2(tile * TILE) + Vector2(TILE / 2.0, TILE / 2.0)
-	if sprite_key != "":
-		var path := "res://assets/characters/%s/overworld.png" % sprite_key
-		if ResourceLoader.exists(path):
-			var sprite := Sprite2D.new()
-			sprite.texture = load(path)
-			sprite.region_enabled = true
-			sprite.region_rect = Rect2(0, 0, 16, 24)
-			sprite.position = Vector2(0, -4)
-			add_child(sprite)
-			_has_sheet = true
+	var sprite := OverworldSprite.new()
+	if sprite.attach(self, sprite_key):
+		sprite.set_facing(facing)
+		_has_sheet = true
 
 
 func _draw() -> void:

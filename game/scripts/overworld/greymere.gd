@@ -281,13 +281,21 @@ func _build_dialogue() -> void:
 
 
 func _build_npcs() -> void:
+	# Elara watches the Hollow Court arch to the north; Mira faces the
+	# square, so the two read as people with somewhere to be.
 	var elara := OverworldNPC.new()
-	elara.setup("Warden Elara Thorne", _find_tile("E"), "elara_intro", PlaceholderPalette.NPC_COLOR, "elara")
+	elara.setup(
+		"Warden Elara Thorne", _find_tile("E"), "elara_intro",
+		PlaceholderPalette.NPC_COLOR, "elara", Vector2i(0, -1)
+	)
 	add_child(elara)
 	_npc_tiles[elara.tile] = elara
 
 	var mira := OverworldNPC.new()
-	mira.setup("Mira Solen", _find_tile("M"), "mira_intro", PlaceholderPalette.NPC_COLOR_ALT, "mira")
+	mira.setup(
+		"Mira Solen", _find_tile("M"), "mira_intro",
+		PlaceholderPalette.NPC_COLOR_ALT, "mira", Vector2i(1, 0)
+	)
 	add_child(mira)
 	_npc_tiles[mira.tile] = mira
 
@@ -320,13 +328,15 @@ func _build_indicators() -> void:
 			if INDICATOR_TILES.has(MAP[y][x]):
 				_add_indicator(Vector2i(x, y))
 	for tile in _npc_tiles:
-		_add_indicator(tile)
+		# Characters are taller than a tile, so their marker has to clear
+		# the sprite's head rather than the tile's top edge.
+		_add_indicator(tile, -1.0 * OverworldSprite.head_clearance())
 
 
-func _add_indicator(tile: Vector2i) -> void:
+func _add_indicator(tile: Vector2i, y_offset: float = -6.0) -> void:
 	var indicator := InteractionIndicator.new()
 	add_child(indicator)
-	indicator.setup(Vector2(tile * TILE) + Vector2(TILE / 2.0, -6))
+	indicator.setup(Vector2(tile * TILE) + Vector2(TILE / 2.0, y_offset))
 
 
 func _build_camera() -> void:
