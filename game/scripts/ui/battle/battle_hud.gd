@@ -11,6 +11,7 @@ var _phase_label: Label
 var _objective_label: Label
 var _message_label: Label
 var _info_label: Label
+var _info_panel: ColorRect
 var _rows: Dictionary = {}   # BattleUnit -> UnitStatusPanel
 var _rows_container: VBoxContainer
 var _flash_rect: ColorRect
@@ -21,9 +22,17 @@ func _ready() -> void:
 	layer = 5
 
 	var top := ColorRect.new()
-	top.color = PlaceholderPalette.BG_PANEL
+	top.color = PlaceholderPalette.MOON_SLATE
 	top.size = Vector2(320, 12)
 	add_child(top)
+	# A gold underline separates the header from the battlefield — the
+	# same accent-strip idea as BattlePanelStyle.draw_panel, kept as a
+	# plain ColorRect here since the top bar isn't a custom-drawn Control.
+	var top_accent := ColorRect.new()
+	top_accent.color = PlaceholderPalette.CREST_GOLD
+	top_accent.position = Vector2(0, 11)
+	top_accent.size = Vector2(320, 1)
+	top.add_child(top_accent)
 	_phase_label = _label(top, Vector2(4, 1), Vector2(200, 10), PlaceholderPalette.TEXT_WARN)
 	_objective_label = _label(top, Vector2(150, 1), Vector2(166, 10), PlaceholderPalette.TEXT_DIM)
 	_objective_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
@@ -36,7 +45,7 @@ func _ready() -> void:
 	_message_label = _label(message_strip, Vector2(4, 1), Vector2(312, 10), PlaceholderPalette.TEXT_MAIN)
 
 	var bottom := ColorRect.new()
-	bottom.color = PlaceholderPalette.BG_DARK
+	bottom.color = PlaceholderPalette.MOON_SLATE
 	bottom.position = Vector2(0, 122)
 	bottom.size = Vector2(320, 58)
 	add_child(bottom)
@@ -51,7 +60,21 @@ func _ready() -> void:
 	action_menu.visible = false
 	bottom.add_child(action_menu)
 
-	_info_label = _label(bottom, Vector2(198, 3), Vector2(120, 54), PlaceholderPalette.TEXT_MAIN)
+	# The target/skill info panel shares the action menu's footprint and
+	# takes the violet framing (target-facing, not command-facing) —
+	# same size/position ActionMenu already occupies, so swapping between
+	# the two never shifts anything else in the bottom panel.
+	_info_panel = ColorRect.new()
+	_info_panel.position = Vector2(196, 1)
+	_info_panel.size = ActionMenu.MENU_SIZE
+	_info_panel.color = PlaceholderPalette.MOON_SLATE
+	_info_panel.visible = false
+	bottom.add_child(_info_panel)
+	var info_border := ColorRect.new()
+	info_border.color = PlaceholderPalette.SPECTRAL_VIOLET
+	info_border.size = Vector2(ActionMenu.MENU_SIZE.x, 1)
+	_info_panel.add_child(info_border)
+	_info_label = _label(_info_panel, Vector2(2, 3), Vector2(118, 52), PlaceholderPalette.TEXT_MAIN)
 	_info_label.visible = false
 
 	round_preview = RoundPreview.new()
@@ -64,7 +87,7 @@ func _ready() -> void:
 	_flash_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(_flash_rect)
 
-	_banner_label = _label(self, Vector2(0, 46), Vector2(320, 20), Color(1.0, 0.85, 0.3))
+	_banner_label = _label(self, Vector2(0, 46), Vector2(320, 20), PlaceholderPalette.CREST_GOLD_BRIGHT)
 	_banner_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_banner_label.add_theme_font_size_override("font_size", 12)
 	_banner_label.visible = false
@@ -120,6 +143,7 @@ func set_message(text: String) -> void:
 
 func show_menu(unit: BattleUnit) -> void:
 	_info_label.visible = false
+	_info_panel.visible = false
 	action_menu.build_for(unit)
 	action_menu.visible = true
 
@@ -132,10 +156,12 @@ func show_info(text: String) -> void:
 	action_menu.visible = false
 	_info_label.text = text
 	_info_label.visible = true
+	_info_panel.visible = true
 
 
 func hide_info() -> void:
 	_info_label.visible = false
+	_info_panel.visible = false
 
 
 func play_awakening_banner(text: String, accent: Color) -> void:

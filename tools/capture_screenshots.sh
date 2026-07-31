@@ -22,7 +22,7 @@ GODOT_SHA512="fd52bb4ba8acc30ca5accd1c566d470ad7282f891ccc0995dfafabcf92bcf76280
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 CACHE_DIR="${CRESTBOUND_GODOT_CACHE:-$HOME/.cache/crestbound-godot}"
 OUT_DIR="$(cd "$(dirname "${1:-$REPO_ROOT/docs/visual_refs}")" && pwd)/$(basename "${1:-visual_refs}")"
-TARGETS=(overworld battle)
+TARGETS=(overworld battle battle_target)
 
 mkdir -p "$CACHE_DIR" "$OUT_DIR"
 

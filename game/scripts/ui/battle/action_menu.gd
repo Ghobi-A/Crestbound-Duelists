@@ -97,10 +97,13 @@ func _draw() -> void:
 		draw_string(font, Vector2(3, y), text, HORIZONTAL_ALIGNMENT_LEFT, 118, 8, color)
 	# A thin divider separates the entry list from the description, so
 	# the description reads as its own region rather than trailing text.
-	var divider_y := 8 + entries.size() * 9 + 2
-	draw_rect(Rect2(3, divider_y, MENU_SIZE.x - 6, 1), PlaceholderPalette.SPECTRAL_VIOLET_DIM)
+	# Placed just above the description's existing baseline rather than
+	# derived from entry count, so it never pushes the description text
+	# down past the panel's bottom edge (MENU_SIZE.y is fixed at 56).
+	const DESCRIPTION_Y := 46
+	draw_rect(Rect2(3, DESCRIPTION_Y - 5, MENU_SIZE.x - 6, 1), PlaceholderPalette.SPECTRAL_VIOLET_DIM)
 	# Description of highlighted entry.
 	var description: String = str(entries[cursor].description)
 	var lines := description.split("\n")
 	for i in lines.size():
-		draw_string(font, Vector2(3, divider_y + 8 + i * 7), lines[i], HORIZONTAL_ALIGNMENT_LEFT, 118, 6, PlaceholderPalette.TEXT_DIM)
+		draw_string(font, Vector2(3, DESCRIPTION_Y + i * 7), lines[i], HORIZONTAL_ALIGNMENT_LEFT, 118, 6, PlaceholderPalette.TEXT_DIM)
