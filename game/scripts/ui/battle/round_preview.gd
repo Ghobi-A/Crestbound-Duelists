@@ -36,8 +36,11 @@ func confirmed() -> bool:
 
 
 func _draw() -> void:
-	draw_rect(Rect2(Vector2.ZERO, PANEL_SIZE), PlaceholderPalette.BG_PANEL)
-	draw_rect(Rect2(Vector2.ZERO, PANEL_SIZE), PlaceholderPalette.PANEL_BORDER, false, 1.0)
+	# Violet border: this screen reviews who each action affects, the
+	# same "review/target" role violet plays on the battlefield ring.
+	BattlePanelStyle.draw_panel_bordered(
+		self, Rect2(Vector2.ZERO, PANEL_SIZE), PlaceholderPalette.MOON_SLATE, PlaceholderPalette.SPECTRAL_VIOLET
+	)
 	var font := get_theme_default_font()
 	draw_string(font, Vector2(6, 12), "ROUND PLAN", HORIZONTAL_ALIGNMENT_LEFT, 168, 8, PlaceholderPalette.TEXT_WARN)
 	var y := 26
