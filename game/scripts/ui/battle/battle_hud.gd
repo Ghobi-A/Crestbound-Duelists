@@ -34,8 +34,18 @@ func _ready() -> void:
 	top_accent.size = Vector2(320, 1)
 	top.add_child(top_accent)
 	_phase_label = _label(top, Vector2(4, 1), Vector2(200, 10), PlaceholderPalette.TEXT_WARN)
-	_objective_label = _label(top, Vector2(150, 1), Vector2(166, 10), PlaceholderPalette.TEXT_DIM)
+	# Objective text is right-aligned and stops short of the icon, which
+	# is pinned to the corner so it never moves as the text changes.
+	_objective_label = _label(top, Vector2(140, 1), Vector2(160, 10), PlaceholderPalette.TEXT_DIM)
 	_objective_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	var objective_icon := UiIcons.make_texture("objective")
+	if objective_icon != null:
+		var icon_rect := TextureRect.new()
+		icon_rect.texture = objective_icon
+		icon_rect.position = Vector2(303, 2)
+		icon_rect.modulate = PlaceholderPalette.CREST_GOLD
+		icon_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		top.add_child(icon_rect)
 
 	var message_strip := ColorRect.new()
 	message_strip.color = Color(0, 0, 0, 0.55)

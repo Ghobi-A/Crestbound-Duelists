@@ -1,0 +1,17 @@
+[remap]
+
+importer="font_data_bmfont"
+type="FontFile"
+uid="uid://bcr00rk3fglke"
+path="res://.godot/imported/crestbound_font.fnt-0f232a7e8d0fd7ecef3ac9986de489c1.fontdata"
+
+[deps]
+
+source_file="res://assets/ui/crestbound_font.fnt"
+dest_files=["res://.godot/imported/crestbound_font.fnt-0f232a7e8d0fd7ecef3ac9986de489c1.fontdata"]
+
+[params]
+
+fallbacks=[]
+compress=true
+scaling_mode=2

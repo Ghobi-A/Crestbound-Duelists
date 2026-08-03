@@ -1,0 +1,39 @@
+{
+  "icon_size": 7,
+  "columns": 8,
+  "atlas": "icons.png",
+  "icons": {
+    "slot_basic": [
+      0,
+      0
+    ],
+    "slot_signature": [
+      1,
+      0
+    ],
+    "slot_gambit": [
+      2,
+      0
+    ],
+    "slot_brace": [
+      3,
+      0
+    ],
+    "status_hexed": [
+      4,
+      0
+    ],
+    "status_awakened": [
+      5,
+      0
+    ],
+    "status_down": [
+      6,
+      0
+    ],
+    "objective": [
+      7,
+      0
+    ]
+  }
+}
