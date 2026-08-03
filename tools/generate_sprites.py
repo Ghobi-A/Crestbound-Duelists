@@ -3,7 +3,7 @@ Crestbound Duelists — Original Pixel Art Generator
 ====================================================
 Authors every prototype sprite as hand-placed pixel clusters via a
 small parametric chibi framework: compact late-16-bit-style Duelists
-(24x32 battle frames, 16x24 overworld frames), spectral Bonded Entity
+(24x32 battle frames; overworld frames in overworld_sprites.py), spectral Bonded Entity
 manifestations, and the Hollow Court battle background.
 
 All designs are original to Crestbound Duelists. Run:
@@ -12,7 +12,7 @@ All designs are original to Crestbound Duelists. Run:
 
 Outputs (committed as build artifacts, regenerable):
     game/assets/characters/<who>[/<class>]/battle.png   11-frame strip
-    game/assets/characters/<who>[/<class>]/overworld.png 2-frame strip
+    game/assets/characters/<who>[/<class>]/overworld.png 12-frame walk
     game/assets/enemies/<id>/battle.png
     game/assets/entities/<id>/idle.png                   2-frame strip
     game/assets/battle/backgrounds/hollow_court.png
@@ -27,11 +27,19 @@ from pathlib import Path
 
 from PIL import Image
 
+import overworld_sprites as ow
+from px_canvas import OUTLINE, Px, c, shade
+
 ROOT = Path(__file__).resolve().parent.parent
 ASSETS = ROOT / "game" / "assets"
 
 FRAME_W, FRAME_H = 24, 32
-OW_W, OW_H = 16, 24
+
+# Overworld walking sprites live in their own module — see
+# tools/overworld_sprites.py for the per-class silhouette builds.
+
+SKIN = c("e8c8a0")
+SKIN_SHADOW = c("c79c72")
 
 # Frame strip layout shared by every battle sheet.
 BATTLE_STATES = {
@@ -43,54 +51,6 @@ BATTLE_STATES = {
     "awaken": {"start": 9, "count": 2, "fps": 5, "loop": True},
 }
 FRAME_COUNT = 11
-
-OUTLINE = (20, 20, 31, 255)
-SKIN = (232, 200, 160, 255)
-SKIN_SHADOW = (199, 156, 114, 255)
-
-
-def c(hexcode: str, alpha: int = 255) -> tuple:
-    hexcode = hexcode.lstrip("#")
-    return (int(hexcode[0:2], 16), int(hexcode[2:4], 16), int(hexcode[4:6], 16), alpha)
-
-
-class Px:
-    """Tiny pixel canvas helper around a PIL RGBA image."""
-
-    def __init__(self, width: int, height: int):
-        self.img = Image.new("RGBA", (width, height), (0, 0, 0, 0))
-        self.w, self.h = width, height
-
-    def dot(self, x: int, y: int, color: tuple):
-        if 0 <= x < self.w and 0 <= y < self.h:
-            self.img.putpixel((int(x), int(y)), color)
-
-    def rect(self, x: int, y: int, w: int, h: int, color: tuple):
-        for yy in range(y, y + h):
-            for xx in range(x, x + w):
-                self.dot(xx, yy, color)
-
-    def hline(self, x: int, y: int, w: int, color: tuple):
-        self.rect(x, y, w, 1, color)
-
-    def vline(self, x: int, y: int, h: int, color: tuple):
-        self.rect(x, y, 1, h, color)
-
-    def outline_solid(self):
-        """Draw a 1px dark outline around every opaque cluster."""
-        src = self.img.load()
-        edges = []
-        for y in range(self.h):
-            for x in range(self.w):
-                if src[x, y][3] == 0:
-                    for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)):
-                        nx, ny = x + dx, y + dy
-                        if 0 <= nx < self.w and 0 <= ny < self.h and src[nx, ny][3] > 200:
-                            edges.append((x, y))
-                            break
-        for x, y in edges:
-            src[x, y] = OUTLINE
-
 
 # ── Character specs ──────────────────────────────────────────────────
 # Every entry is an original Crestbound design. `build` controls
@@ -156,10 +116,6 @@ POSES = [
 ]
 
 
-def shade(color: tuple, factor: float) -> tuple:
-    return (max(0, min(255, int(color[0] * factor))),
-            max(0, min(255, int(color[1] * factor))),
-            max(0, min(255, int(color[2] * factor))), color[3])
 
 
 def draw_duelist(spec: dict, pose: dict) -> Image.Image:
@@ -368,30 +324,6 @@ def _draw_collapsed(p: Px, spec: dict) -> Image.Image:
 
 # ── Overworld sprites (16x24, 2-frame bob) ───────────────────────────
 
-def draw_overworld(spec: dict, bob: int) -> Image.Image:
-    p = Px(OW_W, OW_H)
-    top, skin = spec["top"], spec["skin"]
-    ground = 22
-    robe = spec["build"] == "robe"
-    if robe:
-        for i, yy in enumerate(range(ground - 6, ground)):
-            wdt = 6 + i // 2
-            p.rect(8 - wdt // 2, yy, wdt, 1, top if i % 2 == 0 else shade(top, 0.8))
-    else:
-        p.rect(5, ground - 5, 2, 4, spec["legs"])
-        p.rect(9, ground - 5, 2, 4, spec["legs"])
-        p.hline(5, ground - 1, 2, c("3a3028"))
-        p.hline(9, ground - 1, 2, c("3a3028"))
-    p.rect(4, ground - 11 + bob, 8, 6, top)
-    p.rect(7, ground - 10 + bob, 2, 4, spec["top2"])
-    p.rect(4, ground - 18 + bob, 8, 7, skin)
-    p.dot(6, ground - 14 + bob, spec["eyes"])
-    p.dot(9, ground - 14 + bob, spec["eyes"])
-    _draw_hair(p, spec, 4, ground - 18 + bob, 8)
-    p.outline_solid()
-    return p.img
-
-
 # ── Bonded Entity manifestations (32x32, 2 frames, translucent) ──────
 
 def draw_entity(entity_id: str, frame: int) -> Image.Image:
@@ -531,18 +463,15 @@ def save_battle_sheet(spec: dict, out_path: Path):
     sheet.save(out_path)
 
 
-def save_overworld_sheet(spec: dict, out_path: Path):
-    sheet = Image.new("RGBA", (OW_W * 2, OW_H), (0, 0, 0, 0))
-    for i in range(2):
-        sheet.paste(draw_overworld(spec, i), (i * OW_W, 0))
-    out_path.parent.mkdir(parents=True, exist_ok=True)
-    sheet.save(out_path)
+def save_overworld_sheet(key: str, out_path: Path):
+    """One row of frames: down x4, up x4, side x4."""
+    ow.save_sheet(key, out_path)
 
 
 def main():
     for key, spec in CHARACTERS.items():
         save_battle_sheet(spec, ASSETS / "characters" / key / "battle.png")
-        save_overworld_sheet(spec, ASSETS / "characters" / key / "overworld.png")
+        save_overworld_sheet(key, ASSETS / "characters" / key / "overworld.png")
     for key, spec in ENEMIES.items():
         save_battle_sheet(spec, ASSETS / "enemies" / key / "battle.png")
 
@@ -563,7 +492,7 @@ def main():
         "frame_height": FRAME_H,
         "frame_count": FRAME_COUNT,
         "states": BATTLE_STATES,
-        "overworld": {"frame_width": OW_W, "frame_height": OW_H, "frames": 2},
+        "overworld": ow.manifest_section(),
     }
     (ASSETS / "battle" / "sheet_manifest.json").write_text(
         json.dumps(manifest, indent=2) + "\n", encoding="utf-8"

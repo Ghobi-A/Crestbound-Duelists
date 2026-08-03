@@ -32,6 +32,58 @@ const MAP: Array[String] = [
 
 const BLOCKING_TILES := ["#", "R", "H", "D", "~", "C", "n"]
 
+## Flat ground wear, one character per map tile, purely visual.
+##
+## Decals lie on the ground and never block, so unlike props they may sit
+## on walkable tiles — this is what gives the open middle of town some
+## density without touching the collision map.
+##
+##   d worn dirt   g gravel verge   F flower bed   t tall grass
+const DECAL: Array[String] = [
+	"                        ",
+	"           d            ",
+	"  t                  t  ",
+	"                        ",
+	"  t     d d    d    t   ",
+	"        F               ",
+	"    t     g  g     t    ",
+	"          g  g  tt      ",
+	"     d    g  g t  t     ",
+	"          g  g t  t     ",
+	"     t    g  g  tt t    ",
+	"  t       g  g       t  ",
+	"          d  d          ",
+	"                        ",
+]
+
+## Decorative props, one character per map tile, purely visual.
+##
+## Props may only stand on tiles that already block movement, so dressing
+## the town can never change where the player can walk. `_validate_decor`
+## enforces that at startup rather than trusting the author.
+##
+##   T tree   L lamp post   b barrel   c crate   f fence   w well
+const DECOR: Array[String] = [
+	"TTT TT TTT TT TTT TT TTT",
+	"T                      T",
+	"T                      T",
+	"c                      b",
+	"T                      T",
+	"T                      f",
+	"T                      T",
+	"b                      T",
+	"T                      T",
+	"T                      c",
+	"T                      T",
+	"f                      T",
+	"T                      T",
+	"TTTTTTTTTTL  LTTTTTTTTTT",
+]
+
+# Cool moonlight over the whole map. Warm lantern and window pixels are
+# authored bright enough in the atlas to survive it and still read gold.
+const NIGHT_TINT := Color(0.82, 0.86, 1.0)
+
 const ONBOARDING_FLAG := "overworld_onboarding_seen"
 const ONBOARDING_TITLE := "GETTING STARTED"
 const ONBOARDING_BODY := "MOVE        WASD / Arrow keys\nCONFIRM     Z / Enter / Space\nBACK        X / Escape\n\nObjective: speak to Warden Elara, then investigate the Hollow Court."
@@ -45,7 +97,12 @@ var _exit_dialogue_armed := true
 
 func _ready() -> void:
 	_validate_map()
+	_validate_decor()
+	# Props, NPCs and the player share one y-sorted space so characters
+	# pass behind trees and lamp posts rather than through them.
+	y_sort_enabled = true
 	_build_map_layer()
+	_build_lighting()
 	_build_dialogue()
 	_build_npcs()
 	_build_player()
@@ -63,6 +120,30 @@ func _validate_map() -> void:
 	for row in MAP:
 		if row.length() != MAP[0].length():
 			push_error("Greymere map rows must all be %d tiles wide." % MAP[0].length())
+
+
+func _validate_decor() -> void:
+	## Props must never occupy a walkable tile, or the town would grow
+	## scenery the player can walk straight through. Decals are exempt by
+	## design — they are flat ground wear — but must still line up.
+	for y in DECAL.size():
+		if DECAL[y].length() != map_width():
+			push_error("Greymere decal row %d must be %d tiles wide." % [y, map_width()])
+	if DECAL.size() != MAP.size():
+		push_error("Greymere decals must have %d rows." % MAP.size())
+	if DECOR.size() != MAP.size():
+		push_error("Greymere decor must have %d rows." % MAP.size())
+		return
+	for y in DECOR.size():
+		var row: String = DECOR[y]
+		if row.length() != map_width():
+			push_error("Greymere decor row %d must be %d tiles wide." % [y, map_width()])
+			continue
+		for x in row.length():
+			if row[x] == " ":
+				continue
+			if not BLOCKING_TILES.has(MAP[y][x]):
+				push_error("Greymere decor '%s' at (%d, %d) stands on a walkable tile." % [row[x], x, y])
 
 
 func map_width() -> int:
@@ -88,11 +169,40 @@ func is_walkable(tile: Vector2i) -> bool:
 # ── Scene construction ───────────────────────────────────────────────
 
 func _build_map_layer() -> void:
+	# Preferred path: the generated tile atlas. `_draw_map` below is the
+	# fallback for a checkout where the atlas has not been generated yet.
+	var renderer := MapRenderer.new()
+	if renderer.build(self, MAP, DECAL, DECOR):
+		return
+	push_warning("Greymere tile atlas missing; falling back to placeholder drawing.")
 	var layer := Node2D.new()
 	layer.name = "MapLayer"
+	layer.z_index = -20
 	add_child(layer)
 	layer.draw.connect(_draw_map.bind(layer))
 	layer.queue_redraw()
+
+
+func _build_lighting() -> void:
+	var tint := CanvasModulate.new()
+	tint.name = "NightTint"
+	tint.color = NIGHT_TINT
+	add_child(tint)
+
+	# Screen-space edge falloff, under the dialogue and onboarding layers
+	# so text is never dimmed.
+	var vignette_path := "res://assets/tiles/vignette.png"
+	if not ResourceLoader.exists(vignette_path):
+		return
+	var overlay := CanvasLayer.new()
+	overlay.name = "Vignette"
+	overlay.layer = 1
+	var texture := TextureRect.new()
+	texture.texture = load(vignette_path)
+	texture.set_anchors_preset(Control.PRESET_FULL_RECT)
+	texture.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	overlay.add_child(texture)
+	add_child(overlay)
 
 
 func _draw_map(layer: Node2D) -> void:
@@ -171,13 +281,21 @@ func _build_dialogue() -> void:
 
 
 func _build_npcs() -> void:
+	# Elara watches the Hollow Court arch to the north; Mira faces the
+	# square, so the two read as people with somewhere to be.
 	var elara := OverworldNPC.new()
-	elara.setup("Warden Elara Thorne", _find_tile("E"), "elara_intro", PlaceholderPalette.NPC_COLOR, "elara")
+	elara.setup(
+		"Warden Elara Thorne", _find_tile("E"), "elara_intro",
+		PlaceholderPalette.NPC_COLOR, "elara", Vector2i(0, -1)
+	)
 	add_child(elara)
 	_npc_tiles[elara.tile] = elara
 
 	var mira := OverworldNPC.new()
-	mira.setup("Mira Solen", _find_tile("M"), "mira_intro", PlaceholderPalette.NPC_COLOR_ALT, "mira")
+	mira.setup(
+		"Mira Solen", _find_tile("M"), "mira_intro",
+		PlaceholderPalette.NPC_COLOR_ALT, "mira", Vector2i(1, 0)
+	)
 	add_child(mira)
 	_npc_tiles[mira.tile] = mira
 
@@ -210,13 +328,15 @@ func _build_indicators() -> void:
 			if INDICATOR_TILES.has(MAP[y][x]):
 				_add_indicator(Vector2i(x, y))
 	for tile in _npc_tiles:
-		_add_indicator(tile)
+		# Characters are taller than a tile, so their marker has to clear
+		# the sprite's head rather than the tile's top edge.
+		_add_indicator(tile, -1.0 * OverworldSprite.head_clearance())
 
 
-func _add_indicator(tile: Vector2i) -> void:
+func _add_indicator(tile: Vector2i, y_offset: float = -6.0) -> void:
 	var indicator := InteractionIndicator.new()
 	add_child(indicator)
-	indicator.setup(Vector2(tile * TILE) + Vector2(TILE / 2.0, -6))
+	indicator.setup(Vector2(tile * TILE) + Vector2(TILE / 2.0, y_offset))
 
 
 func _build_camera() -> void:
