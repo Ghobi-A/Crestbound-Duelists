@@ -311,6 +311,6 @@ func _draw() -> void:
 	if unit.awakened and unit.awakening_rounds_left > 0:
 		draw_rect(Rect2(-13, -27, 26, 34), Color(1.0, 0.85, 0.3, 0.85), false, 1.0)
 	if unit.is_braced():
-		draw_rect(Rect2(-12, -14, 3, 8), PlaceholderPalette.PANEL_BORDER)
+		draw_rect(Rect2(-12, -14, 3, 8), PlaceholderPalette.STEEL_GUARD)
 	if unit.has_status("hexed"):
 		draw_rect(Rect2(9, -26, 4, 4), PlaceholderPalette.TILE_CREST_NODE.lightened(0.3))

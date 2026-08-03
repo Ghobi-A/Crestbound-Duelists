@@ -11,6 +11,8 @@ extends Node
 ## nearest-neighbour upscaling, preserving exact pixel boundaries.
 ##
 ## Targets:
+##   boot          — title screen with the main menu.
+##   party_setup   — pre-battle roster and formation screen.
 ##   overworld     — Greymere at the default spawn tile.
 ##   battle        — Hollow Court, round 1, command menu open.
 ##   battle_target — Hollow Court, round 1, first move opened against the
@@ -23,6 +25,8 @@ extends Node
 ## 1280x720 for viewing). Exits with code 0 on success.
 
 const SCENE_PATHS := {
+	"boot": "res://scenes/boot/boot.tscn",
+	"party_setup": "res://scenes/ui/party_setup.tscn",
 	"overworld": "res://scenes/overworld/greymere.tscn",
 	"battle": "res://scenes/battle/party_battle.tscn",
 	"battle_target": "res://scenes/battle/party_battle.tscn",

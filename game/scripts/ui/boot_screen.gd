@@ -26,6 +26,16 @@ var _detail_label: Label
 var _hint_label: Label
 var _error_label: Label
 var _preview: TextureRect
+var _body_panel: UiPanel
+var _menu_rows: Array[Label] = []
+var _menu_band: ColorRect
+var _menu_tick: ColorRect
+
+# Menu row geometry, shared by the labels and the selection band drawn
+# behind them, so the two can never disagree about where a row sits.
+const MENU_TOP := 64.0
+const MENU_PITCH := 12.0
+const MENU_BAND := Rect2(44, 0, 232, 12)
 
 
 func _ready() -> void:
@@ -47,11 +57,38 @@ func _build_ui() -> void:
 	background.set_anchors_preset(Control.PRESET_FULL_RECT)
 	add_child(background)
 
+	# Framing the title and the menu body gives the first screen the same
+	# panelled structure as the rest of the game, instead of labels
+	# floating on a flat fill.
+	add_child(UiPanel.create(Vector2(52, 12), Vector2(216, 34), UiStyle.COMMAND))
+	_body_panel = UiPanel.create(Vector2(36, 54), Vector2(248, 100), UiStyle.NEUTRAL)
+	add_child(_body_panel)
+
+	# Added after the panel and before the labels, so the band layers
+	# correctly: panel, band, text.
+	_menu_band = ColorRect.new()
+	_menu_band.color = PlaceholderPalette.MOON_INDIGO
+	_menu_band.size = MENU_BAND.size
+	_menu_band.visible = false
+	add_child(_menu_band)
+	_menu_tick = ColorRect.new()
+	_menu_tick.color = PlaceholderPalette.CREST_GOLD
+	_menu_tick.size = Vector2(1, MENU_BAND.size.y)
+	_menu_tick.visible = false
+	add_child(_menu_tick)
+
 	_title_label = _make_label(Vector2(0, 18), 12, PlaceholderPalette.TEXT_WARN)
 	_title_label.text = "CRESTBOUND DUELISTS"
 	_subtitle_label = _make_label(Vector2(0, 34), 8, PlaceholderPalette.TEXT_DIM)
 	_subtitle_label.text = "The Crest at Greymere — prototype"
 	_list_label = _make_label(Vector2(0, 62), 8, PlaceholderPalette.TEXT_MAIN)
+	# One label per menu row (rather than a single joined-text label) so a
+	# selection band can sit behind exactly the highlighted row, matching
+	# the battle action menu's treatment.
+	for i in 4:
+		var row := _make_label(Vector2(0, MENU_TOP + i * MENU_PITCH), 8, PlaceholderPalette.TEXT_MAIN)
+		row.visible = false
+		_menu_rows.append(row)
 	_detail_label = _make_label(Vector2(30, 96), 8, PlaceholderPalette.TEXT_DIM)
 	_hint_label = _make_label(Vector2(0, 164), 8, PlaceholderPalette.TEXT_DIM)
 	_error_label = _make_label(Vector2(0, 80), 8, PlaceholderPalette.TEXT_DANGER)
@@ -83,15 +120,39 @@ func _show_data_error() -> void:
 	_hint_label.text = ""
 
 
+func _position_menu_band() -> void:
+	## The band is a node rather than something drawn in `_draw()`: a
+	## Control paints itself *beneath* its children, so a drawn band would
+	## sit under this screen's full-rect background and never be seen.
+	var showing := _screen == Screen.MENU and not _menu_options.is_empty()
+	_menu_band.visible = showing
+	_menu_tick.visible = showing
+	if not showing:
+		return
+	var y := MENU_TOP + _menu_index * MENU_PITCH - 1
+	_menu_band.position = Vector2(MENU_BAND.position.x, y)
+	_menu_tick.position = Vector2(MENU_BAND.position.x, y)
+
+
 func _refresh() -> void:
+	_position_menu_band()
+	if _screen != Screen.MENU:
+		for row in _menu_rows:
+			row.visible = false
 	_detail_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	match _screen:
 		Screen.MENU:
-			var lines: Array[String] = []
-			for i in _menu_options.size():
-				var cursor := "> " if i == _menu_index else "  "
-				lines.append(cursor + _menu_options[i])
-			_list_label.text = "\n".join(lines)
+			_list_label.text = ""
+			for i in _menu_rows.size():
+				var row := _menu_rows[i]
+				row.visible = i < _menu_options.size()
+				if not row.visible:
+					continue
+				row.text = _menu_options[i]
+				row.add_theme_color_override(
+					"font_color",
+					PlaceholderPalette.TEXT_MAIN if i == _menu_index else PlaceholderPalette.TEXT_DIM
+				)
 			_detail_label.text = ""
 			_preview.visible = false
 			_hint_label.text = "Arrows: choose   Z/Enter: confirm"

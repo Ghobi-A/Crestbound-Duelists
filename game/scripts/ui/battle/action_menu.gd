@@ -79,9 +79,7 @@ func current_entry() -> Dictionary:
 
 
 func _draw() -> void:
-	BattlePanelStyle.draw_panel(
-		self, Rect2(Vector2.ZERO, MENU_SIZE), PlaceholderPalette.MOON_SLATE, PlaceholderPalette.CREST_GOLD
-	)
+	UiStyle.draw_panel(self, Rect2(Vector2.ZERO, MENU_SIZE), UiStyle.COMMAND)
 	var font := get_theme_default_font()
 	for i in entries.size():
 		var entry: Dictionary = entries[i]
@@ -89,7 +87,7 @@ func _draw() -> void:
 		if i == cursor:
 			# A filled band, not just a "> " prefix, for real contrast
 			# between the selected and unselected rows.
-			draw_rect(Rect2(1, y - 7, MENU_SIZE.x - 2, 9), PlaceholderPalette.MOON_INDIGO)
+			UiStyle.draw_selection_band(self, Rect2(1, y - 7, MENU_SIZE.x - 2, 9), UiStyle.COMMAND)
 		var color := PlaceholderPalette.TEXT_MAIN if entry.enabled else PlaceholderPalette.TEXT_DIM
 		var text: String = ("> " if i == cursor else "  ") + str(entry.label)
 		if entry.note != "":
@@ -101,7 +99,9 @@ func _draw() -> void:
 	# derived from entry count, so it never pushes the description text
 	# down past the panel's bottom edge (MENU_SIZE.y is fixed at 56).
 	const DESCRIPTION_Y := 46
-	draw_rect(Rect2(3, DESCRIPTION_Y - 5, MENU_SIZE.x - 6, 1), PlaceholderPalette.SPECTRAL_VIOLET_DIM)
+	UiStyle.draw_divider(
+		self, Vector2(3, DESCRIPTION_Y - 5), MENU_SIZE.x - 6, PlaceholderPalette.CREST_GOLD
+	)
 	# Description of highlighted entry.
 	var description: String = str(entries[cursor].description)
 	var lines := description.split("\n")

@@ -423,7 +423,7 @@ func _play_events(action: Dictionary, events: Array) -> void:
 				await get_tree().create_timer(0.3).timeout
 			"intercept":
 				hud.set_message("%s shields %s!" % [event.protector.display_name, event.original_target.display_name])
-				_popup(sprites[event.protector].home_position, "GUARD", PlaceholderPalette.PANEL_BORDER)
+				_popup(sprites[event.protector].home_position, "GUARD", PlaceholderPalette.STEEL_GUARD)
 				await get_tree().create_timer(0.3).timeout
 			"damage":
 				var target: BattleUnit = event.target

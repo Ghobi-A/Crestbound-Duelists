@@ -29,17 +29,8 @@ func _build(title: String, body: String) -> void:
 	scrim.set_anchors_preset(Control.PRESET_FULL_RECT)
 	add_child(scrim)
 
-	var panel := ColorRect.new()
-	panel.color = PlaceholderPalette.BG_PANEL
-	panel.position = Vector2(28, 26)
-	panel.size = Vector2(264, 128)
+	var panel := UiPanel.create(Vector2(28, 26), Vector2(264, 128), UiStyle.COMMAND).with_divider(20)
 	add_child(panel)
-
-	var border := ColorRect.new()
-	border.color = PlaceholderPalette.PANEL_BORDER
-	border.position = Vector2(0, 0)
-	border.size = Vector2(264, 1)
-	panel.add_child(border)
 
 	var title_label := Label.new()
 	title_label.text = title

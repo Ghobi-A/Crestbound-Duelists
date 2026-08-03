@@ -11,7 +11,7 @@ var _phase_label: Label
 var _objective_label: Label
 var _message_label: Label
 var _info_label: Label
-var _info_panel: ColorRect
+var _info_panel: UiPanel
 var _rows: Dictionary = {}   # BattleUnit -> UnitStatusPanel
 var _rows_container: VBoxContainer
 var _flash_rect: ColorRect
@@ -25,9 +25,9 @@ func _ready() -> void:
 	top.color = PlaceholderPalette.MOON_SLATE
 	top.size = Vector2(320, 12)
 	add_child(top)
-	# A gold underline separates the header from the battlefield — the
-	# same accent-strip idea as BattlePanelStyle.draw_panel, kept as a
-	# plain ColorRect here since the top bar isn't a custom-drawn Control.
+	# A gold underline separates the header from the battlefield, matching
+	# the accent edge UiStyle.draw_panel puts on every other panel. Kept
+	# as a plain ColorRect since the top bar isn't a custom-drawn Control.
 	var top_accent := ColorRect.new()
 	top_accent.color = PlaceholderPalette.CREST_GOLD
 	top_accent.position = Vector2(0, 11)
@@ -64,16 +64,11 @@ func _ready() -> void:
 	# takes the violet framing (target-facing, not command-facing) —
 	# same size/position ActionMenu already occupies, so swapping between
 	# the two never shifts anything else in the bottom panel.
-	_info_panel = ColorRect.new()
-	_info_panel.position = Vector2(196, 1)
-	_info_panel.size = ActionMenu.MENU_SIZE
-	_info_panel.color = PlaceholderPalette.MOON_SLATE
+	_info_panel = UiPanel.create(Vector2(196, 1), ActionMenu.MENU_SIZE, UiStyle.TARGET)
 	_info_panel.visible = false
 	bottom.add_child(_info_panel)
-	var info_border := ColorRect.new()
-	info_border.color = PlaceholderPalette.SPECTRAL_VIOLET
-	info_border.size = Vector2(ActionMenu.MENU_SIZE.x, 1)
-	_info_panel.add_child(info_border)
+	# Width matters here: at 116 the longest enemy name wraps to a second
+	# line and pushes the final stat row out of the panel entirely.
 	_info_label = _label(_info_panel, Vector2(2, 3), Vector2(118, 52), PlaceholderPalette.TEXT_MAIN)
 	_info_label.visible = false
 

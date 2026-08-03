@@ -60,10 +60,14 @@ const NPC_COLOR_ALT := Color("6ab4d8")
 const MOON_SLATE := Color("2a2836")
 const MOON_SLATE_DIM := Color("1e1c28")
 const MOON_INDIGO := Color("342f40")
+const MOON_SLATE_LIGHT := Color("6a6480")
 const CREST_GOLD := Color("caa24a")
 const CREST_GOLD_BRIGHT := Color("f2cf7a")
 const SPECTRAL_VIOLET := Color("9b74d6")
 const SPECTRAL_VIOLET_DIM := Color("6a4a9a")
+# Defensive states (Brace, intercepted hits). Moonlit steel rather than
+# the old PANEL_BORDER blue, which read as debug UI against this palette.
+const STEEL_GUARD := Color("6a8fb8")
 
 
 static func class_color(class_id: String) -> Color:

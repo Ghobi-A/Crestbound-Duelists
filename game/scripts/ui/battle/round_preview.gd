@@ -36,13 +36,12 @@ func confirmed() -> bool:
 
 
 func _draw() -> void:
-	# Violet border: this screen reviews who each action affects, the
+	# Violet framing: this screen reviews who each action affects, the
 	# same "review/target" role violet plays on the battlefield ring.
-	BattlePanelStyle.draw_panel_bordered(
-		self, Rect2(Vector2.ZERO, PANEL_SIZE), PlaceholderPalette.MOON_SLATE, PlaceholderPalette.SPECTRAL_VIOLET
-	)
+	UiStyle.draw_panel(self, Rect2(Vector2.ZERO, PANEL_SIZE), UiStyle.TARGET)
 	var font := get_theme_default_font()
 	draw_string(font, Vector2(6, 12), "ROUND PLAN", HORIZONTAL_ALIGNMENT_LEFT, 168, 8, PlaceholderPalette.TEXT_WARN)
+	UiStyle.draw_divider(self, Vector2(6, 16), PANEL_SIZE.x - 12, PlaceholderPalette.SPECTRAL_VIOLET)
 	var y := 26
 	for action in planned:
 		var actor: BattleUnit = action.actor
