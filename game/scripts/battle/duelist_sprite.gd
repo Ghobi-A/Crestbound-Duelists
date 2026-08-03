@@ -19,6 +19,21 @@ var _sprite: Sprite2D
 var _entity_sprite: Sprite2D
 var _manifest: Dictionary = {}
 var _has_sheet := false
+
+# Per-instance frame geometry. Defaults match the global manifest's
+# generated 24x32 sheets; a sidecar (see below) overrides them per
+# character, so an authored hero and a generated placeholder can share
+# a battle with no code change.
+var _frame_w := 24
+var _frame_h := 32
+var _states: Dictionary = {}
+var _anchor := Vector2(12, 22)   # feet, in frame pixels; see docs/AUTHORED_ART_PIPELINE.md
+
+# Where "feet" sit relative to this node's origin, for the contact shadow
+# and highlight rings. The legacy placeholder sheets draw centered with a
+# hand-tuned -10 offset, so their floor sits a few px below origin; a
+# sidecar's anchor is exact, so its floor point IS the origin.
+var _feet_y := 6.0
 var _state := "idle"
 var _frame := 0
 var _frame_clock := 0.0
@@ -69,15 +84,47 @@ func _load_manifest() -> void:
 
 func _setup_sheet() -> void:
 	var path := sheet_path_for(unit.sprite_key())
-	if path == "" or _manifest.is_empty():
+	if path == "":
 		return
+	var sidecar := _load_sidecar(path)
+	if sidecar.is_empty() and _manifest.is_empty():
+		return  # no per-character layout and no global fallback to size against
 	_sprite = Sprite2D.new()
 	_sprite.texture = load(path)
 	_sprite.region_enabled = true
-	_sprite.position = Vector2(0, -10)  # feet roughly on home position
+	if not sidecar.is_empty():
+		_frame_w = int(sidecar.get("frame_width", _frame_w))
+		_frame_h = int(sidecar.get("frame_height", _frame_h))
+		_states = sidecar.get("states", {})
+		var a: Array = sidecar.get("anchor", [_frame_w / 2.0, _frame_h])
+		_anchor = Vector2(a[0], a[1])
+		# Sidecar art is anchored explicitly, so draw it unscaled from its
+		# own top-left rather than the placeholder sheets' centered pivot.
+		_sprite.centered = false
+		_sprite.position = -_anchor
+		_feet_y = 0.0
+	else:
+		_frame_w = int(_manifest.get("frame_width", 24))
+		_frame_h = int(_manifest.get("frame_height", 32))
+		_states = _manifest.get("states", {})
+		_sprite.position = Vector2(0, -10)  # feet roughly on home position
 	add_child(_sprite)
 	_has_sheet = true
 	_apply_frame()
+
+
+func _load_sidecar(sheet_path: String) -> Dictionary:
+	## An authored sheet's layout lives beside it as <name>.json
+	## (battle.png -> battle.json). Absent entirely for the generated
+	## placeholder sheets, which size against the global manifest instead.
+	var sidecar_path := sheet_path.get_basename() + ".json"
+	if not FileAccess.file_exists(sidecar_path):
+		return {}
+	var json := JSON.new()
+	if json.parse(FileAccess.open(sidecar_path, FileAccess.READ).get_as_text()) != OK:
+		push_warning("DuelistSprite: malformed sidecar %s" % sidecar_path)
+		return {}
+	return json.data
 
 
 func _setup_entity() -> void:
@@ -106,7 +153,7 @@ func _process(delta: float) -> void:
 
 	if not _has_sheet or _holding:
 		return
-	var state: Dictionary = _manifest.get("states", {}).get(_state, {})
+	var state: Dictionary = _effective_state(_state)
 	if state.is_empty():
 		return
 	_frame_clock += delta
@@ -133,11 +180,19 @@ func _process(delta: float) -> void:
 func _apply_frame() -> void:
 	if not _has_sheet:
 		return
-	var state: Dictionary = _manifest.get("states", {}).get(_state, {})
+	var state: Dictionary = _effective_state(_state)
 	var start := int(state.get("start", 0))
-	var frame_w := int(_manifest.get("frame_width", 24))
-	var frame_h := int(_manifest.get("frame_height", 32))
-	_sprite.region_rect = Rect2((start + _frame) * frame_w, 0, frame_w, frame_h)
+	_sprite.region_rect = Rect2((start + _frame) * _frame_w, 0, _frame_w, _frame_h)
+
+
+func _effective_state(name: String) -> Dictionary:
+	## A sheet that only authors some states (an idle-only single-frame
+	## sheet, say) falls back to "idle" for the rest, per
+	## docs/AUTHORED_ART_PIPELINE.md, rather than freezing on whatever
+	## frame happened to be on screen or erroring out.
+	if _states.has(name):
+		return _states[name]
+	return _states.get("idle", {})
 
 
 func refresh() -> void:
@@ -254,10 +309,10 @@ func _draw_contact_shadow() -> void:
 	## Grounds every unit on the arena floor. Sized from the manifest's
 	## frame width rather than a fixed constant, so a future sprite-size
 	## migration (Phase 3B) does not require touching this.
-	var frame_w := float(_manifest.get("frame_width", 24))
+	var frame_w := float(_frame_w)
 	var half_w := frame_w * 0.4
 	var half_h := frame_w * 0.16
-	var feet_y := 6.0  # roughly where the sprite's feet sit below home_position
+	var feet_y := _feet_y  # roughly where the sprite's feet sit below home_position
 	var points := PackedVector2Array()
 	for i in 16:
 		var angle := TAU * float(i) / 16.0
@@ -266,10 +321,10 @@ func _draw_contact_shadow() -> void:
 
 
 func _draw_ring(radius_scale: float, color: Color) -> void:
-	var frame_w := float(_manifest.get("frame_width", 24))
+	var frame_w := float(_frame_w)
 	var half_w := frame_w * radius_scale
 	var half_h := half_w * 0.4
-	var feet_y := 6.0 + _ring_bob
+	var feet_y := _feet_y + _ring_bob
 	var points := PackedVector2Array()
 	for i in 20:
 		var angle := TAU * float(i) / 20.0
@@ -307,10 +362,20 @@ func _draw() -> void:
 		draw_rect(Rect2(-7, -4, 14, 13), outline)
 		draw_rect(Rect2(-6, -3, 12, 11), body)
 		draw_rect(Rect2(-4, -11, 8, 8), Color("e8c8a0"))
-	# State overlays shown in both render modes.
+	# State overlays shown in both render modes, sized against this
+	# instance's own frame geometry so they still wrap the sprite once a
+	# sidecar swaps in art much bigger than the 24x32 placeholder box.
+	var body_top_left := (
+		Vector2(-_anchor.x, -_anchor.y) if _has_sheet and _feet_y == 0.0
+		else Vector2(-_frame_w / 2.0, -10 - _frame_h / 2.0)
+	)
+	var body_size := Vector2(_frame_w, _frame_h)
 	if unit.awakened and unit.awakening_rounds_left > 0:
-		draw_rect(Rect2(-13, -27, 26, 34), Color(1.0, 0.85, 0.3, 0.85), false, 1.0)
+		draw_rect(Rect2(body_top_left - Vector2(1, 1), body_size + Vector2(2, 2)),
+			Color(1.0, 0.85, 0.3, 0.85), false, 1.0)
 	if unit.is_braced():
-		draw_rect(Rect2(-12, -14, 3, 8), PlaceholderPalette.STEEL_GUARD)
+		draw_rect(Rect2(body_top_left.x, body_top_left.y + body_size.y * 0.35, 3, body_size.y * 0.25),
+			PlaceholderPalette.STEEL_GUARD)
 	if unit.has_status("hexed"):
-		draw_rect(Rect2(9, -26, 4, 4), PlaceholderPalette.TILE_CREST_NODE.lightened(0.3))
+		draw_rect(Rect2(body_top_left.x + body_size.x - 5, body_top_left.y + 2, 4, 4),
+			PlaceholderPalette.TILE_CREST_NODE.lightened(0.3))

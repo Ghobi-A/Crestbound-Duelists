@@ -51,10 +51,28 @@ def test_overworld_sheet_matches_manifest(key: str, manifest: dict) -> None:
 
 @pytest.mark.parametrize("key", CHARACTER_KEYS + ENEMY_KEYS)
 def test_battle_sheet_matches_manifest(key: str, manifest: dict) -> None:
+    """A battle sheet is sized against its own sidecar (docs/AUTHORED_ART_PIPELINE.md)
+    when one exists, and against the global manifest otherwise. Either way the
+    PNG and its declared layout must actually agree, or DuelistSprite renders
+    a sliver of the wrong frame instead of failing loudly."""
     folder = "characters" if key in CHARACTER_KEYS else "enemies"
-    width, height = png_size(ASSETS / folder / key / "battle.png")
-    assert height == manifest["frame_height"]
-    assert width == manifest["frame_width"] * manifest["frame_count"]
+    png_path = ASSETS / folder / key / "battle.png"
+    width, height = png_size(png_path)
+    sidecar_path = png_path.with_suffix(".json")
+    if sidecar_path.is_file():
+        sidecar = json.loads(sidecar_path.read_text(encoding="utf-8"))
+        assert height == sidecar["frame_height"]
+        assert width == sidecar["frame_width"] * sidecar["frame_count"]
+        x, y = sidecar["anchor"]
+        assert 0 <= x <= sidecar["frame_width"]
+        assert 0 <= y <= sidecar["frame_height"]
+        for name, state in sidecar["states"].items():
+            assert state["start"] + state["count"] <= sidecar["frame_count"], (
+                f"{key}: battle state '{name}' references frames past the end of the sheet"
+            )
+    else:
+        assert height == manifest["frame_height"]
+        assert width == manifest["frame_width"] * manifest["frame_count"]
 
 
 def test_overworld_directions_fit_within_the_sheet(manifest: dict) -> None:

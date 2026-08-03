@@ -1,0 +1,17 @@
+{
+  "frame_width": 66,
+  "frame_height": 64,
+  "frame_count": 1,
+  "anchor": [
+    33,
+    64
+  ],
+  "states": {
+    "idle": {
+      "start": 0,
+      "count": 1,
+      "fps": 2,
+      "loop": true
+    }
+  }
+}
