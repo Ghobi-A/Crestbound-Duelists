@@ -27,6 +27,15 @@ var _entity_clock := 0.0
 var _entity_frame := 0
 var _tween: Tween
 
+# Target-highlighting (Phase 4). Kept independent of _tween/_state so a
+# combat animation (attack/hit/defeat) never fights a highlight, and a
+# highlight change never interrupts a combat animation.
+var _highlight_kind := ""   # "", "selected" (gold, the acting unit), "target" (violet)
+var _highlight_tween: Tween
+var _ring_bob := 0.0
+var _confirm_flash_t := 0.0
+var _confirm_tween: Tween
+
 
 static func sheet_path_for(key: String) -> String:
 	if key == "":
@@ -136,6 +145,52 @@ func refresh() -> void:
 	queue_redraw()
 
 
+func set_highlighted(kind: String) -> void:
+	## "" clears, "selected" marks the acting unit (gold), "target" marks
+	## the current target during selection (violet). Drives a small
+	## looping bob so a locked-in ring reads as "active", not static.
+	if _highlight_kind == kind:
+		return
+	_highlight_kind = kind
+	if is_instance_valid(_highlight_tween):
+		_highlight_tween.kill()
+	if kind == "":
+		_ring_bob = 0.0
+	else:
+		_highlight_tween = create_tween().set_loops()
+		_highlight_tween.tween_method(_set_ring_bob, 0.0, -1.5, 0.5)
+		_highlight_tween.tween_method(_set_ring_bob, -1.5, 0.0, 0.5)
+	queue_redraw()
+
+
+func clear_highlight() -> void:
+	set_highlighted("")
+
+
+func _set_ring_bob(value: float) -> void:
+	_ring_bob = value
+	queue_redraw()
+
+
+func flash_confirm() -> void:
+	## A brief brighter pop on the confirmed target, independent of the
+	## ring state above: the controller opens the next unit's menu (or
+	## the round preview) on the very next call, which synchronously
+	## clears _highlight_kind. If the flash shared that state it would
+	## be killed before a single frame rendered it, so it gets its own
+	## tweened value that nothing else touches.
+	if is_instance_valid(_confirm_tween):
+		_confirm_tween.kill()
+	_confirm_flash_t = 1.0
+	_confirm_tween = create_tween()
+	_confirm_tween.tween_method(_set_confirm_flash, 1.0, 0.0, 0.22)
+
+
+func _set_confirm_flash(value: float) -> void:
+	_confirm_flash_t = value
+	queue_redraw()
+
+
 func play(state: String) -> void:
 	_state = state
 	_frame = 0
@@ -143,6 +198,11 @@ func play(state: String) -> void:
 	_holding = false
 	if _tween != null and _tween.is_running():
 		_tween.kill()
+	# A leftover highlight bob must never fight a combat animation's own
+	# position/modulate tween.
+	if is_instance_valid(_highlight_tween):
+		_highlight_tween.kill()
+		_ring_bob = 0.0
 	if _has_sheet:
 		_apply_frame()
 		# Small physical accents on top of the frame animation.
@@ -190,9 +250,51 @@ func _emit_done(state: String) -> void:
 	animation_finished.emit(state)
 
 
+func _draw_contact_shadow() -> void:
+	## Grounds every unit on the arena floor. Sized from the manifest's
+	## frame width rather than a fixed constant, so a future sprite-size
+	## migration (Phase 3B) does not require touching this.
+	var frame_w := float(_manifest.get("frame_width", 24))
+	var half_w := frame_w * 0.4
+	var half_h := frame_w * 0.16
+	var feet_y := 6.0  # roughly where the sprite's feet sit below home_position
+	var points := PackedVector2Array()
+	for i in 16:
+		var angle := TAU * float(i) / 16.0
+		points.append(Vector2(cos(angle) * half_w, feet_y + sin(angle) * half_h))
+	draw_colored_polygon(points, Color(0.04, 0.04, 0.08, 0.4))
+
+
+func _draw_ring(radius_scale: float, color: Color) -> void:
+	var frame_w := float(_manifest.get("frame_width", 24))
+	var half_w := frame_w * radius_scale
+	var half_h := half_w * 0.4
+	var feet_y := 6.0 + _ring_bob
+	var points := PackedVector2Array()
+	for i in 20:
+		var angle := TAU * float(i) / 20.0
+		points.append(Vector2(cos(angle) * half_w, feet_y + sin(angle) * half_h))
+	draw_polyline(points + PackedVector2Array([points[0]]), color, 1.0)
+
+
+func _draw_highlight() -> void:
+	## Ring markers sit at the unit's base — around the contact shadow,
+	## never over the torso or face — so they never obscure the sprite.
+	if _highlight_kind == "selected":
+		_draw_ring(0.46, PlaceholderPalette.CREST_GOLD)
+	elif _highlight_kind == "target":
+		_draw_ring(0.46, PlaceholderPalette.SPECTRAL_VIOLET)
+	if _confirm_flash_t > 0.0:
+		var flash := PlaceholderPalette.CREST_GOLD_BRIGHT
+		flash.a = _confirm_flash_t
+		_draw_ring(0.5 + 0.25 * _confirm_flash_t, flash)
+
+
 func _draw() -> void:
 	if unit == null:
 		return
+	_draw_contact_shadow()
+	_draw_highlight()
 	if not _has_sheet:
 		# Original placeholder chip for builds without generated art.
 		var body := PlaceholderPalette.class_color(unit.class_id)

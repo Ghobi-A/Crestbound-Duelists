@@ -11,8 +11,10 @@ extends Node
 ## nearest-neighbour upscaling, preserving exact pixel boundaries.
 ##
 ## Targets:
-##   overworld — Greymere at the default spawn tile.
-##   battle    — Hollow Court, round 1, command menu open.
+##   overworld     — Greymere at the default spawn tile.
+##   battle        — Hollow Court, round 1, command menu open.
+##   battle_target — Hollow Court, round 1, first move opened against the
+##                   first target (shows the target-highlight ring/dim).
 ##
 ## The harness seeds a canonical GameState (warrior, onboarding flags set),
 ## instantiates the target scene as a sibling, advances scripted `interact`
@@ -23,6 +25,7 @@ extends Node
 const SCENE_PATHS := {
 	"overworld": "res://scenes/overworld/greymere.tscn",
 	"battle": "res://scenes/battle/party_battle.tscn",
+	"battle_target": "res://scenes/battle/party_battle.tscn",
 }
 
 const SETTLE_FRAMES := 30
@@ -44,10 +47,15 @@ func _ready() -> void:
 	var scene: Node = load(SCENE_PATHS[target]).instantiate()
 	get_tree().root.add_child(scene)
 	await _frames(SETTLE_FRAMES)
-	if target == "battle":
+	if target == "battle" or target == "battle_target":
 		# battle_intro is 3 entries totalling 6 lines; one press per line
 		# leaves the round-1 command menu open.
 		await _press_times(6)
+		await _frames(SETTLE_FRAMES)
+		if target == "battle_target":
+			# Open the first move to leave target selection active, so
+			# the baseline shows the highlight ring and dimming.
+			await _press_times(1)
 	await _frames(SETTLE_FRAMES)
 	await _capture("baseline_%s" % target)
 	get_tree().quit(0)

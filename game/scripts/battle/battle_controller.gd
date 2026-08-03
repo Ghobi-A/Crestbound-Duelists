@@ -12,6 +12,20 @@ extends Node2D
 const OVERWORLD_SCENE := "res://scenes/overworld/greymere.tscn"
 const BOOT_SCENE := "res://scenes/boot/boot.tscn"
 const COURT_RETURN_TILE := Vector2i(11, 2)
+
+## Background height must match where the HUD's opaque bottom panel
+## starts (battle_hud.gd) or a seam shows between the floor and the
+## panel. tools/generate_sprites.py generates backgrounds at this size.
+const BACKGROUND_HEIGHT := 122
+
+## Formation staging. Two clear halves rather than a shared diagonal, so
+## the sides read as opposing at a glance; front/back use one shared
+## depth convention for both teams — front is always closer to the
+## camera (larger Y) — so the read is consistent instead of mirrored.
+const PLAYER_CENTER_X := 88.0
+const ENEMY_CENTER_X := 232.0
+const FRONT_Y := 92.0
+const BACK_Y := 68.0
 const ONBOARDING_FLAG := "battle_onboarding_seen"
 const ONBOARDING_TITLE := "BATTLE BASICS"
 const ONBOARDING_BODY := "Choose each Duelist's action and target.\nBrace acts first and reduces incoming damage.\nBuild Resonance to awaken your Crest."
@@ -87,7 +101,7 @@ func _stage_background() -> void:
 	else:
 		var fallback := ColorRect.new()
 		fallback.color = PlaceholderPalette.BG_DARK
-		fallback.size = Vector2(320, 122)
+		fallback.size = Vector2(320, BACKGROUND_HEIGHT)
 		stage.add_child(fallback)
 
 
@@ -95,7 +109,12 @@ func _stage_units() -> void:
 	for unit in runtime.all_units():
 		var sprite := DuelistSprite.new()
 		stage.add_child(sprite)
-		sprite.configure(unit, stage_position(unit))
+		var home := stage_position(unit)
+		sprite.configure(unit, home)
+		# Back-row units must draw behind front-row units regardless of
+		# team or add order, so the depth the Y position implies is
+		# never contradicted by draw order.
+		sprite.z_index = int(home.y)
 		sprites[unit] = sprite
 
 
@@ -107,20 +126,23 @@ func _shake(strength: float = 2.0) -> void:
 
 
 func stage_position(unit: BattleUnit) -> Vector2:
-	## Dynamic staging: enemies upper-right, players lower-left in a
-	## classic diagonal, spread by party width, with front/back rows
-	## offset toward or away from the opposing side.
+	## Dynamic staging: players occupy the left half, enemies the right,
+	## so the two sides read as opposing formations at a glance. Front
+	## and back rows use one shared depth convention for both teams —
+	## front is always closer to the camera — rather than a convention
+	## that reversed between sides. Back rows draw slightly narrower
+	## than front rows, a shallow wedge that reinforces "protected" depth
+	## without any grid or movement implication.
 	var team_units: Array = runtime.player_units if unit.team == "player" else runtime.enemy_units
 	var count := team_units.size()
-	var spread := 64.0 if count < 3 else 56.0
-	var x := 160.0 + (unit.slot_index - (count - 1) / 2.0) * spread
-	var y: float
-	if unit.team == "enemy":
-		x += 26.0
-		y = 64.0 if unit.position == "front" else 48.0
-	else:
-		x -= 18.0
-		y = 88.0 if unit.position == "front" else 100.0
+	var center_x := PLAYER_CENTER_X if unit.team == "player" else ENEMY_CENTER_X
+	var is_front := unit.position == "front"
+
+	var spread := 46.0 if count < 3 else 40.0
+	if not is_front:
+		spread *= 0.7
+	var x := center_x + (unit.slot_index - (count - 1) / 2.0) * spread
+	var y := FRONT_Y if is_front else BACK_Y
 	return Vector2(x, y)
 
 
@@ -170,10 +192,50 @@ func _current_unit() -> BattleUnit:
 
 func _open_menu_for_current() -> void:
 	state = State.SELECT_MENU
+	_clear_all_highlights()
 	var unit := _current_unit()
 	hud.highlight_unit(unit)
 	hud.show_menu(unit)
+	if sprites.has(unit):
+		sprites[unit].set_highlighted("selected")
 	queue_redraw()
+
+
+# ── Target highlighting (presentation only; target_selector.gd,
+# battle_resolver.gd, battle_unit.gd and encounter_runtime.gd are never
+# touched by any of this) ─────────────────────────────────────────────
+
+func _clear_all_highlights() -> void:
+	for u in sprites:
+		sprites[u].clear_highlight()
+	_clear_target_dim()
+
+
+func _clear_target_dim() -> void:
+	for u in sprites:
+		sprites[u].modulate = Color.WHITE
+
+
+func _clear_target_side() -> void:
+	for u in target_selector.targets:
+		if sprites.has(u):
+			sprites[u].clear_highlight()
+	_clear_target_dim()
+
+
+func _refresh_target_highlights() -> void:
+	var current := target_selector.current()
+	for u in target_selector.targets:
+		if sprites.has(u):
+			sprites[u].set_highlighted("target" if u == current else "")
+	_apply_target_dim()
+
+
+func _apply_target_dim() -> void:
+	var current := target_selector.current()
+	for u in target_selector.targets:
+		if sprites.has(u):
+			sprites[u].modulate = Color.WHITE if u == current else Color(0.55, 0.55, 0.65)
 
 
 func _commit_action(action: Dictionary) -> void:
@@ -193,6 +255,7 @@ func _open_preview() -> void:
 	hud.highlight_unit(null)
 	hud.hide_menu()
 	hud.hide_info()
+	_clear_all_highlights()
 	hud.round_preview.open(planned_actions)
 	queue_redraw()
 
@@ -244,6 +307,7 @@ func _menu_input(event: InputEvent) -> void:
 		if target_selector.open(unit, runtime):
 			state = State.SELECT_TARGET
 			_refresh_target_info()
+			_refresh_target_highlights()
 			queue_redraw()
 
 
@@ -251,19 +315,25 @@ func _target_input(event: InputEvent) -> void:
 	if event.is_action_pressed("move_left") or event.is_action_pressed("move_up"):
 		target_selector.cycle(-1)
 		_refresh_target_info()
+		_refresh_target_highlights()
 		queue_redraw()
 	elif event.is_action_pressed("move_right") or event.is_action_pressed("move_down"):
 		target_selector.cycle(1)
 		_refresh_target_info()
+		_refresh_target_highlights()
 		queue_redraw()
 	elif event.is_action_pressed("cancel"):
 		hud.hide_info()
+		_clear_target_side()
 		_open_menu_for_current()
 	elif event.is_action_pressed("interact"):
 		var unit := _current_unit()
+		var target := target_selector.current()
+		if sprites.has(target):
+			sprites[target].flash_confirm()
 		_commit_action({
 			"actor": unit, "kind": "move",
-			"move": pending_move, "target": target_selector.current(),
+			"move": pending_move, "target": target,
 		})
 		queue_redraw()
 
@@ -291,6 +361,7 @@ func _resolve_round() -> void:
 	state = State.RESOLVING
 	hud.set_phase("ROUND %d — resolution" % runtime.round_number)
 	hud.highlight_unit(null)
+	_clear_all_highlights()
 	queue_redraw()
 
 	var all_actions := planned_actions.duplicate()
@@ -469,17 +540,7 @@ func _leave_after_victory() -> void:
 	get_tree().change_scene_to_file(OVERWORLD_SCENE)
 
 
-# ── Overlay drawing (selection + target markers) ─────────────────────
-
-func _draw() -> void:
-	if state == State.SELECT_MENU or state == State.SELECT_TARGET:
-		if selection_index < selection_order.size():
-			var actor := _current_unit()
-			var home: Vector2 = sprites[actor].home_position
-			draw_rect(Rect2(home + Vector2(-10, -16), Vector2(20, 30)), PlaceholderPalette.OVERLAY_SELECTED, false, 1.0)
-	if state == State.SELECT_TARGET:
-		var target := target_selector.current()
-		if target != null:
-			var home: Vector2 = sprites[target].home_position
-			draw_rect(Rect2(home + Vector2(-10, -16), Vector2(20, 30)), PlaceholderPalette.OVERLAY_CURSOR, false, 1.0)
-			draw_rect(Rect2(home + Vector2(-2, -22), Vector2(4, 4)), PlaceholderPalette.TEXT_DANGER)
+# Selection/target markers now live on DuelistSprite itself
+# (set_highlighted/flash_confirm), sized from the sprite's own manifest
+# instead of a hardcoded box here — see _clear_all_highlights and
+# _refresh_target_highlights above.
