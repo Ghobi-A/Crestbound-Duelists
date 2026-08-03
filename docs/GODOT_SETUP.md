@@ -77,6 +77,48 @@ game/
 It is not a substitute for opening the project in the editor, which
 performs full GDScript parsing.
 
+## Screenshot capture (visual baselines)
+
+`tools/capture_screenshots.sh` renders deterministic baseline frames of
+the real project — the before/after evidence for visual work and the
+input to visual-regression comparison.
+
+```bash
+tools/capture_screenshots.sh                 # -> docs/visual_refs/
+tools/capture_screenshots.sh /tmp/candidate  # -> anywhere else
+python tools/compare_screenshots.py --dir-a docs/visual_refs --dir-b /tmp/candidate
+```
+
+The script downloads a pinned **Godot 4.3-stable** into
+`~/.cache/crestbound-godot` (override with `CRESTBOUND_GODOT_CACHE`),
+verifies it against the official SHA-512 from the release's
+`SHA512-SUMS.txt`, and fails closed on any mismatch. Rendering needs a
+real GL context, so it runs under `xvfb-run` with Mesa llvmpipe
+(`LIBGL_ALWAYS_SOFTWARE=1`); `--headless` cannot rasterize.
+
+Two frames are captured: Greymere at the spawn tile, and the Hollow
+Court round-1 command menu. The window is driven at exactly 320x180 so
+the captured viewport texture *is* the internal game canvas at 1:1; the
+`_4x.png` copies are nearest-neighbour upscales of that image, never OS
+or browser grabs.
+
+Determinism comes from `--fixed-fps 60`, frame-counted waits, `seed(41)`,
+a canonically seeded `GameState`, and scripted input on fixed frames.
+Repeat runs in one environment are byte-identical, but the pass
+condition is a tolerance (see `docs/visual_refs/README.md`) so that
+driver differences across machines do not produce false failures.
+
+The harness lives in `game/scripts/tools/screenshot_capture.gd` and
+`game/scenes/tools/screenshot_capture.tscn`. It is a capture-only entry
+point: no gameplay script is modified to support it.
+
+Note: running Godot's importer rewrites `game/project.godot` in the
+engine's own canonical form — it drops the file's header comments and
+adds `location:0` to each input event. The settings are unchanged, but
+the comments are worth keeping, so revert that file after capturing
+(`git checkout game/project.godot`) unless a project setting was
+genuinely meant to change.
+
 ## Input map
 
 | Action | Keys |
