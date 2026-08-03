@@ -37,13 +37,25 @@ func _build_ui() -> void:
 	background.set_anchors_preset(Control.PRESET_FULL_RECT)
 	add_child(background)
 
+	# Roster on the left (the player's choices, so gold), encounter
+	# detail on the right (what it affects, so violet) — the same accent
+	# grammar the battle HUD uses.
+	add_child(UiPanel.create(Vector2(8, 4), Vector2(304, 22), UiStyle.COMMAND))
+	add_child(UiPanel.create(Vector2(8, 30), Vector2(184, 126), UiStyle.COMMAND))
+	add_child(UiPanel.create(Vector2(196, 30), Vector2(116, 126), UiStyle.TARGET))
+
 	_title_label = _label(Vector2(0, 10), 10, PlaceholderPalette.TEXT_WARN)
 	_title_label.text = "PARTY SETUP — %s" % _encounter.get("name", "")
-	_rows_label = _label(Vector2(24, 34), 8, PlaceholderPalette.TEXT_MAIN)
+	# Both labels are clamped to their panel's interior; the roster's
+	# longest row ("Warden Elara Thorne") used to bleed into the detail
+	# column when the label was left at full screen width.
+	_rows_label = _label(Vector2(14, 34), 8, PlaceholderPalette.TEXT_MAIN)
 	_rows_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
-	_detail_label = _label(Vector2(170, 34), 8, PlaceholderPalette.TEXT_DIM)
+	_rows_label.size = Vector2(172, 118)
+	_detail_label = _label(Vector2(202, 34), 8, PlaceholderPalette.TEXT_DIM)
 	_detail_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
-	_detail_label.size = Vector2(146, 120)
+	_detail_label.size = Vector2(104, 118)
+	_detail_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	_hint_label = _label(Vector2(0, 164), 8, PlaceholderPalette.TEXT_DIM)
 	_hint_label.text = "Up/Down: select  Left/Right: row  Z: swap/confirm  X: back"
 

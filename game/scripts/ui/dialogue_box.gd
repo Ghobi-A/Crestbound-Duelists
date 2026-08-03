@@ -17,7 +17,7 @@ var _entries: Array = []
 var _entry_index := 0
 var _line_index := 0
 
-var _panel: ColorRect
+var _panel: UiPanel
 var _speaker_label: Label
 var _text_label: Label
 var _advance_label: Label
@@ -25,17 +25,8 @@ var _advance_label: Label
 
 func _ready() -> void:
 	layer = 10
-	_panel = ColorRect.new()
-	_panel.color = PlaceholderPalette.BG_PANEL
-	_panel.position = Vector2(4, 132)
-	_panel.size = Vector2(312, 44)
+	_panel = UiPanel.create(Vector2(4, 132), Vector2(312, 44), UiStyle.COMMAND)
 	add_child(_panel)
-
-	var border := ColorRect.new()
-	border.color = PlaceholderPalette.PANEL_BORDER
-	border.position = Vector2(0, 0)
-	border.size = Vector2(312, 1)
-	_panel.add_child(border)
 
 	_speaker_label = Label.new()
 	_speaker_label.position = Vector2(6, 2)
