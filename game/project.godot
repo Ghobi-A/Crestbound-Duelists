@@ -31,6 +31,14 @@ window/size/window_height_override=720
 window/stretch/mode="canvas_items"
 window/stretch/scale_mode="integer"
 
+[gui]
+
+; Project-wide pixel typeface (tools/generate_font.py). Set here rather
+; than per-Label so every Control and every
+; draw_string(get_theme_default_font(), ...) picks it up. Note: running
+; Godot's importer rewrites this file and strips these comments.
+theme/custom_font="res://assets/ui/crestbound_font.fnt"
+
 [input]
 
 move_up={

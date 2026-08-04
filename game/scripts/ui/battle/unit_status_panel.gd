@@ -45,22 +45,24 @@ func _draw() -> void:
 	var name_text := unit.display_name
 	if acted_marker:
 		name_text += " *"
-	draw_string(font, Vector2(3, 8), name_text, HORIZONTAL_ALIGNMENT_LEFT, 96, 8, name_color)
+	# The name field is 104px: "Warden Elara Thorne" measures ~100px in the
+	# pixel font and was being clipped mid-word at the previous 96.
+	draw_string(font, Vector2(3, 8), name_text, HORIZONTAL_ALIGNMENT_LEFT, 104, 8, name_color)
 
 	# HP bar.
 	var hp_ratio := unit.hp_ratio()
-	draw_rect(Rect2(100, 2, 60, 5), Color(0, 0, 0, 0.6))
+	draw_rect(Rect2(110, 2, 54, 5), Color(0, 0, 0, 0.6))
 	var hp_color := Color("57c26b") if hp_ratio > 0.5 else (Color("e2b04a") if hp_ratio > 0.25 else Color("e05555"))
-	draw_rect(Rect2(100, 2, 60 * hp_ratio, 5), hp_color)
-	draw_string(font, Vector2(163, 8), "%d" % unit.hp, HORIZONTAL_ALIGNMENT_LEFT, 28, 8, name_color)
+	draw_rect(Rect2(110, 2, 54 * hp_ratio, 5), hp_color)
+	draw_string(font, Vector2(168, 8), "%d" % unit.hp, HORIZONTAL_ALIGNMENT_LEFT, 24, 8, name_color)
 
 	# Resonance meter (crestless units show no meter).
 	if not unit.crest_record.is_empty():
-		draw_rect(Rect2(100, 9, 60, 3), Color(0, 0, 0, 0.6))
+		draw_rect(Rect2(110, 9, 54, 3), Color(0, 0, 0, 0.6))
 		var resonance_color := PlaceholderPalette.TILE_CREST_NODE.lightened(0.35)
 		if unit.awakened:
-			resonance_color = Color(1.0, 0.85, 0.3)
-		draw_rect(Rect2(100, 9, 60 * unit.resonance / 100.0, 3), resonance_color)
+			resonance_color = PlaceholderPalette.CREST_GOLD_BRIGHT
+		draw_rect(Rect2(110, 9, 54 * unit.resonance / 100.0, 3), resonance_color)
 
 	# State tags.
 	var tags: Array[String] = []
@@ -74,4 +76,5 @@ func _draw() -> void:
 		tags.append(str(status.name).to_upper())
 	for mod in unit.stat_mods:
 		tags.append("%s%+d" % [mod.stat.to_upper(), mod.amount])
-	draw_string(font, Vector2(3, 15), " ".join(tags), HORIZONTAL_ALIGNMENT_LEFT, 186, 6, PlaceholderPalette.TEXT_WARN)
+	# Native font size: the pixel face only stays crisp at 8 or a multiple.
+	draw_string(font, Vector2(3, 16), " ".join(tags), HORIZONTAL_ALIGNMENT_LEFT, 186, 8, PlaceholderPalette.TEXT_WARN)
