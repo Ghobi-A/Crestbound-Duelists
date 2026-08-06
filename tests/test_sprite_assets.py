@@ -23,11 +23,19 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 ASSETS = REPO_ROOT / "game" / "assets"
 MANIFEST_PATH = ASSETS / "battle" / "sheet_manifest.json"
 GREYMERE_GD = REPO_ROOT / "game" / "scripts" / "overworld" / "greymere.gd"
+ENTITIES_JSON = REPO_ROOT / "game" / "data" / "entities.json"
 
 # sprite_key values GameState writes into save data (game_state.gd).
 PLAYER_CLASSES = ["warrior", "guardian", "mage", "sorcerer", "assassin", "neutral"]
 CHARACTER_KEYS = [f"aren/{class_id}" for class_id in PLAYER_CLASSES] + ["elara", "mira"]
 ENEMY_KEYS = ["riven_raider", "hexbound_adept", "unbound_mercenary"]
+
+# Bonded Entity ids, read from the data file rather than hand-duplicated
+# (same reasoning as TOWNSFOLK_KEYS below): entity_runtime.gd loads
+# assets/entities/<entity_id>/idle.png for whatever a party build's
+# entity_id names, so an id present in entities.json with no matching
+# folder is a bond that silently renders nothing in battle.
+ENTITY_IDS = sorted(json.loads(ENTITIES_JSON.read_text(encoding="utf-8")).keys())
 
 
 def _townsfolk_keys() -> list[str]:
@@ -137,6 +145,24 @@ def test_battle_sheet_matches_manifest(key: str, manifest: dict) -> None:
     else:
         assert height == manifest["frame_height"]
         assert width == manifest["frame_width"] * manifest["frame_count"]
+
+
+@pytest.mark.parametrize("entity_id", ENTITY_IDS)
+def test_entity_idle_sheet_exists_and_matches_the_hardcoded_contract(entity_id: str) -> None:
+    """Bonded Entities have no sidecar mechanism (unlike battle.png/
+    overworld.png) — duelist_sprite.gd hardcodes a 32x32-per-frame,
+    2-frame idle sheet directly (region_rect = Rect2(frame * 32, 0, 32,
+    32), alternated every ENTITY_PULSE_TIME). A sheet any other size
+    would just show a sliver, silently, of whichever frame that region
+    happens to land on."""
+    png_path = ASSETS / "entities" / entity_id / "idle.png"
+    assert png_path.is_file(), (
+        f"entities.json declares '{entity_id}' but {png_path} does not exist"
+    )
+    width, height = png_size(png_path)
+    assert (width, height) == (64, 32), (
+        f"{entity_id}/idle.png is {width}x{height}, expected 64x32 (2 frames of 32x32)"
+    )
 
 
 def test_overworld_directions_fit_within_the_sheet(manifest: dict) -> None:
