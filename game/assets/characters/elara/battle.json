@@ -1,10 +1,10 @@
 {
-  "frame_width": 54,
-  "frame_height": 44,
+  "frame_width": 93,
+  "frame_height": 76,
   "frame_count": 1,
   "anchor": [
-    27,
-    44
+    46,
+    76
   ],
   "states": {
     "idle": {

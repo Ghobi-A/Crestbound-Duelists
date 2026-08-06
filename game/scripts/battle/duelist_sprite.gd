@@ -41,6 +41,8 @@ var _frame_clock := 0.0
 var _holding := false   # a non-looping animation finished; hold last frame
 var _entity_clock := 0.0
 var _entity_frame := 0
+var _entity_frame_w := 32
+var _entity_frame_h := 32
 var _tween: Tween
 var _pivot_tween: Tween   # squash/stretch/rotation on _sprite_pivot; see play()
 
@@ -146,11 +148,28 @@ func _setup_entity() -> void:
 	var path := "res://assets/entities/%s/idle.png" % unit.entity_id
 	if not ResourceLoader.exists(path):
 		return
+	# An optional idle.json beside idle.png (same _load_sidecar() helper
+	# battle.json/overworld.json use) lets a Bonded Entity be authored
+	# bigger than the original hardcoded 32x32-per-frame contract —
+	# needed to actually reach the "large enemy/Entity" visual envelope
+	# rather than being stuck at 32x32 forever. Absent sidecar keeps the
+	# original 32x32, 2-frame behaviour unchanged.
+	var sidecar := _load_sidecar(path)
+	var frame_w := int(sidecar.get("frame_width", 32))
+	var frame_h := int(sidecar.get("frame_height", 32))
+	_entity_frame_w = frame_w
+	_entity_frame_h = frame_h
 	_entity_sprite = Sprite2D.new()
 	_entity_sprite.texture = load(path)
 	_entity_sprite.region_enabled = true
-	_entity_sprite.region_rect = Rect2(0, 0, 32, 32)
-	_entity_sprite.position = Vector2(-24, -12) if unit.team == "player" else Vector2(24, -8)
+	_entity_sprite.region_rect = Rect2(0, 0, frame_w, frame_h)
+	# The base offset was tuned for a 32x32 manifestation; scale it with
+	# frame size so a bigger sidecar-authored Entity floats the same
+	# relative distance from its bearer instead of drifting toward them.
+	var offset_scale := frame_w / 32.0
+	_entity_sprite.position = (
+		Vector2(-24, -12) if unit.team == "player" else Vector2(24, -8)
+	) * offset_scale
 	_entity_sprite.z_index = -1
 	_entity_sprite.modulate = Color(1, 1, 1, 0.85)
 	add_child(_entity_sprite)
@@ -162,7 +181,9 @@ func _process(delta: float) -> void:
 		if _entity_clock >= ENTITY_PULSE_TIME:
 			_entity_clock = 0.0
 			_entity_frame = 1 - _entity_frame
-			_entity_sprite.region_rect = Rect2(_entity_frame * 32, 0, 32, 32)
+			_entity_sprite.region_rect = Rect2(
+				_entity_frame * _entity_frame_w, 0, _entity_frame_w, _entity_frame_h
+			)
 
 	if not _has_sheet or _holding:
 		return

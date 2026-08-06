@@ -4,7 +4,7 @@ class_name OverworldNPC
 ## through the owning map's dialogue box. Uses the generated 16x24
 ## overworld sprite when available, else a placeholder chip.
 
-const TILE := 16
+const TILE := PresentationMetrics.TILE
 
 var npc_name := ""
 var dialogue_key := ""

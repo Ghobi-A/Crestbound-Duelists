@@ -49,9 +49,9 @@ xvfb-run -a "$GODOT" --path "$REPO_ROOT/game" --import --quit-after 200 >/dev/nu
 for target in "${TARGETS[@]}"; do
 	echo "Capturing $target ..."
 	# Drive the window at the internal resolution so the captured viewport
-	# texture is the 320x180 game canvas itself, not a scaled OS window.
+	# texture is the 640x360 game canvas itself, not a scaled OS window.
 	xvfb-run -a "$GODOT" --path "$REPO_ROOT/game" --fixed-fps 60 \
-		--resolution 320x180 \
+		--resolution 640x360 \
 		"res://scenes/tools/screenshot_capture.tscn" \
 		-- "--target=$target" "--out=$OUT_DIR"
 done

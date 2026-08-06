@@ -104,7 +104,7 @@ func _build_ui() -> void:
 func _make_label(top_left: Vector2, font_size: int, color: Color) -> Label:
 	var label := Label.new()
 	label.position = top_left
-	label.size = Vector2(320, 180 - top_left.y)
+	label.size = Vector2(PresentationMetrics.CANVAS_SIZE.x, PresentationMetrics.CANVAS_SIZE.y - top_left.y)
 	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	label.add_theme_font_size_override("font_size", font_size)
 	label.add_theme_color_override("font_color", color)

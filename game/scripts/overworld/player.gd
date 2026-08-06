@@ -7,7 +7,7 @@ class_name OverworldPlayer
 
 signal stepped_onto(tile: Vector2i)
 
-const TILE := 16
+const TILE := PresentationMetrics.TILE
 const STEP_TIME := 0.14
 
 var tile := Vector2i.ZERO

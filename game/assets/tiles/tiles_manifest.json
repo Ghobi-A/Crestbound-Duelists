@@ -1,8 +1,8 @@
 {
-  "tile_size": 16,
+  "tile_size": 32,
   "prop_size": [
-    16,
-    24
+    32,
+    48
   ],
   "atlas": "greymere_atlas.png",
   "props_atlas": "greymere_props.png",

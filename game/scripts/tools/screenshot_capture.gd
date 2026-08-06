@@ -2,12 +2,12 @@ extends Node
 ## Deterministic screenshot harness for visual regression baselines.
 ##
 ## Run with a fixed frame delta so every animation phase is reproducible:
-##   godot --path game --fixed-fps 60 --resolution 320x180 \
+##   godot --path game --fixed-fps 60 --resolution 640x360 \
 ##     res://scenes/tools/screenshot_capture.tscn -- --target=overworld --out=/abs/dir
 ##
-## The window is driven at exactly the 320x180 internal resolution, so the
+## The window is driven at exactly the 640x360 internal resolution, so the
 ## viewport texture IS the internal game canvas at 1:1 — never an OS-window
-## or browser grab. The 4x copy is produced from that image by
+## or browser grab. The 2x copy is produced from that image by
 ## nearest-neighbour upscaling, preserving exact pixel boundaries.
 ##
 ## Targets:
@@ -20,8 +20,8 @@ extends Node
 ##
 ## The harness seeds a canonical GameState (warrior, onboarding flags set),
 ## instantiates the target scene as a sibling, advances scripted `interact`
-## presses on fixed frame counts, then writes <out>/<name>.png (320x180
-## internal canvas, canonical) and <out>/<name>_4x.png (nearest-upscaled to
+## presses on fixed frame counts, then writes <out>/<name>.png (640x360
+## internal canvas, canonical) and <out>/<name>_2x.png (nearest-upscaled to
 ## 1280x720 for viewing). Exits with code 0 on success.
 
 const SCENE_PATHS := {
@@ -105,8 +105,12 @@ func _capture(name: String) -> void:
 	var dir := DirAccess.open(out_dir)
 	if dir == null:
 		DirAccess.make_dir_recursive_absolute(out_dir)
-	if image.get_width() != 320 or image.get_height() != 180:
-		push_error("Expected a 320x180 internal viewport, got %dx%d — run with --resolution 320x180." % [image.get_width(), image.get_height()])
+	var expected := PresentationMetrics.CANVAS_SIZE
+	if image.get_width() != expected.x or image.get_height() != expected.y:
+		push_error(
+			"Expected a %dx%d internal viewport, got %dx%d — run with --resolution %dx%d."
+			% [expected.x, expected.y, image.get_width(), image.get_height(), expected.x, expected.y]
+		)
 		get_tree().quit(4)
 		return
 	var canonical_path := "%s/%s.png" % [out_dir, name]
@@ -116,5 +120,5 @@ func _capture(name: String) -> void:
 		return
 	var upscaled := image.duplicate()
 	upscaled.resize(1280, 720, Image.INTERPOLATE_NEAREST)
-	upscaled.save_png("%s/%s_4x.png" % [out_dir, name])
-	print("Captured %s (320x180) and %s_4x.png" % [canonical_path, name])
+	upscaled.save_png("%s/%s_2x.png" % [out_dir, name])
+	print("Captured %s (%dx%d) and %s_2x.png" % [canonical_path, expected.x, expected.y, name])

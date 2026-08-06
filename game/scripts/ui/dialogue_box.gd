@@ -35,7 +35,13 @@ var _advance_label: Label
 
 func _ready() -> void:
 	layer = 10
-	_panel = UiPanel.create(Vector2(4, 132), Vector2(312, 44), UiStyle.COMMAND)
+	# Docked near-full-width at the bottom, same relationship as the old
+	# 320x180-era panel (4px margins, flush with the bottom edge) —
+	# _apply_portrait() already derives the text labels' width from
+	# _panel.size.x dynamically, so widening the panel here is enough;
+	# only _advance_label below needs its own position updated to track it.
+	var canvas := PresentationMetrics.CANVAS_SIZE
+	_panel = UiPanel.create(Vector2(4, canvas.y - 48), Vector2(canvas.x - 8, 44), UiStyle.COMMAND)
 	add_child(_panel)
 
 	_portrait = TextureRect.new()
@@ -67,7 +73,7 @@ func _ready() -> void:
 
 	_advance_label = Label.new()
 	_advance_label.text = "v"
-	_advance_label.position = Vector2(298, 32)
+	_advance_label.position = Vector2(_panel.size.x - 14, 32)
 	_advance_label.add_theme_font_size_override("font_size", 8)
 	_advance_label.add_theme_color_override("font_color", PlaceholderPalette.TEXT_DIM)
 	_panel.add_child(_advance_label)

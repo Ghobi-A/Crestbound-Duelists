@@ -15,17 +15,38 @@ const COURT_RETURN_TILE := Vector2i(11, 2)
 
 ## Background height must match where the HUD's opaque bottom panel
 ## starts (battle_hud.gd) or a seam shows between the floor and the
-## panel. tools/generate_sprites.py generates backgrounds at this size.
-const BACKGROUND_HEIGHT := 122
+## panel. See PresentationMetrics.BATTLE_BACKGROUND_HEIGHT for why this
+## isn't simply the old value doubled.
+const BACKGROUND_HEIGHT := PresentationMetrics.BATTLE_BACKGROUND_HEIGHT
 
 ## Formation staging. Two clear halves rather than a shared diagonal, so
 ## the sides read as opposing at a glance; front/back use one shared
 ## depth convention for both teams — front is always closer to the
 ## camera (larger Y) — so the read is consistent instead of mirrored.
-const PLAYER_CENTER_X := 88.0
-const ENEMY_CENTER_X := 232.0
-const FRONT_Y := 92.0
-const BACK_Y := 68.0
+##
+## These are NOT the 320x180-era values doubled — doubling them
+## verbatim reproduces the exact overlap bug that motivated this
+## migration. Solved from the actual regenerated sidecar widths
+## (characters at 76px tall: 64-99px player, 67-102px enemy), checking
+## three constraints together rather than one at a time — an earlier
+## pass here (88px-tall art, spread=116/112) satisfied same-team
+## adjacency but not the canvas edge, and a real screenshot caught the
+## rightmost enemy slot clipping off the right edge:
+##
+##   1. same-team adjacency: spread must clear the widest same-team
+##      pair (player: Warrior 99px + Elara 93px = 96px centre-to-centre)
+##   2. canvas edge: the outermost slot's sprite half-width must not
+##      cross the canvas edge — the constraint the first pass missed
+##   3. inter-team gap: the two teams' innermost 3-wide-fan slots must
+##      not reach each other
+##
+## PLAYER_CENTER_X/ENEMY_CENTER_X/spread below satisfy all three with a
+## positive (if tight, ~10-17px) margin on every one; verified against
+## a real captured screenshot, not just arithmetic.
+const PLAYER_CENTER_X := 160.0
+const ENEMY_CENTER_X := 478.0
+const FRONT_Y := 184.0
+const BACK_Y := 136.0
 const ONBOARDING_FLAG := "battle_onboarding_seen"
 const ONBOARDING_TITLE := "BATTLE BASICS"
 const ONBOARDING_BODY := "Choose each Duelist's action and target.\nBrace acts first and reduces incoming damage.\nBuild Resonance to awaken your Crest."
@@ -101,7 +122,7 @@ func _stage_background() -> void:
 	else:
 		var fallback := ColorRect.new()
 		fallback.color = PlaceholderPalette.BG_DARK
-		fallback.size = Vector2(320, BACKGROUND_HEIGHT)
+		fallback.size = Vector2(PresentationMetrics.CANVAS_SIZE.x, BACKGROUND_HEIGHT)
 		stage.add_child(fallback)
 
 
@@ -138,7 +159,18 @@ func stage_position(unit: BattleUnit) -> Vector2:
 	var center_x := PLAYER_CENTER_X if unit.team == "player" else ENEMY_CENTER_X
 	var is_front := unit.position == "front"
 
-	var spread := 46.0 if count < 3 else 40.0
+	# 130/100 (not the old 46/40 doubled) are the front-row spread that
+	# clears the widest same-team sidecar pairing at this canvas size,
+	# with room left for the canvas-edge and inter-team constraints too
+	# — see the const-block comment above. The back-row 0.7 shrink is
+	# preserved from the original composition intent (a "protected
+	# depth" wedge) but is not independently collision-proven the way
+	# front-row spacing is: an all-back-row formation of three
+	# maximum-width characters is a real, accepted residual risk rather
+	# than a guarantee, since demanding that case be provably safe too
+	# would require a front-row spread wide enough to push 3-unit
+	# formations off the 640px canvas entirely.
+	var spread := 130.0 if count < 3 else 100.0
 	if not is_front:
 		spread *= 0.7
 	var x := center_x + (unit.slot_index - (count - 1) / 2.0) * spread

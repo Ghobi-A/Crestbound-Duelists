@@ -11,7 +11,7 @@ class_name MapRenderer
 ## bit order taken from the manifest) so paths and water grow their own
 ## transitions against the surrounding land.
 
-const TILE := 16
+const TILE := PresentationMetrics.TILE
 const ATLAS_DIR := "res://assets/tiles/"
 const MANIFEST_PATH := ATLAS_DIR + "tiles_manifest.json"
 

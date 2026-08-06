@@ -148,21 +148,32 @@ def test_battle_sheet_matches_manifest(key: str, manifest: dict) -> None:
 
 
 @pytest.mark.parametrize("entity_id", ENTITY_IDS)
-def test_entity_idle_sheet_exists_and_matches_the_hardcoded_contract(entity_id: str) -> None:
-    """Bonded Entities have no sidecar mechanism (unlike battle.png/
-    overworld.png) — duelist_sprite.gd hardcodes a 32x32-per-frame,
-    2-frame idle sheet directly (region_rect = Rect2(frame * 32, 0, 32,
-    32), alternated every ENTITY_PULSE_TIME). A sheet any other size
-    would just show a sliver, silently, of whichever frame that region
-    happens to land on."""
+def test_entity_idle_sheet_exists_and_matches_its_contract(entity_id: str) -> None:
+    """Bonded Entities can now be sized via an optional idle.json beside
+    idle.png (same _load_sidecar() shape battle.json/overworld.json
+    use) — duelist_sprite.gd falls back to the original hardcoded
+    32x32-per-frame, 2-frame contract when the sidecar is absent. Either
+    way the PNG must actually be 2 frames of whatever size is declared:
+    a mismatch renders a sliver, silently, of whichever frame the fixed
+    region_rect happens to land on."""
     png_path = ASSETS / "entities" / entity_id / "idle.png"
     assert png_path.is_file(), (
         f"entities.json declares '{entity_id}' but {png_path} does not exist"
     )
     width, height = png_size(png_path)
-    assert (width, height) == (64, 32), (
-        f"{entity_id}/idle.png is {width}x{height}, expected 64x32 (2 frames of 32x32)"
-    )
+    sidecar_path = png_path.with_suffix(".json")
+    if sidecar_path.is_file():
+        sidecar = json.loads(sidecar_path.read_text(encoding="utf-8"))
+        frame_w = int(sidecar.get("frame_width", 32))
+        frame_h = int(sidecar.get("frame_height", 32))
+        assert (width, height) == (frame_w * 2, frame_h), (
+            f"{entity_id}/idle.png is {width}x{height}, expected "
+            f"{frame_w * 2}x{frame_h} (2 frames of {frame_w}x{frame_h} per idle.json)"
+        )
+    else:
+        assert (width, height) == (64, 32), (
+            f"{entity_id}/idle.png is {width}x{height}, expected 64x32 (2 frames of 32x32)"
+        )
 
 
 def test_overworld_directions_fit_within_the_sheet(manifest: dict) -> None:

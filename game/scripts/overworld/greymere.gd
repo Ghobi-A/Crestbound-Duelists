@@ -12,7 +12,7 @@ extends Node2D
 ##   Q watchman (spear)   O Goodwife Senna   Y night watchman (torch)
 ##   X hooded stranger
 
-const TILE := 16
+const TILE := PresentationMetrics.TILE
 const PARTY_SETUP_SCENE := "res://scenes/ui/party_setup.tscn"
 const SPAWN_DEFAULT := Vector2i(11, 9)
 const SPAWN_FROM_COURT := Vector2i(11, 2)
