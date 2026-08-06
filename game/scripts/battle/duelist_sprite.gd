@@ -16,6 +16,7 @@ var unit: BattleUnit
 var home_position := Vector2.ZERO
 
 var _sprite: Sprite2D
+var _sprite_pivot: Node2D   # animates around the character's feet; see _setup_sheet()
 var _entity_sprite: Sprite2D
 var _manifest: Dictionary = {}
 var _has_sheet := false
@@ -41,6 +42,7 @@ var _holding := false   # a non-looping animation finished; hold last frame
 var _entity_clock := 0.0
 var _entity_frame := 0
 var _tween: Tween
+var _pivot_tween: Tween   # squash/stretch/rotation on _sprite_pivot; see play()
 
 # Target-highlighting (Phase 4). Kept independent of _tween/_state so a
 # combat animation (attack/hit/defeat) never fights a highlight, and a
@@ -108,7 +110,18 @@ func _setup_sheet() -> void:
 		_frame_h = int(_manifest.get("frame_height", 32))
 		_states = _manifest.get("states", {})
 		_sprite.position = Vector2(0, -10)  # feet roughly on home position
-	add_child(_sprite)
+	# A single authored frame has no attack/hit/defeat art of its own, so
+	# combat states are sold with motion instead: squash/stretch/rotation
+	# tweened on the art alone, never on `self`, so the contact shadow and
+	# highlight rings — drawn in this node's own _draw() — stay flat on
+	# the ground instead of tilting with the character. Rotating/scaling
+	# `_sprite` directly would pivot around its top-left corner (its own
+	# node origin under centered=false); wrapping it in a pivot placed at
+	# `self`'s origin — which staging already puts at the character's
+	# feet — makes those transforms pivot there instead.
+	_sprite_pivot = Node2D.new()
+	add_child(_sprite_pivot)
+	_sprite_pivot.add_child(_sprite)
 	_has_sheet = true
 	_apply_frame()
 
@@ -253,6 +266,8 @@ func play(state: String) -> void:
 	_holding = false
 	if _tween != null and _tween.is_running():
 		_tween.kill()
+	if _pivot_tween != null and _pivot_tween.is_running():
+		_pivot_tween.kill()
 	# A leftover highlight bob must never fight a combat animation's own
 	# position/modulate tween.
 	if is_instance_valid(_highlight_tween):
@@ -260,20 +275,86 @@ func play(state: String) -> void:
 		_ring_bob = 0.0
 	if _has_sheet:
 		_apply_frame()
-		# Small physical accents on top of the frame animation.
+		# Every state starts from a clean pivot transform, whatever the
+		# previous state left it at (brace's held crouch, in particular,
+		# would otherwise leak into the next unrelated animation).
+		if _sprite_pivot != null:
+			_sprite_pivot.scale = Vector2.ONE
+			_sprite_pivot.rotation = 0.0
+		# Single-frame art has no attack/hit/defeat pose of its own, so
+		# these states are sold with motion instead: a position/modulate
+		# tween on `self` (unchanged from before) plus squash, stretch and
+		# rotation on `_sprite_pivot`, which pivots at the character's
+		# feet rather than the sprite's own top-left corner (see
+		# _setup_sheet()) — so a "lean" or "topple" reads as the body
+		# moving, not the art sliding around inside its own frame.
+		var lean := 1.0 if unit.team == "player" else -1.0   # attacks lean toward the enemy side
 		match state:
 			"attack":
 				var toward := Vector2(0, -3) if unit.team == "player" else Vector2(0, 3)
 				_tween = create_tween()
 				_tween.tween_property(self, "position", home_position + toward, 0.1)
 				_tween.tween_property(self, "position", home_position, 0.15)
+				if _sprite_pivot != null:
+					_pivot_tween = create_tween()
+					# Anticipation crouch, then a forward stretch on the
+					# strike, then settle — a squash/stretch beat standing
+					# in for real windup/release frames.
+					_pivot_tween.tween_property(_sprite_pivot, "scale", Vector2(0.88, 1.12), 0.06)
+					_pivot_tween.parallel().tween_property(_sprite_pivot, "rotation", deg_to_rad(-6.0 * lean), 0.06)
+					_pivot_tween.tween_property(_sprite_pivot, "scale", Vector2(1.18, 0.85), 0.07)
+					_pivot_tween.parallel().tween_property(_sprite_pivot, "rotation", deg_to_rad(10.0 * lean), 0.07)
+					_pivot_tween.tween_property(_sprite_pivot, "scale", Vector2.ONE, 0.12)
+					_pivot_tween.parallel().tween_property(_sprite_pivot, "rotation", 0.0, 0.12)
 			"hit":
+				# A small flinch: rocked back and squashed on the impact
+				# frame, then eased back to neutral — the shadow/rings
+				# stay put since only the pivot (and briefly `self`, for
+				# the knockback) moves, not the whole draw. `.parallel()`
+				# ties to whichever tweener was added immediately before
+				# it, so each position step is interleaved right after
+				# its matching modulate step rather than appended at the
+				# end, where it would sync to the wrong half of the flash.
+				var knockback := Vector2(-3, 0) if unit.team == "player" else Vector2(3, 0)
 				_tween = create_tween()
 				_tween.tween_property(self, "modulate", Color(1, 0.55, 0.55), 0.07)
+				_tween.parallel().tween_property(self, "position", home_position + knockback, 0.06)
 				_tween.tween_property(self, "modulate", Color.WHITE, 0.15)
+				_tween.parallel().tween_property(self, "position", home_position, 0.16)
+				if _sprite_pivot != null:
+					_pivot_tween = create_tween()
+					_pivot_tween.tween_property(_sprite_pivot, "scale", Vector2(1.12, 0.85), 0.05)
+					_pivot_tween.parallel().tween_property(_sprite_pivot, "rotation", deg_to_rad(-10.0 * lean), 0.05)
+					_pivot_tween.tween_property(_sprite_pivot, "scale", Vector2.ONE, 0.17)
+					_pivot_tween.parallel().tween_property(_sprite_pivot, "rotation", 0.0, 0.17)
 			"defeat":
 				_tween = create_tween()
 				_tween.tween_property(self, "modulate", Color(0.6, 0.55, 0.6), 0.4)
+				# A collapse, not just a colour fade: the unit topples and
+				# sinks, and — unlike the other states — this pose is left
+				# in place (defeat never springs back to idle).
+				_tween.parallel().tween_property(self, "position", home_position + Vector2(0, 4), 0.4)
+				if _sprite_pivot != null:
+					_pivot_tween = create_tween()
+					_pivot_tween.tween_property(_sprite_pivot, "rotation", deg_to_rad(78.0 * lean), 0.4)
+					_pivot_tween.parallel().tween_property(_sprite_pivot, "scale", Vector2(0.88, 0.82), 0.4)
+			"brace":
+				if _sprite_pivot != null:
+					_pivot_tween = create_tween()
+					# A held crouch, not a spring-back bounce: brace is a
+					# stance that persists until the unit's next action,
+					# and _effective_state() keeps this frame looping
+					# (falling back to "idle") for as long as it does.
+					_pivot_tween.tween_property(_sprite_pivot, "scale", Vector2(0.92, 0.94), 0.12)
+			"awaken":
+				var lift := Vector2(0, -3)
+				_tween = create_tween()
+				_tween.tween_property(self, "position", home_position + lift, 0.12)
+				_tween.tween_property(self, "position", home_position, 0.18)
+				if _sprite_pivot != null:
+					_pivot_tween = create_tween()
+					_pivot_tween.tween_property(_sprite_pivot, "scale", Vector2(1.18, 1.18), 0.14)
+					_pivot_tween.tween_property(_sprite_pivot, "scale", Vector2.ONE, 0.22)
 		return
 	# Placeholder path (no sheet available for this build).
 	match state:
