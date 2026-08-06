@@ -83,7 +83,8 @@ func _ready() -> void:
 	_info_label.visible = false
 
 	round_preview = RoundPreview.new()
-	round_preview.position = Vector2(70, 16)
+	# Centred on the 320px canvas: (320 - RoundPreview.PANEL_SIZE.x) / 2.
+	round_preview.position = Vector2((320.0 - RoundPreview.PANEL_SIZE.x) / 2.0, 16)
 	add_child(round_preview)
 
 	_flash_rect = ColorRect.new()
