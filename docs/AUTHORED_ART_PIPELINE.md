@@ -82,6 +82,37 @@ No GDScript changes, no manifest edits, no gameplay changes. If the
 sidecar and the PNG disagree about frame size, `tests/test_sprite_assets.py`
 fails rather than the game rendering a sliver of the wrong frame.
 
+## Overworld sheets
+
+The same override works for `overworld.png`, read by `OverworldSprite`
+(the player, and any `OverworldNPC` given a `sprite_key`):
+
+```
+game/assets/characters/townsfolk/farmboy/overworld.png     ← the sheet
+game/assets/characters/townsfolk/farmboy/overworld.json    ← its layout
+```
+
+```json
+{
+  "frame_width": 20,
+  "frame_height": 30,
+  "walk_frames": 1,
+  "directions": {"down": 0},
+  "mirror_side_for_west": false,
+  "anchor": [10, 30]
+}
+```
+
+The generated 20x28 walk sheets author four frames per direction across
+`down`/`up`/`side` (west mirrors side). A single authored front-facing
+pose — all this repository's townsfolk have so far — only needs
+`walk_frames: 1` and `directions: {"down": 0}`: `OverworldNPC` is static
+(it never calls `advance()` or re-faces itself), so one frame in "down"
+is the entire sheet, and every such NPC is placed facing
+`Vector2i(0, 1)` since that is the only pose drawn. A sheet that does
+author side/back views can declare a full `directions` dict the same way
+the generated sheets do.
+
 ## Portraits
 
 Portraits live beside the sheets:

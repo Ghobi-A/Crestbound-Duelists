@@ -92,5 +92,51 @@
         "...What exactly did you touch down there?"
       ]
     }
+  ],
+  "toby_flavor": [
+    {
+      "speaker": "Toby",
+      "lines": [
+        "Ma says I'm too young to go near the Court. I say I'm too young to muck out the goat pen either, but here we are.",
+        "You're not going up there, are you? To the arch?"
+      ]
+    }
+  ],
+  "wren_flavor": [
+    {
+      "speaker": "Wren",
+      "lines": [
+        "Feverbalm, willowbark, a little dried nettle for the swelling. Nothing fancy, but it keeps Greymere on its feet.",
+        "Warden Thorne came through here last week smelling of Court dust. Didn't like that one bit."
+      ]
+    }
+  ],
+  "kassian_flavor": [
+    {
+      "speaker": "Elder Kassian",
+      "lines": [
+        "I was younger than you when they sealed that arch. My grandfather was younger than me.",
+        "Three generations of Greymere folk have grown up being told not to ask what's under the Court.",
+        "Strange, how well that worked, right up until it didn't."
+      ]
+    }
+  ],
+  "pell_flavor": [
+    {
+      "speaker": "Pell",
+      "lines": [
+        "Barley's coming in thin this year. Everyone says it's the weather.",
+        "Everyone's been saying it's the weather since that light came out of the Court, funnily enough."
+      ]
+    }
+  ],
+  "guard_flavor": [
+    {
+      "speaker": "Town Guard",
+      "lines": [
+        "Move along toward Veyrhold if you're heading out — I'm not paid to make conversation, I'm paid to watch that road.",
+        "And the arch. Mostly the arch, if I'm honest."
+      ]
+    }
   ]
 }

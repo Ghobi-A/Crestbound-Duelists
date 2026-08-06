@@ -27,6 +27,14 @@ PLAYER_CLASSES = ["warrior", "guardian", "mage", "sorcerer", "assassin", "neutra
 CHARACTER_KEYS = [f"aren/{class_id}" for class_id in PLAYER_CLASSES] + ["elara", "mira"]
 ENEMY_KEYS = ["riven_raider", "hexbound_adept", "unbound_mercenary"]
 
+# Overworld-only sprite_key values (greymere.gd TOWNSFOLK): background
+# villagers, never part of a save's party/roster, so unlike CHARACTER_KEYS
+# they have no battle.png and don't gate test_save_referenced_sprite_paths_exist.
+TOWNSFOLK_KEYS = [
+    f"townsfolk/{name}"
+    for name in ["farmboy", "herbalist_woman", "village_elder", "farmhand_capped", "guard_sword"]
+]
+
 
 def png_size(path: Path) -> tuple[int, int]:
     """Read a PNG's dimensions from its IHDR chunk, no image library needed."""
@@ -41,12 +49,29 @@ def manifest() -> dict:
     return json.loads(MANIFEST_PATH.read_text(encoding="utf-8"))
 
 
-@pytest.mark.parametrize("key", CHARACTER_KEYS)
+@pytest.mark.parametrize("key", CHARACTER_KEYS + TOWNSFOLK_KEYS)
 def test_overworld_sheet_matches_manifest(key: str, manifest: dict) -> None:
-    overworld = manifest["overworld"]
-    width, height = png_size(ASSETS / "characters" / key / "overworld.png")
-    assert height == overworld["frame_height"]
-    assert width == overworld["frame_width"] * overworld["frames"]
+    """Mirrors test_battle_sheet_matches_manifest: an authored overworld
+    sheet (docs/AUTHORED_ART_PIPELINE.md) is sized against its own sidecar
+    when one exists, and against the global manifest otherwise."""
+    png_path = ASSETS / "characters" / key / "overworld.png"
+    width, height = png_size(png_path)
+    sidecar_path = png_path.with_suffix(".json")
+    if sidecar_path.is_file():
+        sidecar = json.loads(sidecar_path.read_text(encoding="utf-8"))
+        assert height == sidecar["frame_height"]
+        assert width == sidecar["frame_width"] * sidecar.get("walk_frames", 1)
+        x, y = sidecar["anchor"]
+        assert 0 <= x <= sidecar["frame_width"]
+        assert 0 <= y <= sidecar["frame_height"]
+        for name, start in sidecar.get("directions", {}).items():
+            assert start + sidecar.get("walk_frames", 1) <= (
+                width // sidecar["frame_width"]
+            ), f"{key}: overworld direction '{name}' runs past the end of the sheet"
+    else:
+        overworld = manifest["overworld"]
+        assert height == overworld["frame_height"]
+        assert width == overworld["frame_width"] * overworld["frames"]
 
 
 @pytest.mark.parametrize("key", CHARACTER_KEYS + ENEMY_KEYS)

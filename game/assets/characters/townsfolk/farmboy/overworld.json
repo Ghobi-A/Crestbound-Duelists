@@ -1,0 +1,13 @@
+{
+  "frame_width": 20,
+  "frame_height": 30,
+  "walk_frames": 1,
+  "directions": {
+    "down": 0
+  },
+  "mirror_side_for_west": false,
+  "anchor": [
+    10,
+    30
+  ]
+}

@@ -45,6 +45,21 @@ static func sheet_path(sprite_key: String) -> String:
 	return CHARACTER_PATH % sprite_key
 
 
+static func _load_sidecar(sheet_path_: String) -> Dictionary:
+	## Mirrors DuelistSprite's battle.json convention: an authored
+	## overworld sheet gets a same-named .json beside it (overworld.png
+	## -> overworld.json). Absent for the generated 20x28 walk sheets,
+	## which keep sizing against the global manifest.
+	var sidecar_path := sheet_path_.get_basename() + ".json"
+	if not FileAccess.file_exists(sidecar_path):
+		return {}
+	var json := JSON.new()
+	if json.parse(FileAccess.open(sidecar_path, FileAccess.READ).get_as_text()) != OK:
+		push_warning("OverworldSprite: malformed sidecar %s" % sidecar_path)
+		return {}
+	return json.data
+
+
 static func head_clearance() -> float:
 	## How far a character's art rises above the centre of its tile, so
 	## callers can place markers above the head without assuming a size.
@@ -62,16 +77,32 @@ func attach(parent: Node2D, sprite_key: String) -> bool:
 	if not ResourceLoader.exists(path):
 		return false
 
-	var data := manifest()
-	frame_width = int(data.get("frame_width", frame_width))
-	frame_height = int(data.get("frame_height", frame_height))
-	walk_frames = maxi(1, int(data.get("walk_frames", walk_frames)))
-	mirror_side_for_west = bool(data.get("mirror_side_for_west", mirror_side_for_west))
-	if data.has("directions"):
-		directions = data["directions"]
-	if data.has("anchor"):
-		var point: Array = data["anchor"]
-		anchor = Vector2(float(point[0]), float(point[1]))
+	var sidecar := _load_sidecar(path)
+	if not sidecar.is_empty():
+		# An authored overworld sheet, per docs/AUTHORED_ART_PIPELINE.md.
+		# The pipeline so far only supplies a front-facing pose (no side
+		# or back view was drawn), which is exactly what a *static* NPC
+		# needs: OverworldNPC never calls advance() or re-faces itself,
+		# so one frame in "down" is the whole sheet. A sidecar that does
+		# author more rows can still declare its own "directions".
+		frame_width = int(sidecar.get("frame_width", frame_width))
+		frame_height = int(sidecar.get("frame_height", frame_height))
+		walk_frames = maxi(1, int(sidecar.get("walk_frames", 1)))
+		mirror_side_for_west = bool(sidecar.get("mirror_side_for_west", false))
+		directions = sidecar.get("directions", {"down": 0})
+		var a: Array = sidecar.get("anchor", [frame_width / 2.0, frame_height])
+		anchor = Vector2(a[0], a[1])
+	else:
+		var data := manifest()
+		frame_width = int(data.get("frame_width", frame_width))
+		frame_height = int(data.get("frame_height", frame_height))
+		walk_frames = maxi(1, int(data.get("walk_frames", walk_frames)))
+		mirror_side_for_west = bool(data.get("mirror_side_for_west", mirror_side_for_west))
+		if data.has("directions"):
+			directions = data["directions"]
+		if data.has("anchor"):
+			var point: Array = data["anchor"]
+			anchor = Vector2(float(point[0]), float(point[1]))
 
 	_sprite = Sprite2D.new()
 	_sprite.texture = load(path)

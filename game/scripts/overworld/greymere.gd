@@ -7,6 +7,8 @@ extends Node2D
 ##   # wall   . grass   , grass(alt)   : path   ~ water
 ##   R roof   H house wall   D door (interact)   C Hollow Court arch
 ##   n notice board   S south exit (step-on trigger)
+##   E Elara   M Mira   B Toby (farmboy)   W Wren (herbalist)
+##   K Elder Kassian   P Pell (farmhand)   G town guard
 
 const TILE := 16
 const PARTY_SETUP_SCENE := "res://scenes/ui/party_setup.tscn"
@@ -20,17 +22,27 @@ const MAP: Array[String] = [
 	"#.....HHDH....HDHH.....#",
 	"#.........E............#",
 	"#......n...............#",
-	"#...,......::......,...#",
+	"#..B,.......::.....W...#",
 	"#..........::..........#",
 	"#....M.....::...~~.....#",
 	"#..........::...~~.....#",
-	"#....,.....::......,...#",
+	"#..K,.......::.....P...#",
 	"#..........::..........#",
-	"#..........::..........#",
+	"#..........::..G.......#",
 	"###########SS###########",
 ]
 
 const BLOCKING_TILES := ["#", "R", "H", "D", "~", "C", "n"]
+
+## Ordinary villagers, distinct from Elara/Mira: no story beat gates on
+## them, just flavour dialogue that keeps Greymere feeling lived-in.
+const TOWNSFOLK: Array[Dictionary] = [
+	{"name": "Toby", "tile_symbol": "B", "dialogue_key": "toby_flavor", "sprite_key": "townsfolk/farmboy"},
+	{"name": "Wren", "tile_symbol": "W", "dialogue_key": "wren_flavor", "sprite_key": "townsfolk/herbalist_woman"},
+	{"name": "Elder Kassian", "tile_symbol": "K", "dialogue_key": "kassian_flavor", "sprite_key": "townsfolk/village_elder"},
+	{"name": "Pell", "tile_symbol": "P", "dialogue_key": "pell_flavor", "sprite_key": "townsfolk/farmhand_capped"},
+	{"name": "Town Guard", "tile_symbol": "G", "dialogue_key": "guard_flavor", "sprite_key": "townsfolk/guard_sword"},
+]
 
 ## Flat ground wear, one character per map tile, purely visual.
 ##
@@ -298,6 +310,20 @@ func _build_npcs() -> void:
 	)
 	add_child(mira)
 	_npc_tiles[mira.tile] = mira
+
+	# Ordinary townsfolk, filling out Greymere as a place people actually
+	# live rather than just a lobby for Elara and Mira. Their art is a
+	# single authored front-facing frame (see
+	# docs/AUTHORED_ART_PIPELINE.md), so unlike the two above they all
+	# face the player at Vector2i(0, 1) — that is the only pose drawn.
+	for def in TOWNSFOLK:
+		var villager := OverworldNPC.new()
+		villager.setup(
+			def.name, _find_tile(def.tile_symbol), def.dialogue_key,
+			PlaceholderPalette.NPC_COLOR, def.sprite_key, Vector2i(0, 1)
+		)
+		add_child(villager)
+		_npc_tiles[villager.tile] = villager
 
 
 func _find_tile(symbol: String) -> Vector2i:
