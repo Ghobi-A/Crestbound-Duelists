@@ -2,12 +2,21 @@ extends CanvasLayer
 class_name DialogueBox
 ## Minimal reusable data-driven dialogue box.
 ##
-## Dialogue files are JSON: { "key": [ {"speaker": "...", "lines": ["..."]} ] }.
-## A key maps to a sequence of entries (a short conversation); each entry
-## has a speaker and one or more lines. Advance with the interact action.
-## Emits dialogue_finished(key) when the sequence ends.
+## Dialogue files are JSON: { "key": [ {"speaker": "...", "lines": [...],
+## "portrait": "..."} ] }. A key maps to a sequence of entries (a short
+## conversation); each entry has a speaker and one or more lines.
+## "portrait" is optional and names a sprite_key under assets/portraits/
+## (e.g. "elara", "townsfolk/farmboy") — an entry with no portrait, or one
+## naming art that was never authored, just shows text at full width, so
+## adding a portrait later is additive and never required. Advance with
+## the interact action. Emits dialogue_finished(key) when the sequence ends.
 
 signal dialogue_finished(key: String)
+
+const PORTRAIT_PATH := "res://assets/portraits/%s/neutral.png"
+const PORTRAIT_SIZE := Vector2(34, 38)
+const PORTRAIT_MARGIN := Vector2(4, 3)
+const TEXT_MARGIN_RIGHT := 6.0
 
 var active := false
 
@@ -18,6 +27,7 @@ var _entry_index := 0
 var _line_index := 0
 
 var _panel: UiPanel
+var _portrait: TextureRect
 var _speaker_label: Label
 var _text_label: Label
 var _advance_label: Label
@@ -27,6 +37,18 @@ func _ready() -> void:
 	layer = 10
 	_panel = UiPanel.create(Vector2(4, 132), Vector2(312, 44), UiStyle.COMMAND)
 	add_child(_panel)
+
+	_portrait = TextureRect.new()
+	_portrait.position = PORTRAIT_MARGIN
+	_portrait.size = PORTRAIT_SIZE
+	_portrait.stretch_mode = TextureRect.STRETCH_SCALE
+	# Portraits are painterly renders, not native pixel art like the rest
+	# of the game (which relies on the project-wide nearest filter to
+	# stay crisp) — downscaling one with nearest neighbour aliases badly,
+	# so this node alone opts into smoothing.
+	_portrait.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
+	_portrait.visible = false
+	_panel.add_child(_portrait)
 
 	_speaker_label = Label.new()
 	_speaker_label.position = Vector2(6, 2)
@@ -90,6 +112,24 @@ func _show_current_line() -> void:
 	_speaker_label.text = entry.get("speaker", "")
 	var lines: Array = entry.get("lines", [])
 	_text_label.text = str(lines[_line_index])
+	_apply_portrait(str(entry.get("portrait", "")))
+
+
+func _apply_portrait(portrait_key: String) -> void:
+	var shown := false
+	if portrait_key != "":
+		var path := PORTRAIT_PATH % portrait_key
+		if ResourceLoader.exists(path):
+			_portrait.texture = load(path)
+			shown = true
+	_portrait.visible = shown
+
+	var text_x := (PORTRAIT_MARGIN.x + PORTRAIT_SIZE.x + PORTRAIT_MARGIN.x) if shown else 6.0
+	var text_width := _panel.size.x - text_x - TEXT_MARGIN_RIGHT
+	_speaker_label.position.x = text_x
+	_text_label.position.x = text_x
+	_speaker_label.size.x = text_width
+	_text_label.size.x = text_width
 
 
 func _advance() -> void:

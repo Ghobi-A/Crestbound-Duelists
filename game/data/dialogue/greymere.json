@@ -2,6 +2,7 @@
   "elara_intro": [
     {
       "speaker": "Warden Elara Thorne",
+      "portrait": "elara",
       "lines": [
         "The Hollow Court has been sealed longer than anyone in Greymere can remember.",
         "If that seal has opened, do not assume what is inside has been waiting peacefully.",
@@ -12,6 +13,7 @@
   "mira_intro": [
     {
       "speaker": "Mira Solen",
+      "portrait": "mira",
       "lines": [
         "The official records say the Court is empty.",
         "Which usually means the interesting records are somewhere we are not allowed to read.",
@@ -56,6 +58,7 @@
     },
     {
       "speaker": "Warden Elara Thorne",
+      "portrait": "elara",
       "lines": [
         "Wait. If you are going in regardless, you will not do it alone.",
         "Mira — stay behind me. And you: touch nothing that hums."
@@ -63,6 +66,7 @@
     },
     {
       "speaker": "Mira Solen",
+      "portrait": "mira",
       "lines": [
         "Everything down there hums, Warden. That is rather the point."
       ]
@@ -79,6 +83,7 @@
   "post_battle": [
     {
       "speaker": "Warden Elara Thorne",
+      "portrait": "elara",
       "lines": [
         "Everyone still standing? Good.",
         "Those were not looters. Someone sent them, and they knew the seal would be open.",
@@ -87,6 +92,7 @@
     },
     {
       "speaker": "Mira Solen",
+      "portrait": "mira",
       "lines": [
         "It answered you. Crests are not supposed to answer anyone anymore.",
         "...What exactly did you touch down there?"
@@ -96,6 +102,7 @@
   "toby_flavor": [
     {
       "speaker": "Toby",
+      "portrait": "townsfolk/farmboy",
       "lines": [
         "Ma says I'm too young to go near the Court. I say I'm too young to muck out the goat pen either, but here we are.",
         "You're not going up there, are you? To the arch?"
@@ -105,6 +112,7 @@
   "wren_flavor": [
     {
       "speaker": "Wren",
+      "portrait": "townsfolk/herbalist_woman",
       "lines": [
         "Feverbalm, willowbark, a little dried nettle for the swelling. Nothing fancy, but it keeps Greymere on its feet.",
         "Warden Thorne came through here last week smelling of Court dust. Didn't like that one bit."
@@ -114,6 +122,7 @@
   "kassian_flavor": [
     {
       "speaker": "Elder Kassian",
+      "portrait": "townsfolk/village_elder",
       "lines": [
         "I was younger than you when they sealed that arch. My grandfather was younger than me.",
         "Three generations of Greymere folk have grown up being told not to ask what's under the Court.",
@@ -124,6 +133,7 @@
   "pell_flavor": [
     {
       "speaker": "Pell",
+      "portrait": "townsfolk/farmhand_capped",
       "lines": [
         "Barley's coming in thin this year. Everyone says it's the weather.",
         "Everyone's been saying it's the weather since that light came out of the Court, funnily enough."
@@ -133,6 +143,7 @@
   "guard_flavor": [
     {
       "speaker": "Town Guard",
+      "portrait": "townsfolk/guard_sword",
       "lines": [
         "Move along toward Veyrhold if you're heading out — I'm not paid to make conversation, I'm paid to watch that road.",
         "And the arch. Mostly the arch, if I'm honest."

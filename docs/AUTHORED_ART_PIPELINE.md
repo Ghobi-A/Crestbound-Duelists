@@ -124,6 +124,18 @@ game/assets/portraits/<sprite_key>/<expression>.png
 Expressions: `neutral`, `determined`, `injured`, `surprised`, `intense`.
 `neutral` is required; the rest are optional and fall back to it, so a
 character with one portrait still works everywhere a portrait is shown.
+Only `neutral` exists for anyone in this repository today — expression
+fallback is a real code path (nothing reads an expression other than
+`neutral` yet), not yet exercised.
+
+`DialogueBox` reads portraits directly: give an entry an optional
+`"portrait": "<sprite_key>"` field and, if
+`assets/portraits/<sprite_key>/neutral.png` exists, it's shown beside
+that entry's text — no code change needed to add one to a new
+character, and an entry with no `portrait` (or one naming art that was
+never authored) just renders full-width text as before, so this is
+purely additive. `tests/test_dialogue_assets.py` catches a `portrait`
+value that doesn't resolve to a real file.
 
 All portraits share one crop, eye line and light direction — see
 `docs/UI_STYLE_GUIDE.md` for the framing rules.

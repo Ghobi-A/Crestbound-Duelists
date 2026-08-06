@@ -10,6 +10,7 @@
     },
     {
       "speaker": "Warden Elara Thorne",
+      "portrait": "elara",
       "lines": [
         "Raiders. And that one carries a Riven mark — do not let it corner you.",
         "Formation. We hold, we do not chase."
@@ -17,6 +18,7 @@
     },
     {
       "speaker": "Mira Solen",
+      "portrait": "mira",
       "lines": [
         "They are between us and the node. Of course they are."
       ]
