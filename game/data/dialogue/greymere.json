@@ -149,5 +149,45 @@
         "And the arch. Mostly the arch, if I'm honest."
       ]
     }
+  ],
+  "watchman_flavor": [
+    {
+      "speaker": "Watchman Orrin",
+      "portrait": "townsfolk/guard_spear",
+      "lines": [
+        "I've stood under this arch every day for six years. Never once had to do anything about it.",
+        "Warden Thorne changed my watch orders last week. Didn't say why. Didn't like that either."
+      ]
+    }
+  ],
+  "senna_flavor": [
+    {
+      "speaker": "Goodwife Senna",
+      "portrait": "townsfolk/elder_woman",
+      "lines": [
+        "Kassian's told you the arch story already, hasn't he. He tells everyone the arch story.",
+        "It's a good story. Doesn't mean it's the whole one."
+      ]
+    }
+  ],
+  "ferris_flavor": [
+    {
+      "speaker": "Old Ferris",
+      "portrait": "townsfolk/torch_bearer",
+      "lines": [
+        "Someone's got to keep the lamps lit and walk the rounds. Forty years now, give or take.",
+        "Quiet town, Greymere. I intend to keep it that way as long as this torch holds out."
+      ]
+    }
+  ],
+  "stranger_flavor": [
+    {
+      "speaker": "",
+      "portrait": "townsfolk/hooded_stranger",
+      "lines": [
+        "The hooded figure says nothing. It does not appear to be waiting for anything in particular.",
+        "Or perhaps it is waiting for exactly the right thing."
+      ]
+    }
   ]
 }

@@ -32,7 +32,10 @@ ENEMY_KEYS = ["riven_raider", "hexbound_adept", "unbound_mercenary"]
 # they have no battle.png and don't gate test_save_referenced_sprite_paths_exist.
 TOWNSFOLK_KEYS = [
     f"townsfolk/{name}"
-    for name in ["farmboy", "herbalist_woman", "village_elder", "farmhand_capped", "guard_sword"]
+    for name in [
+        "farmboy", "herbalist_woman", "village_elder", "farmhand_capped", "guard_sword",
+        "guard_spear", "elder_woman", "torch_bearer", "hooded_stranger",
+    ]
 ]
 
 
