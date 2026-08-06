@@ -138,10 +138,18 @@ def test_battle_sheet_matches_manifest(key: str, manifest: dict) -> None:
         x, y = sidecar["anchor"]
         assert 0 <= x <= sidecar["frame_width"]
         assert 0 <= y <= sidecar["frame_height"]
-        if "facing" in sidecar:
-            assert sidecar["facing"] in ("left", "right"), (
-                f"{key}: facing must be 'left' or 'right', got {sidecar['facing']!r}"
+        if "default_facing" in sidecar:
+            assert sidecar["default_facing"] in ("left", "right"), (
+                f"{key}: default_facing must be 'left' or 'right', got "
+                f"{sidecar['default_facing']!r}"
             )
+        for extent_key in ("left_extent", "right_extent"):
+            if extent_key in sidecar:
+                assert 0 <= sidecar[extent_key] <= sidecar["frame_width"], (
+                    f"{key}: {extent_key} ({sidecar[extent_key]}) must sit within the "
+                    f"frame (0-{sidecar['frame_width']}) — it's a distance from the "
+                    f"anchor, not a coordinate."
+                )
         for name, state in sidecar["states"].items():
             assert state["start"] + state["count"] <= sidecar["frame_count"], (
                 f"{key}: battle state '{name}' references frames past the end of the sheet"

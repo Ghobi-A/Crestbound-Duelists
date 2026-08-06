@@ -24,27 +24,40 @@ const BACKGROUND_HEIGHT := PresentationMetrics.BATTLE_BACKGROUND_HEIGHT
 ## depth convention for both teams — front is always closer to the
 ## camera (larger Y) — so the read is consistent instead of mirrored.
 ##
-## These are NOT the 320x180-era values doubled — doubling them
-## verbatim reproduces the exact overlap bug that motivated this
-## migration. Solved from the actual regenerated sidecar widths
-## (characters at 76px tall: 64-99px player, 67-102px enemy), checking
-## three constraints together rather than one at a time — an earlier
-## pass here (88px-tall art, spread=116/112) satisfied same-team
-## adjacency but not the canvas edge, and a real screenshot caught the
-## rightmost enemy slot clipping off the right edge:
-##
-##   1. same-team adjacency: spread must clear the widest same-team
-##      pair (player: Warrior 99px + Elara 93px = 96px centre-to-centre)
-##   2. canvas edge: the outermost slot's sprite half-width must not
-##      cross the canvas edge — the constraint the first pass missed
-##   3. inter-team gap: the two teams' innermost 3-wide-fan slots must
-##      not reach each other
-##
-## PLAYER_CENTER_X/ENEMY_CENTER_X/spread below satisfy all three with a
-## positive (if tight, ~10-17px) margin on every one; verified against
-## a real captured screenshot, not just arithmetic.
-const PLAYER_CENTER_X := 160.0
-const ENEMY_CENTER_X := 478.0
+## Positions are computed per-team by _team_positions() from each unit's
+## actual authored bounds (sidecar left_extent/right_extent, or the
+## widest highlight ring DuelistSprite ever draws, whichever reaches
+## further — see _sprite_extent()/_edge_envelope()), not from a fixed
+## spacing constant. A fixed spread was tried more than once (88px-tall
+## art, then 76px) and every time a real screenshot caught either a wide
+## sprite clipping the canvas edge, or — the failure mode a *same-row*
+## check alone still misses — a back-row unit's neutral X landing close
+## enough to a front-row unit's that their bounding boxes overlapped
+## despite the two rows only being FRONT_Y - BACK_Y = 48px apart
+## vertically, less than either sprite's own ~76px height. A first pass
+## here gave a mixed-row pair a discounted clearance requirement on the
+## theory that the row's Y offset buys back part of it — a real render
+## disproved that: the two boxes still overlapped in their shared Y
+## band, and since every authored PNG is cropped tight to its own
+## silhouette, an overlapping box is a real collision of opaque art, not
+## a soft depth cue. _team_positions() lays every unit out as one
+## left-to-right sequence by slot_index regardless of row, giving every
+## adjacent pair — same-row or crossing the front/back seam alike — the
+## same full non-overlap clearance.
+const SAFE_MARGIN := 8.0      # keep every unit's edge envelope this far from the canvas edge
+const TEAM_GAP := 20.0        # minimum gap between the two teams' edge envelopes
+const UNIT_GAP := 5.0         # minimum gap between adjacent units' own silhouettes
+# DuelistSprite._draw_highlight draws two rings at different sizes: the
+# persistent selected/target ring (radius_scale 0.46, up whenever a unit
+# is being chosen) and a momentary confirm-flash pop (0.5-0.75, ~0.22s).
+# Formation math guarantees the persistent ring never crosses the canvas
+# edge; demanding the same of the brief flash too would make ordinary
+# 3-unit rosters infeasible, since it's deliberately drawn larger than
+# the character — see _edge_envelope()'s docstring.
+const RING_ENVELOPE_SCALE := 0.46
+const DESIRED_SPREAD := 110.0  # aesthetic target when the zone has room to spare
+const PLAYER_CENTER_X := 159.0
+const ENEMY_CENTER_X := 481.0
 const FRONT_Y := 184.0
 const BACK_Y := 136.0
 const ONBOARDING_FLAG := "battle_onboarding_seen"
@@ -127,10 +140,13 @@ func _stage_background() -> void:
 
 
 func _stage_units() -> void:
+	var homes := {}
+	homes.merge(_team_positions(runtime.player_units))
+	homes.merge(_team_positions(runtime.enemy_units))
 	for unit in runtime.all_units():
 		var sprite := DuelistSprite.new()
 		stage.add_child(sprite)
-		var home := stage_position(unit)
+		var home: Vector2 = homes.get(unit, Vector2(PresentationMetrics.CANVAS_SIZE.x / 2.0, FRONT_Y))
 		sprite.configure(unit, home)
 		# Back-row units must draw behind front-row units regardless of
 		# team or add order, so the depth the Y position implies is
@@ -146,36 +162,153 @@ func _shake(strength: float = 2.0) -> void:
 	tween.tween_property(stage, "position", Vector2.ZERO, 0.06)
 
 
-func stage_position(unit: BattleUnit) -> Vector2:
-	## Dynamic staging: players occupy the left half, enemies the right,
-	## so the two sides read as opposing formations at a glance. Front
-	## and back rows use one shared depth convention for both teams —
-	## front is always closer to the camera — rather than a convention
-	## that reversed between sides. Back rows draw slightly narrower
-	## than front rows, a shallow wedge that reinforces "protected" depth
-	## without any grid or movement implication.
-	var team_units: Array = runtime.player_units if unit.team == "player" else runtime.enemy_units
-	var count := team_units.size()
-	var center_x := PLAYER_CENTER_X if unit.team == "player" else ENEMY_CENTER_X
-	var is_front := unit.position == "front"
+func _sprite_extent(unit: BattleUnit) -> Vector2:
+	## How far left/right this unit's authored ART reaches from its own
+	## centre — sidecar left_extent/right_extent (the PNG's actual
+	## non-transparent bounds, from tools/compute_battle_extents.py),
+	## falling back to anchor/(frame_width - anchor) so an un-measured
+	## sidecar still gets a reasonable estimate instead of 0. This is
+	## what adjacent same-team units must clear so their silhouettes
+	## never visibly overlap.
+	var sidecar := DuelistSprite.sidecar_for(unit.sprite_key())
+	if sidecar.is_empty():
+		return Vector2(12.0, 12.0)
+	var frame_w := float(sidecar.get("frame_width", 24.0))
+	var anchor: Array = sidecar.get("anchor", [frame_w / 2.0, 0])
+	var anchor_x := float(anchor[0])
+	var left := float(sidecar.get("left_extent", anchor_x))
+	var right := float(sidecar.get("right_extent", frame_w - anchor_x))
+	return Vector2(left, right)
 
-	# 130/100 (not the old 46/40 doubled) are the front-row spread that
-	# clears the widest same-team sidecar pairing at this canvas size,
-	# with room left for the canvas-edge and inter-team constraints too
-	# — see the const-block comment above. The back-row 0.7 shrink is
-	# preserved from the original composition intent (a "protected
-	# depth" wedge) but is not independently collision-proven the way
-	# front-row spacing is: an all-back-row formation of three
-	# maximum-width characters is a real, accepted residual risk rather
-	# than a guarantee, since demanding that case be provably safe too
-	# would require a front-row spread wide enough to push 3-unit
-	# formations off the 640px canvas entirely.
-	var spread := 130.0 if count < 3 else 100.0
-	if not is_front:
-		spread *= 0.7
-	var x := center_x + (unit.slot_index - (count - 1) / 2.0) * spread
-	var y := FRONT_Y if is_front else BACK_Y
-	return Vector2(x, y)
+
+func _edge_envelope(unit: BattleUnit) -> Vector2:
+	## How far left/right this unit's full visual footprint reaches,
+	## including the widest highlight ring DuelistSprite ever draws
+	## around it (_draw_highlight's confirm-flash ring, frame_width *
+	## RING_ENVELOPE_SCALE) — larger than the art's own silhouette by
+	## design, since a flash ring reads best when it's visibly bigger
+	## than the character it's confirming. Used only for keeping a unit
+	## off the *canvas edge*: two rings briefly overlapping between
+	## neighbours is normal (they're translucent and momentary); a ring
+	## or the art itself getting clipped by the screen edge is not.
+	var sidecar := DuelistSprite.sidecar_for(unit.sprite_key())
+	var frame_w := 24.0
+	if not sidecar.is_empty():
+		frame_w = float(sidecar.get("frame_width", frame_w))
+	var extent := _sprite_extent(unit)
+	var ring_half := frame_w * RING_ENVELOPE_SCALE
+	return Vector2(max(extent.x, ring_half), max(extent.y, ring_half))
+
+
+func _team_positions(team_units: Array) -> Dictionary:
+	## Two clear halves rather than a shared diagonal, so the sides read
+	## as opposing formations at a glance. Front and back rows share one
+	## depth convention for both teams — front is always closer to the
+	## camera — rather than a convention that reversed between sides.
+	##
+	## Every unit on the team, front and back alike, is laid out as ONE
+	## left-to-right sequence ordered by slot_index — not two independently
+	## centred rows. A back-row unit centred on its own row can still land
+	## squarely behind a front-row unit's shoulder (their rows are only
+	## FRONT_Y - BACK_Y = 48px apart, less than either sprite's own
+	## height), which reads as real overlap, not depth. Running the
+	## adjacency check across the whole sequence with full (not
+	## discounted) clearance for every pair catches that.
+	var result := {}
+	if team_units.is_empty():
+		return result
+	var is_player: bool = team_units[0].team == "player"
+	var mid := PresentationMetrics.CANVAS_SIZE.x / 2.0
+	var center_x := PLAYER_CENTER_X if is_player else ENEMY_CENTER_X
+	# Each team's zone stops short of the canvas edge (SAFE_MARGIN) and
+	# short of the midline (TEAM_GAP), so a compressed formation can never
+	# touch the opposing team either — the inter-team constraint the
+	# original fixed-spread math had to prove separately falls out here.
+	var zone_left := SAFE_MARGIN if is_player else mid + TEAM_GAP / 2.0
+	var zone_right := mid - TEAM_GAP / 2.0 if is_player else PresentationMetrics.CANVAS_SIZE.x - SAFE_MARGIN
+
+	var ordered: Array = team_units.duplicate()
+	ordered.sort_custom(func(a, b): return a.slot_index < b.slot_index)
+	var count := ordered.size()
+	var extents: Array[Vector2] = []
+	var edges: Array[Vector2] = []
+	for u in ordered:
+		extents.append(_sprite_extent(u))
+		edges.append(_edge_envelope(u))
+
+	if count == 1:
+		var edge: Vector2 = edges[0]
+		var x: float = clamp(center_x, zone_left + edge.x, zone_right - edge.y)
+		result[ordered[0]] = Vector2(x, FRONT_Y if ordered[0].position == "front" else BACK_Y)
+		return result
+
+	# Per-pair minimum gap (silhouettes must not overlap) and desired gap
+	# (readable spacing when the zone has room to spare). A pair that
+	# crosses rows gets no discount here: an earlier version scaled the
+	# requirement down by BACK_ROW_RELIEF on the theory that the rows'
+	# ~48px Y offset (less than a sprite's own ~76px height) buys back
+	# part of the horizontal clearance a same-row pair needs in full —
+	# but a real render showed that's false. The two sprites' bounding
+	# boxes still overlap in the shared Y band, and since every authored
+	# PNG is cropped tight to its own silhouette (see
+	# tools/compute_battle_extents.py), an overlapping box is a real
+	# collision of opaque art, not a soft depth cue: it reads as one
+	# character's torso sliced off behind the other, which is exactly
+	# the clipping this system exists to prevent. Full clearance for
+	# every adjacent pair, front/back mix or not, is the only version
+	# that's actually collision-free.
+	var min_gaps: Array[float] = []
+	var desired_gaps: Array[float] = []
+	for i in count - 1:
+		var min_need: float = extents[i].y + UNIT_GAP + extents[i + 1].x
+		min_gaps.append(min_need)
+		desired_gaps.append(max(min_need, DESIRED_SPREAD))
+
+	# Sequentially place left-to-right using the desired gaps first (an
+	# arbitrary local origin — only relative spacing matters here), then
+	# measure the resulting span and re-centre/rescale it to fit the zone.
+	var gaps := desired_gaps
+	var xs := _sequential_positions(gaps)
+	var span_left: float = xs[0] - edges[0].x
+	var span_right: float = xs[count - 1] + edges[count - 1].y
+	var span_width := span_right - span_left
+	var zone_width := zone_right - zone_left
+	if span_width > zone_width:
+		# Doesn't fit at the readable spacing — retry at the minimum
+		# (overlap-safe) spacing instead of scaling desired_gaps down
+		# uniformly, which could compress a pair below its own minimum.
+		gaps = min_gaps
+		xs = _sequential_positions(gaps)
+		span_left = xs[0] - edges[0].x
+		span_right = xs[count - 1] + edges[count - 1].y
+		span_width = span_right - span_left
+		if span_width > zone_width:
+			push_warning(
+				(
+					"BattleController: a %d-unit formation needs %.1fpx to avoid overlap "
+					+ "but its safe zone only allows %.1fpx — using the overlap-safe layout "
+					+ "anyway; unit(s) may sit closer to the arena edge than intended."
+				) % [count, span_width, zone_width]
+			)
+
+	var shift := center_x - (span_left + span_right) / 2.0
+	# Re-clamp against the zone: a formation narrower than the zone but
+	# off-centre relative to it (e.g. one huge outermost sprite) could
+	# otherwise still poke past an edge after the centring shift above.
+	shift = clamp(shift, zone_left - span_left, zone_right - span_right)
+	for i in count:
+		var y := FRONT_Y if ordered[i].position == "front" else BACK_Y
+		result[ordered[i]] = Vector2(xs[i] + shift, y)
+	return result
+
+
+func _sequential_positions(gaps: Array[float]) -> Array[float]:
+	## x[0] = 0, x[i+1] = x[i] + gaps[i] — an arbitrary local origin; the
+	## caller re-centres the whole sequence afterward.
+	var xs: Array[float] = [0.0]
+	for gap in gaps:
+		xs.append(xs[-1] + gap)
+	return xs
 
 
 func _build_hud() -> void:

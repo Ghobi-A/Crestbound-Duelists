@@ -6,6 +6,9 @@
     34,
     76
   ],
+  "default_facing": "left",
+  "left_extent": 34,
+  "right_extent": 33,
   "states": {
     "idle": {
       "start": 0,
@@ -13,6 +16,5 @@
       "fps": 2,
       "loop": true
     }
-  },
-  "facing": "left"
+  }
 }

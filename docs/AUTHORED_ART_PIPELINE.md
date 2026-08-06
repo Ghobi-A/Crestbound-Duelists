@@ -37,7 +37,9 @@ game/assets/characters/aren/warrior/battle.json    ← its layout
   "frame_height": 48,
   "frame_count": 6,
   "anchor": [20, 44],
-  "facing": "right",
+  "default_facing": "right",
+  "left_extent": 19,
+  "right_extent": 21,
   "states": {
     "idle":   {"start": 0, "count": 1, "fps": 2,  "loop": true},
     "attack": {"start": 1, "count": 2, "fps": 10, "loop": false},
@@ -58,13 +60,22 @@ game/assets/characters/aren/warrior/battle.json    ← its layout
   pixels. Staging, contact shadows, target rings and damage popups are
   all positioned from it, so a taller sprite lands correctly without
   anyone editing offsets.
-- **`facing` is which way the art faces by default** — `"left"` or
-  `"right"`, defaulting to `"right"` if omitted. Each authored hero pose
-  is generated independently with no shared turnaround convention, so
-  some lean left and some lean right; `DuelistSprite` flips whichever
+- **`default_facing` is which way the art faces by default** — `"left"`
+  or `"right"`, defaulting to `"right"` if omitted. Each authored hero
+  pose is generated independently with no shared turnaround convention,
+  so some lean left and some lean right; `DuelistSprite` flips whichever
   ones don't match their side (players face right toward the enemy
   formation, enemies face left toward the party) rather than everyone
   quietly facing whatever direction they happened to be drawn in.
+- **`left_extent`/`right_extent` are how far the actual art reaches from
+  the anchor**, in frame pixels — the non-transparent bounding box's
+  distance to the anchor on each side, *not* just half the frame width.
+  `tools/compute_battle_extents.py` derives them from the PNG so a
+  lopsided silhouette (a raised weapon, a trailing cloak) is measured
+  honestly. `battle_controller.gd`'s formation math sizes spacing and
+  arena-edge margins against these — omit them and it falls back to
+  `anchor`/`frame_width - anchor`, i.e. treating the art as if it filled
+  its frame edge-to-edge.
 - **Frame counts and state names are the artist's choice.** A sheet with
   no `brace` state simply falls back to `idle` for that state.
 

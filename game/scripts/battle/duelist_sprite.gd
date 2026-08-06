@@ -68,6 +68,18 @@ static func sheet_path_for(key: String) -> String:
 	return ""
 
 
+static func sidecar_for(key: String) -> Dictionary:
+	## Public entry point for anything outside this class that needs a
+	## unit's authored layout without duplicating the sheet-path/JSON
+	## lookup — battle_controller.gd's formation math is the first
+	## caller, so staging can size against the same left/right extents
+	## and default_facing this class itself draws from.
+	var path := sheet_path_for(key)
+	if path == "":
+		return {}
+	return _load_sidecar(path)
+
+
 func configure(unit_: BattleUnit, home: Vector2) -> void:
 	unit = unit_
 	home_position = home
@@ -107,11 +119,11 @@ func _setup_sheet() -> void:
 		_sprite.centered = false
 		# Each authored hero pose was generated independently with no
 		# shared "which way does this face" convention — some lean left,
-		# some right. "facing" in the sidecar records which way THIS art
+		# some right. "default_facing" in the sidecar records which way THIS
 		# faces by default; flip it whenever that doesn't match what the
 		# unit's side needs (players face right, toward the enemy
 		# formation; enemies face left, toward the party).
-		var faces_left := str(sidecar.get("facing", "right")) == "left"
+		var faces_left := str(sidecar.get("default_facing", "right")) == "left"
 		var needs_flip := (
 			(unit.team == "player" and faces_left)
 			or (unit.team == "enemy" and not faces_left)
@@ -146,7 +158,7 @@ func _setup_sheet() -> void:
 	_apply_frame()
 
 
-func _load_sidecar(sheet_path: String) -> Dictionary:
+static func _load_sidecar(sheet_path: String) -> Dictionary:
 	## An authored sheet's layout lives beside it as <name>.json
 	## (battle.png -> battle.json). Absent entirely for the generated
 	## placeholder sheets, which size against the global manifest instead.

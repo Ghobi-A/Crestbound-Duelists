@@ -119,39 +119,147 @@ def test_team_formations_are_on_opposite_halves_of_the_arena() -> None:
     )
 
 
-def test_front_row_spread_clears_the_widest_authored_sprite_pair() -> None:
-    """This is the actual bug that motivated the 640x360 migration: a
-    spread narrower than the sprites standing in it. Doubling the old
-    320x180-era spread constants verbatim would have reproduced it
-    exactly (every authored sidecar is ~88px tall and 74-118px wide
-    post-migration; the old spread values, even doubled, are well under
-    that). Guard it directly, per team — units only ever stage against
-    their own team's roster (stage_position() looks up
-    runtime.player_units/enemy_units separately), so the correct bound
-    is the worst adjacent pair *within* a team, not across both, which
-    would over-count a pairing (e.g. the widest enemy next to the
-    widest player) that can never actually appear on screen together."""
+def _extent(sidecar: dict) -> tuple[float, float]:
+    """Mirrors battle_controller.gd's _sprite_extent(): the authored
+    silhouette's own left/right reach from its anchor."""
+    frame_w = float(sidecar["frame_width"])
+    anchor_x = float(sidecar["anchor"][0])
+    left = float(sidecar.get("left_extent", anchor_x))
+    right = float(sidecar.get("right_extent", frame_w - anchor_x))
+    return left, right
+
+
+def _edge_envelope(sidecar: dict, ring_scale: float) -> tuple[float, float]:
+    """Mirrors battle_controller.gd's _edge_envelope(): the art's own
+    extent, or the widest highlight ring DuelistSprite ever draws around
+    it, whichever reaches further — used only against the canvas edge."""
+    left, right = _extent(sidecar)
+    ring_half = float(sidecar["frame_width"]) * ring_scale
+    return max(left, ring_half), max(right, ring_half)
+
+
+def _formation_constants() -> dict:
     source = CONTROLLER_GD.read_text(encoding="utf-8")
-    match = re.search(r"var spread := ([\d.]+) if count < 3 else ([\d.]+)", source)
-    assert match, "Could not locate the count-based spread expression in stage_position()"
-    front_spread_many = float(match.group(2))
+    metrics_source = (REPO_ROOT / "game" / "scripts" / "core" / "presentation_metrics.gd").read_text(
+        encoding="utf-8"
+    )
+    canvas_match = re.search(r"const CANVAS_SIZE := Vector2i\((\d+),\s*(\d+)\)", metrics_source)
+    assert canvas_match
+    return {
+        "safe_margin": _float_const(source, "SAFE_MARGIN"),
+        "team_gap": _float_const(source, "TEAM_GAP"),
+        "unit_gap": _float_const(source, "UNIT_GAP"),
+        "ring_scale": _float_const(source, "RING_ENVELOPE_SCALE"),
+        "desired_spread": _float_const(source, "DESIRED_SPREAD"),
+        "player_x": _float_const(source, "PLAYER_CENTER_X"),
+        "enemy_x": _float_const(source, "ENEMY_CENTER_X"),
+        "canvas_width": float(canvas_match.group(1)),
+    }
 
-    def widest_pair_bound(glob_pattern: str) -> float:
-        widths = sorted(
-            (json.loads(p.read_text(encoding="utf-8"))["frame_width"]
-             for p in ASSETS.glob(glob_pattern)),
-            reverse=True,
+
+def _team_positions(rows: list[str], sidecars: list[dict], center_x: float, zone: tuple[float, float], c: dict) -> list[tuple[float, float]]:
+    """Reimplements battle_controller.gd's _team_positions()/
+    _sequential_positions() exactly, so a test failure here means the
+    real GDScript would also produce an overlapping or clipped
+    formation, not just a divergent Python model of it. `rows` is
+    accepted (mirroring the GDScript signature) but, like the real
+    algorithm, every adjacent pair gets full clearance regardless of
+    row — a discounted cross-row clearance was tried and a real render
+    showed it still let bounding boxes collide (see battle_controller.gd's
+    _team_positions() docstring)."""
+    zone_left, zone_right = zone
+    count = len(sidecars)
+    extents = [_extent(s) for s in sidecars]
+    edges = [_edge_envelope(s, c["ring_scale"]) for s in sidecars]
+    if count == 1:
+        x = min(max(center_x, zone_left + edges[0][0]), zone_right - edges[0][1])
+        return [(x, edges[0])]
+
+    min_gaps, desired_gaps = [], []
+    for i in range(count - 1):
+        need = extents[i][1] + c["unit_gap"] + extents[i + 1][0]
+        min_gaps.append(need)
+        desired_gaps.append(max(need, c["desired_spread"]))
+
+    def sequential(gaps: list[float]) -> list[float]:
+        xs = [0.0]
+        for gap in gaps:
+            xs.append(xs[-1] + gap)
+        return xs
+
+    gaps = desired_gaps
+    xs = sequential(gaps)
+    span_left, span_right = xs[0] - edges[0][0], xs[-1] + edges[-1][1]
+    if span_right - span_left > zone_right - zone_left:
+        gaps = min_gaps
+        xs = sequential(gaps)
+        span_left, span_right = xs[0] - edges[0][0], xs[-1] + edges[-1][1]
+
+    shift = center_x - (span_left + span_right) / 2.0
+    shift = min(max(shift, zone_left - span_left), zone_right - span_right)
+    return [x + shift for x in xs]
+
+
+def test_default_roster_formation_has_no_overlap_or_clipping() -> None:
+    """Regression test for the actual bug this fix targets: the shipped
+    640x360 formation math positioned the default roster's lone back-row
+    unit (Mira, a mage) close enough to a front-row unit's own X that
+    their bounding boxes visually overlapped — the two rows are only
+    FRONT_Y - BACK_Y apart, less than either sprite's own height, so
+    row-independent centring alone doesn't prevent it. Runs the actual
+    default party/enemy roster (game_state.gd's _build_default_party(),
+    the encounter's default enemies) through the same algorithm
+    battle_controller.gd uses and asserts every adjacent pair (including
+    across the front/back seam) clears its own required gap, and no
+    unit's edge envelope crosses its team's safe zone."""
+    c = _formation_constants()
+    mid = c["canvas_width"] / 2.0
+    player_zone = (c["safe_margin"], mid - c["team_gap"] / 2.0)
+    enemy_zone = (mid + c["team_gap"] / 2.0, c["canvas_width"] - c["safe_margin"])
+
+    def sidecar_for(key: str) -> dict:
+        for folder in ("characters", "enemies"):
+            path = ASSETS / folder / key / "battle.json"
+            if path.is_file():
+                return json.loads(path.read_text(encoding="utf-8"))
+        raise AssertionError(f"No battle.json found for {key!r}")
+
+    # Mirrors game_state.gd's _build_default_party(): Aren (warrior,
+    # front), Warden Elara Thorne (guardian, front), Mira Solen (mage,
+    # back) — and encounters.json's hollow_court_battle enemy_party
+    # (Riven-touched Raider front, Hexbound Adept back, Unbound
+    # Mercenary front): a genuine front/back mix on both sides, which is
+    # exactly the case a same-row-only check would miss.
+    player_roster = [
+        ("front", sidecar_for("aren/warrior")),
+        ("front", sidecar_for("elara")),
+        ("back", sidecar_for("mira")),
+    ]
+    enemy_roster = [
+        ("front", sidecar_for("riven_raider")),
+        ("back", sidecar_for("hexbound_adept")),
+        ("front", sidecar_for("unbound_mercenary")),
+    ]
+
+    def assert_no_overlap(roster: list[tuple[str, dict]], center_x: float, zone: tuple[float, float], label: str) -> None:
+        rows = [r for r, _ in roster]
+        sidecars = [s for _, s in roster]
+        extents = [_extent(s) for s in sidecars]
+        edges = [_edge_envelope(s, c["ring_scale"]) for s in sidecars]
+        xs = _team_positions(rows, sidecars, center_x, zone, c)
+        for i in range(len(xs) - 1):
+            gap = xs[i + 1] - xs[i]
+            need = extents[i][1] + c["unit_gap"] + extents[i + 1][0]
+            assert gap >= need - 1e-6, (
+                f"{label}: unit {i} and {i + 1} are {gap:.1f}px apart, needs "
+                f"{need:.1f}px — their silhouettes would overlap."
+            )
+        assert xs[0] - edges[0][0] >= zone[0] - 1e-6, (
+            f"{label}: leftmost unit's edge envelope crosses the zone's left bound."
         )
-        assert len(widths) >= 2, f"Expected at least 2 sidecars matching {glob_pattern}"
-        return (widths[0] + widths[1]) / 2.0
+        assert xs[-1] + edges[-1][1] <= zone[1] + 1e-6, (
+            f"{label}: rightmost unit's edge envelope crosses the zone's right bound."
+        )
 
-    worst_pair = max(
-        widest_pair_bound("characters/**/battle.json"),
-        widest_pair_bound("enemies/**/battle.json"),
-    )
-
-    assert front_spread_many > worst_pair, (
-        f"Front-row spread ({front_spread_many}) does not clear the widest "
-        f"same-team sidecar pairing ({worst_pair * 2}px combined, needs > "
-        f"{worst_pair}px) — two adjacent front-row units could overlap."
-    )
+    assert_no_overlap(player_roster, c["player_x"], player_zone, "player")
+    assert_no_overlap(enemy_roster, c["enemy_x"], enemy_zone, "enemy")
