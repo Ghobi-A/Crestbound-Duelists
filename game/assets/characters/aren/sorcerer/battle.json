@@ -13,5 +13,6 @@
       "fps": 2,
       "loop": true
     }
-  }
+  },
+  "facing": "right"
 }

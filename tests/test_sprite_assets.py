@@ -138,6 +138,10 @@ def test_battle_sheet_matches_manifest(key: str, manifest: dict) -> None:
         x, y = sidecar["anchor"]
         assert 0 <= x <= sidecar["frame_width"]
         assert 0 <= y <= sidecar["frame_height"]
+        if "facing" in sidecar:
+            assert sidecar["facing"] in ("left", "right"), (
+                f"{key}: facing must be 'left' or 'right', got {sidecar['facing']!r}"
+            )
         for name, state in sidecar["states"].items():
             assert state["start"] + state["count"] <= sidecar["frame_count"], (
                 f"{key}: battle state '{name}' references frames past the end of the sheet"

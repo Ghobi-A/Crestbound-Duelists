@@ -37,6 +37,7 @@ game/assets/characters/aren/warrior/battle.json    ← its layout
   "frame_height": 48,
   "frame_count": 6,
   "anchor": [20, 44],
+  "facing": "right",
   "states": {
     "idle":   {"start": 0, "count": 1, "fps": 2,  "loop": true},
     "attack": {"start": 1, "count": 2, "fps": 10, "loop": false},
@@ -57,6 +58,13 @@ game/assets/characters/aren/warrior/battle.json    ← its layout
   pixels. Staging, contact shadows, target rings and damage popups are
   all positioned from it, so a taller sprite lands correctly without
   anyone editing offsets.
+- **`facing` is which way the art faces by default** — `"left"` or
+  `"right"`, defaulting to `"right"` if omitted. Each authored hero pose
+  is generated independently with no shared turnaround convention, so
+  some lean left and some lean right; `DuelistSprite` flips whichever
+  ones don't match their side (players face right toward the enemy
+  formation, enemies face left toward the party) rather than everyone
+  quietly facing whatever direction they happened to be drawn in.
 - **Frame counts and state names are the artist's choice.** A sheet with
   no `brace` state simply falls back to `idle` for that state.
 

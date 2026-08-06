@@ -105,7 +105,25 @@ func _setup_sheet() -> void:
 		# Sidecar art is anchored explicitly, so draw it unscaled from its
 		# own top-left rather than the placeholder sheets' centered pivot.
 		_sprite.centered = false
-		_sprite.position = -_anchor
+		# Each authored hero pose was generated independently with no
+		# shared "which way does this face" convention — some lean left,
+		# some right. "facing" in the sidecar records which way THIS art
+		# faces by default; flip it whenever that doesn't match what the
+		# unit's side needs (players face right, toward the enemy
+		# formation; enemies face left, toward the party).
+		var faces_left := str(sidecar.get("facing", "right")) == "left"
+		var needs_flip := (
+			(unit.team == "player" and faces_left)
+			or (unit.team == "enemy" and not faces_left)
+		)
+		_sprite.flip_h = needs_flip
+		# Flipping a non-centered Sprite2D mirrors around its own local
+		# origin, not around the anchor — left uncompensated, the feet
+		# jump sideways by frame_width. Same offset-based fix
+		# overworld_sprite.gd already uses for its west-facing mirror.
+		_sprite.offset = (
+			Vector2(_anchor.x - _frame_w, -_anchor.y) if needs_flip else -_anchor
+		)
 		_feet_y = 0.0
 	else:
 		_frame_w = int(_manifest.get("frame_width", 24))
