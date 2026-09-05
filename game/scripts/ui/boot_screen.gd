@@ -40,6 +40,7 @@ const MENU_BAND := Rect2(44, 0, 232, 12)
 
 func _ready() -> void:
 	_build_ui()
+	AudioRouter.play_music("greymere")
 	if not GameData.load_ok:
 		_show_data_error()
 		return
@@ -57,12 +58,17 @@ func _build_ui() -> void:
 	background.set_anchors_preset(Control.PRESET_FULL_RECT)
 	add_child(background)
 
-	# Framing the title and the menu body gives the first screen the same
-	# panelled structure as the rest of the game, instead of labels
-	# floating on a flat fill.
-	add_child(UiPanel.create(Vector2(52, 12), Vector2(216, 34), UiStyle.COMMAND))
-	_body_panel = UiPanel.create(Vector2(36, 54), Vector2(248, 100), UiStyle.NEUTRAL)
+	# The identity floats in open atmosphere; only the actionable menu is framed.
+	_body_panel = UiPanel.create(Vector2(36, 56), Vector2(248, 98), UiStyle.NEUTRAL)
 	add_child(_body_panel)
+	var title_path := "res://assets/ui/title_mark.png" # optional-authored-asset
+	if ResourceLoader.exists(title_path):
+		var mark := TextureRect.new()
+		mark.texture = load(title_path)
+		mark.position = Vector2(40, 8)
+		mark.size = Vector2(240, 48)
+		mark.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		add_child(mark)
 
 	# Added after the panel and before the labels, so the band layers
 	# correctly: panel, band, text.
@@ -79,6 +85,7 @@ func _build_ui() -> void:
 
 	_title_label = _make_label(Vector2(0, 18), 12, PlaceholderPalette.TEXT_WARN)
 	_title_label.text = "CRESTBOUND DUELISTS"
+	_title_label.visible = not ResourceLoader.exists(title_path)
 	_subtitle_label = _make_label(Vector2(0, 34), 8, PlaceholderPalette.TEXT_DIM)
 	_subtitle_label.text = "The Crest at Greymere — prototype"
 	_list_label = _make_label(Vector2(0, 62), 8, PlaceholderPalette.TEXT_MAIN)
@@ -189,7 +196,9 @@ func _update_preview(class_id: String) -> void:
 		return
 	var atlas := AtlasTexture.new()
 	atlas.atlas = load(path)
-	atlas.region = Rect2(0, 0, 24, 32)  # idle frame
+	var sidecar := VisualAsset.sidecar_for(path)
+	var size := VisualAsset.positive_size(sidecar, Vector2i(24, 32))
+	atlas.region = Rect2(Vector2.ZERO, size)  # authored idle frame
 	_preview.texture = atlas
 	_preview.visible = true
 
@@ -209,9 +218,12 @@ func _unhandled_input(event: InputEvent) -> void:
 func _menu_input() -> void:
 	if Input.is_action_just_pressed("move_up"):
 		_menu_index = wrapi(_menu_index - 1, 0, _menu_options.size())
+		AudioRouter.play_sfx("ui", "move")
 	elif Input.is_action_just_pressed("move_down"):
 		_menu_index = wrapi(_menu_index + 1, 0, _menu_options.size())
+		AudioRouter.play_sfx("ui", "move")
 	elif Input.is_action_just_pressed("interact"):
+		AudioRouter.play_sfx("ui", "confirm")
 		match _menu_options[_menu_index]:
 			"Play Story Demo":
 				_screen = Screen.CLASS_SELECT
@@ -220,7 +232,7 @@ func _menu_input() -> void:
 				return
 			"Continue":
 				if SaveManager.load_game():
-					get_tree().change_scene_to_file(GameState.current_scene)
+					SceneTransition.change_scene(GameState.current_scene)
 					return
 			"Controls":
 				_screen = Screen.CONTROLS
@@ -233,7 +245,7 @@ func _start_quick_battle() -> void:
 	## no need to explore Greymere first. The full story flow is
 	## untouched and still reachable via Play Story Demo.
 	GameState.start_new_game(QUICK_BATTLE_CLASS)
-	get_tree().change_scene_to_file(PARTY_SETUP_SCENE)
+	SceneTransition.change_scene(PARTY_SETUP_SCENE, "spectral")
 
 
 func _controls_input() -> void:
@@ -251,6 +263,6 @@ func _class_select_input() -> void:
 		_screen = Screen.MENU
 	elif Input.is_action_just_pressed("interact"):
 		GameState.start_new_game(_class_list[_class_index])
-		get_tree().change_scene_to_file(OVERWORLD_SCENE)
+		SceneTransition.change_scene(OVERWORLD_SCENE)
 		return
 	_refresh()

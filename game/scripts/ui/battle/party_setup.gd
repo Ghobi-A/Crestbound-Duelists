@@ -19,6 +19,9 @@ var _title_label: Label
 var _rows_label: Label
 var _detail_label: Label
 var _hint_label: Label
+var _portrait: TextureRect
+var _crest_art: TextureRect
+var _entity_art: TextureRect
 
 
 func _ready() -> void:
@@ -41,8 +44,8 @@ func _build_ui() -> void:
 	# detail on the right (what it affects, so violet) — the same accent
 	# grammar the battle HUD uses.
 	add_child(UiPanel.create(Vector2(8, 4), Vector2(304, 22), UiStyle.COMMAND))
-	add_child(UiPanel.create(Vector2(8, 30), Vector2(184, 126), UiStyle.COMMAND))
-	add_child(UiPanel.create(Vector2(196, 30), Vector2(116, 126), UiStyle.TARGET))
+	add_child(UiPanel.create(Vector2(8, 30), Vector2(174, 126), UiStyle.COMMAND))
+	add_child(UiPanel.create(Vector2(186, 30), Vector2(126, 126), UiStyle.TARGET))
 
 	_title_label = _label(Vector2(0, 10), 10, PlaceholderPalette.TEXT_WARN)
 	_title_label.text = "PARTY SETUP — %s" % _encounter.get("name", "")
@@ -51,13 +54,34 @@ func _build_ui() -> void:
 	# column when the label was left at full screen width.
 	_rows_label = _label(Vector2(14, 34), 8, PlaceholderPalette.TEXT_MAIN)
 	_rows_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
-	_rows_label.size = Vector2(172, 118)
-	_detail_label = _label(Vector2(202, 34), 8, PlaceholderPalette.TEXT_DIM)
+	_rows_label.size = Vector2(162, 118)
+	_detail_label = _label(Vector2(230, 78), 8, PlaceholderPalette.TEXT_DIM)
 	_detail_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
-	_detail_label.size = Vector2(104, 118)
+	_detail_label.size = Vector2(76, 74)
 	_detail_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	_hint_label = _label(Vector2(0, 164), 8, PlaceholderPalette.TEXT_DIM)
 	_hint_label.text = "Up/Down: select  Left/Right: row  Z: swap/confirm  X: back"
+	_portrait = TextureRect.new()
+	_portrait.position = Vector2(191, 35)
+	_portrait.size = Vector2(34, 40)
+	_portrait.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	_portrait.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
+	add_child(_portrait)
+	_crest_art = _make_identity_art(Vector2(230, 35))
+	_entity_art = _make_identity_art(Vector2(268, 35))
+
+
+func _make_identity_art(at: Vector2) -> TextureRect:
+	var art := TextureRect.new()
+	art.position = at
+	art.size = Vector2(34, 40)
+	art.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	add_child(art)
+	return art
+
+
+func _optional_texture(path: String) -> Texture2D:
+	return load(path) if ResourceLoader.exists(path) else null
 
 
 func _label(top_left: Vector2, font_size: int, color: Color) -> Label:
@@ -96,20 +120,26 @@ func _refresh() -> void:
 		var entity: Dictionary = GameData.get_entity(build.get("entity_id", "")) if build.get("entity_id", "") else {}
 		var details: Array[String] = []
 		details.append(class_record.get("name", "?"))
-		details.append("Crest: %s" % crest.get("name", "—"))
-		details.append("Entity: %s" % entity.get("name", "—"))
+		details.append(crest.get("name", "NO CREST"))
+		details.append(entity.get("name", "NO ENTITY"))
 		details.append("")
 		details.append("FRONT: full melee power,")
 		details.append("  more exposed.")
 		details.append("BACK: safer from close")
 		details.append("  attacks, weaker melee.")
 		_detail_label.text = "\n".join(details)
+		_portrait.texture = _optional_texture("res://assets/portraits/%s/neutral.png" % build.get("sprite_key", ""))
+		_crest_art.texture = _optional_texture("res://assets/crests/%s/icon.png" % build.get("crest_id", ""))
+		_entity_art.texture = _optional_texture("res://assets/entities/%s/card.png" % build.get("entity_id", ""))
 	else:
 		var details: Array[String] = []
 		if not battlefield.is_empty():
 			details.append(battlefield.get("name", ""))
 			details.append(str(battlefield.get("description", "")))
 		_detail_label.text = "\n".join(details)
+		_portrait.texture = null
+		_crest_art.texture = null
+		_entity_art.texture = null
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -117,16 +147,19 @@ func _unhandled_input(event: InputEvent) -> void:
 		return
 	if event.is_action_pressed("move_up"):
 		_cursor = wrapi(_cursor - 1, 0, _row_count())
+		AudioRouter.play_sfx("ui", "move")
 	elif event.is_action_pressed("move_down"):
 		_cursor = wrapi(_cursor + 1, 0, _row_count())
+		AudioRouter.play_sfx("ui", "move")
 	elif event.is_action_pressed("move_left") or event.is_action_pressed("move_right"):
 		if _cursor < GameState.party.size():
 			var build: Dictionary = GameState.party[_cursor]
 			build["position"] = "back" if build.get("position", "front") == "front" else "front"
 	elif event.is_action_pressed("interact"):
+		AudioRouter.play_sfx("ui", "confirm")
 		if _cursor == GameState.party.size():
 			SaveManager.save_game()
-			get_tree().change_scene_to_file(BATTLE_SCENE)
+			SceneTransition.change_scene(BATTLE_SCENE, "spectral")
 			return
 		elif _cursor > 0:
 			# Swap upward to reorder which members fill the active slots.
@@ -135,6 +168,7 @@ func _unhandled_input(event: InputEvent) -> void:
 			GameState.party[_cursor - 1] = member
 			_cursor -= 1
 	elif event.is_action_pressed("cancel"):
-		get_tree().change_scene_to_file(OVERWORLD_SCENE)
+		AudioRouter.play_sfx("ui", "cancel")
+		SceneTransition.change_scene(OVERWORLD_SCENE)
 		return
 	_refresh()

@@ -120,7 +120,9 @@ func _ready() -> void:
 	# pass behind trees and lamp posts rather than through them.
 	y_sort_enabled = true
 	_build_map_layer()
+	_build_court_landmark()
 	_build_lighting()
+	AudioRouter.play_music("greymere")
 	_build_dialogue()
 	_build_npcs()
 	_build_player()
@@ -199,6 +201,23 @@ func _build_map_layer() -> void:
 	add_child(layer)
 	layer.draw.connect(_draw_map.bind(layer))
 	layer.queue_redraw()
+
+
+func _build_court_landmark() -> void:
+	## Optional authored landmark overlays the atlas symbol without changing its
+	## collision, interaction, map coordinate, or story trigger.
+	var path := "res://assets/landmarks/greymere_court_arch.png" # optional-authored-asset
+	if not ResourceLoader.exists(path):
+		return
+	var art := Sprite2D.new()
+	art.texture = load(path)
+	art.centered = false
+	var metadata := VisualAsset.sidecar_for(path)
+	var landmark_anchor := VisualAsset.anchor(metadata, Vector2(32, 64))
+	art.offset = -landmark_anchor
+	art.position = Vector2(_find_tile("C") * TILE) + Vector2(TILE / 2.0, TILE)
+	art.z_index = int(metadata.get("z_index", -5))
+	add_child(art)
 
 
 func _build_lighting() -> void:
@@ -404,6 +423,7 @@ func _unhandled_input(event: InputEvent) -> void:
 	if (_onboarding != null and _onboarding.active) or _dialogue.active or _player.is_moving():
 		return
 	if event.is_action_pressed("interact"):
+		AudioRouter.play_sfx("world", "interaction")
 		_try_interact()
 
 
@@ -435,7 +455,8 @@ func _on_dialogue_finished(key: String) -> void:
 		GameState.player_tile = SPAWN_FROM_COURT
 		GameState.set_flag("entered_hollow_court")
 		GameState.pending_encounter = "hollow_court_battle"
-		get_tree().change_scene_to_file(PARTY_SETUP_SCENE)
+		AudioRouter.play_sfx("world", "court_transition")
+		SceneTransition.change_scene(PARTY_SETUP_SCENE, "spectral")
 
 
 func _on_player_stepped(tile: Vector2i) -> void:

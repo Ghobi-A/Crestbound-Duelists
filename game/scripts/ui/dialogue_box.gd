@@ -5,7 +5,9 @@ class_name DialogueBox
 ## Dialogue files are JSON: { "key": [ {"speaker": "...", "lines": [...],
 ## "portrait": "..."} ] }. A key maps to a sequence of entries (a short
 ## conversation); each entry has a speaker and one or more lines.
-## "portrait" is optional and names a sprite_key under assets/portraits/
+## "portrait" is optional and names a sprite_key under assets/portraits/;
+## "expression" selects neutral/determined/injured/surprised/intense and
+## gracefully falls back to neutral when that authored crop is unavailable.
 ## (e.g. "elara", "townsfolk/farmboy") — an entry with no portrait, or one
 ## naming art that was never authored, just shows text at full width, so
 ## adding a portrait later is additive and never required. Advance with
@@ -112,13 +114,16 @@ func _show_current_line() -> void:
 	_speaker_label.text = entry.get("speaker", "")
 	var lines: Array = entry.get("lines", [])
 	_text_label.text = str(lines[_line_index])
-	_apply_portrait(str(entry.get("portrait", "")))
+	_apply_portrait(str(entry.get("portrait", "")), str(entry.get("expression", "neutral")))
 
 
-func _apply_portrait(portrait_key: String) -> void:
+func _apply_portrait(portrait_key: String, expression := "neutral") -> void:
 	var shown := false
 	if portrait_key != "":
-		var path := PORTRAIT_PATH % portrait_key
+		var safe_expression := expression if expression in ["neutral", "determined", "injured", "surprised", "intense"] else "neutral"
+		var path := "res://assets/portraits/%s/%s.png" % [portrait_key, safe_expression]
+		if not ResourceLoader.exists(path):
+			path = PORTRAIT_PATH % portrait_key
 		if ResourceLoader.exists(path):
 			_portrait.texture = load(path)
 			shown = true

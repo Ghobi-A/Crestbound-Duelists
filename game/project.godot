@@ -21,6 +21,8 @@ config/icon="res://icon.svg"
 GameData="*res://scripts/data/game_data.gd"
 GameState="*res://scripts/core/game_state.gd"
 SaveManager="*res://scripts/save/save_manager.gd"
+AudioRouter="*res://scripts/presentation/audio_router.gd"
+SceneTransition="*res://scripts/presentation/scene_transition.gd"
 
 [display]
 

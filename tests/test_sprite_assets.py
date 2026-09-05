@@ -22,6 +22,7 @@ import pytest
 REPO_ROOT = Path(__file__).resolve().parents[1]
 ASSETS = REPO_ROOT / "game" / "assets"
 MANIFEST_PATH = ASSETS / "battle" / "sheet_manifest.json"
+HOLLOW_COURT_SIDECAR = ASSETS / "battle" / "backgrounds" / "hollow_court.json"
 GREYMERE_GD = REPO_ROOT / "game" / "scripts" / "overworld" / "greymere.gd"
 
 # sprite_key values GameState writes into save data (game_state.gd).
@@ -162,6 +163,14 @@ def test_battle_states_stay_within_the_frame_count(manifest: dict) -> None:
         assert state["start"] + state["count"] <= manifest["frame_count"], (
             f"battle state '{name}' references frames past the end of the sheet"
         )
+
+
+def test_battle_background_sidecar_has_safe_normalized_crop() -> None:
+    sidecar = json.loads(HOLLOW_COURT_SIDECAR.read_text(encoding="utf-8"))
+    assert sidecar["fit"] in {"cover", "contain", "native"}
+    assert len(sidecar["focal_point"]) == 2
+    assert all(0.0 <= value <= 1.0 for value in sidecar["focal_point"])
+    assert len(sidecar["safe_area"]) == 4
 
 
 @pytest.mark.parametrize("key", CHARACTER_KEYS)

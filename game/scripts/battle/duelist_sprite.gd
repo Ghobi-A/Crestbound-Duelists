@@ -10,8 +10,6 @@ class_name DuelistSprite
 signal animation_finished(state: String)
 
 const MANIFEST_PATH := "res://assets/battle/sheet_manifest.json"
-const ENTITY_PULSE_TIME := 0.6
-
 var unit: BattleUnit
 var home_position := Vector2.ZERO
 
@@ -41,6 +39,10 @@ var _frame_clock := 0.0
 var _holding := false   # a non-looping animation finished; hold last frame
 var _entity_clock := 0.0
 var _entity_frame := 0
+var _entity_frame_count := 2
+var _entity_fps := 1.67
+var _entity_states: Dictionary = {}
+var _entity_state := "idle"
 var _tween: Tween
 var _pivot_tween: Tween   # squash/stretch/rotation on _sprite_pivot; see play()
 
@@ -148,9 +150,21 @@ func _setup_entity() -> void:
 		return
 	_entity_sprite = Sprite2D.new()
 	_entity_sprite.texture = load(path)
+	var sidecar := VisualAsset.sidecar_for(path)
+	var frame_size := VisualAsset.positive_size(sidecar, Vector2i(32, 32))
+	var entity_anchor := VisualAsset.anchor(sidecar, Vector2(frame_size.x / 2.0, frame_size.y))
+	_entity_frame_count = maxi(1, int(sidecar.get("frame_count", 2)))
+	_entity_fps = maxf(0.1, float(sidecar.get("fps", 1.67)))
+	_entity_states = sidecar.get("states", {})
 	_entity_sprite.region_enabled = true
-	_entity_sprite.region_rect = Rect2(0, 0, 32, 32)
-	_entity_sprite.position = Vector2(-24, -12) if unit.team == "player" else Vector2(24, -8)
+	_entity_sprite.region_rect = Rect2(Vector2.ZERO, frame_size)
+	_entity_sprite.centered = false
+	_entity_sprite.offset = -entity_anchor
+	var default_offset := Vector2(-24, -12) if unit.team == "player" else Vector2(24, -8)
+	var raw_offset = sidecar.get("stage_offset", [default_offset.x, default_offset.y])
+	if not raw_offset is Array or raw_offset.size() != 2:
+		raw_offset = [default_offset.x, default_offset.y]
+	_entity_sprite.position = Vector2(float(raw_offset[0]), float(raw_offset[1]))
 	_entity_sprite.z_index = -1
 	_entity_sprite.modulate = Color(1, 1, 1, 0.85)
 	add_child(_entity_sprite)
@@ -159,10 +173,15 @@ func _setup_entity() -> void:
 func _process(delta: float) -> void:
 	if _entity_sprite != null:
 		_entity_clock += delta
-		if _entity_clock >= ENTITY_PULSE_TIME:
+		if _entity_clock >= 1.0 / _entity_fps:
 			_entity_clock = 0.0
-			_entity_frame = 1 - _entity_frame
-			_entity_sprite.region_rect = Rect2(_entity_frame * 32, 0, 32, 32)
+			_entity_frame = (_entity_frame + 1) % _entity_frame_count
+			var frame_width := _entity_sprite.region_rect.size.x
+			var state: Dictionary = _entity_states.get(_entity_state, _entity_states.get("idle", {}))
+			var start := int(state.get("start", 0))
+			var count := maxi(1, int(state.get("count", _entity_frame_count)))
+			_entity_frame = (_entity_frame + 1) % count
+			_entity_sprite.region_rect.position.x = (start + _entity_frame) * frame_width
 
 	if not _has_sheet or _holding:
 		return
@@ -211,6 +230,29 @@ func _effective_state(name: String) -> Dictionary:
 func refresh() -> void:
 	visible = unit == null or unit.is_alive() or _state == "defeat"
 	queue_redraw()
+
+
+func effect_origin() -> Vector2:
+	## Screen-space origin above the feet for VFX and combat floats. This remains
+	## correct for any authored frame because `_anchor` owns its geometry.
+	return home_position + Vector2(0, -maxf(12.0, _anchor.y * 0.55))
+
+
+func play_entity_state(state: String) -> void:
+	if _entity_sprite == null:
+		return
+	_entity_state = state if _entity_states.has(state) else "idle"
+	_entity_frame = 0
+	var visual: Dictionary = _entity_states.get(_entity_state, {})
+	_entity_fps = maxf(0.1, float(visual.get("fps", _entity_fps)))
+	var start := int(visual.get("start", 0))
+	_entity_sprite.region_rect.position.x = start * _entity_sprite.region_rect.size.x
+	# Entities briefly step forward for emphasis, then return to a subordinate idle.
+	_entity_sprite.modulate.a = 1.0 if state in ["appear", "hit", "awaken"] else 0.72
+	if state != "idle":
+		var tween := create_tween()
+		tween.tween_interval(clampf(float(visual.get("duration", 0.32)), 0.08, 0.8))
+		tween.tween_callback(play_entity_state.bind("idle"))
 
 
 func set_highlighted(kind: String) -> void:
