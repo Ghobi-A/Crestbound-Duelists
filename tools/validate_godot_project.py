@@ -11,12 +11,21 @@ errors = []
 res_ref = re.compile(r'res://[A-Za-z0-9_\-./]+')
 for path in list(GAME.rglob("*.gd")) + list(GAME.rglob("*.tscn")) + [GAME / "project.godot"]:
     text = path.read_text(encoding="utf-8")
-    for ref in res_ref.findall(text):
-        target = ref.replace("res://", "")
-        if "%s" in ref or not Path(target).suffix:
-            continue
-        if not (GAME / target).exists():
-            errors.append(f"{path.name}: missing resource {ref}")
+    for line in text.splitlines():
+        for ref in res_ref.findall(line):
+            target = ref.replace("res://", "")
+            if "%s" in ref or not Path(target).suffix:
+                continue
+            # Optional authored replacements are deliberately absent until an
+            # artist supplies them. Call sites must opt in explicitly and guard
+            # them with ResourceLoader.exists rather than weakening all refs.
+            if "# optional-authored-asset" in line and "ResourceLoader.exists" not in text:
+                errors.append(f"{path.name}: unguarded optional resource {ref}")
+                continue
+            if "# optional-authored-asset" in line:
+                continue
+            if not (GAME / target).exists():
+                errors.append(f"{path.name}: missing resource {ref}")
 
 # 2. JSON files must parse.
 for path in GAME.rglob("*.json"):

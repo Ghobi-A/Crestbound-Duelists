@@ -47,6 +47,7 @@ func _process(delta: float) -> void:
 		position = _step_from.lerp(_step_to, _step_progress)
 		if not is_moving():
 			position = _step_to
+			AudioRouter.play_sfx("world", "step", -5.0)
 			stepped_onto.emit(tile)
 		return
 

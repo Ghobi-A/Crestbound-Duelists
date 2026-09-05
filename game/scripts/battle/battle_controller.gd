@@ -47,6 +47,8 @@ var planned_actions: Array = []
 var pending_move: Dictionary = {}
 var stage: Node2D                 # background + unit sprites (shakeable)
 var onboarding: OnboardingPanel
+var presentation: BattlePresentation
+var result_presentation: ResultPresentation
 
 
 func _ready() -> void:
@@ -58,6 +60,10 @@ func _ready() -> void:
 	_stage_background()
 	_stage_units()
 	_build_hud()
+	presentation = BattlePresentation.new()
+	add_child(presentation)
+	presentation.configure(stage, hud, sprites)
+	AudioRouter.play_music("battle")
 	_build_dialogue()
 	_build_onboarding()
 	var objective: Dictionary = GameData.get_objective(runtime.encounter.get("objective", "defeat_all"))
@@ -92,17 +98,36 @@ func _start_intro() -> void:
 
 func _stage_background() -> void:
 	var location: String = runtime.encounter.get("location", "")
+	_stage_background_layer("%s_far" % location, -20)
 	var path := "res://assets/battle/backgrounds/%s.png" % location
 	if ResourceLoader.exists(path):
 		var background := Sprite2D.new()
 		background.texture = load(path)
 		background.centered = false
+		VisualAsset.fit_sprite(background, VisualAsset.sidecar_for(path), Rect2(0, 0, 320, BACKGROUND_HEIGHT))
+		background.z_index = -10
 		stage.add_child(background)
 	else:
 		var fallback := ColorRect.new()
 		fallback.color = PlaceholderPalette.BG_DARK
 		fallback.size = Vector2(320, BACKGROUND_HEIGHT)
+		fallback.z_index = -10
 		stage.add_child(fallback)
+	_stage_background_layer("%s_foreground" % location, 105)
+
+
+func _stage_background_layer(asset_key: String, z: int) -> void:
+	## Optional authored far/foreground plates use transparent PNGs and the same
+	## crop contract. Foreground authors must keep the sidecar safe area clear.
+	var path := "res://assets/battle/backgrounds/%s.png" % asset_key
+	if not ResourceLoader.exists(path):
+		return
+	var layer := Sprite2D.new()
+	layer.texture = load(path)
+	layer.centered = false
+	layer.z_index = z
+	VisualAsset.fit_sprite(layer, VisualAsset.sidecar_for(path), Rect2(0, 0, 320, BACKGROUND_HEIGHT))
+	stage.add_child(layer)
 
 
 func _stage_units() -> void:
@@ -116,13 +141,6 @@ func _stage_units() -> void:
 		# never contradicted by draw order.
 		sprite.z_index = int(home.y)
 		sprites[unit] = sprite
-
-
-func _shake(strength: float = 2.0) -> void:
-	var tween := create_tween()
-	tween.tween_property(stage, "position", Vector2(strength, 0), 0.04)
-	tween.tween_property(stage, "position", Vector2(-strength, 1), 0.05)
-	tween.tween_property(stage, "position", Vector2.ZERO, 0.06)
 
 
 func stage_position(unit: BattleUnit) -> Vector2:
@@ -168,7 +186,7 @@ func _on_dialogue_finished(key: String) -> void:
 	elif key == runtime.encounter.get("victory_dialogue", "__none__"):
 		_leave_after_victory()
 	elif key == runtime.encounter.get("defeat_dialogue", "__none__"):
-		get_tree().change_scene_to_file(BOOT_SCENE)
+		SceneTransition.change_scene(BOOT_SCENE, "defeat")
 
 
 # ── Action selection ─────────────────────────────────────────────────
@@ -290,12 +308,15 @@ func _unhandled_input(event: InputEvent) -> void:
 func _menu_input(event: InputEvent) -> void:
 	if event.is_action_pressed("move_up"):
 		hud.action_menu.move_cursor(-1)
+		AudioRouter.play_sfx("ui", "move")
 	elif event.is_action_pressed("move_down"):
 		hud.action_menu.move_cursor(1)
+		AudioRouter.play_sfx("ui", "move")
 	elif event.is_action_pressed("cancel"):
 		if selection_index > 0:
 			_reopen_last_selection()
 	elif event.is_action_pressed("interact"):
+		AudioRouter.play_sfx("ui", "confirm")
 		var entry := hud.action_menu.current_entry()
 		if not entry.enabled:
 			return
@@ -314,19 +335,23 @@ func _menu_input(event: InputEvent) -> void:
 func _target_input(event: InputEvent) -> void:
 	if event.is_action_pressed("move_left") or event.is_action_pressed("move_up"):
 		target_selector.cycle(-1)
+		AudioRouter.play_sfx("ui", "move")
 		_refresh_target_info()
 		_refresh_target_highlights()
 		queue_redraw()
 	elif event.is_action_pressed("move_right") or event.is_action_pressed("move_down"):
 		target_selector.cycle(1)
+		AudioRouter.play_sfx("ui", "move")
 		_refresh_target_info()
 		_refresh_target_highlights()
 		queue_redraw()
 	elif event.is_action_pressed("cancel"):
+		AudioRouter.play_sfx("ui", "cancel")
 		hud.hide_info()
 		_clear_target_side()
 		_open_menu_for_current()
 	elif event.is_action_pressed("interact"):
+		AudioRouter.play_sfx("ui", "confirm")
 		var unit := _current_unit()
 		var target := target_selector.current()
 		if sprites.has(target):
@@ -375,9 +400,19 @@ func _resolve_round() -> void:
 		if not action.actor.is_alive():
 			continue
 		var events := resolver.execute(action)
-		await _play_events(action, events)
+		# Resolve all Crest state immediately from authoritative events; presentation
+		# receives only the result and cannot decide combat state.
+		var awakenings: Array[BattleUnit] = []
+		for event in events:
+			if event.type == "crest":
+				var crest_result: Dictionary = crest_runtime.process_event(event.unit, event.event)
+				event["presentation_result"] = crest_result
+				if crest_result.awakened:
+					awakenings.append(event.unit)
+		await presentation.play_events(action, events)
+		for awakened_unit in awakenings:
+			await _play_awakening(awakened_unit)
 		hud.refresh_rows()
-		await get_tree().create_timer(0.3).timeout
 
 	resolver.end_round()
 	await _after_round_tick()
@@ -399,78 +434,16 @@ func _after_round_tick() -> void:
 
 
 func _play_events(action: Dictionary, events: Array) -> void:
-	var actor: BattleUnit = action.actor
-	for event in events:
-		match event.type:
-			"action_start":
-				if action.kind == "move":
-					hud.set_message("%s: %s" % [actor.display_name, event.label])
-					sprites[actor].play("attack")
-					await get_tree().create_timer(0.25).timeout
-			"brace":
-				hud.set_message("%s braces." % actor.display_name)
-				sprites[actor].play("brace")
-				await get_tree().create_timer(0.2).timeout
-			"blocked":
-				hud.set_message("%s: %s is blocked by Hex!" % [actor.display_name, event.move_name])
-				_popup(sprites[actor].home_position, "HEX", PlaceholderPalette.TILE_CREST_NODE.lightened(0.4))
-				await get_tree().create_timer(0.35).timeout
-			"retarget":
-				hud.set_message("%s turns to %s!" % [actor.display_name, event.target.display_name])
-			"miss":
-				_popup(sprites[event.target].home_position, "MISS", PlaceholderPalette.TEXT_DIM)
-				hud.set_message("%s: %s missed!" % [actor.display_name, event.move_name])
-				await get_tree().create_timer(0.3).timeout
-			"intercept":
-				hud.set_message("%s shields %s!" % [event.protector.display_name, event.original_target.display_name])
-				_popup(sprites[event.protector].home_position, "GUARD", PlaceholderPalette.STEEL_GUARD)
-				await get_tree().create_timer(0.3).timeout
-			"damage":
-				var target: BattleUnit = event.target
-				_popup(sprites[target].home_position, str(event.amount), Color.WHITE)
-				sprites[target].play("defeat" if event.ko else "hit")
-				if action.kind == "move" and action.move.get("slot", "") == "gambit":
-					_shake(3.0)
-				elif event.amount >= 24:
-					_shake(2.0)
-				hud.set_message("%s takes %d." % [target.display_name, event.amount])
-				await get_tree().create_timer(0.3).timeout
-				if event.ko:
-					hud.set_message("%s falls!" % target.display_name)
-					await get_tree().create_timer(0.3).timeout
-			"counter":
-				var victim: BattleUnit = event.target
-				_popup(sprites[victim].home_position, str(event.amount), Color("7ec8ff"))
-				sprites[victim].play("defeat" if event.ko else "hit")
-				hud.set_message("%s counters for %d!" % [event.actor.display_name, event.amount])
-				await get_tree().create_timer(0.3).timeout
-			"lifesteal":
-				_popup(sprites[event.actor].home_position, "+%d" % event.amount, Color("57c26b"))
-			"stat_mod":
-				var label := "%s%+d" % [str(event.stat).to_upper(), event.amount]
-				var color := Color("e05555") if event.amount < 0 else Color("57c26b")
-				_popup(sprites[event.target].home_position + Vector2(0, -8), label, color)
-			"status":
-				_popup(sprites[event.target].home_position + Vector2(0, -8), str(event.status).to_upper(), PlaceholderPalette.TILE_CREST_NODE.lightened(0.4))
-			"crest":
-				var result: Dictionary = crest_runtime.process_event(event.unit, event.event)
-				if result.gained >= 10:
-					_popup(sprites[event.unit].home_position + Vector2(10, -4), "R+%d" % result.gained, PlaceholderPalette.TILE_CREST_NODE.lightened(0.45))
-				if result.awakened:
-					await _play_awakening(event.unit)
-		for sprite in sprites.values():
-			sprite.refresh()
+	## Compatibility entry point for tools/tests; all sequencing lives in one layer.
+	await presentation.play_events(action, events)
 
 
 func _play_awakening(unit: BattleUnit) -> void:
 	var theme: Dictionary = unit.crest_record.get("visual_theme", {})
 	var accent := _palette_accent(theme.get("palette", ""))
-	hud.play_awakening_banner(CrestRuntime.awakening_banner_text(unit), accent)
 	hud.set_message("%s's Crest answers!" % unit.display_name)
-	_shake(2.0)
-	sprites[unit].play("awaken")
 	hud.refresh_rows()
-	await get_tree().create_timer(1.2).timeout
+	await presentation.play_awakening(unit, CrestRuntime.awakening_banner_text(unit), accent)
 
 
 func _palette_accent(palette: String) -> Color:
@@ -491,19 +464,6 @@ func _palette_accent(palette: String) -> Color:
 			return Color(1.0, 0.85, 0.3)
 
 
-func _popup(world_position: Vector2, text: String, color: Color) -> void:
-	var label := Label.new()
-	label.text = text
-	label.position = world_position + Vector2(-10, -18)
-	label.add_theme_font_size_override("font_size", 8)
-	label.add_theme_color_override("font_color", color)
-	label.z_index = 20
-	add_child(label)
-	var tween := create_tween()
-	tween.tween_property(label, "position:y", label.position.y - 10, 0.5)
-	tween.parallel().tween_property(label, "modulate:a", 0.0, 0.5).set_delay(0.15)
-	tween.tween_callback(label.queue_free)
-
 
 # ── Battle end ───────────────────────────────────────────────────────
 
@@ -511,22 +471,22 @@ func _finish(player_won: bool) -> void:
 	state = State.RESULT
 	hud.hide_menu()
 	hud.hide_info()
-	if player_won:
-		hud.set_phase("VICTORY")
-		hud.set_message("The enemy is defeated.")
-		var key: String = runtime.encounter.get("victory_dialogue", "")
-		if key != "" and dialogue.has_key(key):
-			dialogue.play(key)
-		else:
-			_leave_after_victory()
+	hud.set_phase("VICTORY" if player_won else "DEFEAT")
+	hud.set_message("")
+	result_presentation = ResultPresentation.new()
+	add_child(result_presentation)
+	result_presentation.acknowledged.connect(_after_result.bind(player_won))
+	result_presentation.show_result(player_won)
+
+
+func _after_result(player_won: bool) -> void:
+	var key: String = runtime.encounter.get("victory_dialogue" if player_won else "defeat_dialogue", "")
+	if key != "" and dialogue.has_key(key):
+		dialogue.play(key)
+	elif player_won:
+		_leave_after_victory()
 	else:
-		hud.set_phase("DEFEAT")
-		hud.set_message("The party is overwhelmed...")
-		var key: String = runtime.encounter.get("defeat_dialogue", "")
-		if key != "" and dialogue.has_key(key):
-			dialogue.play(key)
-		else:
-			get_tree().change_scene_to_file(BOOT_SCENE)
+		SceneTransition.change_scene(BOOT_SCENE, "defeat")
 
 
 func _leave_after_victory() -> void:
@@ -537,7 +497,7 @@ func _leave_after_victory() -> void:
 		GameState.set_flag("post_battle_scene_pending")
 		GameState.player_tile = COURT_RETURN_TILE
 	SaveManager.save_game()
-	get_tree().change_scene_to_file(OVERWORLD_SCENE)
+	SceneTransition.change_scene(OVERWORLD_SCENE, "gold")
 
 
 # Selection/target markers now live on DuelistSprite itself

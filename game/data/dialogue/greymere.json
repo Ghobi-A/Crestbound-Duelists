@@ -3,6 +3,7 @@
     {
       "speaker": "Warden Elara Thorne",
       "portrait": "elara",
+      "expression": "determined",
       "lines": [
         "The Hollow Court has been sealed longer than anyone in Greymere can remember.",
         "If that seal has opened, do not assume what is inside has been waiting peacefully.",
@@ -14,6 +15,7 @@
     {
       "speaker": "Mira Solen",
       "portrait": "mira",
+      "expression": "surprised",
       "lines": [
         "The official records say the Court is empty.",
         "Which usually means the interesting records are somewhere we are not allowed to read.",

@@ -17,6 +17,7 @@ import pytest
 REPO_ROOT = Path(__file__).resolve().parents[1]
 DIALOGUE_DIR = REPO_ROOT / "game" / "data" / "dialogue"
 PORTRAITS_DIR = REPO_ROOT / "game" / "assets" / "portraits"
+EXPRESSIONS = {"neutral", "determined", "injured", "surprised", "intense"}
 
 DIALOGUE_FILES = sorted(DIALOGUE_DIR.glob("*.json"))
 
@@ -56,3 +57,13 @@ def test_dialogue_entries_have_speaker_and_lines(path: Path) -> None:
             assert "speaker" in entry, f"{path.name}:{key} entry missing 'speaker'"
             lines = entry.get("lines")
             assert isinstance(lines, list) and lines, f"{path.name}:{key} entry has no lines"
+            assert entry.get("expression", "neutral") in EXPRESSIONS, (
+                f"{path.name}:{key} uses an unsupported portrait expression"
+            )
+
+
+def test_expression_portraits_may_fall_back_to_neutral() -> None:
+    """The slice intentionally directs expressions before every authored crop
+    exists; DialogueBox must retain the documented neutral fallback."""
+    source = (REPO_ROOT / "game/scripts/ui/dialogue_box.gd").read_text(encoding="utf-8")
+    assert 'path = PORTRAIT_PATH % portrait_key' in source

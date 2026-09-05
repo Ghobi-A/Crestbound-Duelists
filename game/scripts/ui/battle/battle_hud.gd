@@ -152,6 +152,11 @@ func show_menu(unit: BattleUnit) -> void:
 	_info_panel.visible = false
 	action_menu.build_for(unit)
 	action_menu.visible = true
+	action_menu.modulate.a = 0.0
+	action_menu.position.x = 200
+	var reveal := create_tween().set_parallel()
+	reveal.tween_property(action_menu, "position:x", 196.0, 0.08)
+	reveal.tween_property(action_menu, "modulate:a", 1.0, 0.08)
 
 
 func hide_menu() -> void:
@@ -163,6 +168,11 @@ func show_info(text: String) -> void:
 	_info_label.text = text
 	_info_label.visible = true
 	_info_panel.visible = true
+	_info_panel.modulate.a = 0.0
+	_info_panel.position.x = 192
+	var reveal := create_tween().set_parallel()
+	reveal.tween_property(_info_panel, "position:x", 196.0, 0.08)
+	reveal.tween_property(_info_panel, "modulate:a", 1.0, 0.08)
 
 
 func hide_info() -> void:
