@@ -16,13 +16,15 @@ from loaders import (
 from models import ClassName, MoveSlot, create_unit
 
 
-def test_load_combat_config_values_match_v21():
+def test_load_combat_config_values_match_v22():
     config = load_combat_config()
-    assert config["speed_band"] == 7
+    assert config["speed_band"] == 20
+    # Retained for v2.1 schema/API compatibility; v2.2 initiative uses
+    # SPD + U(0, speed_band) rather than this ratio threshold.
     assert config["guaranteed_speed_ratio"] == 2.0
     assert config["variance_low"] == 0.85
     assert config["variance_high"] == 1.0
-    assert config["brace_multiplier"] == 1.05
+    assert config["brace_multiplier"] == 1.20
     assert config["max_turns"] == 100
     assert config["stat_decay_duration"] == 3
 
@@ -58,10 +60,15 @@ def test_build_move_matches_engine_expectations():
 
     fortify = build_move("fortify")
     assert fortify.is_buff_move
-    assert ("def", 4) in fortify.self_stat_mods
+    assert ("def", 15) in fortify.self_stat_mods
+    assert ("res", 15) in fortify.self_stat_mods
 
     cripple = build_move("cripple")
-    assert cripple.target_stat_mods == [("def", -5), ("res", -5)]
+    assert cripple.target_stat_mods == [
+        ("def", -6),
+        ("res", -6),
+        ("spd", -15),
+    ]
 
 
 def test_build_move_unknown_id():
@@ -130,7 +137,7 @@ def test_invalid_yaml_error_is_readable(monkeypatch, tmp_path):
 
 
 def test_missing_config_key_error(monkeypatch, tmp_path):
-    (tmp_path / "combat_config.yaml").write_text("speed_band: 7\n")
+    (tmp_path / "combat_config.yaml").write_text("speed_band: 20\n")
     monkeypatch.setattr(loaders, "DATA_DIR", tmp_path)
     loaders.clear_caches()
     try:
