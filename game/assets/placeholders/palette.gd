@@ -6,7 +6,7 @@ class_name PlaceholderPalette
 ## real 16x16 sprites/tiles. GBC-inspired: dark, slightly desaturated,
 ## small set of hues. All original.
 
-const BG_DARK := Color("1a1a2e")
+const BG_DARK := Color("0b101b")
 const BG_PANEL := Color("16213e")
 const PANEL_BORDER := Color("4a9eff")
 const TEXT_MAIN := Color("e8e8f0")
@@ -57,10 +57,10 @@ const NPC_COLOR_ALT := Color("6ab4d8")
 # it. Values match tools/generate_sprites.py's Hollow Court background
 # and dais exactly, so the HUD and the battlefield read as one palette
 # rather than a coincidentally similar one.
-const MOON_SLATE := Color("2a2836")
-const MOON_SLATE_DIM := Color("1e1c28")
-const MOON_INDIGO := Color("342f40")
-const MOON_SLATE_LIGHT := Color("6a6480")
+const MOON_SLATE := Color("111722")
+const MOON_SLATE_DIM := Color("0b1019")
+const MOON_INDIGO := Color("1d2533")
+const MOON_SLATE_LIGHT := Color("697587")
 const CREST_GOLD := Color("caa24a")
 const CREST_GOLD_BRIGHT := Color("f2cf7a")
 const SPECTRAL_VIOLET := Color("9b74d6")

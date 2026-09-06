@@ -1,0 +1,468 @@
+{
+  "schema_version": 1,
+  "style": "moonlit-slate-adult-pixel",
+  "atlas": "res://assets/rework/combat_cast.png",
+  "native_size": [
+    1536,
+    1024
+  ],
+  "native_facing": "right",
+  "display_height": 44,
+  "colour_key": "green",
+  "overworld_atlas": "res://assets/rework/overworld_cast.png",
+  "overworld_display_height": 24,
+  "overworld_frame_size": [
+    384,
+    336
+  ],
+  "overworld_directions": {
+    "down": 0,
+    "up": 1,
+    "east": 2,
+    "west": 3
+  },
+  "overworld_rows": {
+    "kai": 0,
+    "almyra": 342,
+    "liora": 686
+  },
+  "overworld_anchors": {
+    "kai": [
+      192,
+      318
+    ],
+    "almyra": [
+      192,
+      322
+    ],
+    "liora": [
+      192,
+      322
+    ]
+  },
+  "characters": {
+    "almyra": {
+      "display_name": "Warden Almyra",
+      "aliases": [
+        "elara"
+      ],
+      "battle_side": "player",
+      "battle_rect": [
+        564,
+        40,
+        416,
+        464
+      ],
+      "foot_anchor": [
+        210,
+        450
+      ],
+      "visual_centre": [
+        210,
+        232
+      ],
+      "portrait_rect": [
+        720,
+        48,
+        132,
+        160
+      ],
+      "overworld_key": "elara"
+    },
+    "liora": {
+      "display_name": "Liora Sen",
+      "aliases": [
+        "mira"
+      ],
+      "battle_side": "player",
+      "battle_rect": [
+        1080,
+        48,
+        400,
+        452
+      ],
+      "foot_anchor": [
+        204,
+        438
+      ],
+      "visual_centre": [
+        204,
+        226
+      ],
+      "portrait_rect": [
+        1210,
+        58,
+        138,
+        160
+      ],
+      "overworld_key": "mira"
+    },
+    "riven_raider": {
+      "display_name": "Riven Raider",
+      "aliases": [],
+      "battle_side": "enemy",
+      "battle_rect": [
+        16,
+        526,
+        526,
+        458
+      ],
+      "foot_anchor": [
+        249,
+        442
+      ],
+      "visual_centre": [
+        263,
+        229
+      ],
+      "portrait_rect": [
+        278,
+        530,
+        138,
+        160
+      ],
+      "overworld_key": ""
+    },
+    "unbound_mercenary": {
+      "display_name": "Unbound Mercenary",
+      "aliases": [],
+      "battle_side": "enemy",
+      "battle_rect": [
+        550,
+        514,
+        450,
+        470
+      ],
+      "foot_anchor": [
+        223,
+        456
+      ],
+      "visual_centre": [
+        225,
+        235
+      ],
+      "portrait_rect": [
+        744,
+        520,
+        138,
+        160
+      ],
+      "overworld_key": ""
+    },
+    "hexbound_adept": {
+      "display_name": "Hexbound Adept",
+      "aliases": [],
+      "battle_side": "enemy",
+      "battle_rect": [
+        1048,
+        536,
+        450,
+        448
+      ],
+      "foot_anchor": [
+        248,
+        435
+      ],
+      "visual_centre": [
+        225,
+        224
+      ],
+      "portrait_rect": [
+        1240,
+        538,
+        138,
+        160
+      ],
+      "overworld_key": ""
+    },
+    "kai_warrior": {
+      "display_name": "Kai",
+      "class_id": "warrior",
+      "crest": "Crimson",
+      "principle": "Pressure",
+      "aliases": [
+        "aren/warrior"
+      ],
+      "atlas": "res://assets/rework/kai_classes.png",
+      "native_size": [
+        1536,
+        1024
+      ],
+      "colour_key": "magenta",
+      "battle_side": "player",
+      "battle_rect": [
+        16,
+        24,
+        544,
+        482
+      ],
+      "foot_anchor": [
+        222,
+        476
+      ],
+      "visual_centre": [
+        222,
+        238
+      ],
+      "portrait_rect": [
+        274,
+        35,
+        94,
+        126
+      ],
+      "overworld": {
+        "atlas": "res://assets/rework/kai_overworld.png",
+        "frame_size": [
+          313,
+          209
+        ],
+        "row": 0,
+        "foot_anchor": [
+          156,
+          205
+        ]
+      }
+    },
+    "kai_guardian": {
+      "display_name": "Kai",
+      "class_id": "guardian",
+      "crest": "Azure",
+      "principle": "Endurance",
+      "aliases": [
+        "aren/guardian"
+      ],
+      "atlas": "res://assets/rework/kai_classes.png",
+      "native_size": [
+        1536,
+        1024
+      ],
+      "colour_key": "magenta",
+      "battle_side": "player",
+      "battle_rect": [
+        570,
+        24,
+        420,
+        482
+      ],
+      "foot_anchor": [
+        216,
+        476
+      ],
+      "visual_centre": [
+        216,
+        238
+      ],
+      "portrait_rect": [
+        744,
+        32,
+        118,
+        134
+      ],
+      "overworld": {
+        "atlas": "res://assets/rework/kai_overworld.png",
+        "frame_size": [
+          313,
+          209
+        ],
+        "row": 209,
+        "foot_anchor": [
+          156,
+          205
+        ]
+      }
+    },
+    "kai_mage": {
+      "display_name": "Kai",
+      "class_id": "mage",
+      "crest": "Ember",
+      "principle": "Projection",
+      "aliases": [
+        "aren/mage"
+      ],
+      "atlas": "res://assets/rework/kai_classes.png",
+      "native_size": [
+        1536,
+        1024
+      ],
+      "colour_key": "magenta",
+      "battle_side": "player",
+      "battle_rect": [
+        1060,
+        24,
+        450,
+        482
+      ],
+      "foot_anchor": [
+        230,
+        476
+      ],
+      "visual_centre": [
+        230,
+        238
+      ],
+      "portrait_rect": [
+        1230,
+        32,
+        112,
+        134
+      ],
+      "overworld": {
+        "atlas": "res://assets/rework/kai_overworld.png",
+        "frame_size": [
+          313,
+          209
+        ],
+        "row": 418,
+        "foot_anchor": [
+          156,
+          205
+        ]
+      }
+    },
+    "kai_sorcerer": {
+      "display_name": "Kai",
+      "class_id": "sorcerer",
+      "crest": "Eclipse",
+      "principle": "Manipulation",
+      "aliases": [
+        "aren/sorcerer"
+      ],
+      "atlas": "res://assets/rework/kai_classes.png",
+      "native_size": [
+        1536,
+        1024
+      ],
+      "colour_key": "magenta",
+      "battle_side": "player",
+      "battle_rect": [
+        24,
+        520,
+        488,
+        478
+      ],
+      "foot_anchor": [
+        244,
+        464
+      ],
+      "visual_centre": [
+        244,
+        232
+      ],
+      "portrait_rect": [
+        277,
+        529,
+        109,
+        133
+      ],
+      "overworld": {
+        "atlas": "res://assets/rework/kai_overworld.png",
+        "frame_size": [
+          313,
+          209
+        ],
+        "row": 627,
+        "foot_anchor": [
+          156,
+          205
+        ]
+      }
+    },
+    "kai_assassin": {
+      "display_name": "Kai",
+      "class_id": "assassin",
+      "crest": "Glass",
+      "principle": "Precision",
+      "aliases": [
+        "aren/assassin"
+      ],
+      "atlas": "res://assets/rework/kai_classes.png",
+      "native_size": [
+        1536,
+        1024
+      ],
+      "colour_key": "magenta",
+      "battle_side": "player",
+      "battle_rect": [
+        578,
+        520,
+        464,
+        478
+      ],
+      "foot_anchor": [
+        191,
+        464
+      ],
+      "visual_centre": [
+        191,
+        232
+      ],
+      "portrait_rect": [
+        750,
+        530,
+        110,
+        133
+      ],
+      "overworld": {
+        "atlas": "res://assets/rework/kai_overworld.png",
+        "frame_size": [
+          313,
+          209
+        ],
+        "row": 836,
+        "foot_anchor": [
+          156,
+          205
+        ]
+      }
+    },
+    "kai_neutral": {
+      "display_name": "Kai",
+      "class_id": "neutral",
+      "crest": "Verdant",
+      "principle": "Adaptation",
+      "aliases": [
+        "aren/neutral",
+        "kai"
+      ],
+      "atlas": "res://assets/rework/kai_classes.png",
+      "native_size": [
+        1536,
+        1024
+      ],
+      "colour_key": "magenta",
+      "battle_side": "player",
+      "battle_rect": [
+        1064,
+        520,
+        448,
+        478
+      ],
+      "foot_anchor": [
+        216,
+        464
+      ],
+      "visual_centre": [
+        216,
+        232
+      ],
+      "portrait_rect": [
+        1230,
+        526,
+        115,
+        136
+      ],
+      "overworld": {
+        "atlas": "res://assets/rework/kai_overworld.png",
+        "frame_size": [
+          313,
+          209
+        ],
+        "row": 1045,
+        "foot_anchor": [
+          156,
+          205
+        ]
+      }
+    }
+  }
+}

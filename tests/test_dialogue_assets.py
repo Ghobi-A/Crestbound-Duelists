@@ -65,5 +65,7 @@ def test_dialogue_entries_have_speaker_and_lines(path: Path) -> None:
 def test_expression_portraits_may_fall_back_to_neutral() -> None:
     """The slice intentionally directs expressions before every authored crop
     exists; DialogueBox must retain the documented neutral fallback."""
-    source = (REPO_ROOT / "game/scripts/ui/dialogue_box.gd").read_text(encoding="utf-8")
-    assert 'path = PORTRAIT_PATH % portrait_key' in source
+    dialogue = (REPO_ROOT / "game/scripts/ui/dialogue_box.gd").read_text(encoding="utf-8")
+    source = (REPO_ROOT / "game/scripts/art/character_presentation.gd").read_text(encoding="utf-8")
+    assert "CharacterPresentation.apply_portrait" in dialogue
+    assert 'path = "res://assets/portraits/%s/neutral.png" % key' in source

@@ -35,6 +35,8 @@ func setup(
 func _draw() -> void:
 	if _has_sheet:
 		return
+	if not OS.is_debug_build():
+		return
 	draw_rect(Rect2(-4, -2, 8, 8), Color(0, 0, 0, 0.35))
 	draw_rect(Rect2(-3, -1, 6, 6), body_color)
 	draw_rect(Rect2(-3, -7, 6, 6), Color("e8c8a0"))

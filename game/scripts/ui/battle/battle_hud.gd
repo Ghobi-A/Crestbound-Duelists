@@ -13,7 +13,7 @@ var _message_label: Label
 var _info_label: Label
 var _info_panel: UiPanel
 var _rows: Dictionary = {}   # BattleUnit -> UnitStatusPanel
-var _rows_container: VBoxContainer
+var _rows_container: HBoxContainer
 var _flash_rect: ColorRect
 var _banner_label: Label
 
@@ -33,11 +33,14 @@ func _ready() -> void:
 	top_accent.position = Vector2(0, 11)
 	top_accent.size = Vector2(320, 1)
 	top.add_child(top_accent)
-	_phase_label = _label(top, Vector2(4, 1), Vector2(200, 10), PlaceholderPalette.TEXT_WARN)
+	_phase_label = _label(top, Vector2(4, 1), Vector2(132, 10), PlaceholderPalette.TEXT_WARN)
+	_phase_label.clip_text = true
+	_phase_label.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
 	# Objective text is right-aligned and stops short of the icon, which
 	# is pinned to the corner so it never moves as the text changes.
 	_objective_label = _label(top, Vector2(140, 1), Vector2(160, 10), PlaceholderPalette.TEXT_DIM)
 	_objective_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	_objective_label.clip_text = true
 	var objective_icon := UiIcons.make_texture("objective")
 	if objective_icon != null:
 		var icon_rect := TextureRect.new()
@@ -60,7 +63,7 @@ func _ready() -> void:
 	bottom.size = Vector2(320, 58)
 	add_child(bottom)
 
-	_rows_container = VBoxContainer.new()
+	_rows_container = HBoxContainer.new()
 	_rows_container.position = Vector2(2, 2)
 	_rows_container.add_theme_constant_override("separation", 1)
 	bottom.add_child(_rows_container)
@@ -106,6 +109,7 @@ func _label(parent: Node, top_left: Vector2, size_: Vector2, color: Color) -> La
 	label.add_theme_font_size_override("font_size", 8)
 	label.add_theme_color_override("font_color", color)
 	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	label.clip_text = true
 	parent.add_child(label)
 	return label
 
@@ -113,6 +117,9 @@ func _label(parent: Node, top_left: Vector2, size_: Vector2, color: Color) -> La
 func build_rows(player_units: Array) -> void:
 	for unit in player_units:
 		var row := UnitStatusPanel.new()
+		var card_width := (192.0 - maxf(0, player_units.size() - 1)) / maxf(1, player_units.size())
+		row.custom_minimum_size = Vector2(card_width, 54)
+		row.size = row.custom_minimum_size
 		_rows_container.add_child(row)
 		row.bind(unit)
 		_rows[unit] = row

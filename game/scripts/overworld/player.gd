@@ -90,6 +90,8 @@ func _process(delta: float) -> void:
 func _draw() -> void:
 	if _has_sheet:
 		return
+	if not OS.is_debug_build():
+		return
 	# Placeholder chip when class art is missing.
 	var body_color := PlaceholderPalette.class_color(GameState.player_class_id)
 	draw_rect(Rect2(-4, -2, 8, 8), PlaceholderPalette.PLAYER_OUTLINE)

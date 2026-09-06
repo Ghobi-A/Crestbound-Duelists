@@ -27,6 +27,8 @@ var _frame_w := 24
 var _frame_h := 32
 var _states: Dictionary = {}
 var _anchor := Vector2(12, 22)   # feet, in frame pixels; see docs/AUTHORED_ART_PIPELINE.md
+var _atlas_rect := Rect2()
+var _display_scale := 1.0
 
 # Where "feet" sit relative to this node's origin, for the contact shadow
 # and highlight rings. The legacy placeholder sheets draw centered with a
@@ -87,8 +89,13 @@ func _load_manifest() -> void:
 
 
 func _setup_sheet() -> void:
+	var record := CharacterPresentation.record_for(unit.sprite_key())
+	if not record.is_empty():
+		_setup_registered_sprite(record)
+		return
 	var path := sheet_path_for(unit.sprite_key())
 	if path == "":
+		push_error("DuelistSprite: required art missing for " + unit.sprite_key())
 		return
 	var sidecar := _load_sidecar(path)
 	if sidecar.is_empty() and _manifest.is_empty():
@@ -124,6 +131,38 @@ func _setup_sheet() -> void:
 	_sprite_pivot = Node2D.new()
 	add_child(_sprite_pivot)
 	_sprite_pivot.add_child(_sprite)
+	var native_facing := str(sidecar.get("native_facing", "right"))
+	_sprite.flip_h = PresentationLayout.needs_flip(native_facing, unit.team)
+	if not sidecar.is_empty():
+		_sprite.position = -PresentationLayout.mirrored_anchor(_anchor, _frame_w, _sprite.flip_h)
+	_has_sheet = true
+	_apply_frame()
+
+
+func _setup_registered_sprite(record: Dictionary) -> void:
+	var texture := CharacterPresentation.atlas(record)
+	if texture == null:
+		return
+	_atlas_rect = CharacterPresentation.rect(record.battle_rect)
+	_frame_w = int(_atlas_rect.size.x)
+	_frame_h = int(_atlas_rect.size.y)
+	_anchor = Vector2(record.foot_anchor[0], record.foot_anchor[1])
+	_display_scale = float(CharacterPresentation.manifest().get("display_height", 44)) / _anchor.y
+	_states = {"idle": {"start": 0, "count": 1, "fps": 2, "loop": true}}
+	_sprite = Sprite2D.new()
+	_sprite.texture = texture
+	_sprite.material = CharacterPresentation.key_material(record)
+	_sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	_sprite.region_enabled = true
+	_sprite.region_filter_clip_enabled = true
+	_sprite.centered = false
+	_sprite.flip_h = PresentationLayout.needs_flip(str(CharacterPresentation.manifest().native_facing), unit.team)
+	_sprite.scale = Vector2.ONE * _display_scale
+	_sprite.position = -PresentationLayout.mirrored_anchor(_anchor, _frame_w, _sprite.flip_h) * _display_scale
+	_sprite_pivot = Node2D.new()
+	add_child(_sprite_pivot)
+	_sprite_pivot.add_child(_sprite)
+	_feet_y = 0.0
 	_has_sheet = true
 	_apply_frame()
 
@@ -212,6 +251,9 @@ func _process(delta: float) -> void:
 func _apply_frame() -> void:
 	if not _has_sheet:
 		return
+	if _atlas_rect.has_area():
+		_sprite.region_rect = _atlas_rect
+		return
 	var state: Dictionary = _effective_state(_state)
 	var start := int(state.get("start", 0))
 	_sprite.region_rect = Rect2((start + _frame) * _frame_w, 0, _frame_w, _frame_h)
@@ -235,7 +277,7 @@ func refresh() -> void:
 func effect_origin() -> Vector2:
 	## Screen-space origin above the feet for VFX and combat floats. This remains
 	## correct for any authored frame because `_anchor` owns its geometry.
-	return home_position + Vector2(0, -maxf(12.0, _anchor.y * 0.55))
+	return position + Vector2(0, -maxf(12.0, _anchor.y * _display_scale * 0.55))
 
 
 func play_entity_state(state: String) -> void:
@@ -432,7 +474,7 @@ func _draw_contact_shadow() -> void:
 	## Grounds every unit on the arena floor. Sized from the manifest's
 	## frame width rather than a fixed constant, so a future sprite-size
 	## migration (Phase 3B) does not require touching this.
-	var frame_w := float(_frame_w)
+	var frame_w := float(_frame_w) * _display_scale
 	var half_w := frame_w * 0.4
 	var half_h := frame_w * 0.16
 	var feet_y := _feet_y  # roughly where the sprite's feet sit below home_position
@@ -444,7 +486,7 @@ func _draw_contact_shadow() -> void:
 
 
 func _draw_ring(radius_scale: float, color: Color) -> void:
-	var frame_w := float(_frame_w)
+	var frame_w := float(_frame_w) * _display_scale
 	var half_w := frame_w * radius_scale
 	var half_h := half_w * 0.4
 	var feet_y := _feet_y + _ring_bob
@@ -473,7 +515,7 @@ func _draw() -> void:
 		return
 	_draw_contact_shadow()
 	_draw_highlight()
-	if not _has_sheet:
+	if not _has_sheet and OS.is_debug_build():
 		# Original placeholder chip for builds without generated art.
 		var body := PlaceholderPalette.class_color(unit.class_id)
 		var outline := PlaceholderPalette.PLAYER_OUTLINE if unit.team == "player" else PlaceholderPalette.ENEMY_TINT
@@ -489,10 +531,10 @@ func _draw() -> void:
 	# instance's own frame geometry so they still wrap the sprite once a
 	# sidecar swaps in art much bigger than the 24x32 placeholder box.
 	var body_top_left := (
-		Vector2(-_anchor.x, -_anchor.y) if _has_sheet and _feet_y == 0.0
+		Vector2(-_anchor.x, -_anchor.y) * _display_scale if _has_sheet and _feet_y == 0.0
 		else Vector2(-_frame_w / 2.0, -10 - _frame_h / 2.0)
 	)
-	var body_size := Vector2(_frame_w, _frame_h)
+	var body_size := Vector2(_frame_w, _frame_h) * _display_scale
 	if unit.awakened and unit.awakening_rounds_left > 0:
 		draw_rect(Rect2(body_top_left - Vector2(1, 1), body_size + Vector2(2, 2)),
 			Color(1.0, 0.85, 0.3, 0.85), false, 1.0)

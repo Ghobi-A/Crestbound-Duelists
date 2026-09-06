@@ -19,9 +19,7 @@ func show_result(victory: bool) -> void:
 	if ResourceLoader.exists(path):
 		var ornament := TextureRect.new()
 		ornament.texture = load(path)
-		ornament.position = Vector2(80, 44)
-		ornament.size = Vector2(160, 48)
-		ornament.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		PresentationLayout.texture_box(ornament, Rect2(80, 24, 160, 32))
 		add_child(ornament)
 	var title := Label.new()
 	title.text = key.to_upper()

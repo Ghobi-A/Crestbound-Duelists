@@ -1,11 +1,11 @@
 # Crestbound Duelists — narrative character reference (lightweight).
 # Canon lives in docs/LORE_BIBLE.md and docs/STORY_OUTLINE.md.
-# "Aren Vale" is the development placeholder name — the player names
+# "Kai" is the development placeholder name — the player names
 # the protagonist and picks their class (class: null here).
 
 characters:
   - id: aren_vale
-    name: Aren Vale
+    name: Kai
     role: protagonist
     class: null
     default_crest: null   # determined by the player's class choice
@@ -17,7 +17,7 @@ characters:
       Crest under the Hollow Court simply answered.
 
   - id: serin_dain
-    name: Serin Dain
+    name: Rin
     role: rival
     class: assassin
     default_crest: glass_crest
@@ -28,7 +28,7 @@ characters:
       be earned before it is given. Often right about that.
 
   - id: cassian_orre
-    name: Cassian Orre
+    name: Cassian Clave
     role: antagonist
     class: null
     default_crest: null
@@ -39,7 +39,7 @@ characters:
       destroy every Crest and end the arms race — is revealed much later.
 
   - id: elara_thorne
-    name: Warden Elara Thorne
+    name: Warden Almyra
     role: mentor
     class: guardian
     default_crest: azure_crest
@@ -50,14 +50,14 @@ characters:
       the policies she enforces, and believes reform beats rebellion.
 
   - id: mira_solen
-    name: Mira Solen
+    name: Liora Sen
     role: companion
     class: mage
     default_crest: ember_crest
     home: greymere
     description: >-
       A young archive assistant: practical, curious, more socially
-      confident than Aren, and sceptical of official history. A bridge
+      confident than Kai, and sceptical of official history. A bridge
       into Crest lore and the records nobody is allowed to read.
 
   - id: mara_vale
@@ -67,6 +67,6 @@ characters:
     default_crest: null
     home: greymere
     description: >-
-      One of Aren's parents. Once worked alongside Cassian Orre on
+      One of Kai's parents. Once worked alongside Cassian Clave on
       forbidden Crest research before they split over the future of
-      Crests. Raised Aren away from the consequences of that history.
+      Crests. Raised Kai away from the consequences of that history.

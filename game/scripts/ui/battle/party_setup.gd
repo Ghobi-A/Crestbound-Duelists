@@ -57,7 +57,7 @@ func _build_ui() -> void:
 	_title_label = _label(Vector2(0, 10), 10, PlaceholderPalette.TEXT_WARN)
 	_title_label.text = "PARTY SETUP — %s" % _encounter.get("name", "")
 	# Both labels are clamped to their panel's interior; the roster's
-	# longest row ("Warden Elara Thorne") used to bleed into the detail
+	# Long authority names used to bleed into the detail
 	# column when the label was left at full screen width.
 	_rows_label = _label(Vector2(14, 34), 7, PlaceholderPalette.TEXT_MAIN)
 	_rows_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
@@ -72,9 +72,7 @@ func _build_ui() -> void:
 	_hint_label.size = Vector2(296, 10)
 	_hint_label.text = "UP/DOWN SELECT   LEFT/RIGHT ROW   Z CONFIRM   X BACK"
 	_portrait = TextureRect.new()
-	_portrait.position = Vector2(191, 35)
-	_portrait.size = Vector2(34, 40)
-	_portrait.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	PresentationLayout.texture_box(_portrait, Rect2(191, 35, 34, 40))
 	_portrait.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
 	add_child(_portrait)
 	_crest_art = _make_identity_art(Vector2(230, 35))
@@ -83,9 +81,7 @@ func _build_ui() -> void:
 
 func _make_identity_art(at: Vector2) -> TextureRect:
 	var art := TextureRect.new()
-	art.position = at
-	art.size = Vector2(34, 40)
-	art.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	PresentationLayout.texture_box(art, Rect2(at, Vector2(34, 40)))
 	add_child(art)
 	return art
 
@@ -137,7 +133,7 @@ func _refresh() -> void:
 		details.append("more exposed.")
 		details.append("BACK — safer; weaker melee.")
 		_detail_label.text = "\n".join(details)
-		_portrait.texture = _optional_texture("res://assets/portraits/%s/neutral.png" % build.get("sprite_key", ""))
+		CharacterPresentation.apply_portrait(_portrait, str(build.get("sprite_key", "")))
 		_crest_art.texture = _optional_texture("res://assets/crests/%s/icon.png" % build.get("crest_id", ""))
 		_entity_art.texture = _optional_texture("res://assets/entities/%s/card.png" % build.get("entity_id", ""))
 	else:

@@ -16,16 +16,16 @@ const COURT_RETURN_TILE := Vector2i(11, 2)
 ## Background height must match where the HUD's opaque bottom panel
 ## starts (battle_hud.gd) or a seam shows between the floor and the
 ## panel. tools/generate_sprites.py generates backgrounds at this size.
-const BACKGROUND_HEIGHT := 122
+const BACKGROUND_HEIGHT := PresentationLayout.BATTLE_HEIGHT
 
 ## Formation staging. Two clear halves rather than a shared diagonal, so
 ## the sides read as opposing at a glance; front/back use one shared
 ## depth convention for both teams — front is always closer to the
 ## camera (larger Y) — so the read is consistent instead of mirrored.
-const PLAYER_CENTER_X := 88.0
-const ENEMY_CENTER_X := 232.0
-const FRONT_Y := 92.0
-const BACK_Y := 68.0
+const PLAYER_CENTER_X := PresentationLayout.PLAYER_CENTER_X
+const ENEMY_CENTER_X := PresentationLayout.ENEMY_CENTER_X
+const FRONT_Y := PresentationLayout.FRONT_Y
+const BACK_Y := PresentationLayout.BACK_Y
 const ONBOARDING_FLAG := "battle_onboarding_seen"
 const ONBOARDING_TITLE := "BATTLE BASICS"
 const ONBOARDING_BODY := "Choose each Duelist's action and target.\nBrace acts first and reduces incoming damage.\nBuild Resonance to awaken your Crest."
@@ -55,7 +55,7 @@ func _ready() -> void:
 	runtime = EncounterRuntime.start(GameState.pending_encounter, GameData, GameState)
 	resolver = BattleResolver.new(runtime, GameData)
 	crest_runtime = CrestRuntime.new(runtime)
-	stage = Node2D.new()
+	stage = BattleStage.new()
 	add_child(stage)
 	_stage_background()
 	_stage_units()
@@ -97,71 +97,18 @@ func _start_intro() -> void:
 
 
 func _stage_background() -> void:
-	var location: String = runtime.encounter.get("location", "")
-	_stage_background_layer("%s_far" % location, -20)
-	var path := "res://assets/battle/backgrounds/%s.png" % location
-	if ResourceLoader.exists(path):
-		var background := Sprite2D.new()
-		background.texture = load(path)
-		background.centered = false
-		VisualAsset.fit_sprite(background, VisualAsset.sidecar_for(path), Rect2(0, 0, 320, BACKGROUND_HEIGHT))
-		background.z_index = -10
-		stage.add_child(background)
-	else:
-		var fallback := ColorRect.new()
-		fallback.color = PlaceholderPalette.BG_DARK
-		fallback.size = Vector2(320, BACKGROUND_HEIGHT)
-		fallback.z_index = -10
-		stage.add_child(fallback)
-	_stage_background_layer("%s_foreground" % location, 105)
-
-
-func _stage_background_layer(asset_key: String, z: int) -> void:
-	## Optional authored far/foreground plates use transparent PNGs and the same
-	## crop contract. Foreground authors must keep the sidecar safe area clear.
-	var path := "res://assets/battle/backgrounds/%s.png" % asset_key
-	if not ResourceLoader.exists(path):
-		return
-	var layer := Sprite2D.new()
-	layer.texture = load(path)
-	layer.centered = false
-	layer.z_index = z
-	VisualAsset.fit_sprite(layer, VisualAsset.sidecar_for(path), Rect2(0, 0, 320, BACKGROUND_HEIGHT))
-	stage.add_child(layer)
+	(stage as BattleStage).build_background(str(runtime.encounter.get("location", "")))
 
 
 func _stage_units() -> void:
 	for unit in runtime.all_units():
-		var sprite := DuelistSprite.new()
-		stage.add_child(sprite)
-		var home := stage_position(unit)
-		sprite.configure(unit, home)
-		# Back-row units must draw behind front-row units regardless of
-		# team or add order, so the depth the Y position implies is
-		# never contradicted by draw order.
-		sprite.z_index = int(home.y)
-		sprites[unit] = sprite
+		var count := runtime.player_units.size() if unit.team == "player" else runtime.enemy_units.size()
+		sprites[unit] = (stage as BattleStage).add_combatant(unit, count)
 
 
 func stage_position(unit: BattleUnit) -> Vector2:
-	## Dynamic staging: players occupy the left half, enemies the right,
-	## so the two sides read as opposing formations at a glance. Front
-	## and back rows use one shared depth convention for both teams —
-	## front is always closer to the camera — rather than a convention
-	## that reversed between sides. Back rows draw slightly narrower
-	## than front rows, a shallow wedge that reinforces "protected" depth
-	## without any grid or movement implication.
-	var team_units: Array = runtime.player_units if unit.team == "player" else runtime.enemy_units
-	var count := team_units.size()
-	var center_x := PLAYER_CENTER_X if unit.team == "player" else ENEMY_CENTER_X
-	var is_front := unit.position == "front"
-
-	var spread := 46.0 if count < 3 else 40.0
-	if not is_front:
-		spread *= 0.7
-	var x := center_x + (unit.slot_index - (count - 1) / 2.0) * spread
-	var y := FRONT_Y if is_front else BACK_Y
-	return Vector2(x, y)
+	var count := runtime.player_units.size() if unit.team == "player" else runtime.enemy_units.size()
+	return PresentationLayout.stage_position(unit.team, unit.slot_index, count, unit.position)
 
 
 func _build_hud() -> void:

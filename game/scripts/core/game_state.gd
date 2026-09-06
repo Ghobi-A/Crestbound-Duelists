@@ -4,8 +4,8 @@ extends Node
 ## SaveManager.
 
 # Development placeholder name; the player will be able to rename the
-# protagonist (canon: player-named, "Aren Vale" used for development).
-const DEFAULT_PLAYER_NAME := "Aren Vale"
+# protagonist (canon: player-named, "Kai" used for development).
+const DEFAULT_PLAYER_NAME := "Kai"
 
 # Prototype default Crest for each starting class. Mirrors
 # rpg_models.DEFAULT_CREST_BY_CLASS; the architecture allows any
@@ -50,7 +50,7 @@ func start_new_game(class_id: String) -> void:
 
 
 func _build_default_party() -> void:
-	# Opening party: Aren + Warden Elara Thorne + Mira Solen.
+	# Opening party: Kai + Warden Almyra + Liora Sen.
 	party = [
 		{
 			"name": player_name,
@@ -61,7 +61,7 @@ func _build_default_party() -> void:
 			"sprite_key": "aren/%s" % player_class_id,
 		},
 		{
-			"name": "Warden Elara Thorne",
+			"name": "Warden Almyra",
 			"class_id": "guardian",
 			"crest_id": "azure_crest",
 			"entity_id": "storm_lion",
@@ -69,7 +69,7 @@ func _build_default_party() -> void:
 			"sprite_key": "elara",
 		},
 		{
-			"name": "Mira Solen",
+			"name": "Liora Sen",
 			"class_id": "mage",
 			"crest_id": "ember_crest",
 			"entity_id": "ash_seraph",
