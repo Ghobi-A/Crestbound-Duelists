@@ -8,8 +8,11 @@ const ROOTS := ["res://assets/vfx/moves/", "res://assets/vfx/actions/", "res://a
 
 
 static func path_for(key: String) -> String:
-	for root in ROOTS:
-		var candidate := root + key + ".png"
+	for root: String in ROOTS:
+		# Keep this explicitly typed. ROOTS is a Variant-backed Array in
+		# GDScript, so `:= root + key` cannot be inferred consistently by the
+		# web export parser (and previously stopped the deployed game here).
+		var candidate: String = root + key + ".png"
 		if ResourceLoader.exists(candidate):
 			return candidate
 	return ""
