@@ -1,4 +1,4 @@
-"""Static sanity checks for the Godot project (no Godot binary available)."""
+"""Static sanity checks; CI follows these with real Godot compilation/runtime."""
 import json
 import re
 import sys
@@ -69,6 +69,13 @@ for path in GAME.rglob("*.gd"):
         if line.startswith(" ") and line.strip():
             errors.append(f"{path.name}:{n}: space indentation (GDScript files use tabs)")
             break
+
+# 4b. Variant-backed loop values need explicit typing before concatenation.
+# This guards the exact web-export parse failure previously seen in BattleVfx;
+# the workflow also compiles every script with the real Godot parser.
+vfx_source = (GAME / "scripts" / "presentation" / "battle_vfx.gd").read_text(encoding="utf-8")
+if re.search(r"var\s+candidate\s*:=\s*root\s*\+", vfx_source):
+    errors.append("battle_vfx.gd: candidate path must have an explicit String type")
 
 # 5. Dialogue keys used in scripts must exist in the dialogue files.
 dialogue = {}

@@ -23,6 +23,10 @@ var _portrait: TextureRect
 var _crest_art: TextureRect
 var _entity_art: TextureRect
 
+const CONTENT_TOP := 30.0
+const CONTENT_BOTTOM := 154.0
+const FOOTER_TOP := 158.0
+
 
 func _ready() -> void:
 	_encounter = GameData.get_encounter(GameState.pending_encounter)
@@ -44,23 +48,29 @@ func _build_ui() -> void:
 	# detail on the right (what it affects, so violet) — the same accent
 	# grammar the battle HUD uses.
 	add_child(UiPanel.create(Vector2(8, 4), Vector2(304, 22), UiStyle.COMMAND))
-	add_child(UiPanel.create(Vector2(8, 30), Vector2(174, 126), UiStyle.COMMAND))
-	add_child(UiPanel.create(Vector2(186, 30), Vector2(126, 126), UiStyle.TARGET))
+	add_child(UiPanel.create(Vector2(8, CONTENT_TOP), Vector2(174, CONTENT_BOTTOM - CONTENT_TOP), UiStyle.COMMAND))
+	add_child(UiPanel.create(Vector2(186, CONTENT_TOP), Vector2(126, CONTENT_BOTTOM - CONTENT_TOP), UiStyle.TARGET))
+	# Instructions have their own bounded footer rather than competing with
+	# the detail copy. This remains readable on the native 320x180 canvas.
+	add_child(UiPanel.create(Vector2(8, FOOTER_TOP), Vector2(304, 18), UiStyle.NEUTRAL))
 
 	_title_label = _label(Vector2(0, 10), 10, PlaceholderPalette.TEXT_WARN)
 	_title_label.text = "PARTY SETUP — %s" % _encounter.get("name", "")
 	# Both labels are clamped to their panel's interior; the roster's
 	# longest row ("Warden Elara Thorne") used to bleed into the detail
 	# column when the label was left at full screen width.
-	_rows_label = _label(Vector2(14, 34), 8, PlaceholderPalette.TEXT_MAIN)
+	_rows_label = _label(Vector2(14, 34), 7, PlaceholderPalette.TEXT_MAIN)
 	_rows_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
-	_rows_label.size = Vector2(162, 118)
-	_detail_label = _label(Vector2(230, 78), 8, PlaceholderPalette.TEXT_DIM)
+	_rows_label.size = Vector2(162, 114)
+	_rows_label.clip_text = true
+	_detail_label = _label(Vector2(192, 78), 7, PlaceholderPalette.TEXT_DIM)
 	_detail_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
-	_detail_label.size = Vector2(76, 74)
+	_detail_label.size = Vector2(114, 70)
 	_detail_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	_hint_label = _label(Vector2(0, 164), 8, PlaceholderPalette.TEXT_DIM)
-	_hint_label.text = "Up/Down: select  Left/Right: row  Z: swap/confirm  X: back"
+	_detail_label.clip_text = true
+	_hint_label = _label(Vector2(12, 162), 6, PlaceholderPalette.TEXT_DIM)
+	_hint_label.size = Vector2(296, 10)
+	_hint_label.text = "UP/DOWN SELECT   LEFT/RIGHT ROW   Z CONFIRM   X BACK"
 	_portrait = TextureRect.new()
 	_portrait.position = Vector2(191, 35)
 	_portrait.size = Vector2(34, 40)
@@ -123,10 +133,9 @@ func _refresh() -> void:
 		details.append(crest.get("name", "NO CREST"))
 		details.append(entity.get("name", "NO ENTITY"))
 		details.append("")
-		details.append("FRONT: full melee power,")
-		details.append("  more exposed.")
-		details.append("BACK: safer from close")
-		details.append("  attacks, weaker melee.")
+		details.append("FRONT — full melee power;")
+		details.append("more exposed.")
+		details.append("BACK — safer; weaker melee.")
 		_detail_label.text = "\n".join(details)
 		_portrait.texture = _optional_texture("res://assets/portraits/%s/neutral.png" % build.get("sprite_key", ""))
 		_crest_art.texture = _optional_texture("res://assets/crests/%s/icon.png" % build.get("crest_id", ""))

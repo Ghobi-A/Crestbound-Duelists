@@ -75,7 +75,19 @@ jobs:
           test -f "$TEMPLATE_DIR/web_release.zip"
 
       - name: Import project
-        run: ~/godot/Godot --headless --path game --import
+        run: |
+          set -o pipefail
+          ~/godot/Godot --headless --path game --editor --import --quit 2>&1 | tee /tmp/godot-import.log
+          ! grep -E "SCRIPT ERROR: Parse Error|Failed to load script" /tmp/godot-import.log
+
+      - name: Runtime smoke check
+        run: |
+          set -o pipefail
+          timeout 30s ~/godot/Godot --headless --path game \
+            res://scenes/tools/screenshot_capture.tscn -- \
+            --target=boot --out=/tmp/crestbound-smoke 2>&1 | tee /tmp/godot-smoke.log
+          test -s /tmp/crestbound-smoke/baseline_boot.png
+          ! grep -E "SCRIPT ERROR:|Parse Error|Failed to load" /tmp/godot-smoke.log
 
       - name: Export Web build
         run: |
