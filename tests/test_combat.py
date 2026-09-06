@@ -106,6 +106,15 @@ def test_defence_break_signatures_ignore_brace():
     assert v1 == v2
     assert braced == unbraced
 
+    mage = create_unit(ClassName.MAGE)
+    mind_pierce = _signature(mage)
+    random.seed(23)
+    unbraced, v1, _ = calculate_damage(mind_pierce, mage, guardian, False)
+    random.seed(23)
+    braced, v2, _ = calculate_damage(mind_pierce, mage, guardian, True)
+    assert v1 == v2
+    assert braced == unbraced
+
 
 # ── Accuracy / execution ─────────────────────────────────────────────
 
@@ -225,6 +234,28 @@ def test_stat_modifiers_expire_after_decay():
     assert unit.def_ == base
 
 
+def test_move_modifier_survives_three_subsequent_decision_rounds():
+    from models import STAT_DECAY
+
+    warrior = create_unit(ClassName.WARRIOR)
+    mage = create_unit(ClassName.MAGE)
+    armor_break = _signature(warrior)
+    base_def = mage.base_def
+    execute_move(warrior, mage, armor_break, 1, False, False)
+
+    # Stored duration includes the application round's end tick.
+    assert mage.stat_modifiers[0].turns_remaining == STAT_DECAY + 1
+    mage.tick_modifiers()  # end of cast round -> first future decision starts
+    assert mage.def_ == base_def - 8
+
+    for _ in range(STAT_DECAY - 1):
+        mage.tick_modifiers()
+        assert mage.def_ == base_def - 8
+
+    mage.tick_modifiers()  # end of third subsequent round
+    assert mage.def_ == base_def
+
+
 def test_effective_stat_never_below_one():
     unit = create_unit(ClassName.MAGE)
     unit.apply_stat_mod("atk", -999, 3)
@@ -258,6 +289,21 @@ def test_status_ticks_and_expires():
     assert unit.has_status("hexed")
     unit.tick_modifiers()
     assert not unit.has_status("hexed")
+
+
+def test_move_status_survives_configured_future_rounds():
+    sorcerer = create_unit(ClassName.SORCERER)
+    guardian = create_unit(ClassName.GUARDIAN)
+    hex_move = _signature(sorcerer)
+    execute_move(sorcerer, guardian, hex_move, 1, False, False)
+
+    assert guardian.status_effects[0].turns_remaining == hex_move.status_duration + 1
+    guardian.tick_modifiers()  # end of cast round
+    assert guardian.has_status("hexed")
+    guardian.tick_modifiers()  # end of first subsequent round
+    assert guardian.has_status("hexed")
+    guardian.tick_modifiers()  # end of second subsequent round
+    assert not guardian.has_status("hexed")
 
 
 def test_hex_reapplication_refreshes_duration():
