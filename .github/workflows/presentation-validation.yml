@@ -1,0 +1,38 @@
+name: Presentation validation
+
+on:
+  pull_request:
+    paths:
+      - "game/**"
+      - "docs/rework/**"
+      - "tests/test_*presentation*.py"
+      - "tests/test_dialogue_assets.py"
+      - "tests/test_sprite_assets.py"
+      - "tests/test_greymere_layout.py"
+      - "tests/test_cowork_visual_integration.py"
+      - "tools/validate_godot_project.py"
+      - ".github/workflows/presentation-validation.yml"
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install test dependencies
+        run: pip install -r requirements-dev.txt
+
+      - name: Run regression suite
+        run: python -m pytest -q
+
+      - name: Validate Godot presentation contracts
+        run: python tools/validate_godot_project.py
