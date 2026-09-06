@@ -35,7 +35,7 @@ window/stretch/scale_mode="integer"
 
 [gui]
 
-theme/custom_font="res://assets/ui/crestbound_font.fnt"
+theme/custom_font="res://assets/ui/fonts/DejaVuSerif.ttf"
 
 [input]
 

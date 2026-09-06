@@ -72,16 +72,25 @@ func _draw() -> void:
 	if unit == null:
 		return
 	var card := Rect2(Vector2.ZERO, size)
+	# Each duelist's card carries their class colour on its rule, so the
+	# three cards are distinguishable at a glance and the interface says
+	# something about who these people are rather than treating them as
+	# three identical slots. Gold is reserved for whoever is acting.
+	var class_accent: Color = PlaceholderPalette.class_color(unit.class_id)
 	if highlighted:
 		# The acting unit is lifted, not outlined: a lighter surface and a
-		# full gold top rule, so the eye finds it without another border.
+		# full-strength gold rule, so the eye finds it without a border.
 		UiStyle.draw_surface(self, card, UiStyle.SURFACE_RAISED_TOP, UiStyle.SURFACE_RAISED_BOTTOM)
-		draw_rect(Rect2(card.position, Vector2(card.size.x, UiStyle.LINE)),
-			PlaceholderPalette.CREST_GOLD)
+		UiStyle.draw_accent_rule(self, card, PlaceholderPalette.CREST_GOLD)
+		UiStyle.draw_crest_mark(self,
+			Vector2(card.size.x - UiStyle.SPACE_M, UiStyle.LINE * 0.5),
+			UiStyle.SPACE_S * 0.8, PlaceholderPalette.CREST_GOLD)
 	else:
 		UiStyle.draw_surface(self, card, UiStyle.SURFACE_TOP, UiStyle.SURFACE_BOTTOM)
+		var resting := class_accent
+		resting.a = 0.55
+		UiStyle.draw_accent_rule(self, card, resting)
 
-	var font := get_theme_default_font()
 	var ink := PlaceholderPalette.TEXT_MAIN if unit.is_alive() else PlaceholderPalette.TEXT_DIM
 	var portrait := _portrait_rect()
 	var left := portrait.end.x + PAD
@@ -89,12 +98,20 @@ func _draw() -> void:
 
 	# HP is the number read most often mid-battle, so it takes the largest
 	# type and sits beside the portrait where the eye already is.
-	var hp_baseline := PAD + Typography.DISPLAY
-	draw_string(font, Vector2(left, hp_baseline), str(unit.hp),
-		HORIZONTAL_ALIGNMENT_LEFT, column, Typography.DISPLAY, ink)
-	draw_string(font, Vector2(left, hp_baseline + Typography.CAPTION + PAD * 0.3),
-		"/ %d  HP" % unit.max_hp, HORIZONTAL_ALIGNMENT_LEFT, column, Typography.CAPTION,
-		PlaceholderPalette.TEXT_DIM)
+	var hp_baseline := PAD + Typography.size(Typography.Role.NUMERIC)
+	Typography.draw(self, Typography.Role.NUMERIC, Vector2(left, hp_baseline), str(unit.hp), ink, column)
+	# The maximum and its unit are a caption, and the unit itself is set in
+	# the pixel accent face: a three-letter tag is where that face still
+	# earns its place, and it keeps a thread of Crestbound's pixel identity
+	# running through an otherwise typeset card.
+	var max_text := "/ %d" % unit.max_hp
+	Typography.draw(self, Typography.Role.NUMERIC_SMALL,
+		Vector2(left, hp_baseline + Typography.line_height(Typography.Role.NUMERIC_SMALL)),
+		max_text, PlaceholderPalette.TEXT_DIM, column)
+	Typography.draw(self, Typography.Role.PIXEL_TAG,
+		Vector2(left + Typography.measure(Typography.Role.NUMERIC_SMALL, max_text).x + UiStyle.SPACE_S,
+			hp_baseline + Typography.line_height(Typography.Role.NUMERIC_SMALL)),
+		"HP", PlaceholderPalette.TEXT_DIM, column)
 
 	# The name spans the whole card beneath the portrait rather than
 	# sharing a line with it. Beside a portrait there is only ~140px, and
@@ -103,8 +120,7 @@ func _draw() -> void:
 	var bars_y := size.y - PAD - BAR_HEIGHT * 2 - UiStyle.SPACE_XS
 	var name_baseline := bars_y - UiStyle.SPACE_M
 	var name := unit.display_name.trim_prefix("Warden ")
-	draw_string(font, Vector2(PAD, name_baseline), name,
-		HORIZONTAL_ALIGNMENT_LEFT, size.x - PAD * 2, Typography.BODY, ink)
+	Typography.draw(self, Typography.Role.HEADING, Vector2(PAD, name_baseline), name, ink, size.x - PAD * 2)
 
 	# Bars run the card's full width, tying the two columns together.
 	_draw_bar(Rect2(PAD, bars_y, size.x - PAD * 2, BAR_HEIGHT), unit.hp_ratio(),
@@ -112,10 +128,14 @@ func _draw() -> void:
 	if not unit.crest_record.is_empty():
 		_draw_bar(Rect2(PAD, bars_y + BAR_HEIGHT + UiStyle.SPACE_XS, size.x - PAD * 2, BAR_HEIGHT),
 			clampf(unit.resonance / 100.0, 0, 1), PlaceholderPalette.SPECTRAL_VIOLET)
+		# A hairline of the class colour under the bars ties the card's
+		# foot back to its accent rule.
+		draw_rect(Rect2(PAD, size.y - PAD * 0.45, size.x - PAD * 2, 1.0),
+			Color(class_accent.r, class_accent.g, class_accent.b, 0.35))
 
 	# Pips sit on the name's baseline, right-aligned, so a unit with no
 	# statuses simply leaves that corner empty.
-	_draw_status_pips(Vector2(size.x - PAD, name_baseline - Typography.BODY * 0.35))
+	_draw_status_pips(Vector2(size.x - PAD, name_baseline - Typography.size(Typography.Role.HEADING) * 0.32))
 
 	var details: Array[String] = [unit.display_name, "HP %d / %d" % [unit.hp, unit.max_hp], "Resonance %d" % unit.resonance]
 	for status in unit.statuses: details.append(str(status.name))

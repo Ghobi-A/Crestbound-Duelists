@@ -12,8 +12,12 @@ const PORTRAIT_X := PAD
 const TEXT_X := PORTRAIT_X + PORTRAIT_SIZE.x + PAD * 0.8   # clears the portrait
 ## One planned action per row: a name line, a detail line, and a gap.
 const ROW_HEIGHT := 104.0
-const HEADER_BASELINE := PAD + Typography.HEADING
-const ROWS_TOP := HEADER_BASELINE + PAD
+static func header_baseline() -> float:
+	return PAD + Typography.size(Typography.Role.TITLE)
+
+
+static func rows_top() -> float:
+	return header_baseline() + PAD
 const PORTRAIT_PATH := "res://assets/portraits/%s/neutral.png"
 
 var planned: Array = []   # action dictionaries
@@ -58,7 +62,7 @@ func _update_portraits() -> void:
 		var actor: BattleUnit = planned[i].actor
 		CharacterPresentation.apply_portrait(slot, actor.sprite_key())
 		if slot.texture != null:
-			slot.position = Vector2(PORTRAIT_X, ROWS_TOP + i * ROW_HEIGHT)
+			slot.position = Vector2(PORTRAIT_X, rows_top() + i * ROW_HEIGHT)
 			slot.visible = true
 		else:
 			slot.visible = false
@@ -81,20 +85,18 @@ func _draw() -> void:
 	# Violet framing: this screen reviews who each action affects, the
 	# same "review/target" role violet plays on the battlefield ring.
 	UiStyle.draw_panel(self, Rect2(Vector2.ZERO, PANEL_SIZE), UiStyle.TARGET)
-	var font := get_theme_default_font()
-	draw_string(font, Vector2(PAD, HEADER_BASELINE), "ROUND PLAN", HORIZONTAL_ALIGNMENT_LEFT,
-		PANEL_SIZE.x - PAD * 2, Typography.HEADING, PlaceholderPalette.TEXT_WARN)
-	UiStyle.draw_divider(self, Vector2(PAD, HEADER_BASELINE + PAD * 0.4), PANEL_SIZE.x - PAD * 2,
+	Typography.draw(self, Typography.Role.TITLE, Vector2(PAD, header_baseline()), "Round Plan",
+		PlaceholderPalette.CREST_GOLD_BRIGHT, PANEL_SIZE.x - PAD * 2)
+	UiStyle.draw_divider(self, Vector2(PAD, header_baseline() + PAD * 0.4), PANEL_SIZE.x - PAD * 2,
 		PlaceholderPalette.SPECTRAL_VIOLET)
 	# Text starts at TEXT_X (clearing the portrait column) rather than a
 	# fixed inset — a unit with no portrait art just leaves that column
 	# blank, so the layout doesn't need two code paths.
-	var y := ROWS_TOP
+	var y := rows_top()
 	for action in planned:
 		var actor: BattleUnit = action.actor
-		draw_string(font, Vector2(TEXT_X, y + Typography.BODY), actor.display_name,
-			HORIZONTAL_ALIGNMENT_LEFT, PANEL_SIZE.x - TEXT_X - PAD, Typography.BODY,
-			PlaceholderPalette.TEXT_MAIN)
+		Typography.draw(self, Typography.Role.HEADING, Vector2(TEXT_X, y + Typography.size(Typography.Role.HEADING)),
+			actor.display_name, PlaceholderPalette.TEXT_MAIN, PANEL_SIZE.x - TEXT_X - PAD)
 		var detail: String
 		if action.kind == "brace":
 			detail = "Brace"
@@ -102,14 +104,14 @@ func _draw() -> void:
 			detail = str(action.move.get("name", "?"))
 			if action.target != null:
 				detail += "  ->  %s" % action.target.display_name
-		draw_string(font, Vector2(TEXT_X + PAD * 0.6, y + Typography.BODY * 2 + PAD * 0.3), detail,
-			HORIZONTAL_ALIGNMENT_LEFT, PANEL_SIZE.x - TEXT_X - PAD * 2, Typography.BODY,
-			PlaceholderPalette.TEXT_DIM)
+		Typography.draw(self, Typography.Role.SECONDARY,
+			Vector2(TEXT_X + PAD * 0.6, y + Typography.size(Typography.Role.HEADING) + Typography.line_height(Typography.Role.SECONDARY)),
+			detail, PlaceholderPalette.TEXT_DIM, PANEL_SIZE.x - TEXT_X - PAD * 2)
 		y += ROW_HEIGHT
 	var confirm_color := PlaceholderPalette.TEXT_WARN if cursor == 0 else PlaceholderPalette.TEXT_DIM
 	var back_color := PlaceholderPalette.TEXT_WARN if cursor == 1 else PlaceholderPalette.TEXT_DIM
 	var footer_baseline := PANEL_SIZE.y - PAD
-	draw_string(font, Vector2(PAD, footer_baseline), ("> " if cursor == 0 else "  ") + "CONFIRM ROUND",
-		HORIZONTAL_ALIGNMENT_LEFT, PANEL_SIZE.x * 0.6, Typography.BODY, confirm_color)
-	draw_string(font, Vector2(PANEL_SIZE.x * 0.66, footer_baseline), ("> " if cursor == 1 else "  ") + "BACK",
-		HORIZONTAL_ALIGNMENT_LEFT, PANEL_SIZE.x * 0.3, Typography.BODY, back_color)
+	Typography.draw(self, Typography.Role.HEADING, Vector2(PAD, footer_baseline),
+		("> " if cursor == 0 else "  ") + "Confirm Round", confirm_color, PANEL_SIZE.x * 0.6)
+	Typography.draw(self, Typography.Role.HEADING, Vector2(PANEL_SIZE.x * 0.66, footer_baseline),
+		("> " if cursor == 1 else "  ") + "Back", back_color, PANEL_SIZE.x * 0.3)

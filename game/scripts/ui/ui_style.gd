@@ -30,18 +30,26 @@ const CORNER_LENGTH := 12
 const LINE := 2.0
 
 # ── Surface tokens ───────────────────────────────────────────────────
-# Panels are translucent, not opaque slabs. At 320x180 an opaque fill was
-# the only way to keep text legible; at 720p the artwork behind a panel
-# is worth seeing, and a surface that admits some of it is what separates
-# a modern interface from a stack of window boxes. The gradient is subtle
-# and runs light-to-dark downward, so a panel reads as lit from above by
-# the same moon the artwork is.
-const SURFACE_TOP := Color(0.086, 0.106, 0.153, 0.90)
-const SURFACE_BOTTOM := Color(0.043, 0.055, 0.086, 0.94)
-# A raised surface (a card sitting on a panel) is a step lighter, which
-# is how depth is signalled rather than by drawing another border.
-const SURFACE_RAISED_TOP := Color(0.125, 0.149, 0.204, 0.92)
-const SURFACE_RAISED_BOTTOM := Color(0.075, 0.090, 0.129, 0.95)
+# Panels are dark slate with a little of the scene behind them, not sheets
+# of clear glass. Translucency is used sparingly and deliberately: enough
+# that a panel belongs to the same room as the artwork, never so much
+# that it reads as the generic transparent-black rectangle every modern
+# app already uses. What makes it Crestbound is the rest — a warm-shifted
+# slate rather than neutral grey, a fine grain over the fill, a hairline
+# edge, and the Crest mark as its only ornament.
+#
+# The gradient runs light-to-dark downward, so a panel reads as lit from
+# above by the same moon the artwork is.
+const SURFACE_TOP := Color(0.098, 0.110, 0.145, 0.955)
+const SURFACE_BOTTOM := Color(0.047, 0.055, 0.078, 0.985)
+# A raised surface (a card sitting on a panel) is a step lighter and a
+# touch warmer, which is how depth is signalled rather than by drawing
+# another border.
+const SURFACE_RAISED_TOP := Color(0.145, 0.157, 0.196, 0.965)
+const SURFACE_RAISED_BOTTOM := Color(0.082, 0.090, 0.118, 0.99)
+## Fine tiling grain over every surface (tools/generate_ui_surface.py).
+## Peak alpha is 21/255: felt, not seen.
+const GRAIN_PATH := "res://assets/ui/surface_grain.png"
 # Hairline edge. Cool and low-contrast: the border defines the boundary,
 # the accent says what the panel is for.
 const EDGE := Color(0.35, 0.41, 0.52, 0.55)
@@ -58,9 +66,9 @@ const SPACE_M := 16.0
 const SPACE_L := 24.0
 const SPACE_XL := 40.0
 
-# The default interface size. Sizes live in Typography, which documents
-# why only whole multiples of the 8px bitmap face are usable.
-const FONT_SIZE := Typography.BODY
+
+
+static var _grain_cache: Texture2D
 
 
 static func accent_color(role: String) -> Color:
@@ -86,9 +94,29 @@ static func draw_panel(canvas: CanvasItem, rect: Rect2, role := NEUTRAL, ornate 
 	## made the old interface read as a stack of framed boxes.
 	draw_surface(canvas, rect, SURFACE_TOP, SURFACE_BOTTOM)
 	var accent := accent_color(role)
-	canvas.draw_rect(Rect2(rect.position, Vector2(rect.size.x, LINE)), accent)
+	draw_accent_rule(canvas, rect, accent)
 	if ornate:
 		draw_corner_marks(canvas, rect, accent)
+		# One Crest mark, riding the accent rule at the panel's shoulder.
+		draw_crest_mark(canvas, rect.position + Vector2(rect.size.x - SPACE_L, LINE * 0.5),
+			SPACE_S * 0.85, accent)
+
+
+static func draw_accent_rule(canvas: CanvasItem, rect: Rect2, accent: Color) -> void:
+	## The role accent along the panel's top edge, fading out toward the
+	## right. A solid bar edge-to-edge reads as a title bar; a rule that
+	## falls away reads as light catching the lip of the surface.
+	var faded := accent
+	faded.a = 0.0
+	canvas.draw_polygon(
+		PackedVector2Array([
+			rect.position,
+			Vector2(rect.end.x, rect.position.y),
+			Vector2(rect.end.x, rect.position.y + LINE),
+			Vector2(rect.position.x, rect.position.y + LINE),
+		]),
+		PackedColorArray([accent, faded, faded, accent])
+	)
 
 
 static func draw_surface(canvas: CanvasItem, rect: Rect2, top: Color, bottom: Color,
@@ -107,7 +135,46 @@ static func draw_surface(canvas: CanvasItem, rect: Rect2, top: Color, bottom: Co
 		]),
 		PackedColorArray([top, top, bottom, bottom])
 	)
+	draw_grain(canvas, rect)
 	canvas.draw_rect(rect, EDGE, false, 1.0)
+
+
+static func draw_grain(canvas: CanvasItem, rect: Rect2) -> void:
+	## Tiles the surface grain across a panel. Without it the gradient
+	## fill is mathematically smooth, and a mathematically smooth dark
+	## rectangle is exactly what generic glass looks like.
+	var texture := _grain()
+	if texture == null:
+		return
+	canvas.draw_texture_rect(texture, rect, true, Color(1, 1, 1, 1))
+
+
+static func _grain() -> Texture2D:
+	if _grain_cache == null and ResourceLoader.exists(GRAIN_PATH):
+		_grain_cache = load(GRAIN_PATH)
+	return _grain_cache
+
+
+static func draw_crest_mark(canvas: CanvasItem, at: Vector2, radius: float, color: Color) -> void:
+	## Crestbound's own ornament: the four-pointed Crest spark, the same
+	## motif the overworld uses to mark an interactable. One mark on a
+	## panel header does the work a full decorative border used to, and it
+	## says which game this is rather than which UI kit.
+	var long := radius
+	var short := radius * 0.30
+	var body := color
+	canvas.draw_colored_polygon(PackedVector2Array([
+		at + Vector2(0, -long), at + Vector2(short, 0),
+		at + Vector2(0, long), at + Vector2(-short, 0),
+	]), body)
+	# A cross-axis pair, shorter, so the mark reads as a star rather than
+	# a diamond.
+	var arm := radius * 0.62
+	var thin := radius * 0.16
+	canvas.draw_colored_polygon(PackedVector2Array([
+		at + Vector2(-arm, 0), at + Vector2(0, -thin),
+		at + Vector2(arm, 0), at + Vector2(0, thin),
+	]), body)
 
 
 static func draw_scrim(canvas: CanvasItem, rect: Rect2, strength := 0.72) -> void:

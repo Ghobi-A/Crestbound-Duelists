@@ -35,9 +35,8 @@ func _build(title: String, body: String) -> void:
 	var title_label := Label.new()
 	title_label.text = title
 	title_label.position = Vector2(32, 28)
-	title_label.size = Vector2(768, Typography.HEADING + 8)
-	title_label.add_theme_font_size_override("font_size", Typography.HEADING)
-	title_label.add_theme_color_override("font_color", PlaceholderPalette.TEXT_WARN)
+	title_label.size = Vector2(768, Typography.line_height(Typography.Role.TITLE) * 1.2)
+	Typography.apply(title_label, Typography.Role.TITLE, PlaceholderPalette.TEXT_WARN)
 	panel.add_child(title_label)
 
 	var body_label := Label.new()
@@ -45,16 +44,14 @@ func _build(title: String, body: String) -> void:
 	body_label.position = Vector2(32, 96)
 	body_label.size = Vector2(768, 248)
 	body_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	body_label.add_theme_font_size_override("font_size", Typography.BODY)
-	body_label.add_theme_color_override("font_color", PlaceholderPalette.TEXT_MAIN)
+	Typography.apply(body_label, Typography.Role.BODY, PlaceholderPalette.TEXT_MAIN)
 	panel.add_child(body_label)
 
 	var hint_label := Label.new()
 	hint_label.text = "Z / Enter / Space: dismiss"
 	hint_label.position = Vector2(32, 360)
-	hint_label.size = Vector2(768, Typography.BODY + 8)
-	hint_label.add_theme_font_size_override("font_size", Typography.BODY)
-	hint_label.add_theme_color_override("font_color", PlaceholderPalette.TEXT_DIM)
+	hint_label.size = Vector2(768, Typography.line_height(Typography.Role.SECONDARY) * 1.2)
+	Typography.apply(hint_label, Typography.Role.SECONDARY, PlaceholderPalette.TEXT_DIM)
 	panel.add_child(hint_label)
 
 

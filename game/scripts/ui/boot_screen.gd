@@ -34,10 +34,12 @@ var _menu_tick: ColorRect
 # Menu row geometry, shared by the labels and the selection band drawn
 # behind them, so the two can never disagree about where a row sits.
 ## Menu geometry, derived from the canvas rather than hand-placed.
-const MENU_PITCH := Typography.BODY + 16.0
+static func menu_pitch() -> float:
+	return Typography.line_height(Typography.Role.HEADING) + 18.0
 const MENU_TOP := 288.0
-const MENU_BAND := Rect2(PresentationLayout.CANVAS.x * 0.14, 0,
-	PresentationLayout.CANVAS.x * 0.72, MENU_PITCH)
+static func menu_band() -> Rect2:
+	return Rect2(PresentationLayout.CANVAS.x * 0.14, 0,
+		PresentationLayout.CANVAS.x * 0.72, menu_pitch())
 
 
 func _ready() -> void:
@@ -65,8 +67,8 @@ func _build_ui() -> void:
 	# it cannot drift away from the rows it is supposed to contain.
 	var frame_inset := 20.0
 	_body_panel = UiPanel.create(
-		Vector2(MENU_BAND.position.x - frame_inset, MENU_TOP - frame_inset),
-		Vector2(MENU_BAND.size.x + frame_inset * 2, MENU_PITCH * 4 + frame_inset * 2),
+		Vector2(menu_band().position.x - frame_inset, MENU_TOP - frame_inset),
+		Vector2(menu_band().size.x + frame_inset * 2, menu_pitch() * 4 + frame_inset * 2),
 		UiStyle.NEUTRAL)
 	add_child(_body_panel)
 	var title_path := "res://assets/ui/title_mark.png" # optional-authored-asset
@@ -83,31 +85,34 @@ func _build_ui() -> void:
 	# correctly: panel, band, text.
 	_menu_band = ColorRect.new()
 	_menu_band.color = PlaceholderPalette.MOON_INDIGO
-	_menu_band.size = MENU_BAND.size
+	_menu_band.size = menu_band().size
 	_menu_band.visible = false
 	add_child(_menu_band)
 	_menu_tick = ColorRect.new()
 	_menu_tick.color = PlaceholderPalette.CREST_GOLD
-	_menu_tick.size = Vector2(UiStyle.LINE, MENU_BAND.size.y)
+	_menu_tick.size = Vector2(UiStyle.LINE, menu_band().size.y)
 	_menu_tick.visible = false
 	add_child(_menu_tick)
 
-	_title_label = _make_label(Vector2(0, 96), Typography.DISPLAY, PlaceholderPalette.TEXT_WARN)
+	# The logotype is the one place the 8px face still leads: a pixel
+	# wordmark is Crestbound's identity, where pixel body copy was only
+	# ever a limitation of the old canvas.
+	_title_label = _make_label(Vector2(0, 88), Typography.Role.PIXEL_TITLE, PlaceholderPalette.TEXT_WARN)
 	_title_label.text = "CRESTBOUND DUELISTS"
 	_title_label.visible = not ResourceLoader.exists(title_path)
-	_subtitle_label = _make_label(Vector2(0, 176), Typography.BODY, PlaceholderPalette.TEXT_DIM)
+	_subtitle_label = _make_label(Vector2(0, 168), Typography.Role.SECONDARY, PlaceholderPalette.TEXT_DIM)
 	_subtitle_label.text = "The Crest at Greymere — prototype"
-	_list_label = _make_label(Vector2(0, MENU_TOP - 24.0), Typography.BODY, PlaceholderPalette.TEXT_MAIN)
+	_list_label = _make_label(Vector2(0, MENU_TOP - 24.0), Typography.Role.BODY, PlaceholderPalette.TEXT_MAIN)
 	# One label per menu row (rather than a single joined-text label) so a
 	# selection band can sit behind exactly the highlighted row, matching
 	# the battle action menu's treatment.
 	for i in 4:
-		var row := _make_label(Vector2(0, MENU_TOP + i * MENU_PITCH), Typography.BODY, PlaceholderPalette.TEXT_MAIN)
+		var row := _make_label(Vector2(0, MENU_TOP + i * menu_pitch()), Typography.Role.HEADING, PlaceholderPalette.TEXT_MAIN)
 		row.visible = false
 		_menu_rows.append(row)
-	_detail_label = _make_label(Vector2(120, 452), Typography.BODY, PlaceholderPalette.TEXT_DIM)
-	_hint_label = _make_label(Vector2(0, PresentationLayout.CANVAS.y - 56.0), Typography.BODY, PlaceholderPalette.TEXT_DIM)
-	_error_label = _make_label(Vector2(0, 384), Typography.BODY, PlaceholderPalette.TEXT_DANGER)
+	_detail_label = _make_label(Vector2(120, 452), Typography.Role.SECONDARY, PlaceholderPalette.TEXT_DIM)
+	_hint_label = _make_label(Vector2(0, PresentationLayout.CANVAS.y - 56.0), Typography.Role.SECONDARY, PlaceholderPalette.TEXT_DIM)
+	_error_label = _make_label(Vector2(0, 384), Typography.Role.BODY, PlaceholderPalette.TEXT_DANGER)
 
 	_preview = TextureRect.new()
 	# The class preview is an atlas crop of the painted cast art, so it
@@ -118,13 +123,12 @@ func _build_ui() -> void:
 	add_child(_preview)
 
 
-func _make_label(top_left: Vector2, font_size: int, color: Color) -> Label:
+func _make_label(top_left: Vector2, role: Typography.Role, color: Color) -> Label:
 	var label := Label.new()
 	label.position = top_left
 	label.size = Vector2(PresentationLayout.CANVAS.x, PresentationLayout.CANVAS.y - top_left.y)
 	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	label.add_theme_font_size_override("font_size", font_size)
-	label.add_theme_color_override("font_color", color)
+	Typography.apply(label, role, color)
 	add_child(label)
 	return label
 
@@ -146,9 +150,9 @@ func _position_menu_band() -> void:
 	_menu_tick.visible = showing
 	if not showing:
 		return
-	var y := MENU_TOP + _menu_index * MENU_PITCH - 4.0
-	_menu_band.position = Vector2(MENU_BAND.position.x, y)
-	_menu_tick.position = Vector2(MENU_BAND.position.x, y)
+	var y := MENU_TOP + _menu_index * menu_pitch() - 4.0
+	_menu_band.position = Vector2(menu_band().position.x, y)
+	_menu_tick.position = Vector2(menu_band().position.x, y)
 
 
 func _fit_menu_frame(row_count: int) -> void:
@@ -158,9 +162,14 @@ func _fit_menu_frame(row_count: int) -> void:
 	if _body_panel == null:
 		return
 	var inset := 20.0
-	var height := MENU_PITCH * maxf(1.0, float(row_count)) + inset * 2
-	_body_panel.size = Vector2(MENU_BAND.size.x + inset * 2, height)
-	_body_panel.custom_minimum_size = _body_panel.size
+	var height := menu_pitch() * maxf(1.0, float(row_count)) + inset * 2
+	var fitted := Vector2(menu_band().size.x + inset * 2, height)
+	# Minimum first, then size. A Control clamps `size` to its current
+	# `custom_minimum_size`, so assigning size first meant the frame could
+	# never shrink below the four-row box `_build_ui` created — the fit
+	# silently did nothing whenever fewer options were shown.
+	_body_panel.custom_minimum_size = fitted
+	_body_panel.size = fitted
 	_body_panel.queue_redraw()
 
 

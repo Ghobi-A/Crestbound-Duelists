@@ -37,7 +37,8 @@ const CONTENT_BOTTOM := FOOTER_TOP - 16.0                                # 624
 const ROSTER_WIDTH := 696.0
 ## Must match the line advance the roster Label uses, or the selection
 ## band drifts away from the row it is meant to be behind.
-const ROW_PITCH := Typography.BODY + 6.0
+static func row_pitch() -> float:
+	return Typography.line_height(Typography.Role.HEADING) + 8.0
 
 
 class _RosterBand:
@@ -86,7 +87,7 @@ func _build_ui() -> void:
 	# with the detail copy.
 	add_child(UiPanel.create(Vector2(MARGIN, FOOTER_TOP), Vector2(canvas.x - MARGIN * 2, FOOTER_HEIGHT), UiStyle.NEUTRAL))
 
-	_title_label = _label(Vector2(0, MARGIN + PAD), Typography.HEADING, PlaceholderPalette.TEXT_WARN)
+	_title_label = _label(Vector2(0, MARGIN + PAD * 0.9), Typography.Role.TITLE, PlaceholderPalette.CREST_GOLD_BRIGHT)
 	_title_label.size = Vector2(canvas.x, TITLE_HEIGHT)
 	_title_label.text = "PARTY SETUP — %s" % _encounter.get("name", "")
 
@@ -96,14 +97,18 @@ func _build_ui() -> void:
 	_band = _RosterBand.new()
 	_band.position = Vector2(MARGIN + UiStyle.SPACE_S, CONTENT_TOP + PAD)
 	_band.size = Vector2(ROSTER_WIDTH - UiStyle.SPACE_S * 2, content_height - PAD * 2)
-	_band.row_pitch = ROW_PITCH
+	_band.row_pitch = row_pitch()
 	_band.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(_band)
 
-	_rows_label = _label(Vector2(MARGIN + PAD, CONTENT_TOP + PAD), UiStyle.FONT_SIZE, PlaceholderPalette.TEXT_MAIN)
+	_rows_label = _label(Vector2(MARGIN + PAD, CONTENT_TOP + PAD), Typography.Role.HEADING, PlaceholderPalette.TEXT_MAIN)
 	_rows_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 	_rows_label.size = Vector2(ROSTER_WIDTH - PAD * 2, content_height - PAD * 2)
 	_rows_label.clip_text = true
+	# The band pitch and the label's own line advance must agree, or the
+	# highlight drifts off the row it belongs to.
+	_rows_label.add_theme_constant_override("line_spacing",
+		int(row_pitch() - Typography.line_height(Typography.Role.HEADING)))
 
 	# Identity art sits in a row across the top of the detail panel; the
 	# copy runs beneath it. The portrait box is larger than its 138x160
@@ -121,13 +126,13 @@ func _build_ui() -> void:
 	_entity_art = _make_identity_art(Vector2(badge_x + badge_size.x + PAD * 0.6, art_top), badge_size)
 
 	var detail_top := art_top + portrait_size.y + PAD
-	_detail_label = _label(Vector2(detail_x + PAD, detail_top), UiStyle.FONT_SIZE, PlaceholderPalette.TEXT_DIM)
+	_detail_label = _label(Vector2(detail_x + PAD, detail_top), Typography.Role.SECONDARY, PlaceholderPalette.TEXT_DIM)
 	_detail_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 	_detail_label.size = Vector2(detail_width - PAD * 2, CONTENT_BOTTOM - detail_top - PAD)
 	_detail_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	_detail_label.clip_text = true
 
-	_hint_label = _label(Vector2(0, FOOTER_TOP + PAD * 0.5), UiStyle.FONT_SIZE, PlaceholderPalette.TEXT_DIM)
+	_hint_label = _label(Vector2(0, FOOTER_TOP + PAD * 0.5), Typography.Role.SECONDARY, PlaceholderPalette.TEXT_DIM)
 	_hint_label.size = Vector2(canvas.x, FOOTER_HEIGHT)
 	# The full wording fits again: at body size this measures 963 of the
 	# 1168px footer interior, where the 320x180 canvas could not fit it
@@ -146,13 +151,12 @@ func _optional_texture(path: String) -> Texture2D:
 	return load(path) if ResourceLoader.exists(path) else null
 
 
-func _label(top_left: Vector2, font_size: int, color: Color) -> Label:
+func _label(top_left: Vector2, role: Typography.Role, color: Color) -> Label:
 	var label := Label.new()
 	label.position = top_left
 	label.size = PresentationLayout.CANVAS - top_left
 	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	label.add_theme_font_size_override("font_size", font_size)
-	label.add_theme_color_override("font_color", color)
+	Typography.apply(label, role, color)
 	add_child(label)
 	return label
 

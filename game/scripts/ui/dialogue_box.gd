@@ -82,11 +82,11 @@ func _ready() -> void:
 
 	_speaker_label = Label.new()
 	_speaker_label.position = Vector2(PAD, PAD * 0.4)
-	_speaker_label.size = Vector2(PresentationLayout.DIALOGUE_RECT.size.x - PAD * 2, Typography.HEADING + 8.0)
+	_speaker_label.size = Vector2(PresentationLayout.DIALOGUE_RECT.size.x - PAD * 2,
+		Typography.line_height(Typography.Role.TITLE) * 1.2)
 	_speaker_label.clip_text = true
 	_speaker_label.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
-	_speaker_label.add_theme_font_size_override("font_size", Typography.HEADING)
-	_speaker_label.add_theme_color_override("font_color", PlaceholderPalette.CREST_GOLD_BRIGHT)
+	Typography.apply(_speaker_label, Typography.Role.TITLE, PlaceholderPalette.CREST_GOLD_BRIGHT)
 	_panel.add_child(_speaker_label)
 
 	_text_label = Label.new()
@@ -96,8 +96,7 @@ func _ready() -> void:
 		PresentationLayout.TEXT_HEIGHT)
 	_text_label.clip_text = true
 	_text_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	_text_label.add_theme_font_size_override("font_size", Typography.BODY)
-	_text_label.add_theme_color_override("font_color", PlaceholderPalette.TEXT_MAIN)
+	Typography.apply(_text_label, Typography.Role.BODY, PlaceholderPalette.TEXT_MAIN)
 	_panel.add_child(_text_label)
 
 	# Drawn, not typeset: the bitmap face has no triangle glyph, and a
@@ -152,8 +151,8 @@ func _show_current_line() -> void:
 	_speaker_label.text = entry.get("speaker", "")
 	var lines: Array = entry.get("lines", [])
 	_apply_portrait(str(entry.get("portrait", "")), str(entry.get("expression", "neutral")))
-	_pages = paginate(str(lines[_line_index]), _text_label.get_theme_font("font"),
-		Typography.BODY, _text_label.size.x, PresentationLayout.TEXT_HEIGHT)
+	_pages = paginate(str(lines[_line_index]), Typography.font(Typography.Role.BODY),
+		Typography.size(Typography.Role.BODY), _text_label.size.x, PresentationLayout.TEXT_HEIGHT)
 	_page_index = 0
 	_text_label.text = _pages[0]
 

@@ -55,15 +55,19 @@ const LEGACY_COMBATANT_HEIGHT := 44.0
 const EFFECT_SCALE := COMBATANT_HEIGHT / LEGACY_COMBATANT_HEIGHT
 
 # --- Dialogue ---------------------------------------------------------
-const DIALOGUE_RECT := Rect2(32, 496, 1216, 208)
+# Shorter than it was: typeset serif copy fits far more per line than the
+# 8px face did, so the same entries need fewer lines and a 208px panel
+# stood mostly empty. Giving the height back to the world is the point of
+# a cinematic box rather than a text window.
+const DIALOGUE_RECT := Rect2(32, 512, 1216, 168)
 # The speaker's portrait breaks the top edge of the dialogue panel rather
 # than sitting inside it. The character is the subject of the scene and
 # the panel is the surface their words are written on, so the portrait
 # reads better crossing the boundary than boxed inside it. Sized above
 # its 138x160 atlas crop, which the source resolution comfortably carries.
 const PORTRAIT_RECT := Rect2(24, -52, 168, 195)
-const TEXT_TOP := 60.0
-const TEXT_HEIGHT := 112.0
+const TEXT_TOP := 58.0
+const TEXT_HEIGHT := 84.0
 const RIGHT_MARGIN := 56.0
 
 # --- Overworld --------------------------------------------------------

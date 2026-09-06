@@ -99,116 +99,81 @@ def test_scene_changes_use_semantic_transition_gateway() -> None:
         assert "SceneTransition.change_scene" in source(relative)
 
 
-def test_all_ui_text_uses_whole_multiples_of_the_bitmap_font() -> None:
-    """`crestbound_font.fnt` is an 8px bitmap face.
+def test_pixel_accent_font_is_only_used_at_whole_multiples() -> None:
+    """The 8px bitmap face is now an accent, not the interface font.
 
-    Godot rescales bitmap glyphs to any requested size, and only whole
-    multiples of the native size survive intact. Below 8px whole pixel
-    rows are dropped: party setup once rendered "ACTIVE" as "NCTIVE" and
-    "Liora" as "L:ora". At a non-integer multiple the stems land on
-    uneven pixel counts and one letter's strokes differ in weight from
-    the next. Typography exists so sizes are chosen from a fixed scale.
-
-    This checks all three ways a size reaches the renderer: a direct
-    theme override, a size handed to a label helper that forwards it,
-    and a `draw_string` call in a custom-drawn panel.
+    It survives only integral rescaling — below native, whole pixel rows
+    vanish (party setup once rendered "ACTIVE" as "NCTIVE"); at a
+    fractional multiple one letter's stems differ in weight from the
+    next. The scalable serif has no such constraint, so the rule applies
+    to the pixel roles alone.
     """
     fnt = (GAME / "assets/ui/crestbound_font.fnt").read_text(encoding="utf-8")
     native = int(re.search(r"\bsize=(\d+)", fnt).group(1))
-    assert native == 8
 
-    scale = constants(SCRIPTS / "ui" / "typography.gd")
-    assert scale["NATIVE"] == native
-    named = {k: v for k, v in scale.items() if k != "NATIVE"}
-    assert named, "Typography defines no sizes"
-    for name, size in named.items():
+    typography = (SCRIPTS / "ui" / "typography.gd").read_text(encoding="utf-8")
+    assert f"const PIXEL_NATIVE := {native}" in typography
+
+    sizes = dict(
+        re.findall(r"Role\.([A-Z_]+):\s*(\d+)", typography)
+    )
+    pixel_roles = re.findall(r"const _PIXEL_ROLES := \[([^\]]*)\]", typography)
+    assert pixel_roles, "Typography does not declare which roles are pixel"
+    names = re.findall(r"Role\.([A-Z_]+)", pixel_roles[0])
+    assert names, "no pixel roles declared"
+    for name in names:
+        size = int(sizes[name])
         assert size % native == 0 and size >= native, (
-            f"Typography.{name} is {size}px, not a whole multiple of {native}"
+            f"pixel role {name} is {size}px, not a whole multiple of {native}"
         )
 
+
+def test_typography_is_the_only_place_that_chooses_a_size_or_a_face() -> None:
+    """One hierarchy across every screen.
+
+    Screens ask for a role. A screen that set its own `font_size` or
+    loaded its own face would drift away from the rest the first time the
+    scale changed — which is exactly how the old interface ended up with
+    six ad-hoc sizes between 6 and 14.
+    """
     offenders: list[str] = []
     for path in sorted(SCRIPTS.rglob("*.gd")):
-        text = path.read_text(encoding="utf-8")
-        lines = text.splitlines()
-        label = f"{path.relative_to(GAME)}"
-
-        for number, line in enumerate(lines, start=1):
-            for size in re.findall(
-                r'add_theme_font_size_override\(\s*"font_size"\s*,\s*(\d+)', line
-            ):
-                if int(size) % native:
-                    offenders.append(f"{label}:{number} overrides font_size to {size}px")
-
-        # draw_string(font, pos, text, alignment, width, SIZE, colour).
-        # Scanned over the whole file, not per line: these calls routinely
-        # wrap, and a per-line splitter simply saw an unclosed paren and
-        # skipped them — which is how a 6px caption slipped through.
-        for call in re.finditer(r"draw_string\(", text):
-            args = _split_call_args(text[call.end() - 1 :])
-            if args is None or len(args) < 6:
-                continue
-            size_argument = args[5].strip()
-            if size_argument.isdigit() and int(size_argument) % native:
-                number = text.count("\n", 0, call.start()) + 1
-                offenders.append(f"{label}:{number} draws text at {size_argument}px")
-
-        for helper, index in _font_size_forwarding_helpers(text).items():
-            for call in re.finditer(rf"\b{helper}\(", text):
-                args = _split_call_args(text[call.end() - 1 :])
-                if args is None or index >= len(args):
-                    continue
-                argument = args[index].strip()
-                if argument.isdigit() and int(argument) % native:
-                    number = text.count("\n", 0, call.start()) + 1
-                    offenders.append(
-                        f"{label}:{number} passes {argument}px to {helper}()"
-                    )
-    assert not offenders, "text off the type scale: " + "; ".join(offenders)
-
-
-def _font_size_forwarding_helpers(text: str) -> dict[str, int]:
-    """Map helper name -> index of its font-size parameter.
-
-    Only functions that actually forward the parameter into the theme
-    override count, so an unrelated `font_size` local cannot flag callers.
-    """
-    helpers: dict[str, int] = {}
-    for match in re.finditer(r"^func (\w+)\(([^)]*)\)", text, re.MULTILINE):
-        name, signature = match.group(1), match.group(2)
-        parameters = [p.split(":")[0].strip() for p in signature.split(",") if p.strip()]
-        if "font_size" not in parameters:
+        if path.name == "typography.gd":
             continue
-        body = text[match.end() :]
-        next_func = body.find("\nfunc ")
-        if next_func != -1:
-            body = body[:next_func]
-        if 'add_theme_font_size_override("font_size", font_size)' in body:
-            helpers[name] = parameters.index("font_size")
-    return helpers
+        text = path.read_text(encoding="utf-8")
+        for number, line in enumerate(text.splitlines(), 1):
+            code = line.split("#")[0]
+            if "add_theme_font_size_override" in code:
+                offenders.append(f"{path.relative_to(GAME)}:{number} sets font_size directly")
+            if "add_theme_font_override" in code:
+                offenders.append(f"{path.relative_to(GAME)}:{number} sets a face directly")
+            if ".ttf" in code or ".fnt" in code:
+                offenders.append(f"{path.relative_to(GAME)}:{number} names a font file")
+    assert not offenders, "text styling outside Typography: " + "; ".join(offenders)
 
 
-def _split_call_args(text: str) -> list[str] | None:
-    """Split the argument list of a call, ignoring commas nested in parens.
+def test_every_screen_renders_text_through_a_role() -> None:
+    """`draw_string` bypasses the role vocabulary, so custom-drawn panels
+    must go through `Typography.draw` instead."""
+    offenders: list[str] = []
+    for path in sorted(SCRIPTS.rglob("*.gd")):
+        if path.name in {"typography.gd", "dialogue_box.gd", "presentation_smoke.gd"}:
+            # dialogue_box measures inside `paginate`, which is handed a
+            # font and size by its caller; the smoke scene re-measures the
+            # same way to verify pagination.
+            continue
+        text = path.read_text(encoding="utf-8")
+        for number, line in enumerate(text.splitlines(), 1):
+            if "draw_string(" in line.split("#")[0]:
+                offenders.append(f"{path.relative_to(GAME)}:{number}")
+    assert not offenders, "raw draw_string outside Typography: " + "; ".join(offenders)
 
-    `text` starts at the opening paren. Returns None if the call is not
-    closed on this line.
-    """
-    depth = 0
-    args: list[str] = []
-    current = ""
-    for character in text:
-        if character in "([":
-            depth += 1
-            if depth == 1:
-                continue
-        elif character in ")]":
-            depth -= 1
-            if depth == 0:
-                args.append(current)
-                return args
-        if depth == 1 and character == ",":
-            args.append(current)
-            current = ""
-        else:
-            current += character
-    return None
+
+def test_the_serif_face_ships_with_its_licence() -> None:
+    """The interface face is vendored, so its licence must travel with
+    it — the Bitstream Vera terms require the notice be included."""
+    fonts = GAME / "assets/ui/fonts"
+    assert (fonts / "DejaVuSerif.ttf").exists()
+    assert (fonts / "DejaVuSerif-Bold.ttf").exists()
+    licence = (fonts / "LICENSE-DejaVu.txt").read_text(encoding="utf-8")
+    assert "Bitstream" in licence and "Permission is hereby granted" in licence

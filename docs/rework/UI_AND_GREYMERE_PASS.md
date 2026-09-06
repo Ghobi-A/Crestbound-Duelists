@@ -17,12 +17,30 @@ already wired: dropping the assets in requires no code change.
 
 ## 1. Visual direction established
 
-**Artwork is the subject; the interface is glass laid over it.** The old
-interface was a set of opaque boxes bolted under the picture, which is
-what an opaque fill on a 320x180 canvas forced. At 720p the artwork is
-worth seeing, so panels became translucent gradient surfaces with a soft
-cast shadow, a hairline edge, and the role accent confined to a single
-lit rule along the top edge.
+**Artwork is the subject; the interface is dark slate set over it.** The
+old interface was a set of opaque boxes bolted under the picture, which
+is what an opaque fill on a 320x180 canvas forced.
+
+Translucency is used *selectively*, not as a style. A panel admits a
+little of the scene so it belongs to the same room as the artwork, but
+never enough to become the transparent-black rectangle every modern app
+already uses. What makes the surface Crestbound's is the rest: a
+warm-shifted slate rather than neutral grey, a fine grain over the fill
+(`tools/generate_ui_surface.py`), a hairline edge, an accent rule that
+falls away rather than banding edge-to-edge, and the four-pointed Crest
+spark as the interface's only ornament — the same motif the overworld
+uses to mark an interactable.
+
+The first grain attempt was too strong and tiled visibly across a 700px
+panel. A legible repeat is worse than no texture, so peak alpha came down
+to 9/255 and both octaves were made fine; the grain is now felt rather
+than seen.
+
+**Class and Crest colour carries identity.** Each party card takes its
+duelist's class colour on its accent rule and a hairline under its bars,
+so three cards are distinguishable at a glance and the interface says
+something about who these people are. Gold stays reserved for whoever is
+acting.
 
 **Accent means something.** Gold is the player's own agency, violet is
 what an action affects, slate recedes. Confining the accent to one rule
@@ -100,12 +118,48 @@ dead band whenever the save-dependent "Continue" row was absent.
 
 ### Typography
 
-The 8px face is retained deliberately — it is Crestbound's identity, and
-a foreign scalable face would not belong. Hierarchy now comes from the
-`Typography` scale (16/24/32/48, all whole multiples of the native size),
-colour, weight of surface, and spacing, rather than from one
-undifferentiated size everywhere. A true 16px-native bitmap face is
-specified in section 7 as the next typographic step.
+**The 8px bitmap face is no longer the interface font.** It was the only
+size the 320x180 canvas could carry, and keeping it universal at 720p is
+what made a high-resolution screen still read as an upscaled 16-bit one.
+
+The interface is now set in **DejaVu Serif** (Book and Bold), vendored
+under the Bitstream Vera licence with its notice. A serif was chosen
+deliberately: Crestbound is old-world dark fantasy, and a humanist serif
+carries that register where a geometric sans reads as a modern app.
+
+`Typography` exposes *roles*, never sizes or faces, so call sites express
+intent and one hierarchy holds across every screen:
+
+| Role | Size | Face | Used for |
+| --- | --- | --- | --- |
+| `DISPLAY` | 44 | Serif Bold | Screen titles, victory/defeat banners |
+| `TITLE` | 30 | Serif Bold | Panel titles, speaker names |
+| `HEADING` | 24 | Serif Bold | Character names, menu entries |
+| `BODY` | 20 | Serif | Dialogue and running prose |
+| `SECONDARY` | 18 | Serif | Detail columns, hints, objectives |
+| `CAPTION` | 15 | Serif | Move descriptions, dense annotation |
+| `NUMERIC` | 40 | Serif Bold | HP and damage readouts |
+| `NUMERIC_SMALL` | 17 | Serif | The maximum beside a large readout |
+| `PIXEL_TITLE` | 48 | Bitmap | The boot logotype |
+| `PIXEL_TAG` | 16 | Bitmap | Small uppercase tags in the HUD |
+
+The pixel face survives in exactly two places, both chosen because a
+pixel face is the *point* there rather than a limitation: the boot
+wordmark, which is the game's logotype, and the `HP` tag on the party
+cards, which keeps a thread of the pixel identity running through an
+otherwise typeset card.
+
+Three contracts hold the system together:
+`test_typography_is_the_only_place_that_chooses_a_size_or_a_face` fails
+if any screen sets `font_size`, sets a face, or names a font file;
+`test_every_screen_renders_text_through_a_role` fails on a raw
+`draw_string`; and `test_pixel_accent_font_is_only_used_at_whole_multiples`
+keeps the bitmap accent on whole multiples of 8, where it still must be.
+
+Sizes derived from the scale cannot be `const` in GDScript, since a
+constant expression cannot call a function. They are static accessors
+(`row_height()`, `menu_pitch()`, `row_pitch()`) instead, which is also
+what lets a type-scale change reflow the screens automatically.
 
 ---
 
@@ -223,7 +277,7 @@ rather than by code. Each slot below is already wired.
 | 5 | **Villager portraits** | 86x96 against the main cast's 138x160, so villagers are visibly softer in the same dialogue box. | `assets/portraits/townsfolk/*/neutral.png` |
 | 6 | **Townsfolk overworld sprites** | 16-20x30, the chunkiest thing on screen beside the painted cast. Also still one pose per direction, not walk cycles. | `assets/characters/townsfolk/*/overworld.png` |
 | 7 | **Cast atlas alpha** | The atlases bake the chroma key into RGB with no alpha channel. The shader keys proportionally and despills, which cut the fringe by ~70%, but a thin dark outline remains and no shader can remove it without eating the Hexbound Adept's violet robes. | Re-export the atlases with a real alpha channel |
-| 8 | **A 16px-native bitmap face** | Headings are currently the 8px face at integer multiples. A face authored at 16px would give genuinely different letterforms at heading sizes rather than scaled-up body glyphs. | `tools/generate_font.py` |
+| 8 | **A commissioned display face** | DejaVu Serif is a good, free, well-hinted serif, but it is not *Crestbound's* face. A commissioned or licensed display serif with more character in the capitals would lift the logotype-adjacent roles (`DISPLAY`, `TITLE`) further. Drop-in: `Typography` resolves faces in one place. | `game/assets/ui/fonts/` |
 | 9 | **Bonded Entities and other encounter backgrounds** | Still the older, smaller art. | `assets/entities/`, `assets/battle/backgrounds/` |
 | 10 | **Hollow Court landmark** | Currently one arch tile. Deserves a composed approach — larger structure, its own light, environmental cues leading toward it. | `court_arch` + `assets/landmarks/` |
 
@@ -251,10 +305,14 @@ rather than by code. Each slot below is already wired.
 
 ## 9. Test results
 
-- Python suite: **257 passed** (9 new contracts).
+- Python suite: **260 passed**.
 - Godot static validator: passed (46 scripts, 6 scenes, 38 JSON files).
 - Runtime presentation smoke: **0 failures**.
 - Rendered capture: 6 targets at 1280x720, no script or shader errors.
+- Re-captured at 2560x1440: layout identical, no reflow or clipping.
+  Deltas are 0.2-2.0/255 and are antialiasing only — the serif now
+  rasterises at the host resolution rather than being integer-scaled, so
+  text is genuinely sharper on a larger window than it used to be.
 
 New contracts in `tests/test_presentation_layers.py`: band ordering,
 props sharing the actor band, named bands over raw z-indices, source-art

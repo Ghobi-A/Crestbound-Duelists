@@ -76,16 +76,16 @@ func check_dialogue() -> void:
 		check(box._portrait.size == PresentationLayout.PORTRAIT_RECT.size, "Portrait expanded: " + key)
 		check(box._text_label.position.x >= box._portrait.position.x + box._portrait.size.x, "Portrait/text collision: " + key)
 	var original := "A long sentence about the Hollow Court and its forgotten history. ".repeat(40)
-	var font: Font = box._text_label.get_theme_font("font")
+	var font: Font = Typography.font(Typography.Role.BODY)
 	var line_width := box._text_label.size.x
-	var pages := DialogueBox.paginate(original, font, Typography.BODY, line_width,
+	var pages := DialogueBox.paginate(original, font, Typography.size(Typography.Role.BODY), line_width,
 		PresentationLayout.TEXT_HEIGHT)
 	check(pages.size() > 1, "Long dialogue not paginated")
 	var reconstructed := " ".join(pages).replace("\n", " ").strip_edges()
 	check(reconstructed == original.strip_edges(), "Pagination lost or reordered words")
 	for page in pages:
 		for line in page.split("\n"):
-			check(font.get_string_size(line, HORIZONTAL_ALIGNMENT_LEFT, -1, Typography.BODY).x <= line_width, "Text exceeds line width")
+			check(font.get_string_size(line, HORIZONTAL_ALIGNMENT_LEFT, -1, Typography.size(Typography.Role.BODY)).x <= line_width, "Text exceeds line width")
 	box._dialogue_data = {"test": [{"speaker": "An exceptionally long speaker title", "portrait": "elara", "lines": [original, "Final line."]}]}
 	box.play("test")
 	var advances := 0
@@ -136,7 +136,28 @@ func check_world_and_setup() -> void:
 		world._player._sprite.set_facing(direction)
 		check(world._player._sprite._sprite.region_rect.size == Vector2(world._player._sprite.frame_width, world._player._sprite.frame_height), "Overworld crop invalid")
 	world._play_dialogue("kassian_flavor")
-	check(world._camera.offset.y > 0, "Dialogue camera safe area not applied")
+	# The shift is capped at the room left between the view and the map's
+	# southern edge, because Camera2D applies `offset` after its limits and
+	# an uncapped shift scrolls into the void beyond the map. At the
+	# default spawn the camera is already against that limit, so the
+	# correct offset there is zero. What must hold in every case is that
+	# the shift never pushes the view outside the map.
+	var half_view := PresentationLayout.CANVAS.y / PresentationLayout.OVERWORLD_ZOOM * 0.5
+	var map_bottom: float = float(world.map_height()) * float(world.TILE)
+	var lowest_centre: float = map_bottom - half_view
+	# Camera2D clamps its centre to its limits and only then adds `offset`,
+	# so the view's real centre is the clamped follow position plus the
+	# shift. That sum is what must stay inside the map — the player's own
+	# position may legitimately sit past it when standing near the edge.
+	var followed: float = clampf(world._player.position.y, half_view, lowest_centre)
+	var camera_centre: float = followed + world._camera.offset.y
+	check(world._camera.offset.y >= 0.0, "Dialogue camera shifted the wrong way")
+	check(camera_centre <= lowest_centre + 0.01, "Dialogue camera shift escapes the map")
+	# And the player must still be clear of the dialogue panel.
+	var player_screen_y: float = (world._player.position.y - (camera_centre - half_view)) \
+		* PresentationLayout.OVERWORLD_ZOOM
+	check(player_screen_y < PresentationLayout.DIALOGUE_RECT.position.y,
+		"Dialogue panel covers the player")
 	while world._dialogue.active: world._dialogue._advance()
 	check(world._camera.offset == Vector2.ZERO, "Dialogue camera not restored")
 	world.queue_free()

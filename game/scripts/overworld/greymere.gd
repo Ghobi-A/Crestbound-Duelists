@@ -521,10 +521,18 @@ func _play_dialogue(key: String) -> void:
 	# Shift only the camera, never collision or the player's tile state.
 	# The dialogue panel is screen space; the camera offset is world
 	# space, so the panel's height converts through the camera zoom.
-	# Without that divide the view would lurch three times too far.
-	_camera.offset = Vector2(
-		0, PresentationLayout.DIALOGUE_RECT.size.y / 2.0 / PresentationLayout.OVERWORLD_ZOOM
-	)
+	# Without that divide the view would lurch four times too far.
+	#
+	# Camera2D applies `offset` *after* its limits, so an unclamped shift
+	# scrolls straight past the edge of the map and renders the void
+	# beyond it. The shift is therefore capped at whatever room actually
+	# remains between the view's bottom edge and the map's, which is zero
+	# once the player is already at the southern edge.
+	var shift := PresentationLayout.DIALOGUE_RECT.size.y * 0.5 / PresentationLayout.OVERWORLD_ZOOM
+	var half_view := PresentationLayout.CANVAS.y / PresentationLayout.OVERWORLD_ZOOM * 0.5
+	var lowest_centre := map_height() * TILE - half_view
+	var room := maxf(0.0, lowest_centre - _player.position.y)
+	_camera.offset = Vector2(0, minf(shift, room))
 	_dialogue.play(key)
 
 

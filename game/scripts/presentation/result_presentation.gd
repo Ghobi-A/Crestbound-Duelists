@@ -24,18 +24,19 @@ func show_result(victory: bool) -> void:
 	var title := Label.new()
 	title.text = key.to_upper()
 	title.position = Vector2(0, 62)
-	title.size = Vector2(PresentationLayout.CANVAS.x, Typography.DISPLAY * 1.5)
+	title.size = Vector2(PresentationLayout.CANVAS.x, Typography.line_height(Typography.Role.DISPLAY) * 1.4)
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	title.add_theme_font_size_override("font_size", Typography.DISPLAY)
-	title.add_theme_color_override("font_color", PlaceholderPalette.CREST_GOLD_BRIGHT if victory else Color("b7aec8"))
+	Typography.apply(title, Typography.Role.DISPLAY,
+		PlaceholderPalette.CREST_GOLD_BRIGHT if victory else Color("b7aec8"))
+
 	add_child(title)
 	var prompt := Label.new()
 	prompt.text = "Z  CONTINUE"
 	prompt.position = Vector2(0, 108)
-	prompt.size = Vector2(PresentationLayout.CANVAS.x, Typography.BODY * 1.5)
+	prompt.size = Vector2(PresentationLayout.CANVAS.x, Typography.line_height(Typography.Role.BODY) * 1.4)
 	prompt.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	prompt.add_theme_font_size_override("font_size", Typography.BODY)
-	prompt.add_theme_color_override("font_color", PlaceholderPalette.TEXT_DIM)
+	Typography.apply(prompt, Typography.Role.SECONDARY, PlaceholderPalette.TEXT_DIM)
+
 	add_child(prompt)
 	AudioRouter.play_music(key)
 	AudioRouter.play_sfx("battle", key)

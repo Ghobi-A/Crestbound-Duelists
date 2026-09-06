@@ -42,9 +42,9 @@ func _ready() -> void:
 	top.size = Vector2(canvas.x, PresentationLayout.TOP_BAR_HEIGHT)
 	top.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(top)
-	var bar_text_height := Typography.HEADING * 1.5
+	var bar_text_height := Typography.line_height(Typography.Role.HEADING) * 1.35
 	_phase_label = _label(top, Vector2(PAD, (top.size.y - bar_text_height) * 0.5),
-		Vector2(canvas.x * 0.42, bar_text_height), PlaceholderPalette.TEXT_WARN, Typography.BODY)
+		Vector2(canvas.x * 0.42, bar_text_height), PlaceholderPalette.CREST_GOLD_BRIGHT, Typography.Role.HEADING)
 	_phase_label.clip_text = true
 	_phase_label.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
 	# Objective text is right-aligned and stops short of the icon, which
@@ -54,7 +54,7 @@ func _ready() -> void:
 	var objective_right := canvas.x - PAD - icon_side - (PAD if icon_side > 0.0 else 0.0)
 	_objective_label = _label(top, Vector2(canvas.x * 0.45, (top.size.y - bar_text_height) * 0.5),
 		Vector2(objective_right - canvas.x * 0.45, bar_text_height),
-		PlaceholderPalette.TEXT_DIM, Typography.BODY)
+		PlaceholderPalette.TEXT_DIM, Typography.Role.SECONDARY)
 	_objective_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	_objective_label.clip_text = true
 	if objective_icon != null:
@@ -72,9 +72,9 @@ func _ready() -> void:
 	message_strip.position = Vector2(0, hud.position.y - PresentationLayout.MESSAGE_STRIP_HEIGHT)
 	message_strip.size = Vector2(canvas.x, PresentationLayout.MESSAGE_STRIP_HEIGHT)
 	add_child(message_strip)
-	_message_label = _label(message_strip, Vector2(PAD, (message_strip.size.y - Typography.BODY * 1.5) * 0.5),
-		Vector2(canvas.x - PAD * 2, Typography.BODY * 1.5), PlaceholderPalette.TEXT_MAIN,
-		Typography.BODY)
+	var message_line := Typography.line_height(Typography.Role.BODY) * 1.35
+	_message_label = _label(message_strip, Vector2(PAD, (message_strip.size.y - message_line) * 0.5),
+		Vector2(canvas.x - PAD * 2, message_line), PlaceholderPalette.TEXT_MAIN, Typography.Role.BODY)
 
 	var bottom := _Chrome.new()
 	bottom.kind = _Chrome.HUD
@@ -102,7 +102,7 @@ func _ready() -> void:
 	_info_panel.visible = false
 	bottom.add_child(_info_panel)
 	_info_label = _label(_info_panel, Vector2(PAD, PAD),
-		context_rect.size - Vector2(PAD * 2, PAD * 2), PlaceholderPalette.TEXT_MAIN, Typography.BODY)
+		context_rect.size - Vector2(PAD * 2, PAD * 2), PlaceholderPalette.TEXT_MAIN, Typography.Role.BODY)
 	_info_label.visible = false
 
 	round_preview = RoundPreview.new()
@@ -118,8 +118,8 @@ func _ready() -> void:
 	add_child(_flash_rect)
 
 	_banner_label = _label(self, Vector2(0, PresentationLayout.BATTLE_HEIGHT * 0.36),
-		Vector2(canvas.x, Typography.DISPLAY * 1.5), PlaceholderPalette.CREST_GOLD_BRIGHT,
-		Typography.DISPLAY)
+		Vector2(canvas.x, Typography.line_height(Typography.Role.DISPLAY) * 1.4),
+		PlaceholderPalette.CREST_GOLD_BRIGHT, Typography.Role.DISPLAY)
 	_banner_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_banner_label.visible = false
 
@@ -165,12 +165,11 @@ func _context_x() -> float:
 
 
 func _label(parent: Node, top_left: Vector2, size_: Vector2, color: Color,
-		font_size := Typography.BODY) -> Label:
+		role := Typography.Role.BODY) -> Label:
 	var label := Label.new()
 	label.position = top_left
 	label.size = size_
-	label.add_theme_font_size_override("font_size", font_size)
-	label.add_theme_color_override("font_color", color)
+	Typography.apply(label, role, color)
 	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	label.clip_text = true
 	parent.add_child(label)

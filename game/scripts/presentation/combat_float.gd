@@ -14,7 +14,8 @@ func show_float(unit: BattleUnit, origin: Vector2, kind: String, value := "") ->
 	_lanes[unit] = (lane + 1) % 3
 	var label := Label.new()
 	label.text = _text(kind, value)
-	var font_size := Typography.HEADING if kind in ["damage", "heal"] else Typography.BODY
+	var role: Typography.Role = Typography.Role.NUMERIC if kind in ["damage", "heal"] else Typography.Role.HEADING
+	var font_size := Typography.size(role)
 	# Sized from the type it carries. The old 44x12 box was built around
 	# 8px text and would clip every float on this canvas.
 	var box := Vector2(font_size * 7.0, font_size * 1.5)
@@ -23,8 +24,7 @@ func show_float(unit: BattleUnit, origin: Vector2, kind: String, value := "") ->
 	label.position = origin + Vector2(-box.x * 0.5, -box.y - lane * box.y * 0.9)
 	label.size = box
 	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	label.add_theme_font_size_override("font_size", font_size)
-	label.add_theme_color_override("font_color", _color(kind))
+	Typography.apply(label, role, _color(kind))
 	label.add_theme_color_override("font_outline_color", Color(0.04, 0.03, 0.07, 0.9))
 	label.add_theme_constant_override("outline_size", int(UiStyle.LINE * 2))
 	add_child(label)
