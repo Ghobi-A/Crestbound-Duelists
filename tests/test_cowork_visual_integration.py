@@ -57,20 +57,25 @@ def test_kai_class_visual_spec_preserves_magic_and_neutral_identities() -> None:
     assert "mage" in spec and ("tunic" in spec or "robe" in spec or "long coat" in spec)
     assert "sorcerer" in spec and ("tunic" in spec or "robe" in spec or "coat" in spec)
     assert "neutral" in spec and "sword" in spec and "magic" in spec
-    assert "kai's face" in spec or "kai’s face" in spec or "same face" in spec
+    # Cowork's contract phrases this as preserving Kai's identity and explicitly
+    # requires portraits to use the face from the corresponding outfit.
+    assert "kai's identity" in spec
+    assert "portraits use the face" in spec
 
 
 def test_visible_greymere_text_uses_current_canon() -> None:
     text = (GAME / "data" / "dialogue" / "greymere.json").read_text(encoding="utf-8")
-    for stale in ("Warden Thorne", "Avelaine", "Veyrhold"):
-        assert stale not in text
-    for current in ("Warden Almyra", "Duchy of Avelan", "Civara", "Elder Silas"):
-        assert current in text
+    lowered = text.lower()
+    for stale in ("warden thorne", "avelaine", "veyrhold"):
+        assert stale not in lowered
+    for current in ("warden almyra", "duchy of avelan", "civara", "elder silas"):
+        assert current in lowered
 
 
-def test_missing_move_vfx_never_use_placeholder_palette() -> None:
+def test_missing_move_vfx_never_call_placeholder_palette() -> None:
     vfx = (GAME / "scripts" / "presentation" / "battle_vfx.gd").read_text(encoding="utf-8")
-    assert "PlaceholderPalette" not in vfx
+    # Comments may discuss the legacy system; production code must not call it.
+    assert "PlaceholderPalette." not in vfx
     assert "SYSTEM_MAGIC" in vfx
     assert "SYSTEM_PHYSICAL" in vfx
     assert "_play_fallback" in vfx
