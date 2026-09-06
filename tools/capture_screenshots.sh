@@ -43,6 +43,15 @@ GODOT="$CACHE_DIR/$GODOT_BINARY"
 export LIBGL_ALWAYS_SOFTWARE=1
 export GALLIUM_DRIVER=llvmpipe
 
+# Godot resolves user:// under $XDG_DATA_HOME, so a save written by an
+# earlier capture leaks into the next one: once crestbound_save.json
+# exists the boot menu offers "Continue" instead of "Controls" and the
+# baseline silently stops matching. Give every run a throwaway data home
+# so captures are reproducible from a clean slate.
+SAVE_SANDBOX="$(mktemp -d)"
+trap 'rm -rf "$SAVE_SANDBOX"' EXIT
+export XDG_DATA_HOME="$SAVE_SANDBOX"
+
 echo "Importing project ..."
 xvfb-run -a "$GODOT" --path "$REPO_ROOT/game" --import --quit-after 200 >/dev/null 2>&1 || true
 

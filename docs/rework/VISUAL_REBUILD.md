@@ -107,11 +107,39 @@ Magenta extraction protects Verdant green. Full design: `KAI_CLASS_VISUALS.md`.
 - Later encounters explicitly report unassigned enemy art: Archive Ambush (three
   units), Rin's first duel (one), paired Trial (two). They are not visually certified.
 
+## Rendered QA pass — 2026-09-06
+
+Rendered capture is **no longer blocked**. `xvfb-run` opens a display in the
+current environment, so `tools/capture_screenshots.sh` renders all five targets
+through Godot 4.3 on llvmpipe at the native 320x180 canvas.
+
+Two defects that only rendered output could expose:
+
+- **Party setup text was corrupted.** `crestbound_font.fnt` is a bitmap face
+  authored at 8px, and Godot rescales bitmap glyphs to whatever size is asked
+  for. Party setup asked for 7px and 6px; factors below 1.0 drop whole pixel
+  rows, so strokes vanished and letters read as other letters — `ACTIVE`
+  rendered as `NCTIVE`, `Liora` as `L:ora`. Every label now renders at
+  `UiStyle.FONT_SIZE`, and the roster, footer and detail copy were shortened to
+  fit their panels at that size rather than being shrunk below it. The detail
+  box describes only the row the selected duelist is in, which both fits the
+  six-line budget and makes LEFT/RIGHT feedback explicit.
+  `test_no_ui_text_is_rendered_below_the_bitmap_font_native_size` fails on any
+  sub-native size, including one passed through a label helper.
+- **Captures were not reproducible.** Godot resolves `user://` under
+  `$XDG_DATA_HOME`, so a save written by one capture changed the next run's boot
+  menu (`Controls` became `Continue`). The script now runs each capture against
+  a throwaway data home, so baselines are comparable run to run.
+
+Boot, overworld, battle and battle-target frames are byte-identical before and
+after these changes; party setup is the only intended difference. Verified:
+combatant facing, portrait bounds, panel containment, no chroma-key spill on the
+Hollow Court cast, and legible HUD text at native resolution.
+
 ### Remaining limitations / release gate
 
-- **Rendered gameplay QA remains blocked.** A locally extracted virtual display
-  could not open display sockets in this environment. Headless node checks do not
-  certify shader edges, artwork readability or screenshots at either viewport.
+- Rendered QA above covers five static frames only. Animation, transitions,
+  damage/status/awakening effects and smaller host windows are still uninspected.
 - New overworld art has one pose per direction, not full authored walk cycles.
   Combat uses existing motion/effect sequencing with static class poses.
 - Greymere's environment tiles and townsfolk still use existing art. They have not
@@ -122,8 +150,9 @@ Magenta extraction protects Verdant green. Full design: `KAI_CLASS_VISUALS.md`.
 
 ### Visual QA checklist before release
 
-- [ ] Render six class previews, party portraits and dialogue at 320x180 and smaller
-  host windows; verify no clipping, text collision, edge key spill or stretched art.
+- [x] Render boot, party setup, overworld and both battle frames at 320x180;
+  verify no clipping, text collision, edge key spill or stretched art.
+- [ ] Repeat for the six class previews, dialogue and smaller host windows.
 - [ ] Inspect all four overworld directions and walking; author missing cycles.
 - [ ] Inspect every class facing an enemy, each row and asymmetric formation.
 - [ ] Inspect damage, selection, statuses, awakening, victory and defeat effects.
