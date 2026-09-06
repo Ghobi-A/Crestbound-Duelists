@@ -1,7 +1,8 @@
 # Crestbound Duelists — class definitions (single source of truth).
-# v2.3 numerical chassis baseline: every class has a 260-point non-HP
-# stat budget so simulations can measure effective value from a controlled
-# baseline. HP is tuned separately around archetype and target fight length.
+# v2.3 numerical chassis: every class keeps a 260-point non-HP budget.
+# The first controlled baseline exposed large effective-value differences,
+# so points are reallocated within that fixed budget while preserving each
+# archetype. HP remains separate and is tuned for the 6–8 round horizon.
 
 classes:
   - id: warrior
@@ -10,7 +11,7 @@ classes:
       A frontline bruiser whose Crest expression favours direct action and
       guard-breaking pressure. Associated with conviction and confrontation.
     role: physical_bruiser
-    base_stats: {hp: 100, atk: 74, def: 68, mag: 30, res: 44, spd: 44}
+    base_stats: {hp: 96, atk: 70, def: 68, mag: 34, res: 40, spd: 48}
     move_ids: [power_slash, armor_break, reckless_charge]
     tags: [frontline, physical, guard_break]
 
@@ -20,7 +21,7 @@ classes:
       A magical specialist with structured control over Crest resonance.
       Mages trade raw force for a wider, more technical toolkit.
     role: magical_specialist
-    base_stats: {hp: 92, atk: 30, def: 34, mag: 78, res: 70, spd: 48}
+    base_stats: {hp: 96, atk: 30, def: 38, mag: 78, res: 66, spd: 48}
     move_ids: [arcane_bolt, mind_pierce, overload]
     tags: [backline, magical, resistance_break]
 
@@ -30,7 +31,7 @@ classes:
       A fast striker who exploits openings with precision and decisiveness.
       Excels at flanking and finishing weakened targets.
     role: fast_striker
-    base_stats: {hp: 88, atk: 70, def: 40, mag: 34, res: 48, spd: 68}
+    base_stats: {hp: 94, atk: 70, def: 46, mag: 28, res: 48, spd: 68}
     move_ids: [quick_strike, cripple, lethal_edge]
     tags: [flanker, physical, debuff_finisher]
 
@@ -40,7 +41,7 @@ classes:
       A defensive anchor bound to protection and endurance. Guardians hold
       ground, absorb pressure, and reward patient Brace play.
     role: defensive_tank
-    base_stats: {hp: 108, atk: 40, def: 76, mag: 36, res: 72, spd: 36}
+    base_stats: {hp: 104, atk: 44, def: 70, mag: 44, res: 66, spd: 36}
     move_ids: [shield_bash, fortify, avalanche]
     tags: [frontline, tank, brace_synergy]
 
@@ -50,7 +51,7 @@ classes:
       An extremely rare adaptive generalist whose Crest expression refuses to
       settle. Unpredictable, flexible, and politically valuable.
     role: adaptive_generalist
-    base_stats: {hp: 96, atk: 53, def: 50, mag: 53, res: 50, spd: 54}
+    base_stats: {hp: 100, atk: 56, def: 46, mag: 56, res: 50, spd: 52}
     move_ids: [hybrid_strike, focus_shift, wild_card]
     tags: [flexible, adaptive, stance_shift]
 
@@ -60,6 +61,6 @@ classes:
       A fast curse specialist channelling instinctive, aggressive magic.
       Sorcerers deny buffs and control fights through Hex.
     role: curse_specialist
-    base_stats: {hp: 90, atk: 34, def: 38, mag: 76, res: 48, spd: 64}
+    base_stats: {hp: 94, atk: 32, def: 44, mag: 76, res: 48, spd: 60}
     move_ids: [flame, hex, voidfire]
     tags: [backline, magical, status_control, anti_buff]
