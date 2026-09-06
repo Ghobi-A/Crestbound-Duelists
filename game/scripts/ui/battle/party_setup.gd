@@ -59,18 +59,20 @@ func _build_ui() -> void:
 	# Both labels are clamped to their panel's interior; the roster's
 	# Long authority names used to bleed into the detail
 	# column when the label was left at full screen width.
-	_rows_label = _label(Vector2(14, 34), 7, PlaceholderPalette.TEXT_MAIN)
+	_rows_label = _label(Vector2(14, 34), UiStyle.FONT_SIZE, PlaceholderPalette.TEXT_MAIN)
 	_rows_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 	_rows_label.size = Vector2(162, 114)
 	_rows_label.clip_text = true
-	_detail_label = _label(Vector2(192, 78), 7, PlaceholderPalette.TEXT_DIM)
+	_detail_label = _label(Vector2(192, 78), UiStyle.FONT_SIZE, PlaceholderPalette.TEXT_DIM)
 	_detail_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 	_detail_label.size = Vector2(114, 70)
 	_detail_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	_detail_label.clip_text = true
-	_hint_label = _label(Vector2(12, 162), 6, PlaceholderPalette.TEXT_DIM)
+	_hint_label = _label(Vector2(12, 162), UiStyle.FONT_SIZE, PlaceholderPalette.TEXT_DIM)
 	_hint_label.size = Vector2(296, 10)
-	_hint_label.text = "UP/DOWN SELECT   LEFT/RIGHT ROW   Z CONFIRM   X BACK"
+	# Abbreviated so the whole hint fits the footer at native font size
+	# (262px of 296px) instead of being shrunk below it.
+	_hint_label.text = "UP/DOWN SELECT  L/R ROW  Z CONFIRM  X BACK"
 	_portrait = TextureRect.new()
 	PresentationLayout.texture_box(_portrait, Rect2(191, 35, 34, 40))
 	_portrait.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
@@ -111,12 +113,15 @@ func _refresh() -> void:
 	for i in GameState.party.size():
 		var build: Dictionary = GameState.party[i]
 		var cursor := "> " if _cursor == i else "  "
-		var active := "ACTIVE " if i < _slots else "RESERVE"
+		# Status is abbreviated to three characters so a full row reads
+		# within the roster panel at native font size; the previous
+		# "ACTIVE "/"RESERVE" padding only fit by shrinking the font.
+		var active := "ACT" if i < _slots else "RES"
 		var row: String = str(build.get("position", "front")).to_upper()
-		lines.append("%s%-7s %-5s %s" % [cursor, active, row, build.get("name", "?")])
+		lines.append("%s%s %-5s %s" % [cursor, active, row, build.get("name", "?")])
 	lines.append("")
 	var start_cursor := "> " if _cursor == GameState.party.size() else "  "
-	lines.append(start_cursor + "START BATTLE  (%d Duelist%s)" % [_slots, "" if _slots == 1 else "s"])
+	lines.append(start_cursor + "START BATTLE (%d)" % _slots)
 	_rows_label.text = "\n".join(lines)
 
 	if _cursor < GameState.party.size():
@@ -129,9 +134,18 @@ func _refresh() -> void:
 		details.append(crest.get("name", "NO CREST"))
 		details.append(entity.get("name", "NO ENTITY"))
 		details.append("")
-		details.append("FRONT — full melee power;")
-		details.append("more exposed.")
-		details.append("BACK — safer; weaker melee.")
+		# Two lines is the whole budget left in this box at native font
+		# size: 70px holds six 9px lines at the theme's 3px spacing, and
+		# class/crest/entity/spacer already take four. So describe only
+		# the row this duelist is actually in — LEFT/RIGHT swaps it and
+		# the copy follows, which is the feedback that matters here.
+		# Explaining both rows at once clipped the second one silently.
+		if str(build.get("position", "front")) == "front":
+			details.append("FRONT: hits hard,")
+			details.append("more exposed.")
+		else:
+			details.append("BACK: safer, but")
+			details.append("weaker melee.")
 		_detail_label.text = "\n".join(details)
 		CharacterPresentation.apply_portrait(_portrait, str(build.get("sprite_key", "")))
 		_crest_art.texture = _optional_texture("res://assets/crests/%s/icon.png" % build.get("crest_id", ""))

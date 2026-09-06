@@ -22,6 +22,14 @@ const NEUTRAL := "neutral"
 # 3px stops reading as a flourish and starts reading as a broken border.
 const CORNER_LENGTH := 3
 
+# crestbound_font.fnt is a bitmap face authored at 8px. Godot rescales
+# bitmap glyphs to whatever size is asked for, and any factor below 1.0
+# drops whole pixel rows — strokes disappear and letters read as other
+# letters (ACTIVE became NCTIVE, Liora became L:ora on party setup).
+# Never request less than this; to fit more copy, shorten the string or
+# widen its box rather than shrinking the text.
+const FONT_SIZE := 8
+
 
 static func accent_color(role: String) -> Color:
 	match role:
