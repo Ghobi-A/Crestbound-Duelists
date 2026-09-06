@@ -224,7 +224,10 @@ func _execute_move(actor: BattleUnit, action: Dictionary) -> Array:
 			"amount": reflected, "ko": not actor.is_alive(),
 		})
 
-	var decay := runtime.stat_mod_duration(int(game_data.config_value("stat_decay_duration")))
+	# Lifecycle counters tick at the end of the application round, so store
+	# one extra tick: a configured 3-round modifier is active for three
+	# subsequent decision rounds rather than silently spending one immediately.
+	var decay := runtime.stat_mod_duration(int(game_data.config_value("stat_decay_duration"))) + 1
 	for mod in move.get("target_stat_mods", []):
 		# Hex suppresses positive stat changes from any source, while debuffs
 		# remain legal. Current kits target enemies with debuffs only, but the
@@ -247,7 +250,7 @@ func _execute_move(actor: BattleUnit, action: Dictionary) -> Array:
 
 	for effect in move.get("status_effects", []):
 		var status_name: String = effect.get("status", "")
-		var duration := int(effect.get("duration", 1)) + actor.status_duration_bonus()
+		var duration := int(effect.get("duration", 1)) + actor.status_duration_bonus() + 1
 		if status_name == "hexed":
 			# Hex immediately strips existing positive stat modifiers, then
 			# prevents new positive modifiers while the status is active.
