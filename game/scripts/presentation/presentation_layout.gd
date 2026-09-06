@@ -56,9 +56,12 @@ const EFFECT_SCALE := COMBATANT_HEIGHT / LEGACY_COMBATANT_HEIGHT
 
 # --- Dialogue ---------------------------------------------------------
 const DIALOGUE_RECT := Rect2(32, 496, 1216, 208)
-# The portrait box is very nearly 1:1 with its 138x160 atlas crop, so
-# portraits now show their authored detail instead of a 4x reduction.
-const PORTRAIT_RECT := Rect2(20, 20, 136, 160)
+# The speaker's portrait breaks the top edge of the dialogue panel rather
+# than sitting inside it. The character is the subject of the scene and
+# the panel is the surface their words are written on, so the portrait
+# reads better crossing the boundary than boxed inside it. Sized above
+# its 138x160 atlas crop, which the source resolution comfortably carries.
+const PORTRAIT_RECT := Rect2(24, -52, 168, 195)
 const TEXT_TOP := 60.0
 const TEXT_HEIGHT := 112.0
 const RIGHT_MARGIN := 56.0

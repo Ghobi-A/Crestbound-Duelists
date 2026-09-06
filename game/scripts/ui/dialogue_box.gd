@@ -35,13 +35,40 @@ var _panel: UiPanel
 var _portrait: TextureRect
 var _speaker_label: Label
 var _text_label: Label
-var _advance_label: Label
+var _advance_mark: _AdvanceChevron
+
+
+class _AdvanceChevron:
+	extends Control
+	## The "there is more to read" prompt. A slow bob rather than a blink:
+	## blinking pulls the eye away from the line being read.
+	var _time := 0.0
+
+	func _process(delta: float) -> void:
+		_time += delta
+		queue_redraw()
+
+	func _draw() -> void:
+		var bob := sin(_time * 3.0) * 3.0
+		var w := 9.0
+		var h := 7.0
+		var tip := Vector2(0, bob)
+		draw_colored_polygon(
+			PackedVector2Array([
+				tip + Vector2(-w, -h),
+				tip + Vector2(w, -h),
+				tip,
+			]),
+			PlaceholderPalette.CREST_GOLD
+		)
 
 
 func _ready() -> void:
 	layer = 10
 	_panel = UiPanel.create(PresentationLayout.DIALOGUE_RECT.position, PresentationLayout.DIALOGUE_RECT.size, UiStyle.COMMAND)
-	_panel.clip_contents = true
+	# The portrait overhangs the panel's top edge on purpose, so the panel
+	# must not clip its children. Each label clips its own text instead.
+	_panel.clip_contents = false
 	add_child(_panel)
 
 	_portrait = TextureRect.new()
@@ -59,7 +86,7 @@ func _ready() -> void:
 	_speaker_label.clip_text = true
 	_speaker_label.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
 	_speaker_label.add_theme_font_size_override("font_size", Typography.HEADING)
-	_speaker_label.add_theme_color_override("font_color", PlaceholderPalette.TEXT_WARN)
+	_speaker_label.add_theme_color_override("font_color", PlaceholderPalette.CREST_GOLD_BRIGHT)
 	_panel.add_child(_speaker_label)
 
 	_text_label = Label.new()
@@ -73,14 +100,14 @@ func _ready() -> void:
 	_text_label.add_theme_color_override("font_color", PlaceholderPalette.TEXT_MAIN)
 	_panel.add_child(_text_label)
 
-	_advance_label = Label.new()
-	_advance_label.text = "v"
-	_advance_label.position = Vector2(
-		PresentationLayout.DIALOGUE_RECT.size.x - PAD * 2,
-		PresentationLayout.DIALOGUE_RECT.size.y - PAD * 2)
-	_advance_label.add_theme_font_size_override("font_size", Typography.BODY)
-	_advance_label.add_theme_color_override("font_color", PlaceholderPalette.TEXT_DIM)
-	_panel.add_child(_advance_label)
+	# Drawn, not typeset: the bitmap face has no triangle glyph, and a
+	# U+25BC fell back to a tofu box showing its own codepoint.
+	_advance_mark = _AdvanceChevron.new()
+	_advance_mark.position = Vector2(
+		PresentationLayout.DIALOGUE_RECT.size.x - PAD * 2.0,
+		PresentationLayout.DIALOGUE_RECT.size.y - PAD * 1.6)
+	_advance_mark.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_panel.add_child(_advance_mark)
 
 	visible = false
 

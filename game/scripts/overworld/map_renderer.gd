@@ -23,6 +23,26 @@ const WATER_CHARS := ["~"]
 # (NPC spawn markers and the notice board post).
 const GROUND_CHARS := [".", ",", "E", "M", "n", "B", "W", "K", "P", "G", "Q", "O", "Y", "X"]
 
+# Light pools. The glow sprite is a 48px disc, so the scale is what sets
+# how far light actually reaches; a lantern throws further than a window.
+const LAMP_GLOW_SCALE := 1.6
+const LAMP_GLOW_COLOR := Color(1.0, 0.82, 0.48, 0.85)
+const WINDOW_GLOW_SCALE := 0.9
+const WINDOW_GLOW_COLOR := Color(1.0, 0.78, 0.42, 0.55)
+
+# Ground footprint per prop, in world units. A tree's trunk meets the
+# ground over a much narrower span than its canopy, and the shadow has to
+# follow the trunk or the tree looks like it is hovering.
+const _FOOTPRINTS := {
+	"tree_0": 7.0,
+	"tree_1": 7.0,
+	"lamp": 5.0,
+	"barrel": 9.0,
+	"crate": 10.0,
+	"well": 13.0,
+	"fence": 14.0,
+}
+
 var _manifest: Dictionary = {}
 var _terrain_source_id := -1
 var _prop_source_id := -1
@@ -39,12 +59,13 @@ func build(parent: Node2D, rows: Array, decal_rows: Array, decor_rows: Array) ->
 	_terrain_rows = rows
 	_build_tileset()
 
-	var ground := _make_layer(parent, "GroundLayer", -20)
-	var decals := _make_layer(parent, "DecalLayer", -19)
-	var overlay := _make_layer(parent, "OverlayLayer", -18)
+	var ground := _make_layer(parent, "GroundLayer", EnvironmentLayers.GROUND)
+	var overlay := _make_layer(parent, "OverlayLayer", EnvironmentLayers.GROUND + 1)
+	var decals := _make_layer(parent, "DecalLayer", EnvironmentLayers.DECAL)
 	_paint_terrain(ground, overlay, rows)
 	_paint_decals(decals, decal_rows)
 	_place_props(parent, decor_rows)
+	_light_windows(parent, rows)
 	return true
 
 
@@ -238,11 +259,27 @@ func _place_props(parent: Node2D, decor_rows: Array) -> void:
 			# compares where a prop touches the ground — not where its
 			# canopy starts — and characters pass behind it correctly.
 			sprite.offset = Vector2(0, -height)
-			sprite.position = Vector2(x * TILE, (y + 1) * TILE)
-			parent.add_child(sprite)
+			# Centred on its cell rather than pinned to the cell's left
+			# edge: a prop narrower than a tile otherwise stands
+			# noticeably off to one side of the ground it occupies.
+			var stand := Node2D.new()
+			stand.position = Vector2(x * TILE + (TILE - width) / 2.0, (y + 1) * TILE)
+			stand.z_index = EnvironmentLayers.ACTORS
+			stand.y_sort_enabled = true
+			parent.add_child(stand)
+			stand.add_child(sprite)
+			sprite.position = Vector2.ZERO
+			# The shadow anchors at the prop's foot, which is this node's
+			# origin — the same point y-sorting uses.
+			var footprint: float = _FOOTPRINTS.get(prop_name, float(width) * 0.7)
+			var shadow_host := Node2D.new()
+			shadow_host.position = Vector2(width / 2.0, 0)
+			stand.add_child(shadow_host)
+			OverworldDepth.attach(shadow_host, footprint)
 
 			if prop_name == "lamp":
-				_add_glow(parent, Vector2(x * TILE + TILE / 2.0, y * TILE + 4), 1.0)
+				_add_glow(parent, Vector2(x * TILE + TILE / 2.0, y * TILE + 4),
+					LAMP_GLOW_SCALE, LAMP_GLOW_COLOR)
 
 
 func _prop_for(symbol: String, x: int, y: int) -> String:
@@ -262,7 +299,26 @@ func _prop_for(symbol: String, x: int, y: int) -> String:
 	return ""
 
 
-func _add_glow(parent: Node2D, at: Vector2, scale_factor: float) -> void:
+func _light_windows(parent: Node2D, rows: Array) -> void:
+	## A lit window should cast light, not just be a bright rectangle.
+	## Warm spill pools on the ground below each lit pane and picks out
+	## the wall around it, which is what makes the houses read as
+	## occupied rather than as painted facades.
+	for y in rows.size():
+		var row: String = rows[y]
+		for x in row.length():
+			var lit := false
+			if row[x] == "H":
+				lit = _house_kind(rows, x, y) == "window"
+			elif row[x] == "D":
+				lit = true
+			if not lit:
+				continue
+			_add_glow(parent, Vector2(x * TILE + TILE / 2.0, (y + 1) * TILE),
+				WINDOW_GLOW_SCALE, WINDOW_GLOW_COLOR)
+
+
+func _add_glow(parent: Node2D, at: Vector2, scale_factor: float, tint: Color) -> void:
 	var glow_path := ATLAS_DIR + "glow.png"
 	if not ResourceLoader.exists(glow_path):
 		return
@@ -270,9 +326,11 @@ func _add_glow(parent: Node2D, at: Vector2, scale_factor: float) -> void:
 	glow.texture = load(glow_path)
 	glow.position = at
 	glow.scale = Vector2(scale_factor, scale_factor)
+	glow.modulate = tint
 	# Additive so lantern pools brighten the ground without washing out
 	# the tile detail underneath.
 	glow.material = CanvasItemMaterial.new()
 	glow.material.blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
-	glow.z_index = -18
+	glow.z_index = EnvironmentLayers.LIGHT
+	PresentationLayout.use_pixel_art_filter(glow)
 	parent.add_child(glow)

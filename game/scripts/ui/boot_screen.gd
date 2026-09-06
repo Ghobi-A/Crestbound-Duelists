@@ -151,15 +151,29 @@ func _position_menu_band() -> void:
 	_menu_tick.position = Vector2(MENU_BAND.position.x, y)
 
 
+func _fit_menu_frame(row_count: int) -> void:
+	## The frame wraps the rows it actually contains. Sizing it for the
+	## maximum four options left a dead band under the list whenever the
+	## save-dependent "Continue" row was absent.
+	if _body_panel == null:
+		return
+	var inset := 20.0
+	var height := MENU_PITCH * maxf(1.0, float(row_count)) + inset * 2
+	_body_panel.size = Vector2(MENU_BAND.size.x + inset * 2, height)
+	_body_panel.custom_minimum_size = _body_panel.size
+	_body_panel.queue_redraw()
+
+
 func _refresh() -> void:
 	_position_menu_band()
 	if _screen != Screen.MENU:
 		for row in _menu_rows:
 			row.visible = false
 	_detail_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_detail_label.size.x = 260
+	_detail_label.size.x = PresentationLayout.CANVAS.x * 0.5
 	match _screen:
 		Screen.MENU:
+			_fit_menu_frame(_menu_options.size())
 			_list_label.text = ""
 			for i in _menu_rows.size():
 				var row := _menu_rows[i]

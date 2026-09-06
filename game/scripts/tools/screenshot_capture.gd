@@ -7,13 +7,13 @@ extends Node
 ##
 ## The window is driven at exactly the 1280x720 internal resolution, so the
 ## viewport texture IS the internal game canvas at 1:1 — never an OS-window
-## or browser grab. The 4x copy is produced from that image by
-## nearest-neighbour upscaling, preserving exact pixel boundaries.
+## or browser grab.
 ##
 ## Targets:
 ##   boot          — title screen with the main menu.
 ##   party_setup   — pre-battle roster and formation screen.
 ##   overworld     — Greymere at the default spawn tile.
+##   dialogue      — Greymere with its opening conversation on screen.
 ##   battle        — Hollow Court, round 1, command menu open.
 ##   battle_target — Hollow Court, round 1, first move opened against the
 ##                   first target (shows the target-highlight ring/dim).
@@ -31,6 +31,7 @@ const SCENE_PATHS := {
 	"overworld": "res://scenes/overworld/greymere.tscn",
 	"battle": "res://scenes/battle/party_battle.tscn",
 	"battle_target": "res://scenes/battle/party_battle.tscn",
+	"dialogue": "res://scenes/overworld/greymere.tscn",
 }
 
 const SETTLE_FRAMES := 30
@@ -52,6 +53,13 @@ func _ready() -> void:
 	var scene: Node = load(SCENE_PATHS[target]).instantiate()
 	get_tree().root.add_child(scene)
 	await _frames(SETTLE_FRAMES)
+	if target == "dialogue":
+		# Greymere's opening conversation. Dialogue is a major narrative
+		# surface and was previously unrepresented in the baselines, so a
+		# regression in the panel, the portrait bounds or pagination could
+		# only be caught by playing the game.
+		scene.call("_play_dialogue", "elara_intro")
+		await _frames(SETTLE_FRAMES)
 	if target == "battle" or target == "battle_target":
 		# battle_intro is 3 entries totalling 6 lines; one press per line
 		# leaves the round-1 command menu open.

@@ -25,7 +25,7 @@ OUT_DIR="$(cd "$(dirname "${1:-$REPO_ROOT/docs/visual_refs}")" && pwd)/$(basenam
 # Host window to render into. Defaults to the 1280x720 logical canvas;
 # set it to a whole multiple (2560x1440) to check a larger host window.
 CAPTURE_RESOLUTION="${CAPTURE_RESOLUTION:-1280x720}"
-TARGETS=(boot party_setup overworld battle battle_target)
+TARGETS=(boot party_setup overworld dialogue battle battle_target)
 
 mkdir -p "$CACHE_DIR" "$OUT_DIR"
 

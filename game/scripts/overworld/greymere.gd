@@ -111,6 +111,7 @@ var _camera: Camera2D
 var _dialogue: DialogueBox
 var _onboarding: OnboardingPanel
 var _npc_tiles: Dictionary = {}       # Vector2i -> OverworldNPC
+var _indicators: Dictionary = {}      # Vector2i -> InteractionIndicator
 var _exit_dialogue_armed := true
 
 
@@ -121,8 +122,10 @@ func _ready() -> void:
 	# pass behind trees and lamp posts rather than through them.
 	y_sort_enabled = true
 	_build_map_layer()
+	_build_terrain_treatment()
 	_build_court_landmark()
 	_build_lighting()
+	_build_atmosphere()
 	AudioRouter.play_music("greymere")
 	_build_dialogue()
 	_build_npcs()
@@ -221,6 +224,37 @@ func _build_court_landmark() -> void:
 	add_child(art)
 
 
+func _world_size() -> Vector2:
+	return Vector2(map_width() * TILE, map_height() * TILE)
+
+
+func _build_terrain_treatment() -> void:
+	## Broad ground variation over the tile layer. See
+	## terrain_treatment.gdshader: the signal it adds is lower-frequency
+	## than a tile, so no tile set can supply it.
+	var shader_path := "res://scripts/overworld/terrain_treatment.gdshader"
+	if not ResourceLoader.exists(shader_path):
+		return
+	var treatment := ColorRect.new()
+	treatment.name = "TerrainTreatment"
+	treatment.position = Vector2.ZERO
+	treatment.size = _world_size()
+	treatment.z_index = EnvironmentLayers.TERRAIN_TREATMENT
+	treatment.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var material := ShaderMaterial.new()
+	material.shader = load(shader_path)
+	material.set_shader_parameter("world_size", _world_size())
+	treatment.material = material
+	add_child(treatment)
+
+
+func _build_atmosphere() -> void:
+	var atmosphere := OverworldAtmosphere.new()
+	atmosphere.name = "Atmosphere"
+	atmosphere.world_size = _world_size()
+	add_child(atmosphere)
+
+
 func _build_lighting() -> void:
 	var tint := CanvasModulate.new()
 	tint.name = "NightTint"
@@ -239,6 +273,12 @@ func _build_lighting() -> void:
 	texture.texture = load(vignette_path)
 	texture.set_anchors_preset(Control.PRESET_FULL_RECT)
 	texture.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	# The vignette is a smooth falloff ramp, not pixel art: stretching it
+	# to the canvas is exactly what it is for, and it must interpolate
+	# rather than step, or the edge banding becomes visible at 720p.
+	texture.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	texture.stretch_mode = TextureRect.STRETCH_SCALE
+	PresentationLayout.use_source_art_filter(texture)
 	overlay.add_child(texture)
 	add_child(overlay)
 
@@ -387,8 +427,25 @@ func _build_indicators() -> void:
 
 func _add_indicator(tile: Vector2i, y_offset: float = -6.0) -> void:
 	var indicator := InteractionIndicator.new()
+	# Markers belong above the world but below anything the interface
+	# draws, and must not y-sort against characters — a prompt that
+	# disappeared behind the NPC it labels would be worse than none.
+	indicator.z_index = EnvironmentLayers.FOREGROUND
 	add_child(indicator)
 	indicator.setup(Vector2(tile * TILE) + Vector2(TILE / 2.0, y_offset))
+	_indicators[tile] = indicator
+
+
+func _refresh_indicator_focus() -> void:
+	## Exactly one marker can be focused: the tile the player is facing,
+	## which is the same tile `_try_interact` acts on. Deriving both from
+	## `_player.tile + _player.facing` is what keeps the prompt honest —
+	## it cannot highlight something the button would not activate.
+	if _player == null:
+		return
+	var target: Vector2i = _player.tile + _player.facing
+	for tile in _indicators:
+		_indicators[tile].focused = tile == target
 
 
 func _build_camera() -> void:
@@ -427,6 +484,10 @@ func _on_onboarding_dismissed() -> void:
 
 
 # ── Interaction ──────────────────────────────────────────────────────
+
+func _process(_delta: float) -> void:
+	_refresh_indicator_focus()
+
 
 func _unhandled_input(event: InputEvent) -> void:
 	if (_onboarding != null and _onboarding.active) or _dialogue.active or _player.is_moving():

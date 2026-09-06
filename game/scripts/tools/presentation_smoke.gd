@@ -119,8 +119,9 @@ func check_formations() -> void:
 				check(sprite._sprite.flip_h == (unit.team == "enemy"), "Wrong facing " + unit.sprite_key())
 				var anchor := PresentationLayout.mirrored_anchor(sprite._anchor, sprite._frame_w, sprite._sprite.flip_h)
 				check((sprite._sprite.position + anchor * sprite._display_scale).length() < 0.01, "Foot anchor drift")
-				check(sprite.position.y < 110, "Combatant enters HUD")
-				check(sprite.position.x < 160 if unit.team == "player" else sprite.position.x > 160, "Team crosses centre")
+				check(sprite.position.y < PresentationLayout.BATTLE_HEIGHT, "Combatant enters HUD")
+				var midpoint := PresentationLayout.CANVAS.x * 0.5
+				check(sprite.position.x < midpoint if unit.team == "player" else sprite.position.x > midpoint, "Team crosses centre")
 		stage.queue_free()
 		await get_tree().process_frame
 
@@ -147,7 +148,11 @@ func check_world_and_setup() -> void:
 		setup._cursor = i
 		setup._refresh()
 		await get_tree().process_frame
-		check(setup._portrait.size == Vector2(34, 40), "Party portrait expanded")
+		# The box is whatever party setup laid out; what matters is that the
+		# source image did not override it (EXPAND_IGNORE_SIZE), which is
+		# the failure this check exists to catch.
+		check(setup._portrait.expand_mode == TextureRect.EXPAND_IGNORE_SIZE
+			and setup._portrait.size.x > 0.0, "Party portrait expanded")
 	setup.queue_free()
 	await get_tree().process_frame
 

@@ -35,18 +35,13 @@ func _ready() -> void:
 	var canvas := PresentationLayout.CANVAS
 	var hud := PresentationLayout.hud_rect()
 
-	var top := ColorRect.new()
-	top.color = PlaceholderPalette.MOON_SLATE
+	# Header: a downward-fading scrim over the artwork rather than an
+	# opaque bar, so the top of the Hollow Court plate stays visible.
+	var top := _Chrome.new()
+	top.kind = _Chrome.HEADER
 	top.size = Vector2(canvas.x, PresentationLayout.TOP_BAR_HEIGHT)
+	top.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(top)
-	# A gold underline separates the header from the battlefield, matching
-	# the accent edge UiStyle.draw_panel puts on every other panel. Kept
-	# as a plain ColorRect since the top bar isn't a custom-drawn Control.
-	var top_accent := ColorRect.new()
-	top_accent.color = PlaceholderPalette.CREST_GOLD
-	top_accent.position = Vector2(0, top.size.y - UiStyle.LINE)
-	top_accent.size = Vector2(canvas.x, UiStyle.LINE)
-	top.add_child(top_accent)
 	var bar_text_height := Typography.HEADING * 1.5
 	_phase_label = _label(top, Vector2(PAD, (top.size.y - bar_text_height) * 0.5),
 		Vector2(canvas.x * 0.42, bar_text_height), PlaceholderPalette.TEXT_WARN, Typography.BODY)
@@ -71,8 +66,9 @@ func _ready() -> void:
 		icon_rect.modulate = PlaceholderPalette.CREST_GOLD
 		top.add_child(icon_rect)
 
-	var message_strip := ColorRect.new()
-	message_strip.color = Color(0, 0, 0, 0.55)
+	var message_strip := _Chrome.new()
+	message_strip.kind = _Chrome.MESSAGE
+	message_strip.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	message_strip.position = Vector2(0, hud.position.y - PresentationLayout.MESSAGE_STRIP_HEIGHT)
 	message_strip.size = Vector2(canvas.x, PresentationLayout.MESSAGE_STRIP_HEIGHT)
 	add_child(message_strip)
@@ -80,8 +76,9 @@ func _ready() -> void:
 		Vector2(canvas.x - PAD * 2, Typography.BODY * 1.5), PlaceholderPalette.TEXT_MAIN,
 		Typography.BODY)
 
-	var bottom := ColorRect.new()
-	bottom.color = PlaceholderPalette.MOON_SLATE
+	var bottom := _Chrome.new()
+	bottom.kind = _Chrome.HUD
+	bottom.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	bottom.position = hud.position
 	bottom.size = hud.size
 	add_child(bottom)
@@ -125,6 +122,40 @@ func _ready() -> void:
 		Typography.DISPLAY)
 	_banner_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_banner_label.visible = false
+
+
+class _Chrome:
+	extends Control
+	## The HUD's own background bands. Custom-drawn rather than ColorRects
+	## because each is a fade over artwork, not a flat fill.
+	const HEADER := 0
+	const MESSAGE := 1
+	const HUD := 2
+
+	var kind := HUD
+
+	func _draw() -> void:
+		var rect := Rect2(Vector2.ZERO, size)
+		match kind:
+			HEADER:
+				# Fades downward, so it is darkest under the text and
+				# gone by the time it reaches the battlefield.
+				var steps := 8
+				for i in steps:
+					var t := 1.0 - float(i) / float(steps)
+					draw_rect(Rect2(Vector2(0, size.y * float(i) / float(steps)),
+						Vector2(size.x, size.y / float(steps) + 1.0)),
+						Color(0.02, 0.03, 0.05, 0.80 * t * t))
+				draw_rect(Rect2(Vector2(0, size.y - UiStyle.LINE), Vector2(size.x, UiStyle.LINE)),
+					PlaceholderPalette.CREST_GOLD)
+			MESSAGE:
+				UiStyle.draw_scrim(self, rect, 0.62)
+			HUD:
+				# The HUD band is the one place that stays near-opaque:
+				# it carries the densest text in the game and sits over
+				# the busiest part of the plate.
+				UiStyle.draw_surface(self, rect,
+					Color(0.043, 0.055, 0.086, 0.90), Color(0.024, 0.031, 0.051, 0.97), false)
 
 
 func _context_x() -> float:

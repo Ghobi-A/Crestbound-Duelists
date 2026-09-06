@@ -9,7 +9,12 @@ func build_background(location: String) -> void:
 		return
 	var background := TextureRect.new()
 	background.texture = load(path)
-	PresentationLayout.texture_box(background, PresentationLayout.battlefield_rect())
+	# The plate fills the whole canvas, not just the battlefield band. The
+	# HUD then floats translucent surfaces over real artwork instead of
+	# over a flat slate bar, which is most of what made the old interface
+	# read as a separate box bolted under the picture. Combatant staging
+	# still uses BATTLE_HEIGHT, so the composition is unchanged.
+	PresentationLayout.texture_box(background, Rect2(Vector2.ZERO, PresentationLayout.CANVAS))
 	background.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
 	PresentationLayout.use_source_art_filter(background)
 	background.z_index = -20

@@ -20,6 +20,7 @@ var _rows_label: Label
 var _detail_label: Label
 var _hint_label: Label
 var _portrait: TextureRect
+var _band: _RosterBand
 var _crest_art: TextureRect
 var _entity_art: TextureRect
 
@@ -34,6 +35,25 @@ const FOOTER_TOP := PresentationLayout.CANVAS.y - MARGIN - FOOTER_HEIGHT # 640
 const CONTENT_BOTTOM := FOOTER_TOP - 16.0                                # 624
 ## The roster takes the wider share; encounter detail sits beside it.
 const ROSTER_WIDTH := 696.0
+## Must match the line advance the roster Label uses, or the selection
+## band drifts away from the row it is meant to be behind.
+const ROW_PITCH := Typography.BODY + 6.0
+
+
+class _RosterBand:
+	extends Control
+	## Highlight behind the selected roster row. The roster is one
+	## multi-line Label, so the band is drawn separately underneath it
+	## rather than by splitting the roster into per-row controls.
+	var row := 0
+	var row_pitch := 30.0
+	var visible_band := true
+
+	func _draw() -> void:
+		if not visible_band:
+			return
+		UiStyle.draw_selection_band(self,
+			Rect2(0, row * row_pitch, size.x, row_pitch), UiStyle.COMMAND)
 
 
 func _ready() -> void:
@@ -72,6 +92,14 @@ func _build_ui() -> void:
 
 	# Both labels are clamped to their panel's interior so long authority
 	# names cannot bleed into the detail column.
+	# The band is added before the label so it renders behind the text.
+	_band = _RosterBand.new()
+	_band.position = Vector2(MARGIN + UiStyle.SPACE_S, CONTENT_TOP + PAD)
+	_band.size = Vector2(ROSTER_WIDTH - UiStyle.SPACE_S * 2, content_height - PAD * 2)
+	_band.row_pitch = ROW_PITCH
+	_band.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(_band)
+
 	_rows_label = _label(Vector2(MARGIN + PAD, CONTENT_TOP + PAD), UiStyle.FONT_SIZE, PlaceholderPalette.TEXT_MAIN)
 	_rows_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 	_rows_label.size = Vector2(ROSTER_WIDTH - PAD * 2, content_height - PAD * 2)
@@ -146,6 +174,11 @@ func _refresh() -> void:
 	var start_cursor := "> " if _cursor == GameState.party.size() else "  "
 	lines.append(start_cursor + "START BATTLE  (%d Duelist%s)" % [_slots, "" if _slots == 1 else "s"])
 	_rows_label.text = "\n".join(lines)
+	if _band != null:
+		# The roster prints a blank line before START, so the START row is
+		# one line further down than its cursor index.
+		_band.row = _cursor if _cursor < GameState.party.size() else _cursor + 1
+		_band.queue_redraw()
 
 	if _cursor < GameState.party.size():
 		var build: Dictionary = GameState.party[_cursor]

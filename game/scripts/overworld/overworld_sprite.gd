@@ -69,6 +69,18 @@ static func head_clearance() -> float:
 	return float(point[1]) - 8.0 + 5.0
 
 
+func _ground(parent: Node2D) -> void:
+	## A contact shadow at the character's feet. Characters are positioned
+	## with their ground contact on the node origin (the same point that
+	## drives y-sorting), so the shadow needs no per-character tuning and
+	## stays correct whether the art came from the high-resolution cast
+	## atlas or a 20x30 townsfolk sheet.
+	if _sprite == null:
+		return
+	var drawn_width := float(frame_width) * _sprite.scale.x
+	OverworldDepth.attach(parent, drawn_width)
+
+
 func attach(parent: Node2D, sprite_key: String) -> bool:
 	## Build the sprite under `parent`. Returns false when art is missing,
 	## leaving the caller to fall back to its placeholder drawing.
@@ -104,6 +116,7 @@ func attach(parent: Node2D, sprite_key: String) -> bool:
 		_sprite.scale = Vector2.ONE * float(registry.overworld_display_height) / anchor.y
 		parent.add_child(_sprite)
 		_apply()
+		_ground(parent)
 		return true
 	var path := sheet_path(sprite_key)
 	if not ResourceLoader.exists(path):
@@ -147,6 +160,7 @@ func attach(parent: Node2D, sprite_key: String) -> bool:
 	_sprite.scale = Vector2.ONE * 24.0 / maxf(1.0, anchor.y)
 	parent.add_child(_sprite)
 	_apply()
+	_ground(parent)
 	return true
 
 
