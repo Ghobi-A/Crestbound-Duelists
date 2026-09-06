@@ -54,10 +54,18 @@ def test_exported_classes_preserve_balance_values(tmp_path):
     export_all(tmp_path)
     classes = json.loads((tmp_path / "classes.json").read_text(encoding="utf-8"))
     assert classes["warrior"]["base_stats"] == {
-        "hp": 85, "atk": 75, "def": 70, "mag": 30, "res": 35, "spd": 40,
+        "hp": 100, "atk": 74, "def": 68, "mag": 30, "res": 44, "spd": 44,
     }
+    assert classes["guardian"]["base_stats"]["hp"] == 108
+    assert classes["assassin"]["base_stats"]["spd"] == 68
+
+    moves = json.loads((tmp_path / "moves.json").read_text(encoding="utf-8"))
+    assert moves["power_slash"]["power"] == 16
+    assert moves["reckless_charge"]["power"] == 24
+    assert moves["armor_break"]["target_stat_mods"] == [{"stat": "def", "amount": -8}]
+
     config = json.loads((tmp_path / "combat_config.json").read_text(encoding="utf-8"))
-    assert config["brace_multiplier"] == 1.20
+    assert config["brace_multiplier"] == 1.15
     assert config["speed_band"] == 20
 
 
