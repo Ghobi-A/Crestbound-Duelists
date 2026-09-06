@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-07-27T11:47:22+00:00",
-  "git_commit": "2327e22",
+  "generated_at": "2026-09-06T21:54:34+00:00",
+  "git_commit": "c326027",
   "seed": 42,
   "sims_per_matchup": 100000,
   "policy_sims_per_class": 20000,
@@ -16,155 +16,155 @@
   "win_matrix": {
     "Warrior": {
       "Warrior": 50.0,
-      "Mage": 36.1,
-      "Assassin": 91.6,
-      "Guardian": 58.3,
-      "Neutral": 56.6,
-      "Sorcerer": 24.9
+      "Mage": 50.7,
+      "Assassin": 93.3,
+      "Guardian": 52.7,
+      "Neutral": 62.5,
+      "Sorcerer": 79.1
     },
     "Mage": {
-      "Warrior": 63.9,
+      "Warrior": 49.3,
       "Mage": 50.0,
-      "Assassin": 0.0,
-      "Guardian": 88.3,
-      "Neutral": 27.3,
-      "Sorcerer": 93.8
+      "Assassin": 24.1,
+      "Guardian": 36.7,
+      "Neutral": 31.0,
+      "Sorcerer": 72.0
     },
     "Assassin": {
-      "Warrior": 8.4,
-      "Mage": 100.0,
+      "Warrior": 6.7,
+      "Mage": 75.9,
       "Assassin": 50.0,
-      "Guardian": 24.0,
-      "Neutral": 40.2,
-      "Sorcerer": 54.9
+      "Guardian": 11.4,
+      "Neutral": 74.8,
+      "Sorcerer": 76.3
     },
     "Guardian": {
-      "Warrior": 41.7,
-      "Mage": 11.7,
-      "Assassin": 76.0,
+      "Warrior": 47.3,
+      "Mage": 63.3,
+      "Assassin": 88.6,
       "Guardian": 50.0,
-      "Neutral": 54.3,
-      "Sorcerer": 59.9
+      "Neutral": 77.6,
+      "Sorcerer": 86.0
     },
     "Neutral": {
-      "Warrior": 43.4,
-      "Mage": 72.7,
-      "Assassin": 59.8,
-      "Guardian": 45.7,
+      "Warrior": 37.5,
+      "Mage": 69.0,
+      "Assassin": 25.2,
+      "Guardian": 22.4,
       "Neutral": 50.0,
-      "Sorcerer": 22.5
+      "Sorcerer": 21.9
     },
     "Sorcerer": {
-      "Warrior": 75.1,
-      "Mage": 6.2,
-      "Assassin": 45.1,
-      "Guardian": 40.1,
-      "Neutral": 77.5,
+      "Warrior": 20.9,
+      "Mage": 28.0,
+      "Assassin": 23.7,
+      "Guardian": 14.0,
+      "Neutral": 78.1,
       "Sorcerer": 50.0
     }
   },
   "avg_turns": {
-    "Warrior|Mage": 3.0,
-    "Warrior|Assassin": 3.0,
-    "Warrior|Guardian": 4.0,
+    "Warrior|Mage": 2.9,
+    "Warrior|Assassin": 2.4,
+    "Warrior|Guardian": 4.1,
     "Warrior|Neutral": 3.2,
-    "Warrior|Sorcerer": 2.8,
-    "Mage|Assassin": 3.0,
-    "Mage|Guardian": 3.9,
-    "Mage|Neutral": 3.0,
-    "Mage|Sorcerer": 3.0,
-    "Assassin|Guardian": 3.5,
-    "Assassin|Neutral": 3.0,
-    "Assassin|Sorcerer": 2.7,
-    "Guardian|Neutral": 4.6,
-    "Guardian|Sorcerer": 3.4,
+    "Warrior|Sorcerer": 2.3,
+    "Mage|Assassin": 3.1,
+    "Mage|Guardian": 3.6,
+    "Mage|Neutral": 3.1,
+    "Mage|Sorcerer": 2.9,
+    "Assassin|Guardian": 3.2,
+    "Assassin|Neutral": 3.1,
+    "Assassin|Sorcerer": 2.5,
+    "Guardian|Neutral": 4.4,
+    "Guardian|Sorcerer": 3.2,
     "Neutral|Sorcerer": 3.0
   },
   "class_averages": {
-    "Warrior": 53.5,
-    "Mage": 54.7,
-    "Assassin": 45.5,
-    "Guardian": 48.7,
-    "Neutral": 48.8,
-    "Sorcerer": 48.8
+    "Warrior": 67.7,
+    "Mage": 42.6,
+    "Assassin": 49.0,
+    "Guardian": 72.6,
+    "Neutral": 35.2,
+    "Sorcerer": 32.9
   },
   "policy_comparison": {
     "greedy_vs_random": {
       "Warrior": {
-        "win_rate_a": 75.7,
-        "win_rate_b": 24.3
+        "win_rate_a": 52.7,
+        "win_rate_b": 47.3
       },
       "Mage": {
-        "win_rate_a": 61.3,
-        "win_rate_b": 38.7
+        "win_rate_a": 52.3,
+        "win_rate_b": 47.7
       },
       "Assassin": {
-        "win_rate_a": 55.3,
-        "win_rate_b": 44.7
+        "win_rate_a": 57.0,
+        "win_rate_b": 43.0
       },
       "Guardian": {
-        "win_rate_a": 69.1,
-        "win_rate_b": 30.9
+        "win_rate_a": 55.2,
+        "win_rate_b": 44.8
       },
       "Neutral": {
-        "win_rate_a": 62.7,
-        "win_rate_b": 37.3
+        "win_rate_a": 60.7,
+        "win_rate_b": 39.3
       },
       "Sorcerer": {
-        "win_rate_a": 69.5,
-        "win_rate_b": 30.5
+        "win_rate_a": 51.7,
+        "win_rate_b": 48.3
       }
     },
     "lookahead_vs_random": {
       "Warrior": {
-        "win_rate_a": 37.6,
-        "win_rate_b": 62.4
+        "win_rate_a": 57.7,
+        "win_rate_b": 42.3
       },
       "Mage": {
-        "win_rate_a": 47.5,
-        "win_rate_b": 52.5
+        "win_rate_a": 62.2,
+        "win_rate_b": 37.8
       },
       "Assassin": {
-        "win_rate_a": 59.2,
-        "win_rate_b": 40.8
+        "win_rate_a": 54.4,
+        "win_rate_b": 45.6
       },
       "Guardian": {
-        "win_rate_a": 15.3,
-        "win_rate_b": 84.7
+        "win_rate_a": 59.6,
+        "win_rate_b": 40.4
       },
       "Neutral": {
-        "win_rate_a": 63.4,
-        "win_rate_b": 36.6
+        "win_rate_a": 48.4,
+        "win_rate_b": 51.6
       },
       "Sorcerer": {
-        "win_rate_a": 69.3,
-        "win_rate_b": 30.7
+        "win_rate_a": 63.3,
+        "win_rate_b": 36.7
       }
     },
     "lookahead_vs_greedy": {
       "Warrior": {
-        "win_rate_a": 3.0,
-        "win_rate_b": 97.0
+        "win_rate_a": 54.6,
+        "win_rate_b": 45.4
       },
       "Mage": {
-        "win_rate_a": 33.1,
-        "win_rate_b": 66.9
+        "win_rate_a": 60.0,
+        "win_rate_b": 40.0
       },
       "Assassin": {
-        "win_rate_a": 51.2,
-        "win_rate_b": 48.8
+        "win_rate_a": 45.0,
+        "win_rate_b": 55.0
       },
       "Guardian": {
-        "win_rate_a": 0.9,
-        "win_rate_b": 99.1
+        "win_rate_a": 56.1,
+        "win_rate_b": 43.9
       },
       "Neutral": {
-        "win_rate_a": 50.2,
-        "win_rate_b": 49.8
+        "win_rate_a": 33.7,
+        "win_rate_b": 66.3
       },
       "Sorcerer": {
-        "win_rate_a": 50.0,
-        "win_rate_b": 50.0
+        "win_rate_a": 59.7,
+        "win_rate_b": 40.3
       }
     }
   },
@@ -172,6 +172,9 @@
     {
       "class_a": "Warrior",
       "class_b": "Mage",
+      "analysis_model": "stateful_rollout",
+      "rollouts": 128,
+      "horizon": 3,
       "moves_a": [
         "Power Slash",
         "Armor Break",
@@ -184,42 +187,46 @@
       ],
       "payoff": [
         [
-          -0.6142292490118564,
-          7.107509881422928,
-          1.3162055335968361
+          -0.1243075980392156,
+          -0.25460171568627454,
+          0.020851715686274544
         ],
         [
-          -8.182411067193677,
-          -0.4606719367588923,
-          -6.251976284584984
+          -0.040245098039215624,
+          -0.11961397058823535,
+          0.11688725490196077
         ],
         [
-          -2.5062747035573096,
-          5.215464426877475,
-          -0.5758399209486171
+          -0.22995098039215692,
+          -0.3586519607843138,
+          0.01642156862745098
         ]
       ],
       "strategy_a": [
-        1.0,
         0.0,
+        1.0,
         0.0
       ],
       "strategy_b": [
-        1.0,
         0.0,
+        1.0,
         0.0
       ],
       "entropy_a": -0.0,
       "entropy_b": -0.0,
-      "value_a": -0.6142,
+      "value_a": -0.1196,
       "is_pure_a": true,
-      "greedy_move": "Power Slash",
-      "nash_dominant": "Power Slash",
-      "greedy_matches_nash": true
+      "greedy_move": "Reckless Charge",
+      "nash_dominant": "Armor Break",
+      "greedy_matches_nash": false,
+      "separability_residual": 0.101213
     },
     {
       "class_a": "Warrior",
       "class_b": "Assassin",
+      "analysis_model": "stateful_rollout",
+      "rollouts": 128,
+      "horizon": 3,
       "moves_a": [
         "Power Slash",
         "Armor Break",
@@ -232,42 +239,46 @@
       ],
       "payoff": [
         [
-          8.07272727272727,
-          13.622727272727271,
-          9.552727272727275
+          1.206945903361344,
+          1.1225643382352934,
+          1.2109834558823538
         ],
         [
-          0.5045454545454504,
-          6.054545454545451,
-          1.9845454545454544
+          1.2099789915966384,
+          1.1218356092436972,
+          1.214016544117648
         ],
         [
-          6.180681818181817,
-          11.730681818181818,
-          7.660681818181821
+          1.397387079831932,
+          1.430895483193278,
+          1.3639968487394958
         ]
       ],
       "strategy_a": [
-        1.0,
         0.0,
-        0.0
+        0.0,
+        1.0
       ],
       "strategy_b": [
-        1.0,
         0.0,
-        0.0
+        0.0,
+        1.0
       ],
       "entropy_a": -0.0,
       "entropy_b": -0.0,
-      "value_a": 8.0727,
+      "value_a": 1.364,
       "is_pure_a": true,
-      "greedy_move": "Power Slash",
-      "nash_dominant": "Power Slash",
-      "greedy_matches_nash": true
+      "greedy_move": "Reckless Charge",
+      "nash_dominant": "Reckless Charge",
+      "greedy_matches_nash": true,
+      "separability_residual": 0.11789
     },
     {
       "class_a": "Warrior",
       "class_b": "Guardian",
+      "analysis_model": "stateful_rollout",
+      "rollouts": 128,
+      "horizon": 3,
       "moves_a": [
         "Power Slash",
         "Armor Break",
@@ -280,25 +291,25 @@
       ],
       "payoff": [
         [
-          -0.49333333333332874,
-          6.413333333333336,
-          7.130909090909093
+          -0.018106617647058825,
+          0.01066176470588235,
+          0.04439338235294119
         ],
         [
-          -6.0433333333333294,
-          0.8633333333333351,
-          1.580909090909092
+          -0.015165441176470586,
+          0.010477941176470582,
+          0.04806985294117647
         ],
         [
-          -1.8808333333333316,
-          5.025833333333333,
-          5.74340909090909
+          0.03455882352941175,
+          0.05358455882352936,
+          0.09981617647058816
         ]
       ],
       "strategy_a": [
-        1.0,
         0.0,
-        0.0
+        0.0,
+        1.0
       ],
       "strategy_b": [
         1.0,
@@ -307,15 +318,19 @@
       ],
       "entropy_a": -0.0,
       "entropy_b": -0.0,
-      "value_a": -0.4933,
+      "value_a": 0.0346,
       "is_pure_a": true,
-      "greedy_move": "Power Slash",
-      "nash_dominant": "Power Slash",
-      "greedy_matches_nash": true
+      "greedy_move": "Reckless Charge",
+      "nash_dominant": "Reckless Charge",
+      "greedy_matches_nash": true,
+      "separability_residual": 0.009743
     },
     {
       "class_a": "Warrior",
       "class_b": "Neutral",
+      "analysis_model": "stateful_rollout",
+      "rollouts": 128,
+      "horizon": 3,
       "moves_a": [
         "Power Slash",
         "Armor Break",
@@ -328,42 +343,46 @@
       ],
       "payoff": [
         [
-          0.6372222222222135,
-          6.289999999999996,
-          1.2024999999999935
+          0.3733208427601812,
+          0.7097603223981903,
+          0.27119391025641015
         ],
         [
-          -6.022777777777783,
-          -0.370000000000001,
-          -5.457500000000003
+          0.6225042420814484,
+          0.8009049773755665,
+          0.4056549302413273
         ],
         [
-          -1.0277777777777821,
-          4.625,
-          -0.46250000000000213
+          0.38062075791855216,
+          0.3885334181749625,
+          0.2004937311463045
         ]
       ],
       "strategy_a": [
-        1.0,
         0.0,
+        1.0,
         0.0
       ],
       "strategy_b": [
-        1.0,
         0.0,
-        0.0
+        0.0,
+        1.0
       ],
       "entropy_a": -0.0,
       "entropy_b": -0.0,
-      "value_a": 0.6372,
+      "value_a": 0.4057,
       "is_pure_a": true,
-      "greedy_move": "Power Slash",
-      "nash_dominant": "Power Slash",
-      "greedy_matches_nash": true
+      "greedy_move": "Reckless Charge",
+      "nash_dominant": "Armor Break",
+      "greedy_matches_nash": false,
+      "separability_residual": 0.328527
     },
     {
       "class_a": "Warrior",
       "class_b": "Sorcerer",
+      "analysis_model": "stateful_rollout",
+      "rollouts": 128,
+      "horizon": 3,
       "moves_a": [
         "Power Slash",
         "Armor Break",
@@ -376,42 +395,46 @@
       ],
       "payoff": [
         [
-          0.8273291925465855,
-          8.54906832298137,
-          2.757763975155278
+          0.6981783598856209,
+          0.9238613153594776,
+          0.7364328022875819
         ],
         [
-          -7.1012422360248415,
-          0.6204968944099427,
-          -5.170807453416149
+          0.6872191584967321,
+          0.917133884803922,
+          0.726884191176471
         ],
         [
-          -1.1548136645962686,
-          6.566925465838516,
-          0.775621118012424
+          0.8590392667483662,
+          0.921610753676471,
+          0.6817095588235297
         ]
       ],
       "strategy_a": [
-        1.0,
+        0.8226,
         0.0,
-        0.0
+        0.1774
       ],
       "strategy_b": [
-        1.0,
+        0.2538,
         0.0,
-        0.0
+        0.7462
       ],
-      "entropy_a": -0.0,
-      "entropy_b": -0.0,
-      "value_a": 0.8273,
-      "is_pure_a": true,
-      "greedy_move": "Power Slash",
+      "entropy_a": 0.6745,
+      "entropy_b": 0.8173,
+      "value_a": 0.7267,
+      "is_pure_a": false,
+      "greedy_move": "Reckless Charge",
       "nash_dominant": "Power Slash",
-      "greedy_matches_nash": true
+      "greedy_matches_nash": false,
+      "separability_residual": 0.215584
     },
     {
       "class_a": "Mage",
       "class_b": "Assassin",
+      "analysis_model": "stateful_rollout",
+      "rollouts": 128,
+      "horizon": 3,
       "moves_a": [
         "Arcane Bolt",
         "Mind Pierce",
@@ -424,25 +447,25 @@
       ],
       "payoff": [
         [
-          -3.2888888888888914,
-          4.111111111111107,
-          -1.3155555555555551
+          -0.8159151785714289,
+          -0.49245535714285715,
+          -0.6284747023809524
         ],
         [
-          -9.866666666666667,
-          -2.4666666666666686,
-          -7.893333333333331
+          -0.7919196428571432,
+          -0.4720312499999999,
+          -0.6070461309523814
         ],
         [
-          -4.93333333333333,
-          2.4666666666666686,
-          -2.9599999999999937
+          -0.758147321428572,
+          -0.5050595238095241,
+          -0.6680654761904766
         ]
       ],
       "strategy_a": [
-        1.0,
         0.0,
-        0.0
+        0.0,
+        1.0
       ],
       "strategy_b": [
         1.0,
@@ -451,15 +474,19 @@
       ],
       "entropy_a": -0.0,
       "entropy_b": -0.0,
-      "value_a": -3.2889,
+      "value_a": -0.7581,
       "is_pure_a": true,
-      "greedy_move": "Arcane Bolt",
-      "nash_dominant": "Arcane Bolt",
-      "greedy_matches_nash": true
+      "greedy_move": "Overload",
+      "nash_dominant": "Overload",
+      "greedy_matches_nash": true,
+      "separability_residual": 0.097359
     },
     {
       "class_a": "Mage",
       "class_b": "Guardian",
+      "analysis_model": "stateful_rollout",
+      "rollouts": 128,
+      "horizon": 3,
       "moves_a": [
         "Arcane Bolt",
         "Mind Pierce",
@@ -472,42 +499,46 @@
       ],
       "payoff": [
         [
-          0.2227956989247346,
-          12.620476858345022,
-          0.8147956989247298
+          -0.03551470588235296,
+          0.06889705882352942,
+          -0.10118259803921568
         ],
         [
-          -5.506236559139783,
-          6.891444600280504,
-          -4.914236559139788
+          -0.032022058823529403,
+          0.06834558823529414,
+          -0.09796568627450979
         ],
         [
-          -1.2094623655913956,
-          11.188218793828892,
-          -0.6174623655914004
+          0.036274509803921585,
+          0.09276960784313724,
+          -0.0246875
         ]
       ],
       "strategy_a": [
-        1.0,
         0.0,
-        0.0
+        0.0,
+        1.0
       ],
       "strategy_b": [
-        1.0,
         0.0,
-        0.0
+        0.0,
+        1.0
       ],
       "entropy_a": -0.0,
       "entropy_b": -0.0,
-      "value_a": 0.2228,
+      "value_a": -0.0247,
       "is_pure_a": true,
-      "greedy_move": "Arcane Bolt",
-      "nash_dominant": "Arcane Bolt",
-      "greedy_matches_nash": true
+      "greedy_move": "Overload",
+      "nash_dominant": "Overload",
+      "greedy_matches_nash": true,
+      "separability_residual": 0.047917
     },
     {
       "class_a": "Mage",
       "class_b": "Neutral",
+      "analysis_model": "stateful_rollout",
+      "rollouts": 128,
+      "horizon": 3,
       "moves_a": [
         "Arcane Bolt",
         "Mind Pierce",
@@ -520,42 +551,46 @@
       ],
       "payoff": [
         [
-          1.320299145299142,
-          13.234615384615386,
-          1.885576923076922
+          -0.4580208333333334,
+          0.08290865384615376,
+          -0.6296153846153842
         ],
         [
-          -5.510470085470089,
-          6.403846153846155,
-          -4.945192307692309
+          -0.2787780448717948,
+          0.1593108974358975,
+          -0.46210737179487177
         ],
         [
-          -0.38739316239316324,
-          11.526923076923081,
-          0.17788461538461675
+          -0.48936298076923107,
+          -0.13299278846153834,
+          -0.5341666666666666
         ]
       ],
       "strategy_a": [
-        1.0,
         0.0,
+        1.0,
         0.0
       ],
       "strategy_b": [
-        1.0,
         0.0,
-        0.0
+        0.0,
+        1.0
       ],
       "entropy_a": -0.0,
       "entropy_b": -0.0,
-      "value_a": 1.3203,
+      "value_a": -0.4621,
       "is_pure_a": true,
-      "greedy_move": "Arcane Bolt",
-      "nash_dominant": "Arcane Bolt",
-      "greedy_matches_nash": true
+      "greedy_move": "Overload",
+      "nash_dominant": "Mind Pierce",
+      "greedy_matches_nash": false,
+      "separability_residual": 0.184559
     },
     {
       "class_a": "Mage",
       "class_b": "Sorcerer",
+      "analysis_model": "stateful_rollout",
+      "rollouts": 128,
+      "horizon": 3,
       "moves_a": [
         "Arcane Bolt",
         "Mind Pierce",
@@ -568,42 +603,46 @@
       ],
       "payoff": [
         [
-          4.833870967741934,
-          10.562903225806451,
-          6.266129032258064
+          1.1855121527777779,
+          1.239262152777778,
+          0.31172743055555546
         ],
         [
-          -2.103629032258066,
-          3.6254032258064512,
-          -0.6713709677419359
+          1.1558246527777778,
+          1.2091579861111115,
+          0.33209635416666655
         ],
         [
-          3.099495967741934,
-          8.828528225806451,
-          4.531754032258064
+          0.9752734375000005,
+          0.9939192708333336,
+          0.17757378472222213
         ]
       ],
       "strategy_a": [
-        1.0,
         0.0,
+        1.0,
         0.0
       ],
       "strategy_b": [
-        1.0,
         0.0,
-        0.0
+        0.0,
+        1.0
       ],
       "entropy_a": -0.0,
       "entropy_b": -0.0,
-      "value_a": 4.8339,
+      "value_a": 0.3321,
       "is_pure_a": true,
-      "greedy_move": "Arcane Bolt",
-      "nash_dominant": "Arcane Bolt",
-      "greedy_matches_nash": true
+      "greedy_move": "Overload",
+      "nash_dominant": "Mind Pierce",
+      "greedy_matches_nash": false,
+      "separability_residual": 0.076085
     },
     {
       "class_a": "Assassin",
       "class_b": "Guardian",
+      "analysis_model": "stateful_rollout",
+      "rollouts": 128,
+      "horizon": 3,
       "moves_a": [
         "Quick Strike",
         "Cripple",
@@ -616,42 +655,46 @@
       ],
       "payoff": [
         [
-          -1.258850574712639,
-          8.97132486388385,
-          -0.6668505747126439
+          -0.27481617647058826,
+          -0.1372636554621848,
+          -0.904149159663866
         ],
         [
-          -6.617471264367811,
-          3.6127041742286785,
-          -6.025471264367816
+          -0.28117121848739496,
+          -0.16212578781512607,
+          -0.9038405987394955
         ],
         [
-          -2.6878160919540193,
-          7.5423593466424705,
-          -2.095816091954024
+          -0.24073660714285716,
+          -0.13780199579831937,
+          -0.9327599789915971
         ]
       ],
       "strategy_a": [
-        1.0,
         0.0,
+        1.0,
         0.0
       ],
       "strategy_b": [
-        1.0,
         0.0,
-        0.0
+        0.0,
+        1.0
       ],
       "entropy_a": -0.0,
       "entropy_b": -0.0,
-      "value_a": -1.2589,
+      "value_a": -0.9038,
       "is_pure_a": true,
-      "greedy_move": "Quick Strike",
-      "nash_dominant": "Quick Strike",
-      "greedy_matches_nash": true
+      "greedy_move": "Lethal Edge",
+      "nash_dominant": "Cripple",
+      "greedy_matches_nash": false,
+      "separability_residual": 0.06269
     },
     {
       "class_a": "Assassin",
       "class_b": "Neutral",
+      "analysis_model": "stateful_rollout",
+      "rollouts": 128,
+      "horizon": 3,
       "moves_a": [
         "Quick Strike",
         "Cripple",
@@ -664,42 +707,46 @@
       ],
       "payoff": [
         [
-          -0.10277777777778141,
-          9.25,
-          0.4624999999999986
+          0.42738667582417605,
+          0.5591374771062269,
+          0.3983115842490843
         ],
         [
-          -6.577777777777783,
-          2.7749999999999986,
-          -6.012500000000003
+          0.5607886904761906,
+          0.6364898122710624,
+          0.40851362179487194
         ],
         [
-          -1.829444444444448,
-          7.523333333333333,
-          -1.264166666666668
+          0.4554057921245426,
+          0.6862093635531138,
+          0.4069826007326012
         ]
       ],
       "strategy_a": [
-        1.0,
         0.0,
+        1.0,
         0.0
       ],
       "strategy_b": [
-        1.0,
         0.0,
-        0.0
+        0.0,
+        1.0
       ],
       "entropy_a": -0.0,
       "entropy_b": -0.0,
-      "value_a": -0.1028,
+      "value_a": 0.4085,
       "is_pure_a": true,
-      "greedy_move": "Quick Strike",
-      "nash_dominant": "Quick Strike",
-      "greedy_matches_nash": true
+      "greedy_move": "Lethal Edge",
+      "nash_dominant": "Cripple",
+      "greedy_matches_nash": false,
+      "separability_residual": 0.1232
     },
     {
       "class_a": "Assassin",
       "class_b": "Sorcerer",
+      "analysis_model": "stateful_rollout",
+      "rollouts": 128,
+      "horizon": 3,
       "moves_a": [
         "Quick Strike",
         "Cripple",
@@ -712,25 +759,25 @@
       ],
       "payoff": [
         [
-          4.768888888888885,
-          11.34666666666666,
-          6.413333333333323
+          0.5089688740079368,
+          0.7534133184523809,
+          0.6178912450396825
         ],
         [
-          -3.0011111111111113,
-          3.5766666666666644,
-          -1.3566666666666727
+          0.5918960813492067,
+          0.7231460813492059,
+          0.5989552331349205
         ],
         [
-          2.6968888888888856,
-          9.274666666666661,
-          4.341333333333324
+          0.6993582589285714,
+          0.9210658482142857,
+          0.8040674603174605
         ]
       ],
       "strategy_a": [
-        1.0,
         0.0,
-        0.0
+        0.0,
+        1.0
       ],
       "strategy_b": [
         1.0,
@@ -739,15 +786,19 @@
       ],
       "entropy_a": -0.0,
       "entropy_b": -0.0,
-      "value_a": 4.7689,
+      "value_a": 0.6994,
       "is_pure_a": true,
-      "greedy_move": "Quick Strike",
-      "nash_dominant": "Quick Strike",
-      "greedy_matches_nash": true
+      "greedy_move": "Lethal Edge",
+      "nash_dominant": "Lethal Edge",
+      "greedy_matches_nash": true,
+      "separability_residual": 0.113194
     },
     {
       "class_a": "Guardian",
       "class_b": "Neutral",
+      "analysis_model": "stateful_rollout",
+      "rollouts": 128,
+      "horizon": 3,
       "moves_a": [
         "Shield Bash",
         "Fortify",
@@ -760,42 +811,46 @@
       ],
       "payoff": [
         [
-          0.9091880341880341,
-          4.822649572649572,
-          1.300534188034188
+          0.13033913084464552,
+          0.18060426093514326,
+          0.1116680806938159
         ],
         [
-          -4.846367521367522,
-          -0.932905982905984,
-          -4.455021367521368
+          0.12801423453996968,
+          0.18526937217194567,
+          0.1018205599547511
         ],
         [
-          0.4158547008547018,
-          4.32931623931624,
-          0.8072008547008558
+          0.16794400452488678,
+          0.19969951923076923,
+          0.13792420814479642
         ]
       ],
       "strategy_a": [
-        1.0,
         0.0,
-        0.0
+        0.0,
+        1.0
       ],
       "strategy_b": [
-        1.0,
         0.0,
-        0.0
+        0.0,
+        1.0
       ],
       "entropy_a": -0.0,
       "entropy_b": -0.0,
-      "value_a": 0.9092,
+      "value_a": 0.1379,
       "is_pure_a": true,
-      "greedy_move": "Shield Bash",
-      "nash_dominant": "Shield Bash",
-      "greedy_matches_nash": true
+      "greedy_move": "Avalanche",
+      "nash_dominant": "Avalanche",
+      "greedy_matches_nash": true,
+      "separability_residual": 0.01851
     },
     {
       "class_a": "Guardian",
       "class_b": "Sorcerer",
+      "analysis_model": "stateful_rollout",
+      "rollouts": 128,
+      "horizon": 3,
       "moves_a": [
         "Shield Bash",
         "Fortify",
@@ -808,42 +863,46 @@
       ],
       "payoff": [
         [
-          1.398156682027647,
-          7.127188940092164,
-          2.8304147465437772
+          -0.007321027369281038,
+          0.045252502042483655,
+          -0.0419155943627451
         ],
         [
-          -9.461583577712611,
-          -3.7325513196480937,
-          -8.029325513196481
+          0.3920713337418301,
+          -0.28761871936274497,
+          0.5254353043300656
         ],
         [
-          0.7638709677419371,
-          6.4929032258064545,
-          2.1961290322580673
+          0.03645067401960785,
+          0.08902420343137261,
+          -0.0031415951797385596
         ]
       ],
       "strategy_a": [
-        1.0,
         0.0,
-        0.0
+        0.1018,
+        0.8982
       ],
       "strategy_b": [
-        1.0,
         0.0,
-        0.0
+        0.5839,
+        0.4161
       ],
-      "entropy_a": -0.0,
-      "entropy_b": -0.0,
-      "value_a": 1.3982,
-      "is_pure_a": true,
-      "greedy_move": "Shield Bash",
-      "nash_dominant": "Shield Bash",
-      "greedy_matches_nash": true
+      "entropy_a": 0.4747,
+      "entropy_b": 0.9796,
+      "value_a": 0.0507,
+      "is_pure_a": false,
+      "greedy_move": "Avalanche",
+      "nash_dominant": "Avalanche",
+      "greedy_matches_nash": true,
+      "separability_residual": 0.732264
     },
     {
       "class_a": "Neutral",
       "class_b": "Sorcerer",
+      "analysis_model": "stateful_rollout",
+      "rollouts": 128,
+      "horizon": 3,
       "moves_a": [
         "Hybrid Strike",
         "Focus Shift",
@@ -856,39 +915,40 @@
       ],
       "payoff": [
         [
-          0.20927601809954766,
-          7.040045248868779,
-          1.9169683257918528
+          0.26311264690170955,
+          -0.5076288728632478,
+          -0.7117805154914527
         ],
         [
-          -9.541523525018672,
-          -2.7107542942494405,
-          -7.833831217326367
+          -0.2560596955128206,
+          -0.3969935229700855,
+          -0.7832031250000003
         ],
         [
-          -0.38925339366515743,
-          6.441515837104074,
-          1.3184389140271477
+          0.3326489049145299,
+          -0.4388855502136752,
+          -0.7080829326923074
         ]
       ],
       "strategy_a": [
-        1.0,
         0.0,
-        0.0
+        0.0,
+        1.0
       ],
       "strategy_b": [
-        1.0,
         0.0,
-        0.0
+        0.0,
+        1.0
       ],
       "entropy_a": -0.0,
       "entropy_b": -0.0,
-      "value_a": 0.2093,
+      "value_a": -0.7081,
       "is_pure_a": true,
-      "greedy_move": "Hybrid Strike",
-      "nash_dominant": "Hybrid Strike",
-      "greedy_matches_nash": true
+      "greedy_move": "Wild Card",
+      "nash_dominant": "Wild Card",
+      "greedy_matches_nash": true,
+      "separability_residual": 0.629808
     }
   ],
-  "runtime_seconds": 437.7
+  "runtime_seconds": 371.5
 }

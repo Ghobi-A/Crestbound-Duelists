@@ -41,7 +41,7 @@
     "is_buff_move": false,
     "move_type": "physical",
     "name": "Armor Break",
-    "power": 18,
+    "power": 21,
     "range": 1,
     "resource_cost": 0,
     "self_stat_mods": [],
@@ -54,7 +54,7 @@
     "target_rule": "enemy",
     "target_stat_mods": [
       {
-        "amount": -5,
+        "amount": -10,
         "stat": "def"
       }
     ],
@@ -75,7 +75,7 @@
     "is_buff_move": false,
     "move_type": "physical",
     "name": "Avalanche",
-    "power": 28,
+    "power": 31,
     "range": 1,
     "resource_cost": 0,
     "self_stat_mods": [],
@@ -104,7 +104,7 @@
     "is_buff_move": false,
     "move_type": "physical",
     "name": "Cripple",
-    "power": 18,
+    "power": 20,
     "range": 1,
     "resource_cost": 0,
     "self_stat_mods": [],
@@ -112,17 +112,22 @@
     "status_effects": [],
     "tags": [
       "debuff",
-      "setup"
+      "setup",
+      "initiative_control"
     ],
     "target_rule": "enemy",
     "target_stat_mods": [
       {
-        "amount": -5,
+        "amount": -6,
         "stat": "def"
       },
       {
-        "amount": -5,
+        "amount": -6,
         "stat": "res"
+      },
+      {
+        "amount": -15,
+        "stat": "spd"
       }
     ],
     "terrain_effects": [],
@@ -171,24 +176,24 @@
     "is_buff_move": false,
     "move_type": "magical",
     "name": "Focus Shift",
-    "power": 18,
+    "power": 20,
     "range": 2,
     "resource_cost": 0,
     "self_stat_mods": [
       {
-        "amount": 5,
+        "amount": 7,
         "stat": "atk"
       },
       {
-        "amount": 5,
+        "amount": 7,
         "stat": "mag"
       },
       {
-        "amount": -4,
+        "amount": -5,
         "stat": "def"
       },
       {
-        "amount": -4,
+        "amount": -5,
         "stat": "res"
       }
     ],
@@ -217,16 +222,16 @@
     "is_buff_move": true,
     "move_type": "magical",
     "name": "Fortify",
-    "power": 16,
+    "power": 18,
     "range": 1,
     "resource_cost": 0,
     "self_stat_mods": [
       {
-        "amount": 4,
+        "amount": 15,
         "stat": "def"
       },
       {
-        "amount": 4,
+        "amount": 15,
         "stat": "res"
       }
     ],
@@ -255,7 +260,7 @@
     "is_buff_move": false,
     "move_type": "magical",
     "name": "Hex",
-    "power": 18,
+    "power": 19,
     "range": 3,
     "resource_cost": 0,
     "self_stat_mods": [],
@@ -320,7 +325,7 @@
     "is_buff_move": false,
     "move_type": "physical",
     "name": "Lethal Edge",
-    "power": 32,
+    "power": 36,
     "range": 1,
     "resource_cost": 0,
     "self_stat_mods": [],
@@ -349,7 +354,7 @@
     "is_buff_move": false,
     "move_type": "magical",
     "name": "Mind Pierce",
-    "power": 18,
+    "power": 21,
     "range": 3,
     "resource_cost": 0,
     "self_stat_mods": [],
@@ -363,7 +368,7 @@
     "target_rule": "enemy",
     "target_stat_mods": [
       {
-        "amount": -5,
+        "amount": -10,
         "stat": "res"
       }
     ],
@@ -384,12 +389,12 @@
     "is_buff_move": false,
     "move_type": "magical",
     "name": "Overload",
-    "power": 30,
+    "power": 35,
     "range": 3,
     "resource_cost": 0,
     "self_stat_mods": [
       {
-        "amount": -4,
+        "amount": -6,
         "stat": "res"
       }
     ],
@@ -473,12 +478,12 @@
     "is_buff_move": false,
     "move_type": "physical",
     "name": "Reckless Charge",
-    "power": 30,
+    "power": 35,
     "range": 2,
     "resource_cost": 0,
     "self_stat_mods": [
       {
-        "amount": -4,
+        "amount": -6,
         "stat": "def"
       }
     ],
@@ -535,12 +540,12 @@
     "is_buff_move": false,
     "move_type": "magical",
     "name": "Voidfire",
-    "power": 30,
+    "power": 35,
     "range": 3,
     "resource_cost": 0,
     "self_stat_mods": [
       {
-        "amount": -4,
+        "amount": -6,
         "stat": "res"
       }
     ],
@@ -569,7 +574,7 @@
     "is_buff_move": false,
     "move_type": "adaptive",
     "name": "Wild Card",
-    "power": 30,
+    "power": 34,
     "range": 2,
     "resource_cost": 0,
     "self_stat_mods": [],

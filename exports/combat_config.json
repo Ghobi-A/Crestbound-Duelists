@@ -1,8 +1,8 @@
 {
-  "brace_multiplier": 1.05,
+  "brace_multiplier": 1.2,
   "guaranteed_speed_ratio": 2.0,
   "max_turns": 100,
-  "speed_band": 7,
+  "speed_band": 20,
   "stat_decay_duration": 3,
   "variance_high": 1.0,
   "variance_low": 0.85
