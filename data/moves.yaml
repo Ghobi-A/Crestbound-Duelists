@@ -5,10 +5,10 @@
 #   is_buff_move, status_effects (first entry), cooldown_turns.
 # Tactical fields (range, area_shape, target_rule, resource_cost,
 # terrain_effects) are consumed by the Godot client and reserved for the
-# grid-battle layer; they do not affect the 1v1 balance simulation.
+# party-battle layer; they do not affect the 1v1 balance simulation.
 #
-# Balance values are the v2.1 baseline — do not change without rerunning
-# the simulation suite.
+# Balance values are the v2.2 structural-balance baseline. Class statlines
+# remain unchanged; this pass fixes action incentives and mechanic semantics.
 
 moves:
   # ── Warrior ────────────────────────────────────────────────────────
@@ -39,14 +39,14 @@ moves:
     class_id: warrior
     move_type: physical
     slot: signature
-    power: 18
+    power: 21
     accuracy: 1.0
     cooldown_turns: 1
     range: 1
     area_shape: single
     target_rule: enemy
     resource_cost: 0
-    target_stat_mods: [{stat: def, amount: -5}]
+    target_stat_mods: [{stat: def, amount: -10}]
     self_stat_mods: []
     is_buff_move: false
     status_effects: []
@@ -61,7 +61,7 @@ moves:
     class_id: warrior
     move_type: physical
     slot: gambit
-    power: 30
+    power: 35
     accuracy: 0.75
     cooldown_turns: 1
     range: 2
@@ -69,7 +69,7 @@ moves:
     target_rule: enemy
     resource_cost: 0
     target_stat_mods: []
-    self_stat_mods: [{stat: def, amount: -4}]
+    self_stat_mods: [{stat: def, amount: -6}]
     is_buff_move: false
     status_effects: []
     terrain_effects: []
@@ -106,14 +106,14 @@ moves:
     class_id: mage
     move_type: magical
     slot: signature
-    power: 18
+    power: 21
     accuracy: 1.0
     cooldown_turns: 1
     range: 3
     area_shape: single
     target_rule: enemy
     resource_cost: 0
-    target_stat_mods: [{stat: res, amount: -5}]
+    target_stat_mods: [{stat: res, amount: -10}]
     self_stat_mods: []
     is_buff_move: false
     status_effects: []
@@ -128,7 +128,7 @@ moves:
     class_id: mage
     move_type: magical
     slot: gambit
-    power: 30
+    power: 35
     accuracy: 0.75
     cooldown_turns: 1
     range: 3
@@ -136,7 +136,7 @@ moves:
     target_rule: enemy
     resource_cost: 0
     target_stat_mods: []
-    self_stat_mods: [{stat: res, amount: -4}]
+    self_stat_mods: [{stat: res, amount: -6}]
     is_buff_move: false
     status_effects: []
     terrain_effects: []
@@ -173,19 +173,22 @@ moves:
     class_id: assassin
     move_type: physical
     slot: signature
-    power: 18
+    power: 20
     accuracy: 1.0
     cooldown_turns: 1
     range: 1
     area_shape: single
     target_rule: enemy
     resource_cost: 0
-    target_stat_mods: [{stat: def, amount: -5}, {stat: res, amount: -5}]
+    target_stat_mods:
+      - {stat: def, amount: -6}
+      - {stat: res, amount: -6}
+      - {stat: spd, amount: -15}
     self_stat_mods: []
     is_buff_move: false
     status_effects: []
     terrain_effects: []
-    tags: [debuff, setup]
+    tags: [debuff, setup, initiative_control]
     animation_key: stab_low
     vfx_key: cripple_slash
     ai_tags: [damage, debuff]
@@ -195,7 +198,7 @@ moves:
     class_id: assassin
     move_type: physical
     slot: gambit
-    power: 32
+    power: 36
     accuracy: 0.70
     cooldown_turns: 1
     range: 1
@@ -240,7 +243,7 @@ moves:
     class_id: guardian
     move_type: magical
     slot: signature
-    power: 16
+    power: 18
     accuracy: 1.0
     cooldown_turns: 1
     range: 1
@@ -248,7 +251,7 @@ moves:
     target_rule: enemy
     resource_cost: 0
     target_stat_mods: []
-    self_stat_mods: [{stat: def, amount: 4}, {stat: res, amount: 4}]
+    self_stat_mods: [{stat: def, amount: 15}, {stat: res, amount: 15}]
     is_buff_move: true
     status_effects: []
     terrain_effects: []
@@ -262,7 +265,7 @@ moves:
     class_id: guardian
     move_type: physical
     slot: gambit
-    power: 28
+    power: 31
     accuracy: 0.80
     cooldown_turns: 1
     range: 1
@@ -307,7 +310,7 @@ moves:
     class_id: neutral
     move_type: magical
     slot: signature
-    power: 18
+    power: 20
     accuracy: 1.0
     cooldown_turns: 1
     range: 2
@@ -316,10 +319,10 @@ moves:
     resource_cost: 0
     target_stat_mods: []
     self_stat_mods:
-      - {stat: atk, amount: 5}
-      - {stat: mag, amount: 5}
-      - {stat: def, amount: -4}
-      - {stat: res, amount: -4}
+      - {stat: atk, amount: 7}
+      - {stat: mag, amount: 7}
+      - {stat: def, amount: -5}
+      - {stat: res, amount: -5}
     is_buff_move: false
     status_effects: []
     terrain_effects: []
@@ -333,7 +336,7 @@ moves:
     class_id: neutral
     move_type: adaptive
     slot: gambit
-    power: 30
+    power: 34
     accuracy: 0.75
     cooldown_turns: 1
     range: 2
@@ -378,7 +381,7 @@ moves:
     class_id: sorcerer
     move_type: magical
     slot: signature
-    power: 18
+    power: 19
     accuracy: 1.0
     cooldown_turns: 1
     range: 3
@@ -400,7 +403,7 @@ moves:
     class_id: sorcerer
     move_type: magical
     slot: gambit
-    power: 30
+    power: 35
     accuracy: 0.75
     cooldown_turns: 1
     range: 3
@@ -408,7 +411,7 @@ moves:
     target_rule: enemy
     resource_cost: 0
     target_stat_mods: []
-    self_stat_mods: [{stat: res, amount: -4}]
+    self_stat_mods: [{stat: res, amount: -6}]
     is_buff_move: false
     status_effects: []
     terrain_effects: []
