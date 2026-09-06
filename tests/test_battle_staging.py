@@ -21,7 +21,7 @@ import struct
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
-CONTROLLER_GD = REPO_ROOT / "game" / "scripts" / "battle" / "battle_controller.gd"
+LAYOUT_GD = REPO_ROOT / "game" / "scripts" / "presentation" / "presentation_layout.gd"
 HUD_GD = REPO_ROOT / "game" / "scripts" / "ui" / "battle" / "battle_hud.gd"
 BACKGROUND_PNG = REPO_ROOT / "game" / "assets" / "battle" / "backgrounds" / "hollow_court.png"
 
@@ -46,10 +46,10 @@ def png_size(path: Path) -> tuple[int, int]:
 
 
 def test_background_height_matches_hud_bottom_panel() -> None:
-    controller_source = CONTROLLER_GD.read_text(encoding="utf-8")
+    controller_source = LAYOUT_GD.read_text(encoding="utf-8")
     hud_source = HUD_GD.read_text(encoding="utf-8")
 
-    background_height = _int_const(controller_source, "BACKGROUND_HEIGHT")
+    background_height = _int_const(controller_source, "BATTLE_HEIGHT")
 
     match = re.search(
         r'bottom\.position = Vector2\(0, (\d+)\)', hud_source
@@ -64,8 +64,8 @@ def test_background_height_matches_hud_bottom_panel() -> None:
 
 
 def test_generated_background_matches_declared_height() -> None:
-    controller_source = CONTROLLER_GD.read_text(encoding="utf-8")
-    background_height = _int_const(controller_source, "BACKGROUND_HEIGHT")
+    controller_source = LAYOUT_GD.read_text(encoding="utf-8")
+    background_height = _int_const(controller_source, "BATTLE_HEIGHT")
     width, height = png_size(BACKGROUND_PNG)
     assert width == 320
     assert height == background_height
@@ -74,7 +74,7 @@ def test_generated_background_matches_declared_height() -> None:
 def test_front_row_is_closer_to_camera_than_back_row_for_both_teams() -> None:
     """The depth convention must not differ between player and enemy —
     that mismatch was the original "inverted" bug."""
-    source = CONTROLLER_GD.read_text(encoding="utf-8")
+    source = LAYOUT_GD.read_text(encoding="utf-8")
     front_y = _float_const(source, "FRONT_Y")
     back_y = _float_const(source, "BACK_Y")
     # Larger Y is lower on screen, i.e. closer to the camera/HUD.
@@ -82,7 +82,7 @@ def test_front_row_is_closer_to_camera_than_back_row_for_both_teams() -> None:
 
 
 def test_team_formations_are_on_opposite_halves_of_the_arena() -> None:
-    source = CONTROLLER_GD.read_text(encoding="utf-8")
+    source = LAYOUT_GD.read_text(encoding="utf-8")
     player_x = _float_const(source, "PLAYER_CENTER_X")
     enemy_x = _float_const(source, "ENEMY_CENTER_X")
     arena_width = 320.0

@@ -54,7 +54,10 @@ func _ready() -> void:
 	if target == "battle" or target == "battle_target":
 		# battle_intro is 3 entries totalling 6 lines; one press per line
 		# leaves the round-1 command menu open.
-		await _press_times(6)
+		for _page in 100:
+			if not scene.dialogue.active:
+				break
+			await _press_times(1)
 		await _frames(SETTLE_FRAMES)
 		if target == "battle_target":
 			# Open the first move to leave target selection active, so

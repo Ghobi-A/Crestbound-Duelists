@@ -101,9 +101,8 @@ func _build_ui() -> void:
 	_error_label = _make_label(Vector2(0, 80), 8, PlaceholderPalette.TEXT_DANGER)
 
 	_preview = TextureRect.new()
-	_preview.position = Vector2(232, 88)
-	_preview.size = Vector2(48, 64)  # 24x32 frame at 2x
-	_preview.stretch_mode = TextureRect.STRETCH_SCALE
+	PresentationLayout.texture_box(_preview, Rect2(232, 88, 64, 64))
+	_preview.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	_preview.visible = false
 	add_child(_preview)
 
@@ -147,6 +146,7 @@ func _refresh() -> void:
 		for row in _menu_rows:
 			row.visible = false
 	_detail_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_detail_label.size.x = 260
 	match _screen:
 		Screen.MENU:
 			_list_label.text = ""
@@ -164,6 +164,8 @@ func _refresh() -> void:
 			_preview.visible = false
 			_hint_label.text = "Arrows: choose   Z/Enter: confirm"
 		Screen.CLASS_SELECT:
+			_detail_label.size.x = 190
+			_detail_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 			var class_id: String = _class_list[_class_index]
 			var record := GameData.get_class_record(class_id)
 			var crest_id: String = GameState.DEFAULT_CREST_BY_CLASS.get(class_id, "")
@@ -190,16 +192,16 @@ func _refresh() -> void:
 
 
 func _update_preview(class_id: String) -> void:
-	var path := "res://assets/characters/aren/%s/battle.png" % class_id
-	if not ResourceLoader.exists(path):
+	var record := CharacterPresentation.record_for("aren/%s" % class_id)
+	if record.is_empty():
 		_preview.visible = false
 		return
 	var atlas := AtlasTexture.new()
-	atlas.atlas = load(path)
-	var sidecar := VisualAsset.sidecar_for(path)
-	var size := VisualAsset.positive_size(sidecar, Vector2i(24, 32))
-	atlas.region = Rect2(Vector2.ZERO, size)  # authored idle frame
+	atlas.atlas = CharacterPresentation.atlas(record)
+	atlas.region = CharacterPresentation.rect(record.battle_rect)
+	atlas.filter_clip = true
 	_preview.texture = atlas
+	_preview.material = CharacterPresentation.key_material(record)
 	_preview.visible = true
 
 

@@ -100,7 +100,7 @@
         "class_id": "assassin",
         "crest_id": "glass_crest",
         "entity_id": "",
-        "name": "Serin Dain",
+        "name": "Rin",
         "position": "front"
       }
     ],
@@ -108,7 +108,7 @@
     "id": "serin_first_duel",
     "intro_dialogue": "",
     "location": "veyrhold",
-    "name": "Duelist Trial: Serin Dain",
+    "name": "Duelist Trial: Rin",
     "objective": "defeat_all",
     "player_slots": 1,
     "pre_battle_positioning": false,

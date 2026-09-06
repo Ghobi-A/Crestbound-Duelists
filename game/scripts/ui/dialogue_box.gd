@@ -27,6 +27,8 @@ var _current_key := ""
 var _entries: Array = []
 var _entry_index := 0
 var _line_index := 0
+var _pages: Array[String] = []
+var _page_index := 0
 
 var _panel: UiPanel
 var _portrait: TextureRect
@@ -37,13 +39,12 @@ var _advance_label: Label
 
 func _ready() -> void:
 	layer = 10
-	_panel = UiPanel.create(Vector2(4, 132), Vector2(312, 44), UiStyle.COMMAND)
+	_panel = UiPanel.create(PresentationLayout.DIALOGUE_RECT.position, PresentationLayout.DIALOGUE_RECT.size, UiStyle.COMMAND)
+	_panel.clip_contents = true
 	add_child(_panel)
 
 	_portrait = TextureRect.new()
-	_portrait.position = PORTRAIT_MARGIN
-	_portrait.size = PORTRAIT_SIZE
-	_portrait.stretch_mode = TextureRect.STRETCH_SCALE
+	PresentationLayout.texture_box(_portrait, PresentationLayout.PORTRAIT_RECT)
 	# Portraits are painterly renders, not native pixel art like the rest
 	# of the game (which relies on the project-wide nearest filter to
 	# stay crisp) — downscaling one with nearest neighbour aliases badly,
@@ -55,13 +56,16 @@ func _ready() -> void:
 	_speaker_label = Label.new()
 	_speaker_label.position = Vector2(6, 2)
 	_speaker_label.size = Vector2(300, 10)
+	_speaker_label.clip_text = true
+	_speaker_label.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
 	_speaker_label.add_theme_font_size_override("font_size", 8)
 	_speaker_label.add_theme_color_override("font_color", PlaceholderPalette.TEXT_WARN)
 	_panel.add_child(_speaker_label)
 
 	_text_label = Label.new()
-	_text_label.position = Vector2(6, 12)
-	_text_label.size = Vector2(300, 30)
+	_text_label.position = Vector2(6, PresentationLayout.TEXT_TOP)
+	_text_label.size = Vector2(280, PresentationLayout.TEXT_HEIGHT)
+	_text_label.clip_text = true
 	_text_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	_text_label.add_theme_font_size_override("font_size", 8)
 	_text_label.add_theme_color_override("font_color", PlaceholderPalette.TEXT_MAIN)
@@ -69,7 +73,7 @@ func _ready() -> void:
 
 	_advance_label = Label.new()
 	_advance_label.text = "v"
-	_advance_label.position = Vector2(298, 32)
+	_advance_label.position = Vector2(290, 36)
 	_advance_label.add_theme_font_size_override("font_size", 8)
 	_advance_label.add_theme_color_override("font_color", PlaceholderPalette.TEXT_DIM)
 	_panel.add_child(_advance_label)
@@ -102,6 +106,9 @@ func play(key: String) -> void:
 		return
 	_current_key = key
 	_entries = _dialogue_data[key]
+	if _entries.is_empty():
+		push_error("DialogueBox: empty conversation " + key)
+		return
 	_entry_index = 0
 	_line_index = 0
 	active = true
@@ -113,24 +120,52 @@ func _show_current_line() -> void:
 	var entry: Dictionary = _entries[_entry_index]
 	_speaker_label.text = entry.get("speaker", "")
 	var lines: Array = entry.get("lines", [])
-	_text_label.text = str(lines[_line_index])
 	_apply_portrait(str(entry.get("portrait", "")), str(entry.get("expression", "neutral")))
+	_pages = paginate(str(lines[_line_index]), _text_label.get_theme_font("font"), 8, _text_label.size.x, PresentationLayout.TEXT_HEIGHT)
+	_page_index = 0
+	_text_label.text = _pages[0]
+
+
+static func paginate(text: String, font: Font, font_size: int, width: float, height: float) -> Array[String]:
+	# Measure with the actual font. Character fallback also handles long tokens.
+	var pages: Array[String] = []
+	var line := ""
+	var page := ""
+	var line_count := 0
+	var capacity := maxi(1, floori((height + 3.0) / (font.get_height(font_size) + 3.0)))
+	var wrapped: Array[String] = []
+	for paragraph in text.split("\n", true):
+		line = ""
+		for word in paragraph.split(" ", false):
+			var candidate := word if line.is_empty() else line + " " + word
+			if font.get_string_size(candidate, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size).x <= width:
+				line = candidate
+				continue
+			if not line.is_empty():
+				wrapped.append(line)
+			line = ""
+			for character in word:
+				if not line.is_empty() and font.get_string_size(line + character, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size).x > width:
+					wrapped.append(line)
+					line = ""
+				line += character
+		wrapped.append(line)
+	for row in wrapped:
+		if line_count == capacity:
+			pages.append(page)
+			page = ""
+			line_count = 0
+		page += ("\n" if line_count > 0 else "") + row
+		line_count += 1
+	pages.append(page)
+	return pages
 
 
 func _apply_portrait(portrait_key: String, expression := "neutral") -> void:
-	var shown := false
-	if portrait_key != "":
-		var safe_expression := expression if expression in ["neutral", "determined", "injured", "surprised", "intense"] else "neutral"
-		var path := "res://assets/portraits/%s/%s.png" % [portrait_key, safe_expression]
-		if not ResourceLoader.exists(path):
-			path = PORTRAIT_PATH % portrait_key
-		if ResourceLoader.exists(path):
-			_portrait.texture = load(path)
-			shown = true
-	_portrait.visible = shown
-
-	var text_x := (PORTRAIT_MARGIN.x + PORTRAIT_SIZE.x + PORTRAIT_MARGIN.x) if shown else 6.0
-	var text_width := _panel.size.x - text_x - TEXT_MARGIN_RIGHT
+	CharacterPresentation.apply_portrait(_portrait, portrait_key, expression)
+	var shown := _portrait.texture != null
+	var text_x := PresentationLayout.PORTRAIT_RECT.end.x + 6.0 if shown else 6.0
+	var text_width := _panel.size.x - text_x - PresentationLayout.RIGHT_MARGIN
 	_speaker_label.position.x = text_x
 	_text_label.position.x = text_x
 	_speaker_label.size.x = text_width
@@ -138,6 +173,10 @@ func _apply_portrait(portrait_key: String, expression := "neutral") -> void:
 
 
 func _advance() -> void:
+	if _page_index + 1 < _pages.size():
+		_page_index += 1
+		_text_label.text = _pages[_page_index]
+		return
 	var entry: Dictionary = _entries[_entry_index]
 	var lines: Array = entry.get("lines", [])
 	_line_index += 1

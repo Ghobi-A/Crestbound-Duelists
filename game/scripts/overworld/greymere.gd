@@ -7,8 +7,8 @@ extends Node2D
 ##   # wall   . grass   , grass(alt)   : path   ~ water
 ##   R roof   H house wall   D door (interact)   C Hollow Court arch
 ##   n notice board   S south exit (step-on trigger)
-##   E Elara   M Mira   B Toby (farmboy)   W Wren (herbalist)
-##   K Elder Kassian   P Pell (farmhand)   G town guard (sword)
+##   E Almyra   M Liora   B Joey (farmboy)   W Lena (herbalist)
+##   K Elder Silas   P Gell (farmhand)   G town guard (sword)
 ##   Q watchman (spear)   O Goodwife Senna   Y night watchman (torch)
 ##   X hooded stranger
 
@@ -36,14 +36,14 @@ const MAP: Array[String] = [
 
 const BLOCKING_TILES := ["#", "R", "H", "D", "~", "C", "n"]
 
-## Ordinary villagers, distinct from Elara/Mira: no story beat gates on
+## Ordinary villagers, distinct from Almyra/Liora: no story beat gates on
 ## them, just flavour dialogue that keeps Greymere feeling lived-in.
 const TOWNSFOLK: Array[Dictionary] = [
-	{"name": "Toby", "tile_symbol": "B", "dialogue_key": "toby_flavor", "sprite_key": "townsfolk/farmboy"},
-	{"name": "Wren", "tile_symbol": "W", "dialogue_key": "wren_flavor", "sprite_key": "townsfolk/herbalist_woman"},
-	{"name": "Elder Kassian", "tile_symbol": "K", "dialogue_key": "kassian_flavor", "sprite_key": "townsfolk/village_elder"},
-	{"name": "Pell", "tile_symbol": "P", "dialogue_key": "pell_flavor", "sprite_key": "townsfolk/farmhand_capped"},
-	{"name": "Town Guard", "tile_symbol": "G", "dialogue_key": "guard_flavor", "sprite_key": "townsfolk/guard_sword"},
+	{"name": "Joey", "tile_symbol": "B", "dialogue_key": "toby_flavor", "sprite_key": "townsfolk/farmboy"},
+	{"name": "Lena", "tile_symbol": "W", "dialogue_key": "wren_flavor", "sprite_key": "townsfolk/herbalist_woman"},
+	{"name": "Elder Silas", "tile_symbol": "K", "dialogue_key": "kassian_flavor", "sprite_key": "townsfolk/village_elder"},
+	{"name": "Gell", "tile_symbol": "P", "dialogue_key": "pell_flavor", "sprite_key": "townsfolk/farmhand_capped"},
+	{"name": "Danfor", "tile_symbol": "G", "dialogue_key": "guard_flavor", "sprite_key": "townsfolk/guard_sword"},
 	{"name": "Watchman Orrin", "tile_symbol": "Q", "dialogue_key": "watchman_flavor", "sprite_key": "townsfolk/guard_spear"},
 	{"name": "Goodwife Senna", "tile_symbol": "O", "dialogue_key": "senna_flavor", "sprite_key": "townsfolk/elder_woman"},
 	{"name": "Old Ferris", "tile_symbol": "Y", "dialogue_key": "ferris_flavor", "sprite_key": "townsfolk/torch_bearer"},
@@ -104,9 +104,10 @@ const NIGHT_TINT := Color(0.82, 0.86, 1.0)
 
 const ONBOARDING_FLAG := "overworld_onboarding_seen"
 const ONBOARDING_TITLE := "GETTING STARTED"
-const ONBOARDING_BODY := "MOVE        WASD / Arrow keys\nCONFIRM     Z / Enter / Space\nBACK        X / Escape\n\nObjective: speak to Warden Elara, then investigate the Hollow Court."
+const ONBOARDING_BODY := "MOVE        WASD / Arrow keys\nCONFIRM     Z / Enter / Space\nBACK        X / Escape\n\nObjective: speak to Warden Almyra, then investigate the Hollow Court."
 
 var _player: OverworldPlayer
+var _camera: Camera2D
 var _dialogue: DialogueBox
 var _onboarding: OnboardingPanel
 var _npc_tiles: Dictionary = {}       # Vector2i -> OverworldNPC
@@ -318,11 +319,11 @@ func _build_dialogue() -> void:
 
 
 func _build_npcs() -> void:
-	# Elara watches the Hollow Court arch to the north; Mira faces the
+	# Almyra watches the Hollow Court arch to the north; Liora faces the
 	# square, so the two read as people with somewhere to be.
 	var elara := OverworldNPC.new()
 	elara.setup(
-		"Warden Elara Thorne", _find_tile("E"), "elara_intro",
+		"Warden Almyra", _find_tile("E"), "elara_intro",
 		PlaceholderPalette.NPC_COLOR, "elara", Vector2i(0, -1)
 	)
 	add_child(elara)
@@ -330,14 +331,14 @@ func _build_npcs() -> void:
 
 	var mira := OverworldNPC.new()
 	mira.setup(
-		"Mira Solen", _find_tile("M"), "mira_intro",
+		"Liora Sen", _find_tile("M"), "mira_intro",
 		PlaceholderPalette.NPC_COLOR_ALT, "mira", Vector2i(1, 0)
 	)
 	add_child(mira)
 	_npc_tiles[mira.tile] = mira
 
 	# Ordinary townsfolk, filling out Greymere as a place people actually
-	# live rather than just a lobby for Elara and Mira. Their art is a
+	# live rather than just a lobby for Almyra and Liora. Their art is a
 	# single authored front-facing frame (see
 	# docs/AUTHORED_ART_PIPELINE.md), so unlike the two above they all
 	# face the player at Vector2i(0, 1) — that is the only pose drawn.
@@ -392,6 +393,7 @@ func _add_indicator(tile: Vector2i, y_offset: float = -6.0) -> void:
 
 func _build_camera() -> void:
 	var camera := Camera2D.new()
+	_camera = camera
 	camera.limit_left = 0
 	camera.limit_top = 0
 	camera.limit_right = map_width() * TILE
@@ -445,12 +447,17 @@ func _try_interact() -> void:
 
 
 func _play_dialogue(key: String) -> void:
+	if not _dialogue.has_key(key):
+		return
 	_player.movement_locked = true
+	# Shift only the camera, never collision or the player's tile state.
+	_camera.offset = Vector2(0, PresentationLayout.DIALOGUE_RECT.size.y / 2.0)
 	_dialogue.play(key)
 
 
 func _on_dialogue_finished(key: String) -> void:
 	_player.movement_locked = false
+	_camera.offset = Vector2.ZERO
 	if key == "court_entrance":
 		GameState.player_tile = SPAWN_FROM_COURT
 		GameState.set_flag("entered_hollow_court")

@@ -28,8 +28,7 @@ func _init() -> void:
 	# TextureRect gets filtering control _draw()'s draw_texture doesn't.
 	for i in MAX_ROWS:
 		var portrait := TextureRect.new()
-		portrait.size = PORTRAIT_SIZE
-		portrait.stretch_mode = TextureRect.STRETCH_SCALE
+		PresentationLayout.texture_box(portrait, Rect2(Vector2.ZERO, PORTRAIT_SIZE))
 		portrait.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
 		portrait.visible = false
 		add_child(portrait)
@@ -51,9 +50,8 @@ func _update_portraits() -> void:
 			slot.visible = false
 			continue
 		var actor: BattleUnit = planned[i].actor
-		var path := PORTRAIT_PATH % actor.sprite_key()
-		if actor.sprite_key() != "" and ResourceLoader.exists(path):
-			slot.texture = load(path)
+		CharacterPresentation.apply_portrait(slot, actor.sprite_key())
+		if slot.texture != null:
 			slot.position = Vector2(PORTRAIT_X, 26.0 + i * 20.0 - 9.0)
 			slot.visible = true
 		else:

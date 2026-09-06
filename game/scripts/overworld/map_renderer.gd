@@ -21,7 +21,7 @@ const WATER_CHARS := ["~"]
 
 # Characters that should render as plain ground beneath something else
 # (NPC spawn markers and the notice board post).
-const GROUND_CHARS := [".", ",", "E", "M", "n"]
+const GROUND_CHARS := [".", ",", "E", "M", "n", "B", "W", "K", "P", "G", "Q", "O", "Y", "X"]
 
 var _manifest: Dictionary = {}
 var _terrain_source_id := -1

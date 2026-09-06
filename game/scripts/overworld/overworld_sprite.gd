@@ -23,6 +23,7 @@ var mirror_side_for_west := true
 var _sprite: Sprite2D
 var _facing := "down"
 var _frame := 0
+var _registered_row := -1
 
 static var _cached: Dictionary = {}
 
@@ -73,6 +74,34 @@ func attach(parent: Node2D, sprite_key: String) -> bool:
 	## leaving the caller to fall back to its placeholder drawing.
 	if sprite_key == "":
 		return false
+	var record := CharacterPresentation.record_for(sprite_key)
+	var registry := CharacterPresentation.manifest()
+	if not record.is_empty() and (record.has("overworld") or registry.overworld_rows.has(record.canonical_id)):
+		var world: Dictionary = record.get("overworld", {})
+		_registered_row = int(world.get("row", registry.overworld_rows.get(record.canonical_id, 0)))
+		var frame_size: Array = world.get("frame_size", registry.overworld_frame_size)
+		frame_width = int(frame_size[0])
+		frame_height = int(frame_size[1])
+		var point: Array = world.get("foot_anchor", registry.overworld_anchors.get(record.canonical_id, [192, 322]))
+		anchor = Vector2(point[0], point[1])
+		directions = registry.overworld_directions
+		walk_frames = 1
+		_sprite = Sprite2D.new()
+		var path: String = str(world.get("atlas", registry.overworld_atlas))
+		if not ResourceLoader.exists(path):
+			push_error("OverworldSprite: required atlas missing: " + path)
+			return false
+		_sprite.texture = load(path)
+		_sprite.material = CharacterPresentation.key_material(record)
+		_sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+		_sprite.region_enabled = true
+		_sprite.region_filter_clip_enabled = true
+		_sprite.centered = false
+		_sprite.offset = -anchor
+		_sprite.scale = Vector2.ONE * float(registry.overworld_display_height) / anchor.y
+		parent.add_child(_sprite)
+		_apply()
+		return true
 	var path := sheet_path(sprite_key)
 	if not ResourceLoader.exists(path):
 		return false
@@ -111,6 +140,8 @@ func attach(parent: Node2D, sprite_key: String) -> bool:
 	# The anchor pixel lands on the node origin, so a character stands on
 	# its own feet wherever the owner places it.
 	_sprite.offset = -anchor
+	# Static villagers share the same ground scale as the travelling cast.
+	_sprite.scale = Vector2.ONE * 24.0 / maxf(1.0, anchor.y)
 	parent.add_child(_sprite)
 	_apply()
 	return true
@@ -140,6 +171,9 @@ func rest() -> void:
 
 func _apply() -> void:
 	if _sprite == null:
+		return
+	if _registered_row >= 0:
+		_sprite.region_rect = Rect2(int(directions.get(_facing, 0)) * frame_width, _registered_row, frame_width, frame_height)
 		return
 	var row_name := _facing
 	var flip := false

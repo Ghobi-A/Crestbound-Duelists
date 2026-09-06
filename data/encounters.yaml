@@ -34,7 +34,7 @@ encounters:
   # 1v1 formal duel — demonstrates the smallest encounter size.
   # Not reachable in the prototype story yet; used by tests/debug.
   - id: serin_first_duel
-    name: "Duelist Trial: Serin Dain"
+    name: "Duelist Trial: Rin"
     location: veyrhold
     player_slots: 1
     enemy_slots: 1
@@ -42,7 +42,7 @@ encounters:
     objective: defeat_all
     battlefield_effect: {}
     enemy_party:
-      - {name: Serin Dain, class_id: assassin, crest_id: glass_crest, entity_id: "", position: front}
+      - {name: Rin, class_id: assassin, crest_id: glass_crest, entity_id: "", position: front}
     intro_dialogue: ""
     victory_dialogue: ""
     defeat_dialogue: ""

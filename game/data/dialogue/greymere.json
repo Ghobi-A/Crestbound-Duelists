@@ -1,7 +1,7 @@
 {
   "elara_intro": [
     {
-      "speaker": "Warden Elara Thorne",
+      "speaker": "Warden Almyra",
       "portrait": "elara",
       "expression": "determined",
       "lines": [
@@ -13,7 +13,7 @@
   ],
   "mira_intro": [
     {
-      "speaker": "Mira Solen",
+      "speaker": "Liora Sen",
       "portrait": "mira",
       "expression": "surprised",
       "lines": [
@@ -59,15 +59,15 @@
       ]
     },
     {
-      "speaker": "Warden Elara Thorne",
+      "speaker": "Warden Almyra",
       "portrait": "elara",
       "lines": [
         "Wait. If you are going in regardless, you will not do it alone.",
-        "Mira — stay behind me. And you: touch nothing that hums."
+        "Liora — stay behind me. And you: touch nothing that hums."
       ]
     },
     {
-      "speaker": "Mira Solen",
+      "speaker": "Liora Sen",
       "portrait": "mira",
       "lines": [
         "Everything down there hums, Warden. That is rather the point."
@@ -84,7 +84,7 @@
   ],
   "post_battle": [
     {
-      "speaker": "Warden Elara Thorne",
+      "speaker": "Warden Almyra",
       "portrait": "elara",
       "lines": [
         "Everyone still standing? Good.",
@@ -93,7 +93,7 @@
       ]
     },
     {
-      "speaker": "Mira Solen",
+      "speaker": "Liora Sen",
       "portrait": "mira",
       "lines": [
         "It answered you. Crests are not supposed to answer anyone anymore.",
@@ -103,7 +103,7 @@
   ],
   "toby_flavor": [
     {
-      "speaker": "Toby",
+      "speaker": "Joey",
       "portrait": "townsfolk/farmboy",
       "lines": [
         "Ma says I'm too young to go near the Court. I say I'm too young to muck out the goat pen either, but here we are.",
@@ -113,7 +113,7 @@
   ],
   "wren_flavor": [
     {
-      "speaker": "Wren",
+      "speaker": "Lena",
       "portrait": "townsfolk/herbalist_woman",
       "lines": [
         "Feverbalm, willowbark, a little dried nettle for the swelling. Nothing fancy, but it keeps Greymere on its feet.",
@@ -123,7 +123,7 @@
   ],
   "kassian_flavor": [
     {
-      "speaker": "Elder Kassian",
+      "speaker": "Elder Silas",
       "portrait": "townsfolk/village_elder",
       "lines": [
         "I was younger than you when they sealed that arch. My grandfather was younger than me.",
@@ -134,7 +134,7 @@
   ],
   "pell_flavor": [
     {
-      "speaker": "Pell",
+      "speaker": "Gell",
       "portrait": "townsfolk/farmhand_capped",
       "lines": [
         "Barley's coming in thin this year. Everyone says it's the weather.",
@@ -144,7 +144,7 @@
   ],
   "guard_flavor": [
     {
-      "speaker": "Town Guard",
+      "speaker": "Danfor",
       "portrait": "townsfolk/guard_sword",
       "lines": [
         "Move along toward Veyrhold if you're heading out — I'm not paid to make conversation, I'm paid to watch that road.",
@@ -167,7 +167,7 @@
       "speaker": "Goodwife Senna",
       "portrait": "townsfolk/elder_woman",
       "lines": [
-        "Kassian's told you the arch story already, hasn't he. He tells everyone the arch story.",
+        "Silas's told you the arch story already, hasn't he. He tells everyone the arch story.",
         "It's a good story. Doesn't mean it's the whole one."
       ]
     }
