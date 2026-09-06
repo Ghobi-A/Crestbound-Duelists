@@ -72,23 +72,24 @@ func _draw() -> void:
 	if unit == null:
 		return
 	var card := Rect2(Vector2.ZERO, size)
-	# Each duelist's card carries their class colour on its rule, so the
-	# three cards are distinguishable at a glance and the interface says
-	# something about who these people are rather than treating them as
-	# three identical slots. Gold is reserved for whoever is acting.
+	# No surface of its own. The HUD band beneath is already a surface,
+	# and boxing each duelist on top of it produced a rectangle inside a
+	# rectangle — four edges to say something that spacing and a rule say
+	# better. A card is now a group: an accent rule above it in the
+	# duelist's class colour, and clear air on either side.
 	var class_accent: Color = PlaceholderPalette.class_color(unit.class_id)
 	if highlighted:
-		# The acting unit is lifted, not outlined: a lighter surface and a
-		# full-strength gold rule, so the eye finds it without a border.
-		UiStyle.draw_surface(self, card, UiStyle.SURFACE_RAISED_TOP, UiStyle.SURFACE_RAISED_BOTTOM)
+		# The acting unit is the one thing that earns a surface: a faint
+		# raised wash lifts it out of the row without outlining it.
+		UiStyle.draw_surface(self, card, UiStyle.SURFACE_RAISED_TOP,
+			UiStyle.SURFACE_RAISED_BOTTOM, false)
 		UiStyle.draw_accent_rule(self, card, PlaceholderPalette.CREST_GOLD)
 		UiStyle.draw_crest_mark(self,
 			Vector2(card.size.x - UiStyle.SPACE_M, UiStyle.LINE * 0.5),
 			UiStyle.SPACE_S * 0.8, PlaceholderPalette.CREST_GOLD)
 	else:
-		UiStyle.draw_surface(self, card, UiStyle.SURFACE_TOP, UiStyle.SURFACE_BOTTOM)
 		var resting := class_accent
-		resting.a = 0.55
+		resting.a = 0.7
 		UiStyle.draw_accent_rule(self, card, resting)
 
 	var ink := PlaceholderPalette.TEXT_MAIN if unit.is_alive() else PlaceholderPalette.TEXT_DIM

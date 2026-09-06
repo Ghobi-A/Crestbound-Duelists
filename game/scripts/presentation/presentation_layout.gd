@@ -69,6 +69,14 @@ const PORTRAIT_RECT := Rect2(24, -52, 168, 195)
 const TEXT_TOP := 58.0
 const TEXT_HEIGHT := 84.0
 const RIGHT_MARGIN := 56.0
+## Comfortable reading measure for dialogue prose.
+##
+## The panel is 1216 wide, which left the text ~944px — about 85
+## characters a line at body size, well past the point where the eye
+## loses its place returning to the left edge. Capping the measure lets
+## the panel stay full width (it is a cinematic band, not a text box)
+## while the prose inside it reads at a sane length.
+const TEXT_MEASURE := 720.0
 
 # --- Overworld --------------------------------------------------------
 # Greymere's tiles and townsfolk are authored pixel art at 16px and

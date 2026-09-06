@@ -120,9 +120,13 @@ static func draw_accent_rule(canvas: CanvasItem, rect: Rect2, accent: Color) -> 
 
 
 static func draw_surface(canvas: CanvasItem, rect: Rect2, top: Color, bottom: Color,
-		shadow := true) -> void:
+		shadow := true, edge := true) -> void:
 	## Shadow, gradient body and hairline edge, without any accent. Used
 	## directly by cards and scrims that carry no role of their own.
+	##
+	## `edge` off draws the body alone: a wash that lifts something out of
+	## a surface it already sits on, without adding another outline to a
+	## screen that is trying to have fewer of them.
 	if shadow:
 		canvas.draw_rect(Rect2(rect.position + Vector2(0, SHADOW_DROP), rect.size), SHADOW)
 	# draw_rect cannot gradient, but a quad with per-vertex colours can.
@@ -136,7 +140,8 @@ static func draw_surface(canvas: CanvasItem, rect: Rect2, top: Color, bottom: Co
 		PackedColorArray([top, top, bottom, bottom])
 	)
 	draw_grain(canvas, rect)
-	canvas.draw_rect(rect, EDGE, false, 1.0)
+	if edge:
+		canvas.draw_rect(rect, EDGE, false, 1.0)
 
 
 static func draw_grain(canvas: CanvasItem, rect: Rect2) -> void:
@@ -175,6 +180,29 @@ static func draw_crest_mark(canvas: CanvasItem, at: Vector2, radius: float, colo
 		at + Vector2(-arm, 0), at + Vector2(0, -thin),
 		at + Vector2(arm, 0), at + Vector2(0, thin),
 	]), body)
+
+
+static func draw_column_rule(canvas: CanvasItem, rect: Rect2, role := NEUTRAL) -> void:
+	## Separates a column from the one beside it with a vertical hairline
+	## and an accent rule across its head, instead of enclosing it.
+	##
+	## Used where the column already sits on a surface: another filled box
+	## there adds four edges and says nothing the rule does not.
+	var accent := accent_color(role)
+	var faded := accent
+	faded.a = 0.0
+	canvas.draw_polygon(
+		PackedVector2Array([
+			rect.position,
+			Vector2(rect.position.x + LINE, rect.position.y),
+			Vector2(rect.position.x + LINE, rect.end.y),
+			Vector2(rect.position.x, rect.end.y),
+		]),
+		PackedColorArray([accent, accent, faded, faded])
+	)
+	draw_accent_rule(canvas, rect, accent)
+	draw_crest_mark(canvas, Vector2(rect.end.x - SPACE_L, rect.position.y + LINE * 0.5),
+		SPACE_S * 0.85, accent)
 
 
 static func draw_scrim(canvas: CanvasItem, rect: Rect2, strength := 0.72) -> void:

@@ -26,20 +26,30 @@ var _detail_label: Label
 var _hint_label: Label
 var _error_label: Label
 var _preview: TextureRect
-var _body_panel: UiPanel
 var _menu_rows: Array[Label] = []
-var _menu_band: ColorRect
-var _menu_tick: ColorRect
+var _menu_band: _SelectionBand
+
+
+class _SelectionBand:
+	extends Control
+	func _draw() -> void:
+		UiStyle.draw_selection_band(self, Rect2(Vector2.ZERO, size), UiStyle.COMMAND)
 
 # Menu row geometry, shared by the labels and the selection band drawn
 # behind them, so the two can never disagree about where a row sits.
-## Menu geometry, derived from the canvas rather than hand-placed.
+## Menu geometry, measured from the type and the options themselves.
+##
+## The menu is not framed. An enclosing panel around three centred words
+## was inherited from the 320x180 layout, where a box was the only way to
+## group anything; at 720p it read as a large empty container with a
+## little text adrift in it. The list groups itself through position and
+## the selection band, and the space around it belongs to the screen.
 static func menu_pitch() -> float:
 	return Typography.line_height(Typography.Role.HEADING) + 18.0
-const MENU_TOP := 288.0
-static func menu_band() -> Rect2:
-	return Rect2(PresentationLayout.CANVAS.x * 0.14, 0,
-		PresentationLayout.CANVAS.x * 0.72, menu_pitch())
+
+## The list is optically centred on this line rather than hung from a
+## fixed top edge, so three options and four options are both balanced.
+const MENU_CENTER_Y := 404.0
 
 
 func _ready() -> void:
@@ -62,15 +72,6 @@ func _build_ui() -> void:
 	background.set_anchors_preset(Control.PRESET_FULL_RECT)
 	add_child(background)
 
-	# The identity floats in open atmosphere; only the actionable menu is
-	# framed. The frame is derived from the menu's own band and pitch, so
-	# it cannot drift away from the rows it is supposed to contain.
-	var frame_inset := 20.0
-	_body_panel = UiPanel.create(
-		Vector2(menu_band().position.x - frame_inset, MENU_TOP - frame_inset),
-		Vector2(menu_band().size.x + frame_inset * 2, menu_pitch() * 4 + frame_inset * 2),
-		UiStyle.NEUTRAL)
-	add_child(_body_panel)
 	var title_path := "res://assets/ui/title_mark.png" # optional-authored-asset
 	if ResourceLoader.exists(title_path):
 		var mark := TextureRect.new()
@@ -83,16 +84,15 @@ func _build_ui() -> void:
 
 	# Added after the panel and before the labels, so the band layers
 	# correctly: panel, band, text.
-	_menu_band = ColorRect.new()
-	_menu_band.color = PlaceholderPalette.MOON_INDIGO
-	_menu_band.size = menu_band().size
+	# The same selection treatment the battle action menu uses, so the two
+	# lists in the game read as one control. It is a node rather than
+	# something drawn in this screen's own `_draw()`, because a Control
+	# paints beneath its children and the band would land under the
+	# full-rect background.
+	_menu_band = _SelectionBand.new()
 	_menu_band.visible = false
+	_menu_band.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(_menu_band)
-	_menu_tick = ColorRect.new()
-	_menu_tick.color = PlaceholderPalette.CREST_GOLD
-	_menu_tick.size = Vector2(UiStyle.LINE, menu_band().size.y)
-	_menu_tick.visible = false
-	add_child(_menu_tick)
 
 	# The logotype is the one place the 8px face still leads: a pixel
 	# wordmark is Crestbound's identity, where pixel body copy was only
@@ -102,15 +102,15 @@ func _build_ui() -> void:
 	_title_label.visible = not ResourceLoader.exists(title_path)
 	_subtitle_label = _make_label(Vector2(0, 168), Typography.Role.SECONDARY, PlaceholderPalette.TEXT_DIM)
 	_subtitle_label.text = "The Crest at Greymere — prototype"
-	_list_label = _make_label(Vector2(0, MENU_TOP - 24.0), Typography.Role.BODY, PlaceholderPalette.TEXT_MAIN)
+	_list_label = _make_label(Vector2(0, MENU_CENTER_Y - 96.0), Typography.Role.BODY, PlaceholderPalette.TEXT_MAIN)
 	# One label per menu row (rather than a single joined-text label) so a
 	# selection band can sit behind exactly the highlighted row, matching
 	# the battle action menu's treatment.
 	for i in 4:
-		var row := _make_label(Vector2(0, MENU_TOP + i * menu_pitch()), Typography.Role.HEADING, PlaceholderPalette.TEXT_MAIN)
+		var row := _make_label(Vector2(0, MENU_CENTER_Y), Typography.Role.HEADING, PlaceholderPalette.TEXT_MAIN)
 		row.visible = false
 		_menu_rows.append(row)
-	_detail_label = _make_label(Vector2(120, 452), Typography.Role.SECONDARY, PlaceholderPalette.TEXT_DIM)
+	_detail_label = _make_label(Vector2(0, 512), Typography.Role.SECONDARY, PlaceholderPalette.TEXT_DIM)
 	_hint_label = _make_label(Vector2(0, PresentationLayout.CANVAS.y - 56.0), Typography.Role.SECONDARY, PlaceholderPalette.TEXT_DIM)
 	_error_label = _make_label(Vector2(0, 384), Typography.Role.BODY, PlaceholderPalette.TEXT_DANGER)
 
@@ -141,48 +141,51 @@ func _show_data_error() -> void:
 	_hint_label.text = ""
 
 
-func _position_menu_band() -> void:
-	## The band is a node rather than something drawn in `_draw()`: a
-	## Control paints itself *beneath* its children, so a drawn band would
-	## sit under this screen's full-rect background and never be seen.
+func _menu_top() -> float:
+	## Top of the list, derived so the block is centred on MENU_CENTER_Y.
+	var block := menu_pitch() * maxf(1.0, float(_menu_options.size()))
+	return MENU_CENTER_Y - block * 0.5
+
+
+func _menu_measure() -> float:
+	## The selection band hugs the longest option rather than spanning a
+	## fixed share of the screen. The old band was 921px wide behind a
+	## 222px word, which is what made the menu read as a bar.
+	var widest := 0.0
+	for option in _menu_options:
+		widest = maxf(widest, Typography.measure(Typography.Role.HEADING, option).x)
+	return widest + UiStyle.SPACE_XL * 2.0
+
+
+func _layout_menu() -> void:
+	## Rows and the selection band are positioned together from the live
+	## option count, so adding or removing "Continue" reflows the block
+	## instead of leaving a hole where a row used to be.
+	var top := _menu_top()
+	for i in _menu_rows.size():
+		_menu_rows[i].position.y = top + i * menu_pitch()
+
 	var showing := _screen == Screen.MENU and not _menu_options.is_empty()
 	_menu_band.visible = showing
-	_menu_tick.visible = showing
 	if not showing:
 		return
-	var y := MENU_TOP + _menu_index * menu_pitch() - 4.0
-	_menu_band.position = Vector2(menu_band().position.x, y)
-	_menu_tick.position = Vector2(menu_band().position.x, y)
-
-
-func _fit_menu_frame(row_count: int) -> void:
-	## The frame wraps the rows it actually contains. Sizing it for the
-	## maximum four options left a dead band under the list whenever the
-	## save-dependent "Continue" row was absent.
-	if _body_panel == null:
-		return
-	var inset := 20.0
-	var height := menu_pitch() * maxf(1.0, float(row_count)) + inset * 2
-	var fitted := Vector2(menu_band().size.x + inset * 2, height)
-	# Minimum first, then size. A Control clamps `size` to its current
-	# `custom_minimum_size`, so assigning size first meant the frame could
-	# never shrink below the four-row box `_build_ui` created — the fit
-	# silently did nothing whenever fewer options were shown.
-	_body_panel.custom_minimum_size = fitted
-	_body_panel.size = fitted
-	_body_panel.queue_redraw()
+	var measure := _menu_measure()
+	var x := (PresentationLayout.CANVAS.x - measure) * 0.5
+	var y := top + _menu_index * menu_pitch() - 4.0
+	_menu_band.size = Vector2(measure, menu_pitch())
+	_menu_band.position = Vector2(x, y)
+	_menu_band.queue_redraw()
 
 
 func _refresh() -> void:
-	_position_menu_band()
+	_layout_menu()
 	if _screen != Screen.MENU:
 		for row in _menu_rows:
 			row.visible = false
 	_detail_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_detail_label.size.x = PresentationLayout.CANVAS.x * 0.5
+	_detail_label.size.x = PresentationLayout.CANVAS.x
 	match _screen:
 		Screen.MENU:
-			_fit_menu_frame(_menu_options.size())
 			_list_label.text = ""
 			for i in _menu_rows.size():
 				var row := _menu_rows[i]

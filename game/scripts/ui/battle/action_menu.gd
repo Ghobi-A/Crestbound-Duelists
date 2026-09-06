@@ -98,7 +98,11 @@ func current_entry() -> Dictionary:
 
 
 func _draw() -> void:
-	UiStyle.draw_panel(self, Rect2(Vector2.ZERO, MENU_SIZE), UiStyle.COMMAND)
+	# No panel. This sits inside the HUD band, which is already a surface;
+	# a second box on top of it was a rectangle inside a rectangle. The
+	# menu is separated from the party cards by a vertical rule and
+	# claimed as the player's own by the gold accent above it.
+	UiStyle.draw_column_rule(self, Rect2(Vector2.ZERO, MENU_SIZE), UiStyle.COMMAND)
 	var icon_side := UiIcons.display_size()
 	var text_x := PAD + icon_side + PAD * 0.5
 	for i in entries.size():

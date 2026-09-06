@@ -14,6 +14,8 @@ extends Node
 ##   party_setup   — pre-battle roster and formation screen.
 ##   overworld     — Greymere at the default spawn tile.
 ##   dialogue      — Greymere with its opening conversation on screen.
+##   onboarding    — Greymere's first-entry controls overlay.
+##   result        — the victory beat, shown on its own.
 ##   battle        — Hollow Court, round 1, command menu open.
 ##   battle_target — Hollow Court, round 1, first move opened against the
 ##                   first target (shows the target-highlight ring/dim).
@@ -32,6 +34,11 @@ const SCENE_PATHS := {
 	"battle": "res://scenes/battle/party_battle.tscn",
 	"battle_target": "res://scenes/battle/party_battle.tscn",
 	"dialogue": "res://scenes/overworld/greymere.tscn",
+	"onboarding": "res://scenes/overworld/greymere.tscn",
+	# Presentation-only: the result overlay is instantiated directly
+	# rather than by playing a battle to its end, which would make the
+	# baseline depend on combat rolls.
+	"result": "",
 }
 
 const SETTLE_FRAMES := 30
@@ -50,6 +57,14 @@ func _ready() -> void:
 	seed(41)
 	_seed_state()
 	await get_tree().process_frame
+	if target == "result":
+		var result := ResultPresentation.new()
+		get_tree().root.add_child(result)
+		result.show_result(true)
+		await _frames(SETTLE_FRAMES)
+		await _capture("baseline_%s" % target)
+		get_tree().quit(0)
+		return
 	var scene: Node = load(SCENE_PATHS[target]).instantiate()
 	get_tree().root.add_child(scene)
 	await _frames(SETTLE_FRAMES)
@@ -87,7 +102,10 @@ func _parse_args() -> void:
 
 func _seed_state() -> void:
 	GameState.start_new_game("warrior")
-	GameState.set_flag("overworld_onboarding_seen")
+	# The onboarding target is the one case that wants the overlay, so it
+	# alone leaves the "seen" flag clear.
+	if target != "onboarding":
+		GameState.set_flag("overworld_onboarding_seen")
 	GameState.set_flag("battle_onboarding_seen")
 
 

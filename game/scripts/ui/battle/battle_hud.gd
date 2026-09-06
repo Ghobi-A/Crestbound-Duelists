@@ -11,7 +11,15 @@ var _phase_label: Label
 var _objective_label: Label
 var _message_label: Label
 var _info_label: Label
-var _info_panel: UiPanel
+var _info_panel: _ContextColumn
+
+
+class _ContextColumn:
+	extends Control
+	## The target-information column. Violet, because it describes what an
+	## action affects rather than what the player commands.
+	func _draw() -> void:
+		UiStyle.draw_column_rule(self, Rect2(Vector2.ZERO, size), UiStyle.TARGET)
 var _rows: Dictionary = {}   # BattleUnit -> UnitStatusPanel
 var _rows_container: HBoxContainer
 var _flash_rect: ColorRect
@@ -98,7 +106,12 @@ func _ready() -> void:
 	# The target/skill info panel shares the action menu's footprint and
 	# takes the violet framing (target-facing, not command-facing), so
 	# swapping between the two never shifts anything else in the HUD.
-	_info_panel = UiPanel.create(context_rect.position, context_rect.size, UiStyle.TARGET)
+	# Same treatment as the action menu it replaces on screen: a column
+	# rule rather than a second filled box inside the HUD band.
+	_info_panel = _ContextColumn.new()
+	_info_panel.position = context_rect.position
+	_info_panel.size = context_rect.size
+	_info_panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_info_panel.visible = false
 	bottom.add_child(_info_panel)
 	_info_label = _label(_info_panel, Vector2(PAD, PAD),

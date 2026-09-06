@@ -110,11 +110,31 @@ drawn, bobbing chevron. It had been typeset as `▼`, which the bitmap face
 has no glyph for and which rendered as a tofu box showing its own
 codepoint — a defect only visible by looking at the screen.
 
-### Boot
+### Removing legacy containers
 
-The menu frame is derived from the menu band and pitch and now fits the
-number of options actually shown; sized for the maximum four, it left a
-dead band whenever the save-dependent "Continue" row was absent.
+New type inside old boxes is not a redesign. Every screen was re-audited
+against what its content actually measures under the serif, and the
+containers that only existed because a 320x180 canvas had no other way to
+group things were removed:
+
+| Screen | Was | Now |
+| --- | --- | --- |
+| Boot | A framed panel around three centred words, sized for four rows | No frame. The list is optically centred on one line, the selection band hugs the longest option (302px, not 921px), and the negative space belongs to the screen |
+| Party setup | Four panels: title bar, roster, detail, footer bar. The roster panel stood ~490px tall around ~180px of rows | One panel — the detail card. The title takes a fading rule and a Crest mark; the roster is a drawn list; the hint sits on the bottom margin with nothing around it |
+| Party setup rows | One space-padded string, every column the same weight | Per-row drawing: the duelist's name leads, slot and row recede as a right-aligned tag. The space padding only aligned at all because the bitmap face was fixed width |
+| Battle cards | A filled, edged surface per duelist, inside the HUD band | No surface. A card is a group: an accent rule in the duelist's class colour, and air either side. Only the acting unit gets a faint edgeless wash |
+| Battle context panel | A filled panel inside the HUD band | A vertical column rule plus an accent head — a rectangle inside a rectangle said nothing the rule does not |
+| Dialogue | Corner ticks and a Crest mark on the surface that carries every line of writing | Accent rule only. Ornament on a panel you meet constantly becomes furniture |
+| Dialogue measure | ~944px, about 85 characters a line | Capped at 720px. The panel stays full width because it is a cinematic band, but the prose reads at a sane length |
+| Onboarding | An 832x416 box (the old box multiplied up) around six lines, columns aligned with runs of spaces | Sized to its content. Runs of spaces are parsed as a column break and laid out properly, so callers did not change |
+| Result beat | Title at y=62 and ornament at (80, 24) — raw 320x180 coordinates that survived the migration | Centred on the canvas, with the same Crest rule party setup uses |
+
+Two of these were only visible on screen. The onboarding objective line
+was clipping its last two words, because paragraph rows were drawn with a
+width and no wrapping. And the boot menu frame had never actually
+shrunk to its row count: `size` was assigned before `custom_minimum_size`,
+and a Control clamps `size` to its current minimum, so the fit silently
+did nothing.
 
 ### Typography
 
@@ -306,6 +326,10 @@ rather than by code. Each slot below is already wired.
 ## 9. Test results
 
 - Python suite: **260 passed**.
+- Baselines now cover eight states: boot, party setup, overworld,
+  dialogue, **onboarding**, battle, battle target and **result**. The
+  last two were previously unrepresented, which is why their 320x180
+  coordinates survived unnoticed.
 - Godot static validator: passed (46 scripts, 6 scenes, 38 JSON files).
 - Runtime presentation smoke: **0 failures**.
 - Rendered capture: 6 targets at 1280x720, no script or shader errors.

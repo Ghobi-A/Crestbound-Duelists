@@ -65,7 +65,12 @@ class _AdvanceChevron:
 
 func _ready() -> void:
 	layer = 10
-	_panel = UiPanel.create(PresentationLayout.DIALOGUE_RECT.position, PresentationLayout.DIALOGUE_RECT.size, UiStyle.COMMAND)
+	# Unornamented. Corner ticks and a Crest mark are a flourish for a
+	# panel you meet occasionally; on the surface that carries every line
+	# of the game's writing they become furniture. The fading accent rule
+	# is enough to say whose surface it is.
+	_panel = UiPanel.create(PresentationLayout.DIALOGUE_RECT.position,
+		PresentationLayout.DIALOGUE_RECT.size, UiStyle.COMMAND, false)
 	# The portrait overhangs the panel's top edge on purpose, so the panel
 	# must not clip its children. Each label clips its own text instead.
 	_panel.clip_contents = false
@@ -92,7 +97,8 @@ func _ready() -> void:
 	_text_label = Label.new()
 	_text_label.position = Vector2(PAD, PresentationLayout.TEXT_TOP)
 	_text_label.size = Vector2(
-		PresentationLayout.DIALOGUE_RECT.size.x - PAD - PresentationLayout.RIGHT_MARGIN,
+		minf(PresentationLayout.DIALOGUE_RECT.size.x - PAD - PresentationLayout.RIGHT_MARGIN,
+			PresentationLayout.TEXT_MEASURE),
 		PresentationLayout.TEXT_HEIGHT)
 	_text_label.clip_text = true
 	_text_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -196,7 +202,9 @@ func _apply_portrait(portrait_key: String, expression := "neutral") -> void:
 	CharacterPresentation.apply_portrait(_portrait, portrait_key, expression)
 	var shown := _portrait.texture != null
 	var text_x := PresentationLayout.PORTRAIT_RECT.end.x + PAD if shown else PAD
-	var text_width := _panel.size.x - text_x - PresentationLayout.RIGHT_MARGIN
+	var text_width := minf(
+		_panel.size.x - text_x - PresentationLayout.RIGHT_MARGIN,
+		PresentationLayout.TEXT_MEASURE)
 	_speaker_label.position.x = text_x
 	_text_label.position.x = text_x
 	_speaker_label.size.x = text_width
