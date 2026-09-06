@@ -57,7 +57,8 @@ def test_exported_classes_preserve_balance_values(tmp_path):
         "hp": 85, "atk": 75, "def": 70, "mag": 30, "res": 35, "spd": 40,
     }
     config = json.loads((tmp_path / "combat_config.json").read_text(encoding="utf-8"))
-    assert config["brace_multiplier"] == 1.05
+    assert config["brace_multiplier"] == 1.20
+    assert config["speed_band"] == 20
 
 
 def test_sync_to_game_copies_files(tmp_path):
