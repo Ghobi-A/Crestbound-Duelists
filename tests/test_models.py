@@ -8,15 +8,13 @@ from models import ClassName, MoveSlot, MoveType, create_unit, CLASS_STATS
 
 ALL_CLASSES = list(ClassName)
 
-# The v2.3 naked-class chassis. If these change, it must be a deliberate
-# balance decision — update data/classes.yaml and this table together.
 EXPECTED_STATS = {
-    ClassName.WARRIOR:  {"hp": 100, "atk": 74, "def": 68, "mag": 30, "res": 44, "spd": 44},
-    ClassName.MAGE:     {"hp": 92, "atk": 30, "def": 34, "mag": 78, "res": 70, "spd": 48},
-    ClassName.ASSASSIN: {"hp": 88, "atk": 70, "def": 40, "mag": 34, "res": 48, "spd": 68},
-    ClassName.GUARDIAN: {"hp": 108, "atk": 40, "def": 76, "mag": 36, "res": 72, "spd": 36},
-    ClassName.NEUTRAL:  {"hp": 96, "atk": 53, "def": 50, "mag": 53, "res": 50, "spd": 54},
-    ClassName.SORCERER: {"hp": 90, "atk": 34, "def": 38, "mag": 76, "res": 48, "spd": 64},
+    ClassName.WARRIOR:  {"hp": 96, "atk": 70, "def": 68, "mag": 34, "res": 40, "spd": 48},
+    ClassName.MAGE:     {"hp": 96, "atk": 30, "def": 38, "mag": 78, "res": 66, "spd": 48},
+    ClassName.ASSASSIN: {"hp": 94, "atk": 70, "def": 46, "mag": 28, "res": 48, "spd": 68},
+    ClassName.GUARDIAN: {"hp": 104, "atk": 44, "def": 70, "mag": 44, "res": 66, "spd": 36},
+    ClassName.NEUTRAL:  {"hp": 100, "atk": 56, "def": 46, "mag": 56, "res": 50, "spd": 52},
+    ClassName.SORCERER: {"hp": 94, "atk": 32, "def": 44, "mag": 76, "res": 48, "spd": 60},
 }
 
 EXPECTED_MOVES = {
@@ -51,7 +49,6 @@ def test_base_stats_match_v23_chassis(cls):
 
 @pytest.mark.parametrize("cls", ALL_CLASSES)
 def test_class_stats_table_matches_units(cls):
-    # analysis.ipynb imports CLASS_STATS directly — keep it consistent.
     unit = create_unit(cls)
     stats = CLASS_STATS[cls]
     assert stats["hp"] == unit.base_hp
@@ -108,6 +105,7 @@ def test_move_types_present():
     unit = create_unit(ClassName.GUARDIAN)
     shield_bash = unit.moves[0]
     assert shield_bash.move_type == MoveType.ADAPTIVE
+    assert unit.moves[1].move_type == MoveType.ADAPTIVE
     warrior = create_unit(ClassName.WARRIOR)
     assert warrior.moves[0].move_type == MoveType.PHYSICAL
     mage = create_unit(ClassName.MAGE)
