@@ -71,8 +71,11 @@ jobs:
       - name: Validate Godot project
         run: python tools/validate_godot_project.py
 
-      - name: Quick balance diagnostics
+      - name: Quick greedy diagnostics
         run: python balance_report.py --sims 500 --policy greedy
+
+      - name: Quick tactical diagnostics
+        run: python balance_report.py --sims 500 --policy lookahead
 
       - name: Validate analytical snapshot on pull request
         if: github.event_name == 'pull_request'
