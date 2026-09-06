@@ -8,15 +8,15 @@ from models import ClassName, MoveSlot, MoveType, create_unit, CLASS_STATS
 
 ALL_CLASSES = list(ClassName)
 
-# The v2.1 baseline stats. If these change, it must be a deliberate
+# The v2.3 naked-class chassis. If these change, it must be a deliberate
 # balance decision — update data/classes.yaml and this table together.
 EXPECTED_STATS = {
-    ClassName.WARRIOR:  {"hp": 85, "atk": 75, "def": 70, "mag": 30, "res": 35, "spd": 40},
-    ClassName.MAGE:     {"hp": 75, "atk": 30, "def": 35, "mag": 80, "res": 75, "spd": 42},
-    ClassName.ASSASSIN: {"hp": 70, "atk": 70, "def": 35, "mag": 38, "res": 55, "spd": 80},
-    ClassName.GUARDIAN: {"hp": 85, "atk": 40, "def": 75, "mag": 40, "res": 75, "spd": 35},
-    ClassName.NEUTRAL:  {"hp": 78, "atk": 55, "def": 50, "mag": 55, "res": 50, "spd": 50},
-    ClassName.SORCERER: {"hp": 72, "atk": 40, "def": 30, "mag": 80, "res": 48, "spd": 80},
+    ClassName.WARRIOR:  {"hp": 100, "atk": 74, "def": 68, "mag": 30, "res": 44, "spd": 44},
+    ClassName.MAGE:     {"hp": 92, "atk": 30, "def": 34, "mag": 78, "res": 70, "spd": 48},
+    ClassName.ASSASSIN: {"hp": 88, "atk": 70, "def": 40, "mag": 34, "res": 48, "spd": 68},
+    ClassName.GUARDIAN: {"hp": 108, "atk": 40, "def": 76, "mag": 36, "res": 72, "spd": 36},
+    ClassName.NEUTRAL:  {"hp": 96, "atk": 53, "def": 50, "mag": 53, "res": 50, "spd": 54},
+    ClassName.SORCERER: {"hp": 90, "atk": 34, "def": 38, "mag": 76, "res": 48, "spd": 64},
 }
 
 EXPECTED_MOVES = {
@@ -38,7 +38,7 @@ def test_unit_can_be_created(cls):
 
 
 @pytest.mark.parametrize("cls", ALL_CLASSES)
-def test_base_stats_match_v21_baseline(cls):
+def test_base_stats_match_v23_chassis(cls):
     unit = create_unit(cls)
     expected = EXPECTED_STATS[cls]
     assert unit.base_hp == expected["hp"]
