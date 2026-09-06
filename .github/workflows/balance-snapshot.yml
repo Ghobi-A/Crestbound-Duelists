@@ -1,10 +1,24 @@
 name: Balance snapshot
 
-# Regenerates results/recruiter_snapshot.json whenever the balance data or the
-# engine that consumes it changes, so the Streamlit Balance Lab can never drift
-# from the YAML source of truth.
+# Validates combat/data changes on pull requests. On main, also regenerates
+# committed YAML-derived game exports and the recruiter analytical snapshot.
 
 on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "data/**"
+      - "combat.py"
+      - "models.py"
+      - "loaders.py"
+      - "ai.py"
+      - "simulation.py"
+      - "nash.py"
+      - "game/scripts/battle/**"
+      - "tests/**"
+      - "tools/generate_snapshot.py"
+      - "export_game_data.py"
+      - ".github/workflows/balance-snapshot.yml"
   push:
     branches: [main]
     paths:
@@ -15,7 +29,10 @@ on:
       - "ai.py"
       - "simulation.py"
       - "nash.py"
+      - "game/scripts/battle/**"
+      - "tests/**"
       - "tools/generate_snapshot.py"
+      - "export_game_data.py"
       - ".github/workflows/balance-snapshot.yml"
   workflow_dispatch:
     inputs:
@@ -46,31 +63,52 @@ jobs:
       - name: Run test suite
         run: python -m pytest -q
 
-      - name: Regenerate snapshot
+      - name: Regenerate YAML-derived game exports
+        run: python export_game_data.py
+
+      - name: Validate Godot project
+        run: python tools/validate_godot_project.py
+
+      - name: Validate analytical snapshot on pull request
+        if: github.event_name == 'pull_request'
+        run: |
+          python tools/generate_snapshot.py \
+            --sims 1000 \
+            --policy-sims 250 \
+            --seed 42 \
+            --output /tmp/crestbound-pr-snapshot.json \
+            --quiet
+
+      - name: Regenerate production snapshot
+        if: github.event_name != 'pull_request'
         run: |
           cp results/recruiter_snapshot.json /tmp/previous.json 2>/dev/null || true
           python tools/generate_snapshot.py \
             --sims "${{ github.event.inputs.sims || '100000' }}" \
             --seed "${{ github.event.inputs.seed || '42' }}"
 
-      - name: Commit if the analysis changed
+      - name: Commit generated outputs if analysis or balance data changed
+        if: github.event_name != 'pull_request'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
           # generated_at, runtime_seconds and git_commit change on every run,
-          # so compare only the analytical payload. The generator is seeded,
-          # so identical inputs really do produce an identical payload.
+          # so discard a metadata-only snapshot diff when the analytical
+          # payload itself is unchanged.
           strip() { jq -S 'del(.generated_at, .runtime_seconds, .git_commit)' "$1"; }
-
           if [ -f /tmp/previous.json ] && \
              diff -q <(strip /tmp/previous.json) \
                      <(strip results/recruiter_snapshot.json) >/dev/null; then
-            echo "Analysis unchanged — discarding metadata-only diff."
+            echo "Analysis unchanged — discarding metadata-only snapshot diff."
             git checkout -- results/recruiter_snapshot.json
+          fi
+
+          git add exports game/data results/recruiter_snapshot.json
+          if git diff --cached --quiet; then
+            echo "Generated outputs unchanged."
             exit 0
           fi
 
-          git add results/recruiter_snapshot.json
-          git commit -m "chore: regenerate balance snapshot"
+          git commit -m "chore: regenerate balance exports and snapshot"
           git push

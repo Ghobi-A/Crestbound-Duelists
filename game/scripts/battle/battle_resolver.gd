@@ -30,10 +30,10 @@ func _init(runtime_: EncounterRuntime, game_data_: Node) -> void:
 # ── Initiative ───────────────────────────────────────────────────────
 
 func order_actions(actions: Array) -> Array:
-	## Brace commitments resolve first; attacks then resolve by
-	## probabilistic speed: score = SPD + U(0, speed_band). A speed gap
-	## of at least the band guarantees order (preserving the Balance
-	## Lab's speed-band spirit); close speeds stay uncertain.
+	## Brace commitments resolve first; attacks then resolve by the same
+	## initiative score as the Python lab: SPD + U(0, speed_band).
+	## A speed gap of at least the band guarantees order; close speeds
+	## remain uncertain.
 	var band: float = game_data.config_value("speed_band")
 	var scored: Array = []
 	for action in actions:
@@ -57,12 +57,17 @@ func resolve_move_type(move: Dictionary, attacker: BattleUnit, defender: BattleU
 	return "physical" if phys >= mag else "magical"
 
 
-func defence_value(defender: BattleUnit, stat_name: String) -> float:
+func defence_value(defender: BattleUnit, stat_name: String, ignore_brace: bool = false) -> float:
 	var value := float(defender.stat(stat_name))
-	if defender.is_braced():
+	if defender.is_braced() and not ignore_brace:
 		var multiplier: float = game_data.config_value("brace_multiplier") + defender.brace_multiplier_bonus()
 		value = floorf(value * multiplier)
 	return value
+
+
+func _move_breaks_brace(move: Dictionary) -> bool:
+	var tags: Array = move.get("tags", [])
+	return tags.has("guard_break") or tags.has("resistance_break")
 
 
 func damage_multipliers(attacker: BattleUnit, defender: BattleUnit, move: Dictionary, previous_move_id: String) -> float:
@@ -96,7 +101,11 @@ func damage_multipliers(attacker: BattleUnit, defender: BattleUnit, move: Dictio
 func damage_range(attacker: BattleUnit, defender: BattleUnit, move: Dictionary, previous_move_id: String = "") -> Vector2i:
 	var resolved := resolve_move_type(move, attacker, defender)
 	var atk := float(attacker.stat("atk" if resolved == "physical" else "mag"))
-	var def_value := defence_value(defender, "def" if resolved == "physical" else "res")
+	var def_value := defence_value(
+		defender,
+		"def" if resolved == "physical" else "res",
+		_move_breaks_brace(move)
+	)
 	var ratio := 2.0 * atk / maxf(1.0, atk + def_value)
 	var base := float(move.get("power", 0)) * ratio \
 		* damage_multipliers(attacker, defender, move, previous_move_id)
@@ -217,21 +226,35 @@ func _execute_move(actor: BattleUnit, action: Dictionary) -> Array:
 
 	var decay := runtime.stat_mod_duration(int(game_data.config_value("stat_decay_duration")))
 	for mod in move.get("target_stat_mods", []):
+		# Hex suppresses positive stat changes from any source, while debuffs
+		# remain legal. Current kits target enemies with debuffs only, but the
+		# rule is generic for future ally-targeted moves.
+		if int(mod.amount) > 0 and target.has_status("hexed"):
+			continue
 		target.apply_stat_mod(mod.stat, int(mod.amount), decay)
 		if int(mod.amount) < 0:
 			actor.debuffs_applied += 1
 		events.append({"type": "stat_mod", "target": target, "stat": mod.stat, "amount": int(mod.amount)})
-	# Hex prevents a unit from strengthening itself (1v1 engine parity).
-	if not (move.get("self_stat_mods", []).size() > 0 and actor.has_status("hexed")):
-		for mod in move.get("self_stat_mods", []):
-			actor.apply_stat_mod(mod.stat, int(mod.amount), decay)
-			events.append({"type": "stat_mod", "target": actor, "stat": mod.stat, "amount": int(mod.amount)})
+
+	# Dedicated buff moves are blocked before execution. Trade-off actions
+	# such as Focus Shift still resolve under Hex, but only their negative
+	# self-modifiers survive.
+	for mod in move.get("self_stat_mods", []):
+		if int(mod.amount) > 0 and actor.has_status("hexed"):
+			continue
+		actor.apply_stat_mod(mod.stat, int(mod.amount), decay)
+		events.append({"type": "stat_mod", "target": actor, "stat": mod.stat, "amount": int(mod.amount)})
 
 	for effect in move.get("status_effects", []):
+		var status_name: String = effect.get("status", "")
 		var duration := int(effect.get("duration", 1)) + actor.status_duration_bonus()
-		target.apply_status(effect.get("status", ""), duration)
+		if status_name == "hexed":
+			# Hex immediately strips existing positive stat modifiers, then
+			# prevents new positive modifiers while the status is active.
+			target.stat_mods = target.stat_mods.filter(func(mod): return int(mod.amount) <= 0)
+		target.apply_status(status_name, duration)
 		actor.statuses_applied += 1
-		events.append({"type": "status", "target": target, "status": effect.get("status", "")})
+		events.append({"type": "status", "target": target, "status": status_name})
 		events.append({"type": "crest", "unit": actor, "event": "status_applied"})
 		# Eclipse awakening: Hex also disturbs the target's cooldowns.
 		if actor.awakening_effect_active("hex_saturation"):

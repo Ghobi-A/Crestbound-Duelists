@@ -8,7 +8,7 @@ Writes results/recruiter_snapshot.json:
   - 6x6 win-rate matrix + average fight duration per matchup
   - Ranked average win rate per class
   - Policy comparison (greedy / lookahead / random, mirror matches)
-  - Nash maximin analysis for all 15 unique matchups
+  - Stateful Nash/maximin analysis for all 15 unique matchups
 
 Usage:
     python tools/generate_snapshot.py                 # 100k per matchup
@@ -118,15 +118,18 @@ def build_policy_comparison(n_sims: int, verbose: bool) -> dict:
     return out
 
 
-def build_nash() -> list[dict]:
-    """Nash maximin analysis for all unique matchups, JSON-serialisable."""
+def build_nash(seed: int) -> list[dict]:
+    """Stateful Nash/maximin analysis for all unique matchups."""
     results = []
     for class_a, class_b in combinations(ALL_CLASSES, 2):
-        r = nash.analyse_matchup(class_a, class_b)
+        r = nash.analyse_matchup(class_a, class_b, seed=seed)
         results.append(
             {
                 "class_a": r["class_a"],
                 "class_b": r["class_b"],
+                "analysis_model": r["analysis_model"],
+                "rollouts": int(r["rollouts"]),
+                "horizon": int(r["horizon"]),
                 "moves_a": r["moves_a"],
                 "moves_b": r["moves_b"],
                 "payoff": r["payoff"].tolist(),
@@ -139,6 +142,7 @@ def build_nash() -> list[dict]:
                 "greedy_move": r["greedy_move"],
                 "nash_dominant": r["nash_dominant"],
                 "greedy_matches_nash": bool(r["greedy_matches_nash"]),
+                "separability_residual": round(float(r["separability_residual"]), 6),
             }
         )
     return results
@@ -164,8 +168,6 @@ def main() -> None:
     verbose = not args.quiet
     start = time.time()
 
-    # The combat engine draws initiative and damage variance from the global
-    # `random` module, so seeding here makes the whole snapshot reproducible.
     random.seed(args.seed)
 
     if verbose:
@@ -179,8 +181,8 @@ def main() -> None:
     policy_comparison = build_policy_comparison(args.policy_sims, verbose)
 
     if verbose:
-        print("\nNash maximin analysis...")
-    nash_results = build_nash()
+        print("\nStateful Nash/maximin analysis...")
+    nash_results = build_nash(args.seed)
 
     snapshot = {
         "generated_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),

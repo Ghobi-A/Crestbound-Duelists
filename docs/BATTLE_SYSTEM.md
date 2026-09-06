@@ -36,8 +36,8 @@ RESOLUTION
     1. Brace commitments (always first — defensive stances set up)
     2. Everything else by probabilistic speed:
        score = SPD + U(0, speed_band)
-       — a gap ≥ speed_band guarantees order; close speeds stay
-         uncertain (preserves the Balance Lab's speed-band spirit)
+       — v2.2 uses speed_band = 20
+       — a gap ≥ speed_band guarantees order; closer speeds remain uncertain
 ROUND END
   Cooldowns tick, stat modifiers decay, statuses tick,
   Brace expires, Resonance/awakening checks, victory/defeat check
@@ -55,9 +55,35 @@ target that fell mid-round retarget to a random living enemy.
 | **Gambit** | High-impact, higher-risk — more power, less accuracy; cooldown |
 | **Brace** | Defensive commitment: multiplies defence until your next turn; feeds some Crests' Resonance. Using it costs your offensive action — that trade-off is the point. |
 
+A configured cooldown of `1` means the move is **unavailable for the
+next decision round**. Cooldowns are stored with one extra internal tick
+because the lifecycle decrements them at round end; this prevents the
+round of use from immediately consuming the entire cooldown.
+
 The action menu shows cooldowns (`CD n`) and Hex blocks
 (`Blocked by Hex`) explicitly. Target selection previews estimated
 damage, hit chance, and rider effects.
+
+### v2.2 class-action identities
+
+- **Warrior — Armor Break:** stronger DEF break and a guard-breaking hit
+  that ignores Brace for its own damage calculation.
+- **Mage — Mind Pierce:** stronger RES break and the magical equivalent
+  of a guard-breaking hit.
+- **Assassin — Cripple:** now reduces SPD as well as DEF/RES, making
+  initiative manipulation part of its precision/setup identity.
+- **Guardian — Fortify:** larger DEF/RES gain so the defensive Signature
+  produces material mitigation under the compressed damage formula.
+- **Neutral — Focus Shift:** stronger offensive shift with an explicit
+  defensive trade-off; under Hex the positive half is suppressed while
+  the negative half still applies.
+- **Sorcerer — Hex:** blocks dedicated buff moves, removes active positive
+  stat modifiers when applied, and suppresses new positive stat changes
+  while active.
+
+Every Gambit is intentionally above its class Basic on raw
+`power × accuracy` expected value. Its cost is instead expressed through
+miss variance, the real cooldown window and, where applicable, a self-debuff.
 
 ## Positioning (pre-battle only)
 
@@ -84,9 +110,41 @@ damage = power × 2·ATK/(ATK+DEF) × U(variance_low, variance_high)
          minimum 1
 ```
 
-Braced defence is multiplied by `brace_multiplier` (+ Azure bonus).
-Hex blocks buff-type actions and self-strengthening while active.
-Stat modifiers decay after `stat_decay_duration` rounds.
+Braced defence is multiplied by `brace_multiplier`; v2.2 uses **1.20×**
+(+ any Azure bonus). At equal attacking and defending stats this is
+roughly a 9% incoming-damage reduction rather than the ~2% produced by
+the old 1.05 multiplier.
+
+Hex blocks dedicated buff actions, strips active positive stat modifiers
+when applied, and suppresses positive stat changes while active. Negative
+trade-off modifiers are not erased by Hex. Stat modifiers decay after
+`stat_decay_duration` rounds.
+
+## Stateful balance / Nash model
+
+The original v2.1 research matrix used
+
+```text
+A[i,j] = E[damage_A(move_i)] - E[damage_B(move_j)]
+```
+
+which has the separable form `f(i) - g(j)`. That construction makes each
+player's best action independent of the opponent's chosen action, so its
+pure equilibria were not evidence that execution randomness itself
+eliminated strategic mixing.
+
+v2.2 instead estimates a finite-horizon state-action value:
+
+```text
+Q(s, a_i, a_j)
+```
+
+by forcing each joint opening action pair and running seeded three-round
+continuations through the real combat transition system. The state carries
+HP, cooldowns, stat modifiers, statuses/Hex and initiative/Brace effects.
+The resulting matrix can therefore be non-separable, and mixed policies —
+when they appear — are an empirical property of interaction rather than a
+mathematical artifact of the payoff definition.
 
 ## Resonance and awakening
 
@@ -127,6 +185,9 @@ data as the player's UI and works at any party size.
 
 ## Current limitations
 
+- The v2.2 balance pass deliberately leaves the six class statlines
+  unchanged. Individual-stat tuning should follow the regenerated matchup
+  matrix rather than precede the structural fixes.
 - Ember's scorched-ground and Verdant's overgrowth awakening effects
   are not implemented (data only).
 - Entity `granted_move` abilities and awakened entity forms are not
