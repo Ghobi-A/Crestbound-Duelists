@@ -394,6 +394,13 @@ func _add_indicator(tile: Vector2i, y_offset: float = -6.0) -> void:
 func _build_camera() -> void:
 	var camera := Camera2D.new()
 	_camera = camera
+	# Greymere's tiles are authored at 16px and its townsfolk at ~20x30.
+	# Zooming by a whole number keeps that art exactly hard-edged while
+	# the wider canvas shows more of the town; scaling the tile grid up
+	# instead would only stretch pixels that hold no further detail. The
+	# registered cast still resolves at 3x here because the GPU samples
+	# its atlas at final screen scale, not at the sprite's logical size.
+	camera.zoom = Vector2.ONE * PresentationLayout.OVERWORLD_ZOOM
 	camera.limit_left = 0
 	camera.limit_top = 0
 	camera.limit_right = map_width() * TILE
@@ -451,7 +458,12 @@ func _play_dialogue(key: String) -> void:
 		return
 	_player.movement_locked = true
 	# Shift only the camera, never collision or the player's tile state.
-	_camera.offset = Vector2(0, PresentationLayout.DIALOGUE_RECT.size.y / 2.0)
+	# The dialogue panel is screen space; the camera offset is world
+	# space, so the panel's height converts through the camera zoom.
+	# Without that divide the view would lurch three times too far.
+	_camera.offset = Vector2(
+		0, PresentationLayout.DIALOGUE_RECT.size.y / 2.0 / PresentationLayout.OVERWORLD_ZOOM
+	)
 	_dialogue.play(key)
 
 

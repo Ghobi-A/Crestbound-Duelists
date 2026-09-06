@@ -4,7 +4,14 @@ class_name ActionMenu
 ## Shows cooldowns, Hex blocks, and a short description of the
 ## highlighted entry. The controller drives cursor movement.
 
-const MENU_SIZE := Vector2(122, 56)
+## Matches BattleHud's contextual panel footprint. The HUD is the one
+## owner of that geometry; this mirrors it so the menu and the target
+## info panel occupy exactly the same box.
+const MENU_SIZE := Vector2(420, 192)
+const PAD := 12.0
+## Row pitch: a body line plus breathing room, so the icon column and the
+## selection band stay vertically centred on their text at any type size.
+const ROW_HEIGHT := Typography.BODY + 6.0
 
 var entries: Array = []   # {label, kind, move, enabled, note, description}
 var cursor := 0
@@ -88,39 +95,39 @@ func current_entry() -> Dictionary:
 func _draw() -> void:
 	UiStyle.draw_panel(self, Rect2(Vector2.ZERO, MENU_SIZE), UiStyle.COMMAND)
 	var font := get_theme_default_font()
+	var icon_side := UiIcons.display_size()
+	var text_x := PAD + icon_side + PAD * 0.5
 	for i in entries.size():
 		var entry: Dictionary = entries[i]
-		var y := 8 + i * 9
+		var baseline := PAD + ROW_HEIGHT * i + Typography.BODY
 		if i == cursor:
 			# A filled band, not just a "> " prefix, for real contrast
 			# between the selected and unselected rows.
-			UiStyle.draw_selection_band(self, Rect2(1, y - 7, MENU_SIZE.x - 2, 9), UiStyle.COMMAND)
+			UiStyle.draw_selection_band(self,
+				Rect2(UiStyle.LINE, baseline - Typography.BODY, MENU_SIZE.x - UiStyle.LINE * 2, ROW_HEIGHT),
+				UiStyle.COMMAND)
 		var color := PlaceholderPalette.TEXT_MAIN if entry.enabled else PlaceholderPalette.TEXT_DIM
 		# The icon replaces the old "> " prefix: the selection band already
 		# says which row is focused, so the glyph is free to say what kind
 		# of action it is instead.
 		var icon := "slot_brace" if entry.kind == "brace" else UiIcons.slot_icon(str(entry.move.get("slot", "")))
 		var icon_tint := PlaceholderPalette.CREST_GOLD if entry.enabled else PlaceholderPalette.TEXT_DIM
-		UiIcons.draw_icon(self, icon, Vector2(4, y - 7), icon_tint)
+		UiIcons.draw_icon(self, icon, Vector2(PAD, baseline - Typography.BODY + (ROW_HEIGHT - icon_side) * 0.5), icon_tint)
 		var text: String = str(entry.label)
 		if entry.note != "":
 			text += "  [%s]" % entry.note
-		draw_string(font, Vector2(14, y), text, HORIZONTAL_ALIGNMENT_LEFT, 106, 8, color)
-	# A thin divider separates the entry list from the description, so
-	# the description reads as its own region rather than trailing text.
-	# Placed just above the description's existing baseline rather than
-	# derived from entry count, so it never pushes the description text
-	# down past the panel's bottom edge (MENU_SIZE.y is fixed at 56).
-	const DESCRIPTION_Y := 46
-	# Divider sits clear of the first description row: text at baseline 46
-	# occupies rows 39-46, so the rule goes at 38.
-	UiStyle.draw_divider(
-		self, Vector2(3, DESCRIPTION_Y - 8), MENU_SIZE.x - 6, PlaceholderPalette.CREST_GOLD
-	)
-	# Description of the highlighted entry, at the font's native size so
-	# it stays pixel-crisp. Two rows fit; anything beyond is clipped
-	# rather than drawn outside the panel.
+		draw_string(font, Vector2(text_x, baseline), text,
+			HORIZONTAL_ALIGNMENT_LEFT, MENU_SIZE.x - text_x - PAD, Typography.BODY, color)
+	# The description block is anchored to the panel's bottom edge rather
+	# than to the entry count, so a unit with fewer moves does not float
+	# its description into the middle of the panel.
+	var description_lines := 2
+	var description_top := MENU_SIZE.y - PAD - Typography.CAPTION * description_lines - PAD * 0.4
+	UiStyle.draw_divider(self, Vector2(PAD, description_top - PAD * 0.6),
+		MENU_SIZE.x - PAD * 2, PlaceholderPalette.CREST_GOLD)
 	var description: String = str(entries[cursor].description)
 	var lines := description.split("\n")
-	for i in mini(lines.size(), 2):
-		draw_string(font, Vector2(3, DESCRIPTION_Y + i * 8), lines[i], HORIZONTAL_ALIGNMENT_LEFT, 118, 8, PlaceholderPalette.TEXT_DIM)
+	for i in mini(lines.size(), description_lines):
+		draw_string(font, Vector2(PAD, description_top + Typography.CAPTION * (i + 1)), lines[i],
+			HORIZONTAL_ALIGNMENT_LEFT, MENU_SIZE.x - PAD * 2, Typography.CAPTION,
+			PlaceholderPalette.TEXT_DIM)

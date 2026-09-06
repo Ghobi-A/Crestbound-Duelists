@@ -33,9 +33,11 @@ var _menu_tick: ColorRect
 
 # Menu row geometry, shared by the labels and the selection band drawn
 # behind them, so the two can never disagree about where a row sits.
-const MENU_TOP := 64.0
-const MENU_PITCH := 12.0
-const MENU_BAND := Rect2(44, 0, 232, 12)
+## Menu geometry, derived from the canvas rather than hand-placed.
+const MENU_PITCH := Typography.BODY + 16.0
+const MENU_TOP := 288.0
+const MENU_BAND := Rect2(PresentationLayout.CANVAS.x * 0.14, 0,
+	PresentationLayout.CANVAS.x * 0.72, MENU_PITCH)
 
 
 func _ready() -> void:
@@ -58,15 +60,22 @@ func _build_ui() -> void:
 	background.set_anchors_preset(Control.PRESET_FULL_RECT)
 	add_child(background)
 
-	# The identity floats in open atmosphere; only the actionable menu is framed.
-	_body_panel = UiPanel.create(Vector2(36, 56), Vector2(248, 98), UiStyle.NEUTRAL)
+	# The identity floats in open atmosphere; only the actionable menu is
+	# framed. The frame is derived from the menu's own band and pitch, so
+	# it cannot drift away from the rows it is supposed to contain.
+	var frame_inset := 20.0
+	_body_panel = UiPanel.create(
+		Vector2(MENU_BAND.position.x - frame_inset, MENU_TOP - frame_inset),
+		Vector2(MENU_BAND.size.x + frame_inset * 2, MENU_PITCH * 4 + frame_inset * 2),
+		UiStyle.NEUTRAL)
 	add_child(_body_panel)
 	var title_path := "res://assets/ui/title_mark.png" # optional-authored-asset
 	if ResourceLoader.exists(title_path):
 		var mark := TextureRect.new()
 		mark.texture = load(title_path)
-		mark.position = Vector2(40, 8)
-		mark.size = Vector2(240, 48)
+		# Centred over the title line it replaces.
+		mark.position = Vector2(PresentationLayout.CANVAS.x * 0.5 - 480.0, 64.0)
+		mark.size = Vector2(960, 96)
 		mark.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 		add_child(mark)
 
@@ -79,30 +88,32 @@ func _build_ui() -> void:
 	add_child(_menu_band)
 	_menu_tick = ColorRect.new()
 	_menu_tick.color = PlaceholderPalette.CREST_GOLD
-	_menu_tick.size = Vector2(1, MENU_BAND.size.y)
+	_menu_tick.size = Vector2(UiStyle.LINE, MENU_BAND.size.y)
 	_menu_tick.visible = false
 	add_child(_menu_tick)
 
-	_title_label = _make_label(Vector2(0, 18), 12, PlaceholderPalette.TEXT_WARN)
+	_title_label = _make_label(Vector2(0, 96), Typography.DISPLAY, PlaceholderPalette.TEXT_WARN)
 	_title_label.text = "CRESTBOUND DUELISTS"
 	_title_label.visible = not ResourceLoader.exists(title_path)
-	_subtitle_label = _make_label(Vector2(0, 34), 8, PlaceholderPalette.TEXT_DIM)
+	_subtitle_label = _make_label(Vector2(0, 176), Typography.BODY, PlaceholderPalette.TEXT_DIM)
 	_subtitle_label.text = "The Crest at Greymere — prototype"
-	_list_label = _make_label(Vector2(0, 62), 8, PlaceholderPalette.TEXT_MAIN)
+	_list_label = _make_label(Vector2(0, MENU_TOP - 24.0), Typography.BODY, PlaceholderPalette.TEXT_MAIN)
 	# One label per menu row (rather than a single joined-text label) so a
 	# selection band can sit behind exactly the highlighted row, matching
 	# the battle action menu's treatment.
 	for i in 4:
-		var row := _make_label(Vector2(0, MENU_TOP + i * MENU_PITCH), 8, PlaceholderPalette.TEXT_MAIN)
+		var row := _make_label(Vector2(0, MENU_TOP + i * MENU_PITCH), Typography.BODY, PlaceholderPalette.TEXT_MAIN)
 		row.visible = false
 		_menu_rows.append(row)
-	_detail_label = _make_label(Vector2(30, 96), 8, PlaceholderPalette.TEXT_DIM)
-	_hint_label = _make_label(Vector2(0, 164), 8, PlaceholderPalette.TEXT_DIM)
-	_error_label = _make_label(Vector2(0, 80), 8, PlaceholderPalette.TEXT_DANGER)
+	_detail_label = _make_label(Vector2(120, 452), Typography.BODY, PlaceholderPalette.TEXT_DIM)
+	_hint_label = _make_label(Vector2(0, PresentationLayout.CANVAS.y - 56.0), Typography.BODY, PlaceholderPalette.TEXT_DIM)
+	_error_label = _make_label(Vector2(0, 384), Typography.BODY, PlaceholderPalette.TEXT_DANGER)
 
 	_preview = TextureRect.new()
-	PresentationLayout.texture_box(_preview, Rect2(232, 88, 64, 64))
-	_preview.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	# The class preview is an atlas crop of the painted cast art, so it
+	# takes the source-art filter and a box large enough to show it.
+	PresentationLayout.texture_box(_preview, Rect2(928, 400, 256, 256))
+	PresentationLayout.use_source_art_filter(_preview)
 	_preview.visible = false
 	add_child(_preview)
 
@@ -110,7 +121,7 @@ func _build_ui() -> void:
 func _make_label(top_left: Vector2, font_size: int, color: Color) -> Label:
 	var label := Label.new()
 	label.position = top_left
-	label.size = Vector2(320, 180 - top_left.y)
+	label.size = Vector2(PresentationLayout.CANVAS.x, PresentationLayout.CANVAS.y - top_left.y)
 	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	label.add_theme_font_size_override("font_size", font_size)
 	label.add_theme_color_override("font_color", color)
@@ -135,7 +146,7 @@ func _position_menu_band() -> void:
 	_menu_tick.visible = showing
 	if not showing:
 		return
-	var y := MENU_TOP + _menu_index * MENU_PITCH - 1
+	var y := MENU_TOP + _menu_index * MENU_PITCH - 4.0
 	_menu_band.position = Vector2(MENU_BAND.position.x, y)
 	_menu_tick.position = Vector2(MENU_BAND.position.x, y)
 

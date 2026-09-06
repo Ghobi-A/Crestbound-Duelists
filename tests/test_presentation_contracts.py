@@ -8,6 +8,8 @@ from pathlib import Path
 
 import yaml
 
+from gdscript_consts import constants
+
 ROOT = Path(__file__).resolve().parents[1]
 GAME = ROOT / "game"
 SCRIPTS = GAME / "scripts"
@@ -97,48 +99,71 @@ def test_scene_changes_use_semantic_transition_gateway() -> None:
         assert "SceneTransition.change_scene" in source(relative)
 
 
-def test_no_ui_text_is_rendered_below_the_bitmap_font_native_size() -> None:
+def test_all_ui_text_uses_whole_multiples_of_the_bitmap_font() -> None:
     """`crestbound_font.fnt` is an 8px bitmap face.
 
-    Godot rescales bitmap glyphs to any requested size, and a factor below
-    1.0 drops whole pixel rows: strokes vanish and letters turn into other
-    letters. Party setup shipped at 6-7px and rendered "ACTIVE" as "NCTIVE"
-    and "Liora" as "L:ora". Sub-native sizes must never come back.
+    Godot rescales bitmap glyphs to any requested size, and only whole
+    multiples of the native size survive intact. Below 8px whole pixel
+    rows are dropped: party setup once rendered "ACTIVE" as "NCTIVE" and
+    "Liora" as "L:ora". At a non-integer multiple the stems land on
+    uneven pixel counts and one letter's strokes differ in weight from
+    the next. Typography exists so sizes are chosen from a fixed scale.
+
+    This checks all three ways a size reaches the renderer: a direct
+    theme override, a size handed to a label helper that forwards it,
+    and a `draw_string` call in a custom-drawn panel.
     """
     fnt = (GAME / "assets/ui/crestbound_font.fnt").read_text(encoding="utf-8")
     native = int(re.search(r"\bsize=(\d+)", fnt).group(1))
     assert native == 8
 
+    scale = constants(SCRIPTS / "ui" / "typography.gd")
+    assert scale["NATIVE"] == native
+    named = {k: v for k, v in scale.items() if k != "NATIVE"}
+    assert named, "Typography defines no sizes"
+    for name, size in named.items():
+        assert size % native == 0 and size >= native, (
+            f"Typography.{name} is {size}px, not a whole multiple of {native}"
+        )
+
     offenders: list[str] = []
     for path in sorted(SCRIPTS.rglob("*.gd")):
         text = path.read_text(encoding="utf-8")
         lines = text.splitlines()
+        label = f"{path.relative_to(GAME)}"
 
-        # Sizes written straight into the override.
         for number, line in enumerate(lines, start=1):
             for size in re.findall(
                 r'add_theme_font_size_override\(\s*"font_size"\s*,\s*(\d+)', line
             ):
-                if int(size) < native:
-                    offenders.append(f"{path.relative_to(GAME)}:{number} uses {size}px")
+                if int(size) % native:
+                    offenders.append(f"{label}:{number} overrides font_size to {size}px")
 
-        # Sizes handed to a label helper that forwards them to the override
-        # (party_setup._label, boot_screen._make_label). A literal at the
-        # call site never reaches the regex above, which is exactly how the
-        # 6px footer survived the first version of this check.
+        # draw_string(font, pos, text, alignment, width, SIZE, colour).
+        # Scanned over the whole file, not per line: these calls routinely
+        # wrap, and a per-line splitter simply saw an unclosed paren and
+        # skipped them — which is how a 6px caption slipped through.
+        for call in re.finditer(r"draw_string\(", text):
+            args = _split_call_args(text[call.end() - 1 :])
+            if args is None or len(args) < 6:
+                continue
+            size_argument = args[5].strip()
+            if size_argument.isdigit() and int(size_argument) % native:
+                number = text.count("\n", 0, call.start()) + 1
+                offenders.append(f"{label}:{number} draws text at {size_argument}px")
+
         for helper, index in _font_size_forwarding_helpers(text).items():
-            for number, line in enumerate(lines, start=1):
-                for call in re.finditer(rf"\b{helper}\(", line):
-                    args = _split_call_args(line[call.end() - 1 :])
-                    if args is None or index >= len(args):
-                        continue
-                    argument = args[index].strip()
-                    if argument.isdigit() and int(argument) < native:
-                        offenders.append(
-                            f"{path.relative_to(GAME)}:{number}"
-                            f" passes {argument}px to {helper}()"
-                        )
-    assert not offenders, "text below the font's native size: " + "; ".join(offenders)
+            for call in re.finditer(rf"\b{helper}\(", text):
+                args = _split_call_args(text[call.end() - 1 :])
+                if args is None or index >= len(args):
+                    continue
+                argument = args[index].strip()
+                if argument.isdigit() and int(argument) % native:
+                    number = text.count("\n", 0, call.start()) + 1
+                    offenders.append(
+                        f"{label}:{number} passes {argument}px to {helper}()"
+                    )
+    assert not offenders, "text off the type scale: " + "; ".join(offenders)
 
 
 def _font_size_forwarding_helpers(text: str) -> dict[str, int]:

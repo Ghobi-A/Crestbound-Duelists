@@ -16,9 +16,10 @@ class_name DialogueBox
 signal dialogue_finished(key: String)
 
 const PORTRAIT_PATH := "res://assets/portraits/%s/neutral.png"
-const PORTRAIT_SIZE := Vector2(34, 38)
-const PORTRAIT_MARGIN := Vector2(4, 3)
-const TEXT_MARGIN_RIGHT := 6.0
+const PORTRAIT_SIZE := Vector2(136, 152)
+const PORTRAIT_MARGIN := Vector2(16, 12)
+const TEXT_MARGIN_RIGHT := 24.0
+const PAD := 24.0
 
 var active := false
 
@@ -46,35 +47,38 @@ func _ready() -> void:
 	_portrait = TextureRect.new()
 	PresentationLayout.texture_box(_portrait, PresentationLayout.PORTRAIT_RECT)
 	# Portraits are painterly renders, not native pixel art like the rest
-	# of the game (which relies on the project-wide nearest filter to
-	# stay crisp) — downscaling one with nearest neighbour aliases badly,
-	# so this node alone opts into smoothing.
-	_portrait.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
+	# of the game, so they smooth rather than alias. The box is now very
+	# nearly 1:1 with the 138x160 atlas crop.
+	PresentationLayout.use_source_art_filter(_portrait)
 	_portrait.visible = false
 	_panel.add_child(_portrait)
 
 	_speaker_label = Label.new()
-	_speaker_label.position = Vector2(6, 2)
-	_speaker_label.size = Vector2(300, 10)
+	_speaker_label.position = Vector2(PAD, PAD * 0.4)
+	_speaker_label.size = Vector2(PresentationLayout.DIALOGUE_RECT.size.x - PAD * 2, Typography.HEADING + 8.0)
 	_speaker_label.clip_text = true
 	_speaker_label.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
-	_speaker_label.add_theme_font_size_override("font_size", 8)
+	_speaker_label.add_theme_font_size_override("font_size", Typography.HEADING)
 	_speaker_label.add_theme_color_override("font_color", PlaceholderPalette.TEXT_WARN)
 	_panel.add_child(_speaker_label)
 
 	_text_label = Label.new()
-	_text_label.position = Vector2(6, PresentationLayout.TEXT_TOP)
-	_text_label.size = Vector2(280, PresentationLayout.TEXT_HEIGHT)
+	_text_label.position = Vector2(PAD, PresentationLayout.TEXT_TOP)
+	_text_label.size = Vector2(
+		PresentationLayout.DIALOGUE_RECT.size.x - PAD - PresentationLayout.RIGHT_MARGIN,
+		PresentationLayout.TEXT_HEIGHT)
 	_text_label.clip_text = true
 	_text_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	_text_label.add_theme_font_size_override("font_size", 8)
+	_text_label.add_theme_font_size_override("font_size", Typography.BODY)
 	_text_label.add_theme_color_override("font_color", PlaceholderPalette.TEXT_MAIN)
 	_panel.add_child(_text_label)
 
 	_advance_label = Label.new()
 	_advance_label.text = "v"
-	_advance_label.position = Vector2(290, 36)
-	_advance_label.add_theme_font_size_override("font_size", 8)
+	_advance_label.position = Vector2(
+		PresentationLayout.DIALOGUE_RECT.size.x - PAD * 2,
+		PresentationLayout.DIALOGUE_RECT.size.y - PAD * 2)
+	_advance_label.add_theme_font_size_override("font_size", Typography.BODY)
 	_advance_label.add_theme_color_override("font_color", PlaceholderPalette.TEXT_DIM)
 	_panel.add_child(_advance_label)
 
@@ -121,7 +125,8 @@ func _show_current_line() -> void:
 	_speaker_label.text = entry.get("speaker", "")
 	var lines: Array = entry.get("lines", [])
 	_apply_portrait(str(entry.get("portrait", "")), str(entry.get("expression", "neutral")))
-	_pages = paginate(str(lines[_line_index]), _text_label.get_theme_font("font"), 8, _text_label.size.x, PresentationLayout.TEXT_HEIGHT)
+	_pages = paginate(str(lines[_line_index]), _text_label.get_theme_font("font"),
+		Typography.BODY, _text_label.size.x, PresentationLayout.TEXT_HEIGHT)
 	_page_index = 0
 	_text_label.text = _pages[0]
 
@@ -164,7 +169,7 @@ static func paginate(text: String, font: Font, font_size: int, width: float, hei
 func _apply_portrait(portrait_key: String, expression := "neutral") -> void:
 	CharacterPresentation.apply_portrait(_portrait, portrait_key, expression)
 	var shown := _portrait.texture != null
-	var text_x := PresentationLayout.PORTRAIT_RECT.end.x + 6.0 if shown else 6.0
+	var text_x := PresentationLayout.PORTRAIT_RECT.end.x + PAD if shown else PAD
 	var text_width := _panel.size.x - text_x - PresentationLayout.RIGHT_MARGIN
 	_speaker_label.position.x = text_x
 	_text_label.position.x = text_x

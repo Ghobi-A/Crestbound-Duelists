@@ -77,13 +77,15 @@ func check_dialogue() -> void:
 		check(box._text_label.position.x >= box._portrait.position.x + box._portrait.size.x, "Portrait/text collision: " + key)
 	var original := "A long sentence about the Hollow Court and its forgotten history. ".repeat(40)
 	var font: Font = box._text_label.get_theme_font("font")
-	var pages := DialogueBox.paginate(original, font, 8, 180, 28)
+	var line_width := box._text_label.size.x
+	var pages := DialogueBox.paginate(original, font, Typography.BODY, line_width,
+		PresentationLayout.TEXT_HEIGHT)
 	check(pages.size() > 1, "Long dialogue not paginated")
 	var reconstructed := " ".join(pages).replace("\n", " ").strip_edges()
 	check(reconstructed == original.strip_edges(), "Pagination lost or reordered words")
 	for page in pages:
 		for line in page.split("\n"):
-			check(font.get_string_size(line, HORIZONTAL_ALIGNMENT_LEFT, -1, 8).x <= 180, "Text exceeds line width")
+			check(font.get_string_size(line, HORIZONTAL_ALIGNMENT_LEFT, -1, Typography.BODY).x <= line_width, "Text exceeds line width")
 	box._dialogue_data = {"test": [{"speaker": "An exceptionally long speaker title", "portrait": "elara", "lines": [original, "Final line."]}]}
 	box.play("test")
 	var advances := 0

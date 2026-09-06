@@ -59,9 +59,10 @@ saves and any external reference to the constant keep resolving.
 3. a border in the role accent, darkened 40%
 4. corner marks in the full-strength accent (when `ornate`)
 
-Corner marks are `UiStyle.CORNER_LENGTH` = **3px**. This is a hard
-ceiling, not a preference: at 320x180 a longer mark stops reading as a
-flourish and starts reading as a broken border.
+Corner marks are `UiStyle.CORNER_LENGTH` = **12px**, drawn at
+`UiStyle.LINE` weight. The ratio is the point, not the number: a mark
+longer than about 1% of the screen width stops reading as a flourish and
+starts reading as a broken border.
 
 For node-based screens use `UiPanel.create(pos, size, role)`, and
 `.with_divider(y)` when the panel has a title that needs separating from
@@ -151,8 +152,10 @@ renders readable text-only menus.
 
 ## Layout constraints
 
-The internal canvas is **320x180**. Two rules follow from that and have
-both already caused real bugs:
+The internal canvas is **1280x720** (`PresentationLayout.CANVAS`), and
+every screen coordinate derives from it — see
+`rework/RESOLUTION_MIGRATION.md`. Two rules still follow, and both have
+already caused real bugs:
 
 1. **Clamp label width to the panel interior.** A label left at default
    width bleeds across panel borders into the neighbouring column. This
@@ -161,6 +164,11 @@ both already caused real bugs:
 2. **Check the longest real string, not a typical one.** Two pixels of
    label width decided whether "Riven-touched Raider" fit on one line;
    when it wrapped, it pushed the panel's last row out of view entirely.
+
+3. **Take sizes from `Typography`.** The 8px bitmap face survives only
+   whole-number rescaling, so every size is a multiple of 8. Anything
+   else drops or thickens pixel rows;
+   `test_all_ui_text_uses_whole_multiples_of_the_bitmap_font` enforces it.
 
 Verify layout changes with `tools/capture_screenshots.sh`, which renders
 every screen at the true internal resolution.

@@ -22,6 +22,9 @@ GODOT_SHA512="fd52bb4ba8acc30ca5accd1c566d470ad7282f891ccc0995dfafabcf92bcf76280
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 CACHE_DIR="${CRESTBOUND_GODOT_CACHE:-$HOME/.cache/crestbound-godot}"
 OUT_DIR="$(cd "$(dirname "${1:-$REPO_ROOT/docs/visual_refs}")" && pwd)/$(basename "${1:-visual_refs}")"
+# Host window to render into. Defaults to the 1280x720 logical canvas;
+# set it to a whole multiple (2560x1440) to check a larger host window.
+CAPTURE_RESOLUTION="${CAPTURE_RESOLUTION:-1280x720}"
 TARGETS=(boot party_setup overworld battle battle_target)
 
 mkdir -p "$CACHE_DIR" "$OUT_DIR"
@@ -58,9 +61,9 @@ xvfb-run -a "$GODOT" --path "$REPO_ROOT/game" --import --quit-after 200 >/dev/nu
 for target in "${TARGETS[@]}"; do
 	echo "Capturing $target ..."
 	# Drive the window at the internal resolution so the captured viewport
-	# texture is the 320x180 game canvas itself, not a scaled OS window.
+	# texture is the 1280x720 game canvas itself, not a scaled OS window.
 	xvfb-run -a "$GODOT" --path "$REPO_ROOT/game" --fixed-fps 60 \
-		--resolution 320x180 \
+		--resolution "$CAPTURE_RESOLUTION" \
 		"res://scenes/tools/screenshot_capture.tscn" \
 		-- "--target=$target" "--out=$OUT_DIR"
 done

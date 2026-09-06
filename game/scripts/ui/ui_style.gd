@@ -18,17 +18,20 @@ const COMMAND := "command"
 const TARGET := "target"
 const NEUTRAL := "neutral"
 
-# Trim is deliberately small: at 320x180 a corner mark longer than about
-# 3px stops reading as a flourish and starts reading as a broken border.
-const CORNER_LENGTH := 3
+# Trim scales with the canvas: a corner mark shorter than about 1% of
+# the screen width stops reading as a flourish and starts reading as a
+# broken border.
+const CORNER_LENGTH := 12
 
-# crestbound_font.fnt is a bitmap face authored at 8px. Godot rescales
-# bitmap glyphs to whatever size is asked for, and any factor below 1.0
-# drops whole pixel rows — strokes disappear and letters read as other
-# letters (ACTIVE became NCTIVE, Liora became L:ora on party setup).
-# Never request less than this; to fit more copy, shorten the string or
-# widen its box rather than shrinking the text.
-const FONT_SIZE := 8
+# Chrome stroke weight. A 1px rule was a quarter of a scaled pixel-row at
+# 320x180; on a 1280x720 canvas the same value renders as a hairline that
+# reads as a rendering fault rather than a border, so strokes carry real
+# weight while staying thinner in relative terms than they used to be.
+const LINE := 2.0
+
+# The default interface size. Sizes live in Typography, which documents
+# why only whole multiples of the 8px bitmap face are usable.
+const FONT_SIZE := Typography.BODY
 
 
 static func accent_color(role: String) -> Color:
@@ -51,10 +54,10 @@ static func draw_panel(canvas: CanvasItem, rect: Rect2, role := NEUTRAL, ornate 
 	# A single lit top edge reads as a bevel without costing a second
 	# colour ramp step.
 	canvas.draw_rect(
-		Rect2(rect.position + Vector2(1, 1), Vector2(rect.size.x - 2, 1)),
+		Rect2(rect.position + Vector2(LINE, LINE), Vector2(rect.size.x - LINE * 2, LINE)),
 		PlaceholderPalette.MOON_INDIGO
 	)
-	canvas.draw_rect(rect, accent.darkened(0.4), false, 1.0)
+	canvas.draw_rect(rect, accent.darkened(0.4), false, LINE)
 	if ornate:
 		draw_corner_marks(canvas, rect, accent)
 
@@ -65,8 +68,8 @@ static func draw_corner_marks(canvas: CanvasItem, rect: Rect2, color: Color) -> 
 	var length := float(CORNER_LENGTH)
 	var left := rect.position.x
 	var top := rect.position.y
-	var right := rect.position.x + rect.size.x - 1
-	var bottom := rect.position.y + rect.size.y - 1
+	var right := rect.position.x + rect.size.x - LINE
+	var bottom := rect.position.y + rect.size.y - LINE
 	for corner in [
 		{"x": left, "y": top, "dx": 1.0, "dy": 1.0},
 		{"x": right, "y": top, "dx": -1.0, "dy": 1.0},
@@ -77,8 +80,8 @@ static func draw_corner_marks(canvas: CanvasItem, rect: Rect2, color: Color) -> 
 		var y: float = corner["y"]
 		var dx: float = corner["dx"]
 		var dy: float = corner["dy"]
-		var horizontal := Rect2(Vector2(minf(x, x + dx * length), y), Vector2(length, 1))
-		var vertical := Rect2(Vector2(x, minf(y, y + dy * length)), Vector2(1, length))
+		var horizontal := Rect2(Vector2(minf(x, x + dx * length), y), Vector2(length, LINE))
+		var vertical := Rect2(Vector2(x, minf(y, y + dy * length)), Vector2(LINE, length))
 		canvas.draw_rect(horizontal, color)
 		canvas.draw_rect(vertical, color)
 
@@ -86,20 +89,20 @@ static func draw_corner_marks(canvas: CanvasItem, rect: Rect2, color: Color) -> 
 static func draw_divider(canvas: CanvasItem, from: Vector2, width: float, color: Color, diamond := true) -> void:
 	## A hairline rule, optionally pinched by a small diamond at centre —
 	## used to separate a panel's header or its detail block.
-	canvas.draw_rect(Rect2(from, Vector2(width, 1)), color.darkened(0.25))
+	canvas.draw_rect(Rect2(from, Vector2(width, LINE)), color.darkened(0.25))
 	if not diamond:
 		return
 	var centre := from + Vector2(width * 0.5, 0.0)
-	canvas.draw_rect(Rect2(centre + Vector2(-1, -1), Vector2(3, 1)), color)
-	canvas.draw_rect(Rect2(centre + Vector2(-2, 0), Vector2(5, 1)), color)
-	canvas.draw_rect(Rect2(centre + Vector2(-1, 1), Vector2(3, 1)), color)
+	canvas.draw_rect(Rect2(centre + Vector2(-LINE, -LINE), Vector2(LINE * 3, LINE)), color)
+	canvas.draw_rect(Rect2(centre + Vector2(-LINE * 2, 0), Vector2(LINE * 5, LINE)), color)
+	canvas.draw_rect(Rect2(centre + Vector2(-LINE, LINE), Vector2(LINE * 3, LINE)), color)
 
 
 static func draw_header_underline(canvas: CanvasItem, rect: Rect2, role := COMMAND) -> void:
 	## The accent rule beneath a screen or panel title.
 	var accent := accent_color(role)
 	canvas.draw_rect(
-		Rect2(Vector2(rect.position.x, rect.position.y + rect.size.y - 1), Vector2(rect.size.x, 1)),
+		Rect2(Vector2(rect.position.x, rect.position.y + rect.size.y - LINE), Vector2(rect.size.x, LINE)),
 		accent
 	)
 
@@ -108,4 +111,4 @@ static func draw_selection_band(canvas: CanvasItem, rect: Rect2, role := COMMAND
 	## The filled band behind a highlighted list row, plus a leading
 	## accent tick so the selected row is readable even in a still frame.
 	canvas.draw_rect(rect, PlaceholderPalette.MOON_INDIGO)
-	canvas.draw_rect(Rect2(rect.position, Vector2(1, rect.size.y)), accent_color(role))
+	canvas.draw_rect(Rect2(rect.position, Vector2(LINE, rect.size.y)), accent_color(role))

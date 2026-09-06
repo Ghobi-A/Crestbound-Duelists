@@ -41,7 +41,10 @@ func _play_authored(path: String, at: Vector2, state_name: String) -> void:
 	sprite.region_enabled = true
 	sprite.centered = false
 	sprite.offset = -VisualAsset.anchor(data, Vector2(frame_size) * 0.5)
-	sprite.scale = Vector2.ONE * maxf(0.1, float(data.get("scale", 1.0)))
+	# Authored sheets are pixel art sized for the old canvas; the shared
+	# effect scale brings them up to the combatants they play over.
+	sprite.scale = Vector2.ONE * maxf(0.1, float(data.get("scale", 1.0))) * PresentationLayout.EFFECT_SCALE
+	PresentationLayout.use_pixel_art_filter(sprite)
 	sprite.z_index = int(data.get("z_index", 120))
 	var offset = data.get("offset", [0, 0])
 	if not offset is Array or offset.size() != 2:
@@ -63,7 +66,7 @@ func _play_authored(path: String, at: Vector2, state_name: String) -> void:
 
 func _play_fallback(at: Vector2, kind: String, weight: String) -> void:
 	var mark := Polygon2D.new()
-	var radius := 6.0 if weight == "basic" else (9.0 if weight == "signature" else 11.0)
+	var radius := (6.0 if weight == "basic" else (9.0 if weight == "signature" else 11.0)) * PresentationLayout.EFFECT_SCALE
 	var points := PackedVector2Array()
 	for i in 8:
 		var r := radius if i % 2 == 0 else radius * 0.4

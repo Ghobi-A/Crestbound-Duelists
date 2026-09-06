@@ -12,7 +12,7 @@ func show_result(victory: bool) -> void:
 	_active = true
 	var shade := ColorRect.new()
 	shade.color = Color(0.03, 0.025, 0.06, 0.78)
-	shade.size = Vector2(320, 180)
+	shade.size = PresentationLayout.CANVAS
 	add_child(shade)
 	var key := "victory" if victory else "defeat"
 	var path := "res://assets/ui/results/%s.png" % key
@@ -24,17 +24,17 @@ func show_result(victory: bool) -> void:
 	var title := Label.new()
 	title.text = key.to_upper()
 	title.position = Vector2(0, 62)
-	title.size = Vector2(320, 20)
+	title.size = Vector2(PresentationLayout.CANVAS.x, Typography.DISPLAY * 1.5)
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	title.add_theme_font_size_override("font_size", 14)
+	title.add_theme_font_size_override("font_size", Typography.DISPLAY)
 	title.add_theme_color_override("font_color", PlaceholderPalette.CREST_GOLD_BRIGHT if victory else Color("b7aec8"))
 	add_child(title)
 	var prompt := Label.new()
 	prompt.text = "Z  CONTINUE"
 	prompt.position = Vector2(0, 108)
-	prompt.size = Vector2(320, 12)
+	prompt.size = Vector2(PresentationLayout.CANVAS.x, Typography.BODY * 1.5)
 	prompt.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	prompt.add_theme_font_size_override("font_size", 8)
+	prompt.add_theme_font_size_override("font_size", Typography.BODY)
 	prompt.add_theme_color_override("font_color", PlaceholderPalette.TEXT_DIM)
 	add_child(prompt)
 	AudioRouter.play_music(key)

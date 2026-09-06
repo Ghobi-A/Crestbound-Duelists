@@ -82,5 +82,6 @@ static func portrait(key: String, expression := "neutral") -> Texture2D:
 static func apply_portrait(node: TextureRect, key: String, expression := "neutral") -> void:
 	node.texture = portrait(key, expression)
 	node.material = key_material(record_for(key)) if not record_for(key).is_empty() else null
-	node.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	# Portrait crops come from the same painted atlas as the battle art.
+	PresentationLayout.use_source_art_filter(node)
 	node.visible = node.texture != null

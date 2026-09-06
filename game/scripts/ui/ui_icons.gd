@@ -10,6 +10,13 @@ extends RefCounted
 const ATLAS_PATH := "res://assets/ui/icons.png"
 const MANIFEST_PATH := "res://assets/ui/icons_manifest.json"
 
+## Icons are 7px pixel art. On the 1280x720 canvas they are drawn at a
+## whole-number multiple so every source pixel stays a clean square; a
+## fractional factor would round some pixels to 3 units and some to 4
+## and visibly bend the glyph. 4x puts them at 28px, matching the body
+## type they sit beside.
+const DISPLAY_SCALE := 4.0
+
 static var _manifest: Dictionary = {}
 static var _atlas: Texture2D
 static var _loaded := false
@@ -30,8 +37,14 @@ static func _ensure_loaded() -> void:
 
 
 static func size() -> int:
+	## Source size in atlas pixels.
 	_ensure_loaded()
 	return int(_manifest.get("icon_size", 7))
+
+
+static func display_size() -> float:
+	## On-canvas size after the integer upscale above.
+	return float(size()) * DISPLAY_SCALE
 
 
 static func has(icon_name: String) -> bool:
@@ -47,7 +60,8 @@ static func draw_icon(canvas: CanvasItem, icon_name: String, at: Vector2, tint: 
 	var cell: Array = _manifest["icons"][icon_name]
 	var side := size()
 	var region := Rect2(int(cell[0]) * side, int(cell[1]) * side, side, side)
-	canvas.draw_texture_rect_region(_atlas, Rect2(at, Vector2(side, side)), region, tint)
+	var drawn := float(side) * DISPLAY_SCALE
+	canvas.draw_texture_rect_region(_atlas, Rect2(at, Vector2(drawn, drawn)), region, tint)
 
 
 static func make_texture(icon_name: String) -> AtlasTexture:

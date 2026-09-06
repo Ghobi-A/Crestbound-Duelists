@@ -155,3 +155,32 @@ def test_court_return_tile_matches_battle_controller() -> None:
     match = re.search(r"const COURT_RETURN_TILE := Vector2i\((\d+),\s*(\d+)\)", battle_source)
     assert match, "Could not locate COURT_RETURN_TILE in battle_controller.gd"
     assert [int(match.group(1)), int(match.group(2))] == current_layout()["spawn_from_court"]
+
+
+def test_camera_zoom_keeps_the_view_inside_the_map(layout: dict) -> None:
+    """An integer zoom preserves the tile art exactly, but too low a zoom
+    shows past the map edge into empty space. At 3 the camera framed
+    427x240 world units against a 384x224 map and rendered the void
+    around it; any zoom must keep the visible region within bounds.
+    """
+    from gdscript_consts import constants
+
+    layout_gd = (
+        REPO_ROOT / "game" / "scripts" / "presentation" / "presentation_layout.gd"
+    )
+    constants_ = constants(layout_gd)
+    zoom = constants_["OVERWORLD_ZOOM"]
+    canvas = constants_["CANVAS"]
+
+    source = _read_source()
+    tile = int(re.search(r"const TILE := (\d+)", source).group(1))
+    map_width = layout["width"] * tile
+    map_height = layout["height"] * tile
+
+    assert zoom == int(zoom), "A fractional zoom breaks pixel alignment on tile art"
+    assert canvas.x / zoom <= map_width, (
+        f"view is {canvas.x / zoom:.0f} world units wide, map is only {map_width}"
+    )
+    assert canvas.y / zoom <= map_height, (
+        f"view is {canvas.y / zoom:.0f} world units tall, map is only {map_height}"
+    )

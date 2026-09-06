@@ -10,21 +10,27 @@ for each visual phase and as the visual-regression baseline.
 
 | File | Contents |
 | --- | --- |
-| `baseline_overworld.png` | Greymere at the default spawn tile (320x180, canonical) |
-| `baseline_overworld_4x.png` | Same frame, nearest-upscaled to 1280x720 for viewing |
-| `baseline_battle.png` | Hollow Court, round 1, command menu open (320x180, canonical) |
-| `baseline_battle_4x.png` | Same frame, nearest-upscaled to 1280x720 for viewing |
+| `baseline_boot.png` | Title screen, first menu row selected |
+| `baseline_party_setup.png` | Party setup, Kai selected |
+| `baseline_overworld.png` | Greymere at the default spawn tile |
+| `baseline_battle.png` | Hollow Court, round 1, command menu open |
+| `baseline_battle_target.png` | Hollow Court, target selection on the Riven Raider |
 
-The 320x180 file is the canonical artifact: it is the internal game viewport
-captured at 1:1, never an OS-window or browser grab. The `_4x` copy is derived
-from it by nearest-neighbour upscaling, so it adds no information and
-introduces no filtering.
+Every baseline is 1280x720: the internal game viewport captured at 1:1, never
+an OS-window or browser grab. Since the migration in
+`../rework/RESOLUTION_MIGRATION.md` the canvas *is* the delivery resolution,
+so there is no longer a companion `_4x` upscale — the canonical file is
+already the size a player sees.
 
 Regenerate with:
 
 ```bash
 tools/capture_screenshots.sh                 # writes into docs/visual_refs/
 tools/capture_screenshots.sh /tmp/candidate  # writes elsewhere for comparison
+
+# Check a larger host window. Integer stretch means a whole multiple
+# scales exactly; the harness reports if a size is not a whole multiple.
+CAPTURE_RESOLUTION=2560x1440 tools/capture_screenshots.sh /tmp/at-1440p
 ```
 
 Compare a candidate run against the committed baselines:

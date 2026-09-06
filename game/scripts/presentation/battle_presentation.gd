@@ -87,7 +87,7 @@ func play_events(action: Dictionary, events: Array) -> void:
 func play_awakening(unit: BattleUnit, banner: String, accent: Color) -> void:
 	var dim := ColorRect.new()
 	dim.color = Color(0.03, 0.025, 0.06, 0.0)
-	dim.size = Vector2(320, 122)
+	dim.size = PresentationLayout.battlefield_rect().size
 	dim.z_index = 105
 	add_child(dim)
 	var fade := create_tween()
@@ -96,7 +96,7 @@ func play_awakening(unit: BattleUnit, banner: String, accent: Color) -> void:
 	if sprites.has(unit):
 		sprites[unit].play_entity_state("awaken")
 		sprites[unit].play("awaken")
-	await vfx.play_effect(unit.crest_id, sprites[unit].effect_origin() if sprites.has(unit) else Vector2(160, 70), "magic", "signature", "awaken")
+	await vfx.play_effect(unit.crest_id, sprites[unit].effect_origin() if sprites.has(unit) else PresentationLayout.battlefield_rect().get_center(), "magic", "signature", "awaken")
 	hud.play_awakening_banner(banner, accent)
 	AudioRouter.play_sfx("battle", "awakening")
 	shake(2.0)

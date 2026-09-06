@@ -9,9 +9,9 @@ func build_background(location: String) -> void:
 		return
 	var background := TextureRect.new()
 	background.texture = load(path)
-	PresentationLayout.texture_box(background, Rect2(0, 0, 320, PresentationLayout.BATTLE_HEIGHT))
+	PresentationLayout.texture_box(background, PresentationLayout.battlefield_rect())
 	background.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
-	background.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	PresentationLayout.use_source_art_filter(background)
 	background.z_index = -20
 	add_child(background)
 

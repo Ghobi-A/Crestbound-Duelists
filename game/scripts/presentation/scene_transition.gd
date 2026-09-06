@@ -8,7 +8,7 @@ var _busy := false
 func _ready() -> void:
 	layer = 100
 	_veil = ColorRect.new()
-	_veil.size = Vector2(320, 180)
+	_veil.size = PresentationLayout.CANVAS
 	_veil.color = Color(0.08, 0.07, 0.12, 0.0)
 	_veil.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(_veil)

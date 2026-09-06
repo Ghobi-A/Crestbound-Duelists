@@ -29,31 +29,31 @@ func _build(title: String, body: String) -> void:
 	scrim.set_anchors_preset(Control.PRESET_FULL_RECT)
 	add_child(scrim)
 
-	var panel := UiPanel.create(Vector2(28, 26), Vector2(264, 128), UiStyle.COMMAND).with_divider(20)
+	var panel := UiPanel.create(Vector2(224, 152), Vector2(832, 416), UiStyle.COMMAND).with_divider(72)
 	add_child(panel)
 
 	var title_label := Label.new()
 	title_label.text = title
-	title_label.position = Vector2(8, 8)
-	title_label.size = Vector2(248, 12)
-	title_label.add_theme_font_size_override("font_size", 9)
+	title_label.position = Vector2(32, 28)
+	title_label.size = Vector2(768, Typography.HEADING + 8)
+	title_label.add_theme_font_size_override("font_size", Typography.HEADING)
 	title_label.add_theme_color_override("font_color", PlaceholderPalette.TEXT_WARN)
 	panel.add_child(title_label)
 
 	var body_label := Label.new()
 	body_label.text = body
-	body_label.position = Vector2(8, 24)
-	body_label.size = Vector2(248, 84)
+	body_label.position = Vector2(32, 96)
+	body_label.size = Vector2(768, 248)
 	body_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	body_label.add_theme_font_size_override("font_size", 8)
+	body_label.add_theme_font_size_override("font_size", Typography.BODY)
 	body_label.add_theme_color_override("font_color", PlaceholderPalette.TEXT_MAIN)
 	panel.add_child(body_label)
 
 	var hint_label := Label.new()
 	hint_label.text = "Z / Enter / Space: dismiss"
-	hint_label.position = Vector2(8, 112)
-	hint_label.size = Vector2(248, 10)
-	hint_label.add_theme_font_size_override("font_size", 8)
+	hint_label.position = Vector2(32, 360)
+	hint_label.size = Vector2(768, Typography.BODY + 8)
+	hint_label.add_theme_font_size_override("font_size", Typography.BODY)
 	hint_label.add_theme_color_override("font_color", PlaceholderPalette.TEXT_DIM)
 	panel.add_child(hint_label)
 

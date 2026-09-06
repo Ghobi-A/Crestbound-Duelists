@@ -18,95 +18,127 @@ var _flash_rect: ColorRect
 var _banner_label: Label
 
 
+## Interior padding and the gap between the card strip and the
+## contextual panel. Everything below positions against these and
+## against PresentationLayout, never against a literal canvas size.
+const PAD := 12.0
+const GUTTER := 16.0
+## The contextual panel (action menu / target info) occupies the right
+## third of the HUD; the card strip takes the rest. Cards carry a
+## smaller share of the screen than they did at 320x180, where they ran
+## the full width of a 58px bar on a 180px canvas.
+const CONTEXT_PANEL_WIDTH := 420.0
+
+
 func _ready() -> void:
 	layer = 5
+	var canvas := PresentationLayout.CANVAS
+	var hud := PresentationLayout.hud_rect()
 
 	var top := ColorRect.new()
 	top.color = PlaceholderPalette.MOON_SLATE
-	top.size = Vector2(320, 12)
+	top.size = Vector2(canvas.x, PresentationLayout.TOP_BAR_HEIGHT)
 	add_child(top)
 	# A gold underline separates the header from the battlefield, matching
 	# the accent edge UiStyle.draw_panel puts on every other panel. Kept
 	# as a plain ColorRect since the top bar isn't a custom-drawn Control.
 	var top_accent := ColorRect.new()
 	top_accent.color = PlaceholderPalette.CREST_GOLD
-	top_accent.position = Vector2(0, 11)
-	top_accent.size = Vector2(320, 1)
+	top_accent.position = Vector2(0, top.size.y - UiStyle.LINE)
+	top_accent.size = Vector2(canvas.x, UiStyle.LINE)
 	top.add_child(top_accent)
-	_phase_label = _label(top, Vector2(4, 1), Vector2(132, 10), PlaceholderPalette.TEXT_WARN)
+	var bar_text_height := Typography.HEADING * 1.5
+	_phase_label = _label(top, Vector2(PAD, (top.size.y - bar_text_height) * 0.5),
+		Vector2(canvas.x * 0.42, bar_text_height), PlaceholderPalette.TEXT_WARN, Typography.BODY)
 	_phase_label.clip_text = true
 	_phase_label.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
 	# Objective text is right-aligned and stops short of the icon, which
 	# is pinned to the corner so it never moves as the text changes.
-	_objective_label = _label(top, Vector2(140, 1), Vector2(160, 10), PlaceholderPalette.TEXT_DIM)
+	var objective_icon := UiIcons.make_texture("objective")
+	var icon_side := UiIcons.display_size() if objective_icon != null else 0.0
+	var objective_right := canvas.x - PAD - icon_side - (PAD if icon_side > 0.0 else 0.0)
+	_objective_label = _label(top, Vector2(canvas.x * 0.45, (top.size.y - bar_text_height) * 0.5),
+		Vector2(objective_right - canvas.x * 0.45, bar_text_height),
+		PlaceholderPalette.TEXT_DIM, Typography.BODY)
 	_objective_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	_objective_label.clip_text = true
-	var objective_icon := UiIcons.make_texture("objective")
 	if objective_icon != null:
 		var icon_rect := TextureRect.new()
 		icon_rect.texture = objective_icon
-		icon_rect.position = Vector2(303, 2)
+		PresentationLayout.texture_box(icon_rect, Rect2(
+			canvas.x - PAD - icon_side, (top.size.y - icon_side) * 0.5, icon_side, icon_side))
+		PresentationLayout.use_pixel_art_filter(icon_rect)
 		icon_rect.modulate = PlaceholderPalette.CREST_GOLD
-		icon_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		top.add_child(icon_rect)
 
 	var message_strip := ColorRect.new()
 	message_strip.color = Color(0, 0, 0, 0.55)
-	message_strip.position = Vector2(0, 110)
-	message_strip.size = Vector2(320, 12)
+	message_strip.position = Vector2(0, hud.position.y - PresentationLayout.MESSAGE_STRIP_HEIGHT)
+	message_strip.size = Vector2(canvas.x, PresentationLayout.MESSAGE_STRIP_HEIGHT)
 	add_child(message_strip)
-	_message_label = _label(message_strip, Vector2(4, 1), Vector2(312, 10), PlaceholderPalette.TEXT_MAIN)
+	_message_label = _label(message_strip, Vector2(PAD, (message_strip.size.y - Typography.BODY * 1.5) * 0.5),
+		Vector2(canvas.x - PAD * 2, Typography.BODY * 1.5), PlaceholderPalette.TEXT_MAIN,
+		Typography.BODY)
 
 	var bottom := ColorRect.new()
 	bottom.color = PlaceholderPalette.MOON_SLATE
-	bottom.position = Vector2(0, 122)
-	bottom.size = Vector2(320, 58)
+	bottom.position = hud.position
+	bottom.size = hud.size
 	add_child(bottom)
 
+	var context_x := hud.size.x - PAD - CONTEXT_PANEL_WIDTH
 	_rows_container = HBoxContainer.new()
-	_rows_container.position = Vector2(2, 2)
-	_rows_container.add_theme_constant_override("separation", 1)
+	_rows_container.position = Vector2(PAD, PAD)
+	_rows_container.add_theme_constant_override("separation", int(GUTTER * 0.5))
 	bottom.add_child(_rows_container)
 
+	var context_rect := Rect2(context_x, PAD, CONTEXT_PANEL_WIDTH, hud.size.y - PAD * 2)
 	action_menu = ActionMenu.new()
-	action_menu.position = Vector2(196, 1)
+	action_menu.position = context_rect.position
 	action_menu.visible = false
 	bottom.add_child(action_menu)
 
 	# The target/skill info panel shares the action menu's footprint and
-	# takes the violet framing (target-facing, not command-facing) —
-	# same size/position ActionMenu already occupies, so swapping between
-	# the two never shifts anything else in the bottom panel.
-	_info_panel = UiPanel.create(Vector2(196, 1), ActionMenu.MENU_SIZE, UiStyle.TARGET)
+	# takes the violet framing (target-facing, not command-facing), so
+	# swapping between the two never shifts anything else in the HUD.
+	_info_panel = UiPanel.create(context_rect.position, context_rect.size, UiStyle.TARGET)
 	_info_panel.visible = false
 	bottom.add_child(_info_panel)
-	# Width matters here: at 116 the longest enemy name wraps to a second
-	# line and pushes the final stat row out of the panel entirely.
-	_info_label = _label(_info_panel, Vector2(2, 3), Vector2(118, 52), PlaceholderPalette.TEXT_MAIN)
+	_info_label = _label(_info_panel, Vector2(PAD, PAD),
+		context_rect.size - Vector2(PAD * 2, PAD * 2), PlaceholderPalette.TEXT_MAIN, Typography.BODY)
 	_info_label.visible = false
 
 	round_preview = RoundPreview.new()
-	# Centred on the 320px canvas: (320 - RoundPreview.PANEL_SIZE.x) / 2.
-	round_preview.position = Vector2((320.0 - RoundPreview.PANEL_SIZE.x) / 2.0, 16)
+	round_preview.position = Vector2(
+		(canvas.x - RoundPreview.PANEL_SIZE.x) * 0.5,
+		(PresentationLayout.BATTLE_HEIGHT - RoundPreview.PANEL_SIZE.y) * 0.5)
 	add_child(round_preview)
 
 	_flash_rect = ColorRect.new()
 	_flash_rect.color = Color(1, 1, 1, 0)
-	_flash_rect.size = Vector2(320, 180)
+	_flash_rect.size = canvas
 	_flash_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(_flash_rect)
 
-	_banner_label = _label(self, Vector2(0, 46), Vector2(320, 20), PlaceholderPalette.CREST_GOLD_BRIGHT)
+	_banner_label = _label(self, Vector2(0, PresentationLayout.BATTLE_HEIGHT * 0.36),
+		Vector2(canvas.x, Typography.DISPLAY * 1.5), PlaceholderPalette.CREST_GOLD_BRIGHT,
+		Typography.DISPLAY)
 	_banner_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_banner_label.add_theme_font_size_override("font_size", 12)
 	_banner_label.visible = false
 
 
-func _label(parent: Node, top_left: Vector2, size_: Vector2, color: Color) -> Label:
+func _context_x() -> float:
+	## Resting x of the contextual panel, shared by the action menu and
+	## the target info panel so they occupy exactly the same footprint.
+	return PresentationLayout.CANVAS.x - PAD - CONTEXT_PANEL_WIDTH
+
+
+func _label(parent: Node, top_left: Vector2, size_: Vector2, color: Color,
+		font_size := Typography.BODY) -> Label:
 	var label := Label.new()
 	label.position = top_left
 	label.size = size_
-	label.add_theme_font_size_override("font_size", 8)
+	label.add_theme_font_size_override("font_size", font_size)
 	label.add_theme_color_override("font_color", color)
 	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	label.clip_text = true
@@ -115,10 +147,13 @@ func _label(parent: Node, top_left: Vector2, size_: Vector2, color: Color) -> La
 
 
 func build_rows(player_units: Array) -> void:
+	var strip_width := PresentationLayout.CANVAS.x - PAD * 3 - CONTEXT_PANEL_WIDTH
+	var separation := GUTTER * 0.5
 	for unit in player_units:
 		var row := UnitStatusPanel.new()
-		var card_width := (192.0 - maxf(0, player_units.size() - 1)) / maxf(1, player_units.size())
-		row.custom_minimum_size = Vector2(card_width, 54)
+		var gaps := separation * maxf(0, player_units.size() - 1)
+		var card_width := (strip_width - gaps) / maxf(1, player_units.size())
+		row.custom_minimum_size = Vector2(card_width, PresentationLayout.HUD_HEIGHT - PAD * 2)
 		row.size = row.custom_minimum_size
 		_rows_container.add_child(row)
 		row.bind(unit)
@@ -160,9 +195,10 @@ func show_menu(unit: BattleUnit) -> void:
 	action_menu.build_for(unit)
 	action_menu.visible = true
 	action_menu.modulate.a = 0.0
-	action_menu.position.x = 200
+	var rest_x := _context_x()
+	action_menu.position.x = rest_x + GUTTER
 	var reveal := create_tween().set_parallel()
-	reveal.tween_property(action_menu, "position:x", 196.0, 0.08)
+	reveal.tween_property(action_menu, "position:x", rest_x, 0.08)
 	reveal.tween_property(action_menu, "modulate:a", 1.0, 0.08)
 
 
@@ -176,9 +212,10 @@ func show_info(text: String) -> void:
 	_info_label.visible = true
 	_info_panel.visible = true
 	_info_panel.modulate.a = 0.0
-	_info_panel.position.x = 192
+	var rest_x := _context_x()
+	_info_panel.position.x = rest_x - GUTTER
 	var reveal := create_tween().set_parallel()
-	reveal.tween_property(_info_panel, "position:x", 196.0, 0.08)
+	reveal.tween_property(_info_panel, "position:x", rest_x, 0.08)
 	reveal.tween_property(_info_panel, "modulate:a", 1.0, 0.08)
 
 
@@ -198,7 +235,7 @@ func play_awakening_banner(text: String, accent: Color) -> void:
 	_banner_label.add_theme_color_override("font_color", accent.lightened(0.3))
 	_banner_label.visible = true
 	_banner_label.scale = Vector2(1.0, 0.2)
-	_banner_label.pivot_offset = Vector2(160, 10)
+	_banner_label.pivot_offset = _banner_label.size * 0.5
 	var banner_tween := create_tween()
 	banner_tween.tween_property(_banner_label, "scale:y", 1.0, 0.12)
 	banner_tween.tween_interval(1.0)

@@ -23,9 +23,17 @@ var _portrait: TextureRect
 var _crest_art: TextureRect
 var _entity_art: TextureRect
 
-const CONTENT_TOP := 30.0
-const CONTENT_BOTTOM := 154.0
-const FOOTER_TOP := 158.0
+## Screen bands. Derived from the canvas so the three panels stay
+## aligned to one grid rather than to hand-placed offsets.
+const MARGIN := 32.0
+const PAD := 24.0
+const TITLE_HEIGHT := 88.0
+const FOOTER_HEIGHT := 48.0
+const CONTENT_TOP := MARGIN + TITLE_HEIGHT + 16.0                       # 136
+const FOOTER_TOP := PresentationLayout.CANVAS.y - MARGIN - FOOTER_HEIGHT # 640
+const CONTENT_BOTTOM := FOOTER_TOP - 16.0                                # 624
+## The roster takes the wider share; encounter detail sits beside it.
+const ROSTER_WIDTH := 696.0
 
 
 func _ready() -> void:
@@ -39,51 +47,69 @@ func _ready() -> void:
 
 
 func _build_ui() -> void:
+	var canvas := PresentationLayout.CANVAS
 	var background := ColorRect.new()
 	background.color = PlaceholderPalette.BG_DARK
 	background.set_anchors_preset(Control.PRESET_FULL_RECT)
 	add_child(background)
 
+	var content_height := CONTENT_BOTTOM - CONTENT_TOP
+	var detail_x := MARGIN + ROSTER_WIDTH + 16.0
+	var detail_width := canvas.x - MARGIN - detail_x
 	# Roster on the left (the player's choices, so gold), encounter
 	# detail on the right (what it affects, so violet) — the same accent
 	# grammar the battle HUD uses.
-	add_child(UiPanel.create(Vector2(8, 4), Vector2(304, 22), UiStyle.COMMAND))
-	add_child(UiPanel.create(Vector2(8, CONTENT_TOP), Vector2(174, CONTENT_BOTTOM - CONTENT_TOP), UiStyle.COMMAND))
-	add_child(UiPanel.create(Vector2(186, CONTENT_TOP), Vector2(126, CONTENT_BOTTOM - CONTENT_TOP), UiStyle.TARGET))
-	# Instructions have their own bounded footer rather than competing with
-	# the detail copy. This remains readable on the native 320x180 canvas.
-	add_child(UiPanel.create(Vector2(8, FOOTER_TOP), Vector2(304, 18), UiStyle.NEUTRAL))
+	add_child(UiPanel.create(Vector2(MARGIN, MARGIN), Vector2(canvas.x - MARGIN * 2, TITLE_HEIGHT), UiStyle.COMMAND))
+	add_child(UiPanel.create(Vector2(MARGIN, CONTENT_TOP), Vector2(ROSTER_WIDTH, content_height), UiStyle.COMMAND))
+	add_child(UiPanel.create(Vector2(detail_x, CONTENT_TOP), Vector2(detail_width, content_height), UiStyle.TARGET))
+	# Instructions have their own bounded footer rather than competing
+	# with the detail copy.
+	add_child(UiPanel.create(Vector2(MARGIN, FOOTER_TOP), Vector2(canvas.x - MARGIN * 2, FOOTER_HEIGHT), UiStyle.NEUTRAL))
 
-	_title_label = _label(Vector2(0, 10), 10, PlaceholderPalette.TEXT_WARN)
+	_title_label = _label(Vector2(0, MARGIN + PAD), Typography.HEADING, PlaceholderPalette.TEXT_WARN)
+	_title_label.size = Vector2(canvas.x, TITLE_HEIGHT)
 	_title_label.text = "PARTY SETUP — %s" % _encounter.get("name", "")
-	# Both labels are clamped to their panel's interior; the roster's
-	# Long authority names used to bleed into the detail
-	# column when the label was left at full screen width.
-	_rows_label = _label(Vector2(14, 34), UiStyle.FONT_SIZE, PlaceholderPalette.TEXT_MAIN)
+
+	# Both labels are clamped to their panel's interior so long authority
+	# names cannot bleed into the detail column.
+	_rows_label = _label(Vector2(MARGIN + PAD, CONTENT_TOP + PAD), UiStyle.FONT_SIZE, PlaceholderPalette.TEXT_MAIN)
 	_rows_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
-	_rows_label.size = Vector2(162, 114)
+	_rows_label.size = Vector2(ROSTER_WIDTH - PAD * 2, content_height - PAD * 2)
 	_rows_label.clip_text = true
-	_detail_label = _label(Vector2(192, 78), UiStyle.FONT_SIZE, PlaceholderPalette.TEXT_DIM)
+
+	# Identity art sits in a row across the top of the detail panel; the
+	# copy runs beneath it. The portrait box is larger than its 138x160
+	# atlas crop's short side, so the crop is shown at close to authored
+	# size instead of the 34x40 thumbnail the old canvas allowed.
+	var art_top := CONTENT_TOP + PAD
+	var portrait_size := Vector2(172, 200)
+	_portrait = TextureRect.new()
+	PresentationLayout.texture_box(_portrait, Rect2(Vector2(detail_x + PAD, art_top), portrait_size))
+	PresentationLayout.use_source_art_filter(_portrait)
+	add_child(_portrait)
+	var badge_size := Vector2(120, 140)
+	var badge_x := detail_x + PAD + portrait_size.x + PAD
+	_crest_art = _make_identity_art(Vector2(badge_x, art_top), badge_size)
+	_entity_art = _make_identity_art(Vector2(badge_x + badge_size.x + PAD * 0.6, art_top), badge_size)
+
+	var detail_top := art_top + portrait_size.y + PAD
+	_detail_label = _label(Vector2(detail_x + PAD, detail_top), UiStyle.FONT_SIZE, PlaceholderPalette.TEXT_DIM)
 	_detail_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
-	_detail_label.size = Vector2(114, 70)
+	_detail_label.size = Vector2(detail_width - PAD * 2, CONTENT_BOTTOM - detail_top - PAD)
 	_detail_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	_detail_label.clip_text = true
-	_hint_label = _label(Vector2(12, 162), UiStyle.FONT_SIZE, PlaceholderPalette.TEXT_DIM)
-	_hint_label.size = Vector2(296, 10)
-	# Abbreviated so the whole hint fits the footer at native font size
-	# (262px of 296px) instead of being shrunk below it.
-	_hint_label.text = "UP/DOWN SELECT  L/R ROW  Z CONFIRM  X BACK"
-	_portrait = TextureRect.new()
-	PresentationLayout.texture_box(_portrait, Rect2(191, 35, 34, 40))
-	_portrait.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
-	add_child(_portrait)
-	_crest_art = _make_identity_art(Vector2(230, 35))
-	_entity_art = _make_identity_art(Vector2(268, 35))
+
+	_hint_label = _label(Vector2(0, FOOTER_TOP + PAD * 0.5), UiStyle.FONT_SIZE, PlaceholderPalette.TEXT_DIM)
+	_hint_label.size = Vector2(canvas.x, FOOTER_HEIGHT)
+	# The full wording fits again: at body size this measures 963 of the
+	# 1168px footer interior, where the 320x180 canvas could not fit it
+	# even with the text shrunk below the font's native size.
+	_hint_label.text = "UP/DOWN SELECT   LEFT/RIGHT ROW   Z CONFIRM   X BACK"
 
 
-func _make_identity_art(at: Vector2) -> TextureRect:
+func _make_identity_art(at: Vector2, art_size: Vector2) -> TextureRect:
 	var art := TextureRect.new()
-	PresentationLayout.texture_box(art, Rect2(at, Vector2(34, 40)))
+	PresentationLayout.texture_box(art, Rect2(at, art_size))
 	add_child(art)
 	return art
 
@@ -95,7 +121,7 @@ func _optional_texture(path: String) -> Texture2D:
 func _label(top_left: Vector2, font_size: int, color: Color) -> Label:
 	var label := Label.new()
 	label.position = top_left
-	label.size = Vector2(320 - top_left.x, 180 - top_left.y)
+	label.size = PresentationLayout.CANVAS - top_left
 	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	label.add_theme_font_size_override("font_size", font_size)
 	label.add_theme_color_override("font_color", color)
@@ -113,15 +139,12 @@ func _refresh() -> void:
 	for i in GameState.party.size():
 		var build: Dictionary = GameState.party[i]
 		var cursor := "> " if _cursor == i else "  "
-		# Status is abbreviated to three characters so a full row reads
-		# within the roster panel at native font size; the previous
-		# "ACTIVE "/"RESERVE" padding only fit by shrinking the font.
-		var active := "ACT" if i < _slots else "RES"
+		var active := "ACTIVE " if i < _slots else "RESERVE"
 		var row: String = str(build.get("position", "front")).to_upper()
-		lines.append("%s%s %-5s %s" % [cursor, active, row, build.get("name", "?")])
+		lines.append("%s%-7s %-5s %s" % [cursor, active, row, build.get("name", "?")])
 	lines.append("")
 	var start_cursor := "> " if _cursor == GameState.party.size() else "  "
-	lines.append(start_cursor + "START BATTLE (%d)" % _slots)
+	lines.append(start_cursor + "START BATTLE  (%d Duelist%s)" % [_slots, "" if _slots == 1 else "s"])
 	_rows_label.text = "\n".join(lines)
 
 	if _cursor < GameState.party.size():
@@ -134,18 +157,12 @@ func _refresh() -> void:
 		details.append(crest.get("name", "NO CREST"))
 		details.append(entity.get("name", "NO ENTITY"))
 		details.append("")
-		# Two lines is the whole budget left in this box at native font
-		# size: 70px holds six 9px lines at the theme's 3px spacing, and
-		# class/crest/entity/spacer already take four. So describe only
-		# the row this duelist is actually in — LEFT/RIGHT swaps it and
-		# the copy follows, which is the feedback that matters here.
-		# Explaining both rows at once clipped the second one silently.
-		if str(build.get("position", "front")) == "front":
-			details.append("FRONT: hits hard,")
-			details.append("more exposed.")
-		else:
-			details.append("BACK: safer, but")
-			details.append("weaker melee.")
+		# Both rows are described again. The 320x180 detail box held six
+		# lines total and four were already spent, so it could only
+		# afford the selected row; this one has room for the comparison
+		# the player is actually making.
+		details.append("FRONT — full melee power; more exposed.")
+		details.append("BACK — safer; weaker melee.")
 		_detail_label.text = "\n".join(details)
 		CharacterPresentation.apply_portrait(_portrait, str(build.get("sprite_key", "")))
 		_crest_art.texture = _optional_texture("res://assets/crests/%s/icon.png" % build.get("crest_id", ""))

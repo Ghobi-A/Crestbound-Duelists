@@ -2,10 +2,10 @@ extends Node
 ## Deterministic screenshot harness for visual regression baselines.
 ##
 ## Run with a fixed frame delta so every animation phase is reproducible:
-##   godot --path game --fixed-fps 60 --resolution 320x180 \
+##   godot --path game --fixed-fps 60 --resolution 1280x720 \
 ##     res://scenes/tools/screenshot_capture.tscn -- --target=overworld --out=/abs/dir
 ##
-## The window is driven at exactly the 320x180 internal resolution, so the
+## The window is driven at exactly the 1280x720 internal resolution, so the
 ## viewport texture IS the internal game canvas at 1:1 — never an OS-window
 ## or browser grab. The 4x copy is produced from that image by
 ## nearest-neighbour upscaling, preserving exact pixel boundaries.
@@ -20,9 +20,10 @@ extends Node
 ##
 ## The harness seeds a canonical GameState (warrior, onboarding flags set),
 ## instantiates the target scene as a sibling, advances scripted `interact`
-## presses on fixed frame counts, then writes <out>/<name>.png (320x180
-## internal canvas, canonical) and <out>/<name>_4x.png (nearest-upscaled to
-## 1280x720 for viewing). Exits with code 0 on success.
+## presses on fixed frame counts, then writes <out>/<name>.png at the
+## 1280x720 internal canvas. That is the delivery resolution, so unlike
+## the 320x180 canvas this replaced there is no companion upscale to
+## write for viewing. Exits with code 0 on success.
 
 const SCENE_PATHS := {
 	"boot": "res://scenes/boot/boot.tscn",
@@ -108,16 +109,32 @@ func _capture(name: String) -> void:
 	var dir := DirAccess.open(out_dir)
 	if dir == null:
 		DirAccess.make_dir_recursive_absolute(out_dir)
-	if image.get_width() != 320 or image.get_height() != 180:
-		push_error("Expected a 320x180 internal viewport, got %dx%d — run with --resolution 320x180." % [image.get_width(), image.get_height()])
+	# Under the canvas_items/integer stretch the root viewport is the host
+	# window, and the canvas is scaled into it by a whole number. So this
+	# checks the property that actually matters at any window size —
+	# that the scale is integral and the canvas fits — rather than
+	# demanding one exact resolution. That is what lets the same harness
+	# capture 1280x720 and a larger host window.
+	var canvas := PresentationLayout.CANVAS
+	var scale_x := float(image.get_width()) / canvas.x
+	var scale_y := float(image.get_height()) / canvas.y
+	if scale_x < 1.0 or scale_y < 1.0:
+		push_error("Window %dx%d is smaller than the %dx%d canvas." % [
+			image.get_width(), image.get_height(), int(canvas.x), int(canvas.y)])
 		get_tree().quit(4)
 		return
+	var scale := mini(int(floor(scale_x)), int(floor(scale_y)))
+	if not is_equal_approx(scale_x, scale_y) or absf(scale_x - float(scale)) > 0.001:
+		# Not fatal: integer stretch letterboxes a non-multiple window
+		# rather than distorting, which is the intended trade. Recorded so
+		# a capture at such a size is not mistaken for a clean multiple.
+		print("Note: window %dx%d is not a whole multiple of the canvas (letterboxed at %dx)." % [
+			image.get_width(), image.get_height(), scale])
 	var canonical_path := "%s/%s.png" % [out_dir, name]
 	if image.save_png(canonical_path) != OK:
 		push_error("Failed to write %s" % canonical_path)
 		get_tree().quit(3)
 		return
-	var upscaled := image.duplicate()
-	upscaled.resize(1280, 720, Image.INTERPOLATE_NEAREST)
-	upscaled.save_png("%s/%s_4x.png" % [out_dir, name])
-	print("Captured %s (320x180) and %s_4x.png" % [canonical_path, name])
+	# The canvas is now the delivery resolution, so there is no companion
+	# upscale to write: what is captured is what a player sees.
+	print("Captured %s (%dx%d)" % [canonical_path, image.get_width(), image.get_height()])

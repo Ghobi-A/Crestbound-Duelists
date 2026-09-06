@@ -93,7 +93,10 @@ func attach(parent: Node2D, sprite_key: String) -> bool:
 			return false
 		_sprite.texture = load(path)
 		_sprite.material = CharacterPresentation.key_material(record)
-		_sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+		# Registered cast only: 384x336 atlas frames sampled down to the
+		# overworld display height. The authored 20x30 townsfolk sheets
+		# below take the project-wide nearest filter instead.
+		PresentationLayout.use_source_art_filter(_sprite)
 		_sprite.region_enabled = true
 		_sprite.region_filter_clip_enabled = true
 		_sprite.centered = false

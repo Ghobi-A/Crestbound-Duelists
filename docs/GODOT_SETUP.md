@@ -27,9 +27,10 @@ file and the command to fix it instead of crashing.
 
 | Setting | Value | Why |
 |---------|-------|-----|
-| Viewport | **320x180** | Low-res 16:9 canvas; 16x16 tiles → 20x11.25 visible tiles |
-| Window override | 1280x720 | 4x integer scale on launch |
-| Stretch mode | `canvas_items` | Crisp scaling of the low-res canvas |
+| Viewport | **1280x720** | Logical canvas and delivery resolution (see `rework/RESOLUTION_MIGRATION.md`) |
+| Window override | 1280x720 | 1:1 on launch |
+| Stretch mode | `canvas_items` | Scales the logical canvas as a unit |
+| Scale mode | `integer` | Whole-number scaling only, so pixel art and the bitmap typeface stay exact |
 | Stretch scale mode | `integer` | No fractional scaling, no shimmer |
 | Default texture filter | Nearest | No smoothing/blur on pixels |
 | 2D transform/vertex snapping | On | No sub-pixel wobble |
@@ -96,11 +97,12 @@ verifies it against the official SHA-512 from the release's
 real GL context, so it runs under `xvfb-run` with Mesa llvmpipe
 (`LIBGL_ALWAYS_SOFTWARE=1`); `--headless` cannot rasterize.
 
-Two frames are captured: Greymere at the spawn tile, and the Hollow
-Court round-1 command menu. The window is driven at exactly 320x180 so
-the captured viewport texture *is* the internal game canvas at 1:1; the
-`_4x.png` copies are nearest-neighbour upscales of that image, never OS
-or browser grabs.
+Five frames are captured: boot, party setup, Greymere at the spawn tile,
+the Hollow Court round-1 command menu, and target selection. The window
+is driven at 1280x720 so the captured viewport texture *is* the internal
+game canvas at 1:1, never an OS or browser grab. Set
+`CAPTURE_RESOLUTION` to a whole multiple (2560x1440) to check a larger
+host window; the harness reports any size that is not a whole multiple.
 
 Determinism comes from `--fixed-fps 60`, frame-counted waits, `seed(41)`,
 a canonically seeded `GameState`, and scripted input on fixed frames.

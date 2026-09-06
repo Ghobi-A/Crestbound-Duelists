@@ -152,7 +152,10 @@ func _setup_registered_sprite(record: Dictionary) -> void:
 	_sprite = Sprite2D.new()
 	_sprite.texture = texture
 	_sprite.material = CharacterPresentation.key_material(record)
-	_sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	# The atlas is painted at 1536x1024; its regions are ~460px tall and
+	# get sampled down to display_height. Nearest at that ratio stipples
+	# the result, so registered cast art smooths instead.
+	PresentationLayout.use_source_art_filter(_sprite)
 	_sprite.region_enabled = true
 	_sprite.region_filter_clip_enabled = true
 	_sprite.centered = false
@@ -494,7 +497,7 @@ func _draw_ring(radius_scale: float, color: Color) -> void:
 	for i in 20:
 		var angle := TAU * float(i) / 20.0
 		points.append(Vector2(cos(angle) * half_w, feet_y + sin(angle) * half_h))
-	draw_polyline(points + PackedVector2Array([points[0]]), color, 1.0)
+	draw_polyline(points + PackedVector2Array([points[0]]), color, UiStyle.LINE)
 
 
 func _draw_highlight() -> void:
@@ -535,12 +538,15 @@ func _draw() -> void:
 		else Vector2(-_frame_w / 2.0, -10 - _frame_h / 2.0)
 	)
 	var body_size := Vector2(_frame_w, _frame_h) * _display_scale
+	# Marker weights scale with the drawn body rather than being fixed
+	# pixel counts tuned for the 44px-tall sprites the old canvas showed.
+	var mark := maxf(UiStyle.LINE, body_size.x * 0.02)
 	if unit.awakened and unit.awakening_rounds_left > 0:
-		draw_rect(Rect2(body_top_left - Vector2(1, 1), body_size + Vector2(2, 2)),
-			Color(1.0, 0.85, 0.3, 0.85), false, 1.0)
+		draw_rect(Rect2(body_top_left - Vector2(mark, mark), body_size + Vector2(mark * 2, mark * 2)),
+			Color(1.0, 0.85, 0.3, 0.85), false, mark)
 	if unit.is_braced():
-		draw_rect(Rect2(body_top_left.x, body_top_left.y + body_size.y * 0.35, 3, body_size.y * 0.25),
+		draw_rect(Rect2(body_top_left.x, body_top_left.y + body_size.y * 0.35, mark * 3, body_size.y * 0.25),
 			PlaceholderPalette.STEEL_GUARD)
 	if unit.has_status("hexed"):
-		draw_rect(Rect2(body_top_left.x + body_size.x - 5, body_top_left.y + 2, 4, 4),
+		draw_rect(Rect2(body_top_left.x + body_size.x - mark * 5, body_top_left.y + mark * 2, mark * 4, mark * 4),
 			PlaceholderPalette.TILE_CREST_NODE.lightened(0.3))

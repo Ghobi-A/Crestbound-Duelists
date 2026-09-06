@@ -136,6 +136,13 @@ after these changes; party setup is the only intended difference. Verified:
 combatant facing, portrait bounds, panel containment, no chroma-key spill on the
 Hollow Court cast, and legible HUD text at native resolution.
 
+## Superseded by the 1280x720 migration
+
+The canvas described above (320x180, integer-scaled) was replaced after
+this report. Coordinates, font sizes and the 44px combatant height quoted
+here are historical; `RESOLUTION_MIGRATION.md` documents what replaced
+them and why.
+
 ### Remaining limitations / release gate
 
 - Rendered QA above covers five static frames only. Animation, transitions,
