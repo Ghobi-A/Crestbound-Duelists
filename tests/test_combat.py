@@ -196,7 +196,7 @@ def test_target_stat_mods_apply():
     armor_break = _signature(warrior)
     base_def = mage.def_
     execute_move(warrior, mage, armor_break, 1, False, False)
-    assert mage.def_ == base_def - 10
+    assert mage.def_ == base_def - 8
 
 
 def test_self_stat_mods_apply():
@@ -210,7 +210,7 @@ def test_self_stat_mods_apply():
             random.seed(seed)
             break
     execute_move(warrior, mage, reckless, 1, False, False)
-    assert warrior.def_ == base_def - 6
+    assert warrior.def_ == base_def - 4
 
 
 def test_stat_modifiers_expire_after_decay():
@@ -245,7 +245,7 @@ def test_cripple_controls_initiative():
     cripple = _signature(assassin)
     base_spd = neutral.spd
     execute_move(assassin, neutral, cripple, 1, False, False)
-    assert neutral.spd == base_spd - 15
+    assert neutral.spd == base_spd - 8
 
 
 # ── Statuses / Hex ───────────────────────────────────────────────────
@@ -284,8 +284,8 @@ def test_hex_blocks_buff_moves():
 def test_hex_move_applies_status_and_strips_positive_modifiers():
     sorcerer = create_unit(ClassName.SORCERER)
     guardian = create_unit(ClassName.GUARDIAN)
-    guardian.apply_stat_mod("def", 15, 3)
-    assert guardian.def_ == guardian.base_def + 15
+    guardian.apply_stat_mod("def", 8, 3)
+    assert guardian.def_ == guardian.base_def + 8
 
     hex_move = _signature(sorcerer)
     log = execute_move(sorcerer, guardian, hex_move, 1, False, False)
@@ -318,8 +318,8 @@ def test_speed_guaranteed_when_diff_exceeds_band():
 
 
 def test_speed_probabilistic_inside_wider_band():
-    neutral = create_unit(ClassName.NEUTRAL)    # spd 50
-    guardian = create_unit(ClassName.GUARDIAN)  # spd 35; diff 15 < band 20
+    neutral = create_unit(ClassName.NEUTRAL)    # spd 54
+    guardian = create_unit(ClassName.GUARDIAN)  # spd 36; diff 18 < band 20
     firsts = {id(neutral): 0, id(guardian): 0}
     random.seed(12345)
     for _ in range(1000):
