@@ -10,6 +10,7 @@ on:
     branches: [main]
     paths:
       - "game/**"
+      - "tools/materialize_overworld_v2.py"
       - ".github/workflows/godot-web-deploy.yml"
   workflow_dispatch: {}
 
@@ -31,6 +32,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
+      - name: Materialize authored overworld v2 atlases
+        run: python tools/materialize_overworld_v2.py
 
       - name: Cache Godot editor and export templates
         id: godot-cache
