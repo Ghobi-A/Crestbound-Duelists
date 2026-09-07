@@ -10,6 +10,8 @@ on:
       - "tests/test_sprite_assets.py"
       - "tests/test_greymere_layout.py"
       - "tests/test_cowork_visual_integration.py"
+      - "tests/test_overworld_v2.py"
+      - "tools/materialize_overworld_v2.py"
       - "tools/validate_godot_project.py"
       - ".github/workflows/presentation-validation.yml"
   workflow_dispatch: {}
@@ -30,6 +32,9 @@ jobs:
         with:
           python-version: "3.11"
           cache: pip
+
+      - name: Materialize authored overworld v2 atlases
+        run: python tools/materialize_overworld_v2.py
 
       - name: Install test dependencies
         run: pip install -r requirements-dev.txt
