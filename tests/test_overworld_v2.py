@@ -2,9 +2,10 @@
 
 from __future__ import annotations
 
-import base64
 import json
 import struct
+import subprocess
+import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -18,12 +19,8 @@ def _registry() -> dict:
     return json.loads(REGISTRY.read_text(encoding="utf-8"))
 
 
-def _decode(name: str) -> bytes:
-    text = (REWORK / f"{name}.b64").read_text(encoding="ascii")
-    return base64.b64decode("".join(text.split()), validate=True)
-
-
-def _png_dimensions(payload: bytes) -> tuple[int, int]:
+def _png_dimensions(path: Path) -> tuple[int, int]:
+    payload = path.read_bytes()
     assert payload.startswith(PNG_SIGNATURE)
     assert payload[12:16] == b"IHDR"
     return struct.unpack(">II", payload[16:24])
@@ -69,9 +66,20 @@ def test_greymere_and_story_cast_are_covered_by_v2_atlas() -> None:
         assert entries[key]["atlas"] == "cast"
 
 
-def test_encoded_v2_atlases_are_valid_expected_png_sheets() -> None:
-    assert _png_dimensions(_decode("kai_overworld_v2.png")) == (640, 336)
-    assert _png_dimensions(_decode("overworld_cast_v2.png")) == (640, 896)
+def test_authored_source_materializes_valid_expected_png_sheets() -> None:
+    subprocess.run([sys.executable, str(ROOT / "tools" / "materialize_overworld_v2.py")], check=True, cwd=ROOT)
+    assert _png_dimensions(REWORK / "kai_overworld_v2.png") == (640, 336)
+    assert _png_dimensions(REWORK / "overworld_cast_v2.png") == (640, 896)
+    assert (REWORK / "kai_overworld_v2.png").stat().st_size > 8_000
+    assert (REWORK / "overworld_cast_v2.png").stat().st_size > 20_000
+
+
+def test_authored_source_contains_class_specific_silhouettes() -> None:
+    source = (ROOT / "tools" / "overworld_v2_art.py").read_text(encoding="utf-8")
+    for identity in ("warrior", "guardian", "robe", "sorcerer", "assassin", "neutral"):
+        assert f'kind="{identity}"' in source
+    for gear in ("sword", "shield", "book", "staff", "daggers", "magic_sword"):
+        assert f'gear="{gear}"' in source
 
 
 def test_runtime_drives_frames_from_step_progress() -> None:
