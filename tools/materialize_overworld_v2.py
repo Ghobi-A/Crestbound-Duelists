@@ -1,25 +1,27 @@
-"""Materialize deterministic overworld v2 PNG atlases from repository-safe base64 sources."""
+"""Materialize the authored overworld v2 PNG atlases used by Godot and Web export."""
 
 from __future__ import annotations
 
-import base64
 from pathlib import Path
+
+from overworld_v2_art import CAST, KAI, build_sheet
 
 ROOT = Path(__file__).resolve().parents[1]
 REWORK = ROOT / "game" / "assets" / "rework"
-ATLAS_NAMES = ("kai_overworld_v2.png", "overworld_cast_v2.png")
 PNG_SIGNATURE = b"\x89PNG\r\n\x1a\n"
 
 
 def materialize() -> None:
-    for name in ATLAS_NAMES:
-        source = REWORK / f"{name}.b64"
-        target = REWORK / name
-        payload = base64.b64decode("".join(source.read_text(encoding="ascii").split()), validate=True)
+    targets = (
+        (KAI, REWORK / "kai_overworld_v2.png", (640, 336)),
+        (CAST, REWORK / "overworld_cast_v2.png", (640, 896)),
+    )
+    for specs, target, expected in targets:
+        build_sheet(specs, target)
+        payload = target.read_bytes()
         if not payload.startswith(PNG_SIGNATURE):
-            raise RuntimeError(f"decoded asset is not a PNG: {source}")
-        target.write_bytes(payload)
-        print(f"materialized {target.relative_to(ROOT)} ({len(payload)} bytes)")
+            raise RuntimeError(f"generated asset is not a PNG: {target}")
+        print(f"materialized {target.relative_to(ROOT)} {expected[0]}x{expected[1]} ({len(payload)} bytes)")
 
 
 if __name__ == "__main__":
