@@ -32,6 +32,7 @@ var _page_index := 0
 
 var _panel: UiPanel
 var _portrait: TextureRect
+var _portrait_frame: UiPanel
 var _speaker_label: Label
 var _text_label: Label
 var _advance_label: Label
@@ -43,6 +44,9 @@ func _ready() -> void:
 	_panel.clip_contents = true
 	add_child(_panel)
 
+	_portrait_frame = UiPanel.create(Vector2(3, 3), Vector2(38, 44), UiStyle.NEUTRAL)
+	_portrait_frame.visible = false
+	_panel.add_child(_portrait_frame)
 	_portrait = TextureRect.new()
 	PresentationLayout.texture_box(_portrait, PresentationLayout.PORTRAIT_RECT)
 	# Portraits are painterly renders, not native pixel art like the rest
@@ -164,6 +168,7 @@ static func paginate(text: String, font: Font, font_size: int, width: float, hei
 func _apply_portrait(portrait_key: String, expression := "neutral") -> void:
 	CharacterPresentation.apply_portrait(_portrait, portrait_key, expression)
 	var shown := _portrait.texture != null
+	_portrait_frame.visible = shown
 	var text_x := PresentationLayout.PORTRAIT_RECT.end.x + 6.0 if shown else 6.0
 	var text_width := _panel.size.x - text_x - PresentationLayout.RIGHT_MARGIN
 	_speaker_label.position.x = text_x

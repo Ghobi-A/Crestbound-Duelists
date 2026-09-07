@@ -65,7 +65,8 @@ def test_optional_focal_assets_have_runtime_fallbacks() -> None:
     setup = source("scripts/ui/battle/party_setup.gd")
     world = source("scripts/overworld/greymere.gd")
     result = source("scripts/presentation/result_presentation.gd")
-    assert "assets/ui/title_mark.png" in boot and "CRESTBOUND DUELISTS" in boot
+    assert '_title_label.text = "CRESTBOUND"' in boot
+    assert '_subtitle_label.text = "D U E L I S T S"' in boot
     assert "assets/landmarks/greymere_court_arch.png" in world
     assert "if not ResourceLoader.exists(path):\n\t\treturn" in world
     assert "assets/ui/results/%s.png" in result and "key.to_upper()" in result

@@ -33,9 +33,9 @@ var _menu_tick: ColorRect
 
 # Menu row geometry, shared by the labels and the selection band drawn
 # behind them, so the two can never disagree about where a row sits.
-const MENU_TOP := 64.0
-const MENU_PITCH := 12.0
-const MENU_BAND := Rect2(44, 0, 232, 12)
+const MENU_TOP := 76.0
+const MENU_PITCH := 16.0
+const MENU_BAND := Rect2(20, 0, 128, 14)
 
 
 func _ready() -> void:
@@ -57,18 +57,16 @@ func _build_ui() -> void:
 	background.color = PlaceholderPalette.BG_DARK
 	background.set_anchors_preset(Control.PRESET_FULL_RECT)
 	add_child(background)
+	var scenery := TextureRect.new()
+	PresentationLayout.texture_box(scenery, Rect2(0, 0, 320, 180))
+	scenery.texture = load("res://assets/rework/hollow_court.png")
+	scenery.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+	scenery.modulate = Color(0.35, 0.42, 0.55)
+	add_child(scenery)
 
 	# The identity floats in open atmosphere; only the actionable menu is framed.
-	_body_panel = UiPanel.create(Vector2(36, 56), Vector2(248, 98), UiStyle.NEUTRAL)
+	_body_panel = UiPanel.create(Vector2(12, 62), Vector2(144, 90), UiStyle.NEUTRAL)
 	add_child(_body_panel)
-	var title_path := "res://assets/ui/title_mark.png" # optional-authored-asset
-	if ResourceLoader.exists(title_path):
-		var mark := TextureRect.new()
-		mark.texture = load(title_path)
-		mark.position = Vector2(40, 8)
-		mark.size = Vector2(240, 48)
-		mark.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-		add_child(mark)
 
 	# Added after the panel and before the labels, so the band layers
 	# correctly: panel, band, text.
@@ -83,17 +81,20 @@ func _build_ui() -> void:
 	_menu_tick.visible = false
 	add_child(_menu_tick)
 
-	_title_label = _make_label(Vector2(0, 18), 12, PlaceholderPalette.TEXT_WARN)
-	_title_label.text = "CRESTBOUND DUELISTS"
-	_title_label.visible = not ResourceLoader.exists(title_path)
+	_title_label = _make_label(Vector2(0, 14), 16, PlaceholderPalette.TEXT_WARN)
+	_title_label.text = "CRESTBOUND"
+	_title_label.visible = true
 	_subtitle_label = _make_label(Vector2(0, 34), 8, PlaceholderPalette.TEXT_DIM)
-	_subtitle_label.text = "The Crest at Greymere — prototype"
+	_subtitle_label.text = "D U E L I S T S"
 	_list_label = _make_label(Vector2(0, 62), 8, PlaceholderPalette.TEXT_MAIN)
 	# One label per menu row (rather than a single joined-text label) so a
 	# selection band can sit behind exactly the highlighted row, matching
 	# the battle action menu's treatment.
 	for i in 4:
 		var row := _make_label(Vector2(0, MENU_TOP + i * MENU_PITCH), 8, PlaceholderPalette.TEXT_MAIN)
+		row.position.x = 28
+		row.size = Vector2(120, 12)
+		row.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 		row.visible = false
 		_menu_rows.append(row)
 	_detail_label = _make_label(Vector2(30, 96), 8, PlaceholderPalette.TEXT_DIM)
@@ -149,6 +150,9 @@ func _refresh() -> void:
 	_detail_label.size.x = 260
 	match _screen:
 		Screen.MENU:
+			_body_panel.position = Vector2(12, 62)
+			_body_panel.custom_minimum_size = Vector2(144, 90)
+			_body_panel.size = Vector2(144, 90)
 			_list_label.text = ""
 			for i in _menu_rows.size():
 				var row := _menu_rows[i]
@@ -161,9 +165,14 @@ func _refresh() -> void:
 					PlaceholderPalette.TEXT_MAIN if i == _menu_index else PlaceholderPalette.TEXT_DIM
 				)
 			_detail_label.text = ""
-			_preview.visible = false
+			PresentationLayout.texture_box(_preview, Rect2(168, 54, 140, 106))
+			_update_preview("neutral")
 			_hint_label.text = "Arrows: choose   Z/Enter: confirm"
 		Screen.CLASS_SELECT:
+			_body_panel.custom_minimum_size = Vector2(296, 98)
+			_body_panel.size = Vector2(296, 98)
+			_body_panel.position = Vector2(12, 56)
+			PresentationLayout.texture_box(_preview, Rect2(222, 80, 80, 70))
 			_detail_label.size.x = 190
 			_detail_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 			var class_id: String = _class_list[_class_index]
@@ -184,6 +193,9 @@ func _refresh() -> void:
 			_hint_label.text = "Left/Right: class   Z/Enter: begin   X: back"
 			_update_preview(class_id)
 		Screen.CONTROLS:
+			_body_panel.custom_minimum_size = Vector2(296, 98)
+			_body_panel.size = Vector2(296, 98)
+			_body_panel.position = Vector2(12, 56)
 			_list_label.text = "Controls"
 			_detail_label.text = CONTROLS_TEXT
 			_detail_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT

@@ -47,12 +47,14 @@ static func accent_color(role: String) -> Color:
 static func draw_panel(canvas: CanvasItem, rect: Rect2, role := NEUTRAL, ornate := true) -> void:
 	## A filled panel with a recessed bevel and a restrained accent border.
 	var accent := accent_color(role)
-	canvas.draw_rect(rect, PlaceholderPalette.MOON_SLATE)
+	canvas.draw_rect(rect, Color("080e18"))
+	canvas.draw_rect(rect.grow(-1), Color("141e2b"))
+	canvas.draw_rect(rect.grow(-2), Color("192637"), false, 1.0)
 	# A single lit top edge reads as a bevel without costing a second
 	# colour ramp step.
 	canvas.draw_rect(
 		Rect2(rect.position + Vector2(1, 1), Vector2(rect.size.x - 2, 1)),
-		PlaceholderPalette.MOON_INDIGO
+		Color("46556a")
 	)
 	canvas.draw_rect(rect, accent.darkened(0.4), false, 1.0)
 	if ornate:

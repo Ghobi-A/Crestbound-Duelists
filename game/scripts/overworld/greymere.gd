@@ -121,6 +121,7 @@ func _ready() -> void:
 	# pass behind trees and lamp posts rather than through them.
 	y_sort_enabled = true
 	_build_map_layer()
+	TownArchitecture.place(self, MAP)
 	_build_court_landmark()
 	_build_lighting()
 	AudioRouter.play_music("greymere")

@@ -22,6 +22,9 @@ var _hint_label: Label
 var _portrait: TextureRect
 var _crest_art: TextureRect
 var _entity_art: TextureRect
+var _roster: Control
+const CARD_HEIGHT := 31.0
+const VISIBLE_CARDS := 3
 
 const CONTENT_TOP := 30.0
 const CONTENT_BOTTOM := 154.0
@@ -63,6 +66,9 @@ func _build_ui() -> void:
 	_rows_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 	_rows_label.size = Vector2(162, 114)
 	_rows_label.clip_text = true
+	_rows_label.visible = false
+	_roster = Control.new()
+	add_child(_roster)
 	_detail_label = _label(Vector2(192, 78), UiStyle.FONT_SIZE, PlaceholderPalette.TEXT_DIM)
 	_detail_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 	_detail_label.size = Vector2(114, 70)
@@ -108,6 +114,7 @@ func _row_count() -> int:
 
 
 func _refresh() -> void:
+	_refresh_roster()
 	var lines: Array[String] = []
 	var battlefield: Dictionary = _encounter.get("battlefield_effect", {})
 	for i in GameState.party.size():
@@ -159,6 +166,41 @@ func _refresh() -> void:
 		_portrait.texture = null
 		_crest_art.texture = null
 		_entity_art.texture = null
+
+
+func _refresh_roster() -> void:
+	for child in _roster.get_children():
+		_roster.remove_child(child)
+		child.queue_free()
+	# Scroll through any party size without changing active-slot selection.
+	var first := maxi(0, mini(_cursor, GameState.party.size() - 1) - VISIBLE_CARDS + 1)
+	for i in range(first, mini(first + VISIBLE_CARDS, GameState.party.size())):
+		var build: Dictionary = GameState.party[i]
+		var card := UiPanel.create(Vector2(12, 34 + (i - first) * 33), Vector2(166, CARD_HEIGHT), UiStyle.COMMAND if i == _cursor else UiStyle.NEUTRAL)
+		_roster.add_child(card)
+		var portrait := TextureRect.new()
+		PresentationLayout.texture_box(portrait, Rect2(3, 3, 22, 25))
+		card.add_child(portrait)
+		CharacterPresentation.apply_portrait(portrait, str(build.get("sprite_key", "")))
+		var name_label := Label.new()
+		name_label.position = Vector2(30, 3)
+		name_label.size = Vector2(132, 11)
+		name_label.clip_text = true
+		name_label.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+		name_label.text = str(build.get("name", "?"))
+		name_label.add_theme_font_size_override("font_size", UiStyle.FONT_SIZE)
+		card.add_child(name_label)
+		var state := Label.new()
+		state.position = Vector2(30, 17)
+		state.text = "%s · %s" % ["ACTIVE" if i < _slots else "RESERVE", str(build.get("position", "front")).to_upper()]
+		state.add_theme_font_size_override("font_size", UiStyle.FONT_SIZE)
+		state.add_theme_color_override("font_color", PlaceholderPalette.TEXT_DIM)
+		card.add_child(state)
+	var start := Label.new()
+	start.position = Vector2(16, 138)
+	start.text = ("> " if _cursor == GameState.party.size() else "  ") + "BEGIN ENCOUNTER"
+	start.add_theme_font_size_override("font_size", UiStyle.FONT_SIZE)
+	_roster.add_child(start)
 
 
 func _unhandled_input(event: InputEvent) -> void:

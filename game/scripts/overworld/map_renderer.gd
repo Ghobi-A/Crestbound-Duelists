@@ -43,6 +43,12 @@ func build(parent: Node2D, rows: Array, decal_rows: Array, decor_rows: Array) ->
 	var decals := _make_layer(parent, "DecalLayer", -19)
 	var overlay := _make_layer(parent, "OverlayLayer", -18)
 	_paint_terrain(ground, overlay, rows)
+	# A connected, deliberately laid stone promenade ties the homes and court
+	# into the town. These are flat decals; collision and interaction stay in MAP.
+	for x in range(8, 16):
+		_put(overlay, x, 4, "path_15")
+	for y in range(2, 6):
+		_put(overlay, 11, y, "path_15")
 	_paint_decals(decals, decal_rows)
 	_place_props(parent, decor_rows)
 	return true
