@@ -10,6 +10,7 @@ on:
     branches: [main]
     paths:
       - "game/**"
+      - "tools/overworld_v2_art.py"
       - "tools/materialize_overworld_v2.py"
       - ".github/workflows/godot-web-deploy.yml"
   workflow_dispatch: {}
