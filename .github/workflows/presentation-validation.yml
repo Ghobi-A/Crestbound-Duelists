@@ -11,6 +11,7 @@ on:
       - "tests/test_greymere_layout.py"
       - "tests/test_cowork_visual_integration.py"
       - "tests/test_overworld_v2.py"
+      - "tools/overworld_v2_art.py"
       - "tools/materialize_overworld_v2.py"
       - "tools/validate_godot_project.py"
       - ".github/workflows/presentation-validation.yml"
