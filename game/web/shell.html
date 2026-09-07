@@ -25,21 +25,19 @@ body {
 
 #canvas-wrap {
 	position: relative;
-	width: 100%;
-	max-width: 1280px;
+	flex: none;
 }
 
 #canvas {
 	display: block;
 	margin: 0 auto;
 	color: white;
-	width: 100%;
-	height: auto;
-	max-width: min(1280px, 145vh);
+	image-rendering: pixelated;
+	image-rendering: crisp-edges;
 }
 
 #canvas:focus {
-	outline: 2px solid #4a9eff;
+	outline: none;
 }
 
 #controls-note {
@@ -156,10 +154,6 @@ body {
 					<div id="status-notice" class="godot" style="display: none;"></div>
 				</div>
 			</div>
-			<div id="controls-note">
-				MOVE: WASD / Arrow keys &nbsp;&bull;&nbsp; CONFIRM: Z / Enter / Space &nbsp;&bull;&nbsp; BACK: X / Escape
-				<br>Click the game once to focus keyboard input and enable audio (browser policy).
-			</div>
 		</div>
 
 		<script src="$GODOT_URL"></script>
@@ -167,6 +161,21 @@ body {
 const GODOT_CONFIG = $GODOT_CONFIG;
 const engine = new Engine(GODOT_CONFIG);
 const gdCanvas = document.getElementById('canvas');
+// Backing buffer and CSS dimensions agree, keeping pointer coordinates correct.
+function fitPixelCanvas() {
+	const scale = Math.max(1, Math.floor(Math.min(window.innerWidth / 320, window.innerHeight / 180)));
+	const width = 320 * scale;
+	const height = 180 * scale;
+	gdCanvas.width = width;
+	gdCanvas.height = height;
+	gdCanvas.style.width = width + 'px';
+	gdCanvas.style.height = height + 'px';
+	const wrap = document.getElementById('canvas-wrap');
+	wrap.style.width = width + 'px';
+	wrap.style.height = height + 'px';
+}
+fitPixelCanvas();
+window.addEventListener('resize', fitPixelCanvas);
 gdCanvas.addEventListener('pointerdown', function () {
 	gdCanvas.focus();
 });
@@ -274,6 +283,7 @@ gdCanvas.addEventListener('pointerdown', function () {
 			setStatusMode('hidden');
 			initializing = false;
 			gdCanvas.focus();
+			fitPixelCanvas();
 		}, displayFailureNotice);
 	}
 }());

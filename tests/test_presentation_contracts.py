@@ -67,8 +67,8 @@ def test_optional_focal_assets_have_runtime_fallbacks() -> None:
     result = source("scripts/presentation/result_presentation.gd")
     assert '_title_label.text = "CRESTBOUND"' in boot
     assert '_subtitle_label.text = "D U E L I S T S"' in boot
-    assert "assets/landmarks/greymere_court_arch.png" in world
-    assert "if not ResourceLoader.exists(path):\n\t\treturn" in world
+    assert "extends WorldLocation" in world
+    assert "WorldCatalog" in source("scripts/overworld/world_location.gd")
     assert "assets/ui/results/%s.png" in result and "key.to_upper()" in result
     assert "_optional_texture" in setup
 

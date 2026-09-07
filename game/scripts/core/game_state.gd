@@ -38,6 +38,10 @@ var pending_encounter := "hollow_court_battle"
 var current_scene := "res://scenes/overworld/greymere.tscn"
 var player_tile := Vector2i(11, 9)
 var flags: Dictionary = {}  # e.g. {"hollow_court_cleared": true}
+var location_id := "greymere"
+var location_spawn := "approach"
+var location_revision := 1
+var player_facing := Vector2i(0,-1)
 
 
 func start_new_game(class_id: String) -> void:
@@ -45,6 +49,11 @@ func start_new_game(class_id: String) -> void:
 	player_crest_id = DEFAULT_CREST_BY_CLASS.get(class_id, "")
 	player_tile = Vector2i(11, 9)
 	flags = {}
+	current_scene = "res://scenes/overworld/greymere.tscn"
+	location_id = "greymere"
+	location_spawn = "approach"
+	location_revision = 1
+	player_facing = Vector2i(0,-1)
 	pending_encounter = "hollow_court_battle"
 	_build_default_party()
 
@@ -107,6 +116,10 @@ func to_save_dict() -> Dictionary:
 		"current_scene": current_scene,
 		"player_tile": {"x": player_tile.x, "y": player_tile.y},
 		"flags": flags,
+		"location_id": location_id,
+		"location_spawn": location_spawn,
+		"location_revision": location_revision,
+		"player_facing": [player_facing.x, player_facing.y],
 	}
 
 
@@ -123,3 +136,8 @@ func from_save_dict(data: Dictionary) -> void:
 	var tile: Dictionary = data.get("player_tile", {"x": 11, "y": 9})
 	player_tile = Vector2i(int(tile.get("x", 11)), int(tile.get("y", 9)))
 	flags = data.get("flags", {})
+	location_id = str(data.get("location_id","greymere"))
+	location_spawn = str(data.get("location_spawn","approach"))
+	location_revision = int(data.get("location_revision",0))
+	var facing: Array = data.get("player_facing",[0,1])
+	player_facing = Vector2i(int(facing[0]),int(facing[1]))
