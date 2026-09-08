@@ -89,7 +89,7 @@ func _seed_state() -> void:
 		GameState.location_spawn = "entrance"
 	elif target in ["town_square","court_gate","west_lane"]:
 		GameState.location_spawn = ""
-		GameState.player_tile = {"town_square":Vector2i(17,20),"court_gate":Vector2i(17,9),"west_lane":Vector2i(10,23)}[target]
+		GameState.player_tile = {"town_square":Vector2i(17,20),"court_gate":Vector2i(17,7),"west_lane":Vector2i(10,23)}[target]
 	GameState.set_flag("overworld_onboarding_seen")
 	GameState.set_flag("battle_onboarding_seen")
 

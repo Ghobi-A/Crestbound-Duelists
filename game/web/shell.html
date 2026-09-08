@@ -284,6 +284,7 @@ gdCanvas.addEventListener('pointerdown', function () {
 			initializing = false;
 			gdCanvas.focus();
 			fitPixelCanvas();
+			gdCanvas.dataset.ready = 'true';
 		}, displayFailureNotice);
 	}
 }());

@@ -1,43 +1,42 @@
 extends Node2D
 class_name WorldTerrain
-## Low-frequency support terrain, one native pixel per drawn detail.
-## Focal architecture and furniture are separate authored sprites.
+## The original texture kit spans four tiles per material to avoid a stamped grid.
 var rows: Array = []
 var interior := false
 const TILE := 16
+const MATERIAL_TILES := 4
+var texture: Texture2D = preload("res://assets/environment/terrain.png")
+var clock := 0.0
+
+func _process(delta: float) -> void:
+	clock += delta
+	if int(clock*4) != int((clock-delta)*4): queue_redraw()
 
 func _draw() -> void:
+	var quadrant := texture.get_size()/2.0
+	var source_cell := quadrant/float(MATERIAL_TILES)
 	for y in rows.size():
 		for x in rows[y].length():
-			var p := Vector2(x * TILE, y * TILE)
+			var p := Vector2(x*TILE,y*TILE)
 			var symbol: String = rows[y][x]
-			var variant: int = (x * 17 + y * 31) % 7
-			match symbol:
-				"_": draw_rect(Rect2(p, Vector2(16,16)), Color("090f19"))
-				"w":
-					draw_rect(Rect2(p,Vector2(16,16)),Color("47372f"))
-					for board in 4:
-						draw_rect(Rect2(p+Vector2(0,board*4),Vector2(15,3)), Color("574437") if (x+board)%3 else Color("604c3b"))
-						draw_line(p+Vector2(2,board*4+1),p+Vector2(8+variant,board*4+1),Color("4d3b30"))
-				":", "^", "#":
-					draw_rect(Rect2(p,Vector2(16,16)),Color("252e37"))
-					for row in 3:
-						for col in 2:
-							var q := p + Vector2(col*8+(row%2)*2, row*5)
-							var color := Color("52606a") if symbol == "^" else Color("434c53")
-							draw_rect(Rect2(q, Vector2(7,4)),color.lightened(variant*0.008))
-							draw_line(q,q+Vector2(6,0),color.lightened(0.10))
-					if symbol == "^": draw_line(p,p+Vector2(15,0),Color("8a9193"))
-				"~":
-					draw_rect(Rect2(p,Vector2(16,16)),Color("14283c"))
-					draw_rect(Rect2(p+Vector2(variant,4),Vector2(7,1)),Color("42718d"))
-					draw_rect(Rect2(p+Vector2(2,11),Vector2(5,1)),Color("294b66"))
-				"=":
-					draw_rect(Rect2(p,Vector2(16,16)),Color("302f30"))
-					for board in 4: draw_rect(Rect2(p+Vector2(0,board*4),Vector2(16,3)),Color("6a5340"))
-				_:
-					draw_rect(Rect2(p,Vector2(16,16)),Color("202f2d"))
-					for i in 4:
-						var q := p+Vector2((x*7+i*5)%15,(y*3+i*7)%15)
-						draw_line(q,q+Vector2(1,-2),Color("38483d"))
-					if variant == 2: draw_rect(Rect2(p+Vector2(5,8),Vector2(2,1)),Color("797d7e"))
+			var material := Vector2(1,0)
+			if symbol in [":","^"]: material = Vector2.ZERO
+			elif symbol == "w": material = Vector2(0,1)
+			elif symbol == "#": material = Vector2(1,1)
+			var source := material*quadrant + Vector2(x%MATERIAL_TILES,y%MATERIAL_TILES)*source_cell
+			draw_texture_rect_region(texture,Rect2(p,Vector2(16,16)),Rect2(source,source_cell))
+			if symbol == "_": draw_rect(Rect2(p,Vector2(16,16)),Color("090f19"))
+			elif symbol == "^":
+				draw_line(p,p+Vector2(15,0),Color("65727a"))
+				draw_line(p+Vector2(0,14),p+Vector2(15,14),Color("202c37"))
+			elif symbol == "#":
+				draw_rect(Rect2(p,Vector2(16,16)),Color(0.02,0.04,0.08,0.2))
+				if interior: draw_line(p+Vector2(0,15),p+Vector2(15,15),Color("59646a"))
+			elif symbol == "~":
+				draw_rect(Rect2(p,Vector2(16,16)),Color("14283c"))
+				var phase := int(clock*4+x+y)%7
+				draw_line(p+Vector2(phase,4),p+Vector2(phase+5,4),Color("578197"))
+				draw_line(p+Vector2(2,11),p+Vector2(7,11),Color("294b66"))
+			elif symbol == "=":
+				draw_rect(Rect2(p,Vector2(16,16)),Color("302f30"))
+				for board in 4: draw_rect(Rect2(p+Vector2(0,board*4),Vector2(16,3)),Color("6a5340"))

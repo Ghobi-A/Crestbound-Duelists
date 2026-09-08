@@ -1,0 +1,253 @@
+{
+  "schema_version": 1,
+  "audit_complete": true,
+  "decision_document": "docs/rework/GREYMERE_CHARACTER_REFERENCE_AUDIT.md",
+  "characters": [
+    {
+      "id": "joey",
+      "display_name": "Joey",
+      "classification": "A",
+      "aliases": [
+        "townsfolk/farmboy"
+      ],
+      "references": [
+        "game/assets/portraits/townsfolk/farmboy/neutral.png",
+        "game/assets/ChatGPT Image Aug 6, 2026, 02_02_04 AM (8).png",
+        "game/assets/characters/townsfolk/farmboy/overworld.png"
+      ],
+      "replacement_status": "not_started"
+    },
+    {
+      "id": "lena",
+      "display_name": "Lena",
+      "classification": "A",
+      "aliases": [
+        "townsfolk/herbalist_woman"
+      ],
+      "references": [
+        "game/assets/portraits/townsfolk/herbalist_woman/neutral.png",
+        "game/assets/ChatGPT Image Aug 6, 2026, 02_02_04 AM (8).png",
+        "game/assets/characters/townsfolk/herbalist_woman/overworld.png"
+      ],
+      "replacement_status": "not_started"
+    },
+    {
+      "id": "silas",
+      "display_name": "Elder Silas",
+      "classification": "A",
+      "aliases": [
+        "townsfolk/village_elder"
+      ],
+      "references": [
+        "game/assets/portraits/townsfolk/village_elder/neutral.png",
+        "game/assets/ChatGPT Image Aug 6, 2026, 02_02_04 AM (8).png",
+        "game/assets/characters/townsfolk/village_elder/overworld.png"
+      ],
+      "replacement_status": "not_started"
+    },
+    {
+      "id": "gell",
+      "display_name": "Gell",
+      "classification": "B",
+      "aliases": [
+        "townsfolk/farmhand_capped"
+      ],
+      "references": [
+        "game/assets/portraits/townsfolk/farmhand_capped/neutral.png",
+        "game/assets/ChatGPT Image Aug 6, 2026, 02_02_04 AM (8).png",
+        "game/assets/characters/townsfolk/farmhand_capped/overworld.png"
+      ],
+      "replacement_status": "not_started"
+    },
+    {
+      "id": "danfor",
+      "display_name": "Danfor",
+      "classification": "A",
+      "aliases": [
+        "townsfolk/guard_sword"
+      ],
+      "references": [
+        "game/assets/portraits/townsfolk/guard_sword/neutral.png",
+        "game/assets/ChatGPT Image Aug 6, 2026, 02_02_04 AM (8).png",
+        "game/assets/characters/townsfolk/guard_sword/overworld.png"
+      ],
+      "replacement_status": "not_started"
+    },
+    {
+      "id": "orrin",
+      "display_name": "Watchman Orrin",
+      "classification": "A",
+      "aliases": [
+        "townsfolk/guard_spear"
+      ],
+      "references": [
+        "game/assets/portraits/townsfolk/guard_spear/neutral.png",
+        "game/assets/ChatGPT Image Aug 6, 2026, 02_02_04 AM (8).png",
+        "game/assets/characters/townsfolk/guard_spear/overworld.png"
+      ],
+      "replacement_status": "not_started"
+    },
+    {
+      "id": "senna",
+      "display_name": "Goodwife Senna",
+      "classification": "A",
+      "aliases": [
+        "townsfolk/elder_woman"
+      ],
+      "references": [
+        "game/assets/portraits/townsfolk/elder_woman/neutral.png",
+        "game/assets/ChatGPT Image Aug 6, 2026, 02_02_04 AM (8).png",
+        "game/assets/characters/townsfolk/elder_woman/overworld.png"
+      ],
+      "replacement_status": "not_started"
+    },
+    {
+      "id": "ferris",
+      "display_name": "Old Ferris",
+      "classification": "B",
+      "aliases": [
+        "townsfolk/torch_bearer"
+      ],
+      "references": [
+        "game/assets/portraits/townsfolk/torch_bearer/neutral.png",
+        "game/assets/ChatGPT Image Aug 6, 2026, 02_02_04 AM (5).png",
+        "game/assets/characters/townsfolk/torch_bearer/overworld.png"
+      ],
+      "replacement_status": "not_started"
+    },
+    {
+      "id": "stranger",
+      "display_name": "Hooded Stranger",
+      "classification": "A",
+      "aliases": [
+        "townsfolk/hooded_stranger"
+      ],
+      "references": [
+        "game/assets/portraits/townsfolk/hooded_stranger/neutral.png",
+        "game/assets/ChatGPT Image Aug 6, 2026, 02_02_04 AM (8).png",
+        "game/assets/characters/townsfolk/hooded_stranger/overworld.png"
+      ],
+      "replacement_status": "not_started"
+    },
+    {
+      "id": "almyra",
+      "display_name": "Warden Almyra",
+      "classification": "A",
+      "aliases": [
+        "almyra",
+        "elara"
+      ],
+      "references": [
+        "game/assets/rework/combat_cast.png",
+        "game/assets/rework/overworld_cast.png",
+        "game/assets/portraits/elara/neutral.png"
+      ],
+      "replacement_status": "not_started"
+    },
+    {
+      "id": "liora",
+      "display_name": "Liora Sen",
+      "classification": "B",
+      "aliases": [
+        "liora",
+        "mira"
+      ],
+      "references": [
+        "game/assets/rework/combat_cast.png",
+        "game/assets/rework/overworld_cast.png",
+        "game/assets/portraits/mira/neutral.png"
+      ],
+      "replacement_status": "not_started"
+    },
+    {
+      "id": "kai_warrior",
+      "display_name": "Kai",
+      "classification": "A",
+      "aliases": [
+        "aren/warrior",
+        "kai_warrior"
+      ],
+      "references": [
+        "game/assets/rework/kai_classes.png",
+        "game/assets/rework/kai_overworld.png",
+        "docs/rework/KAI_CLASS_VISUALS.md"
+      ],
+      "replacement_status": "not_started"
+    },
+    {
+      "id": "kai_guardian",
+      "display_name": "Kai",
+      "classification": "A",
+      "aliases": [
+        "aren/guardian",
+        "kai_guardian"
+      ],
+      "references": [
+        "game/assets/rework/kai_classes.png",
+        "game/assets/rework/kai_overworld.png",
+        "docs/rework/KAI_CLASS_VISUALS.md"
+      ],
+      "replacement_status": "not_started"
+    },
+    {
+      "id": "kai_mage",
+      "display_name": "Kai",
+      "classification": "A",
+      "aliases": [
+        "aren/mage",
+        "kai_mage"
+      ],
+      "references": [
+        "game/assets/rework/kai_classes.png",
+        "game/assets/rework/kai_overworld.png",
+        "docs/rework/KAI_CLASS_VISUALS.md"
+      ],
+      "replacement_status": "not_started"
+    },
+    {
+      "id": "kai_sorcerer",
+      "display_name": "Kai",
+      "classification": "A",
+      "aliases": [
+        "aren/sorcerer",
+        "kai_sorcerer"
+      ],
+      "references": [
+        "game/assets/rework/kai_classes.png",
+        "game/assets/rework/kai_overworld.png",
+        "docs/rework/KAI_CLASS_VISUALS.md"
+      ],
+      "replacement_status": "not_started"
+    },
+    {
+      "id": "kai_assassin",
+      "display_name": "Kai",
+      "classification": "A",
+      "aliases": [
+        "aren/assassin",
+        "kai_assassin"
+      ],
+      "references": [
+        "game/assets/rework/kai_classes.png",
+        "game/assets/rework/kai_overworld.png",
+        "docs/rework/KAI_CLASS_VISUALS.md"
+      ],
+      "replacement_status": "not_started"
+    },
+    {
+      "id": "kai_neutral",
+      "display_name": "Kai",
+      "classification": "A",
+      "aliases": [
+        "aren/neutral",
+        "kai_neutral"
+      ],
+      "references": [
+        "game/assets/rework/kai_classes.png",
+        "game/assets/rework/kai_overworld.png",
+        "docs/rework/KAI_CLASS_VISUALS.md"
+      ],
+      "replacement_status": "not_started"
+    }
+  ]
+}
