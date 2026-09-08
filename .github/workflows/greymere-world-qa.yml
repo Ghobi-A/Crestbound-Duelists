@@ -36,7 +36,7 @@ jobs:
           curl -fsSL https://github.com/godotengine/godot/releases/download/4.3-stable/Godot_v4.3-stable_export_templates.tpz -o "$RUNNER_TEMP/templates.zip"
           unzip -q "$RUNNER_TEMP/templates.zip" -d "$RUNNER_TEMP/export-templates"
           mkdir -p "$HOME/.local/share/godot/export_templates/4.3.stable" build/web
-          cp "$RUNNER_TEMP/export-templates/templates/web_release.zip" "$HOME/.local/share/godot/export_templates/4.3.stable/"
+          cp "$RUNNER_TEMP/export-templates/templates/"web*.zip "$HOME/.local/share/godot/export_templates/4.3.stable/"
           "$HOME/.cache/crestbound-godot/Godot_v4.3-stable_linux.x86_64" --headless --path game --export-release Web ../build/web/index.html
           npm install --no-save playwright
           npx playwright install --with-deps chromium
