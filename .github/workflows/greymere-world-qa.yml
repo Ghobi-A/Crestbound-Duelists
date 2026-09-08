@@ -1,0 +1,49 @@
+name: Greymere world QA
+on:
+  push:
+    branches: [world/greymere-rebuild]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - run: sudo apt-get update -qq && sudo apt-get install -y xvfb libgl1-mesa-dri
+      - run: python -m pip install pytest pyyaml
+      - run: python tools/materialize_overworld_v2.py
+      - run: python tools/validate_godot_project.py && python -m pytest tests/test_world_locations.py tests/test_presentation_contracts.py tests/test_greymere_character_references.py -q
+      - name: Capture actual Godot scenes
+        run: |
+          mkdir -p "$RUNNER_TEMP/world-qa"
+          bash tools/capture_screenshots.sh "$RUNNER_TEMP/world-qa"
+          for target in town_square court_gate west_lane lena_house inn silas_study; do
+            xvfb-run -a "$HOME/.cache/crestbound-godot/Godot_v4.3-stable_linux.x86_64" --path game --fixed-fps 60 --resolution 320x180 res://scenes/tools/screenshot_capture.tscn -- "--target=$target" "--out=$RUNNER_TEMP/world-qa"
+          done
+      - name: Exercise movement, doors, saves and combat
+        run: |
+          set -o pipefail
+          export XDG_DATA_HOME="$RUNNER_TEMP/qa-saves"
+          GODOT="$HOME/.cache/crestbound-godot/Godot_v4.3-stable_linux.x86_64"
+          timeout 90s "$GODOT" --headless --max-fps 120 --path game res://scenes/tools/world_smoke.tscn 2>&1 | tee "$RUNNER_TEMP/world-qa/world.log"
+          grep -q 'WORLD_SMOKE: 0 failures' "$RUNNER_TEMP/world-qa/world.log"
+          timeout 90s "$GODOT" --headless --max-fps 120 --path game res://scenes/tools/presentation_smoke.tscn 2>&1 | tee "$RUNNER_TEMP/world-qa/presentation.log"
+          grep -q 'PRESENTATION_SMOKE: 0 failures' "$RUNNER_TEMP/world-qa/presentation.log"
+      - name: Export and exercise browser build
+        run: |
+          curl -fsSL https://github.com/godotengine/godot/releases/download/4.3-stable/Godot_v4.3-stable_export_templates.tpz -o "$RUNNER_TEMP/templates.zip"
+          unzip -q "$RUNNER_TEMP/templates.zip" -d "$RUNNER_TEMP/export-templates"
+          mkdir -p "$HOME/.local/share/godot/export_templates/4.3.stable" build/web
+          cp "$RUNNER_TEMP/export-templates/templates/"web*.zip "$HOME/.local/share/godot/export_templates/4.3.stable/"
+          "$HOME/.cache/crestbound-godot/Godot_v4.3-stable_linux.x86_64" --headless --path game --export-release Web ../build/web/index.html
+          npm install --no-save playwright
+          npx playwright install --with-deps chromium
+          python -m http.server 8765 --directory build/web > "$RUNNER_TEMP/web-server.log" 2>&1 &
+          CRESTBOUND_QA_OUT="$RUNNER_TEMP/world-qa" node tools/verify_world_web.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: greymere-rendered-qa
+          path: ${{ runner.temp }}/world-qa

@@ -30,6 +30,12 @@ const SCENE_PATHS := {
 	"overworld": "res://scenes/overworld/greymere.tscn",
 	"battle": "res://scenes/battle/party_battle.tscn",
 	"battle_target": "res://scenes/battle/party_battle.tscn",
+	"lena_house": "res://scenes/overworld/lena_house.tscn",
+	"inn": "res://scenes/overworld/inn.tscn",
+	"silas_study": "res://scenes/overworld/silas_study.tscn",
+	"town_square": "res://scenes/overworld/greymere.tscn",
+	"court_gate": "res://scenes/overworld/greymere.tscn",
+	"west_lane": "res://scenes/overworld/greymere.tscn",
 }
 
 const SETTLE_FRAMES := 30
@@ -78,6 +84,12 @@ func _parse_args() -> void:
 
 func _seed_state() -> void:
 	GameState.start_new_game("warrior")
+	if target in ["lena_house","inn","silas_study"]:
+		GameState.location_id = target
+		GameState.location_spawn = "entrance"
+	elif target in ["town_square","court_gate","west_lane"]:
+		GameState.location_spawn = ""
+		GameState.player_tile = {"town_square":Vector2i(17,20),"court_gate":Vector2i(17,7),"west_lane":Vector2i(10,23)}[target]
 	GameState.set_flag("overworld_onboarding_seen")
 	GameState.set_flag("battle_onboarding_seen")
 
