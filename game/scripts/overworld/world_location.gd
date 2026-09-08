@@ -13,6 +13,7 @@ var _blocked: Dictionary = {}
 var _doors: Dictionary = {}
 var _interactions: Dictionary = {}
 var _camera_follow := Vector2.ZERO
+const CAMERA_LOOK_AHEAD := Vector2(0, -24)
 var _menu_open := false
 var _menu_cursor := 0
 var _menu_status := ""
@@ -104,7 +105,7 @@ func _build_camera() -> void:
 	_camera.limit_bottom = map_height()*TILE
 	# Smooth the target, then round once; Camera2D subpixel smoothing is disabled.
 	_camera.position_smoothing_enabled = false
-	_camera_follow = _player.position
+	_camera_follow = _player.position + CAMERA_LOOK_AHEAD
 	_camera.position = _camera_follow.round()
 	add_child(_camera)
 	_camera.make_current()
@@ -122,7 +123,7 @@ func is_walkable(tile: Vector2i) -> bool:
 func _process(delta: float) -> void:
 	if _player == null: return
 	_player.movement_locked = _dialogue.active or _menu_open or SceneTransition._busy
-	_camera_follow = _camera_follow.lerp(_player.position,1.0-exp(-10.0*delta))
+	_camera_follow = _camera_follow.lerp(_player.position + CAMERA_LOOK_AHEAD,1.0-exp(-10.0*delta))
 	_camera.position = _camera_follow.round()
 	_hud.visible = not _dialogue.active
 	_hud.show_context(context_verb())
