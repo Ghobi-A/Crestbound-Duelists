@@ -106,6 +106,15 @@ def test_defence_break_signatures_ignore_brace():
     assert v1 == v2
     assert braced == unbraced
 
+    mage = create_unit(ClassName.MAGE)
+    mind_pierce = _signature(mage)
+    random.seed(23)
+    unbraced, v1, _ = calculate_damage(mind_pierce, mage, guardian, False)
+    random.seed(23)
+    braced, v2, _ = calculate_damage(mind_pierce, mage, guardian, True)
+    assert v1 == v2
+    assert braced == unbraced
+
 
 # ── Accuracy / execution ─────────────────────────────────────────────
 
@@ -196,7 +205,7 @@ def test_target_stat_mods_apply():
     armor_break = _signature(warrior)
     base_def = mage.def_
     execute_move(warrior, mage, armor_break, 1, False, False)
-    assert mage.def_ == base_def - 10
+    assert mage.def_ == base_def - 8
 
 
 def test_self_stat_mods_apply():
@@ -210,7 +219,7 @@ def test_self_stat_mods_apply():
             random.seed(seed)
             break
     execute_move(warrior, mage, reckless, 1, False, False)
-    assert warrior.def_ == base_def - 6
+    assert warrior.def_ == base_def - 4
 
 
 def test_stat_modifiers_expire_after_decay():
@@ -223,6 +232,28 @@ def test_stat_modifiers_expire_after_decay():
     for _ in range(STAT_DECAY):
         unit.tick_modifiers()
     assert unit.def_ == base
+
+
+def test_move_modifier_survives_three_subsequent_decision_rounds():
+    from models import STAT_DECAY
+
+    warrior = create_unit(ClassName.WARRIOR)
+    mage = create_unit(ClassName.MAGE)
+    armor_break = _signature(warrior)
+    base_def = mage.base_def
+    execute_move(warrior, mage, armor_break, 1, False, False)
+
+    # Stored duration includes the application round's end tick.
+    assert mage.stat_modifiers[0].turns_remaining == STAT_DECAY + 1
+    mage.tick_modifiers()  # end of cast round -> first future decision starts
+    assert mage.def_ == base_def - 8
+
+    for _ in range(STAT_DECAY - 1):
+        mage.tick_modifiers()
+        assert mage.def_ == base_def - 8
+
+    mage.tick_modifiers()  # end of third subsequent round
+    assert mage.def_ == base_def
 
 
 def test_effective_stat_never_below_one():
@@ -245,7 +276,7 @@ def test_cripple_controls_initiative():
     cripple = _signature(assassin)
     base_spd = neutral.spd
     execute_move(assassin, neutral, cripple, 1, False, False)
-    assert neutral.spd == base_spd - 15
+    assert neutral.spd == base_spd - 8
 
 
 # ── Statuses / Hex ───────────────────────────────────────────────────
@@ -258,6 +289,21 @@ def test_status_ticks_and_expires():
     assert unit.has_status("hexed")
     unit.tick_modifiers()
     assert not unit.has_status("hexed")
+
+
+def test_move_status_survives_configured_future_rounds():
+    sorcerer = create_unit(ClassName.SORCERER)
+    guardian = create_unit(ClassName.GUARDIAN)
+    hex_move = _signature(sorcerer)
+    execute_move(sorcerer, guardian, hex_move, 1, False, False)
+
+    assert guardian.status_effects[0].turns_remaining == hex_move.status_duration + 1
+    guardian.tick_modifiers()  # end of cast round
+    assert guardian.has_status("hexed")
+    guardian.tick_modifiers()  # end of first subsequent round
+    assert guardian.has_status("hexed")
+    guardian.tick_modifiers()  # end of second subsequent round
+    assert not guardian.has_status("hexed")
 
 
 def test_hex_reapplication_refreshes_duration():
@@ -284,8 +330,8 @@ def test_hex_blocks_buff_moves():
 def test_hex_move_applies_status_and_strips_positive_modifiers():
     sorcerer = create_unit(ClassName.SORCERER)
     guardian = create_unit(ClassName.GUARDIAN)
-    guardian.apply_stat_mod("def", 15, 3)
-    assert guardian.def_ == guardian.base_def + 15
+    guardian.apply_stat_mod("def", 8, 3)
+    assert guardian.def_ == guardian.base_def + 8
 
     hex_move = _signature(sorcerer)
     log = execute_move(sorcerer, guardian, hex_move, 1, False, False)
@@ -318,8 +364,8 @@ def test_speed_guaranteed_when_diff_exceeds_band():
 
 
 def test_speed_probabilistic_inside_wider_band():
-    neutral = create_unit(ClassName.NEUTRAL)    # spd 50
-    guardian = create_unit(ClassName.GUARDIAN)  # spd 35; diff 15 < band 20
+    neutral = create_unit(ClassName.NEUTRAL)    # spd 54
+    guardian = create_unit(ClassName.GUARDIAN)  # spd 36; diff 18 < band 20
     firsts = {id(neutral): 0, id(guardian): 0}
     random.seed(12345)
     for _ in range(1000):

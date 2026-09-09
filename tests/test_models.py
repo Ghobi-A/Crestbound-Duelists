@@ -8,15 +8,13 @@ from models import ClassName, MoveSlot, MoveType, create_unit, CLASS_STATS
 
 ALL_CLASSES = list(ClassName)
 
-# The v2.1 baseline stats. If these change, it must be a deliberate
-# balance decision — update data/classes.yaml and this table together.
 EXPECTED_STATS = {
-    ClassName.WARRIOR:  {"hp": 85, "atk": 75, "def": 70, "mag": 30, "res": 35, "spd": 40},
-    ClassName.MAGE:     {"hp": 75, "atk": 30, "def": 35, "mag": 80, "res": 75, "spd": 42},
-    ClassName.ASSASSIN: {"hp": 70, "atk": 70, "def": 35, "mag": 38, "res": 55, "spd": 80},
-    ClassName.GUARDIAN: {"hp": 85, "atk": 40, "def": 75, "mag": 40, "res": 75, "spd": 35},
-    ClassName.NEUTRAL:  {"hp": 78, "atk": 55, "def": 50, "mag": 55, "res": 50, "spd": 50},
-    ClassName.SORCERER: {"hp": 72, "atk": 40, "def": 30, "mag": 80, "res": 48, "spd": 80},
+    ClassName.WARRIOR:  {"hp": 96, "atk": 70, "def": 68, "mag": 34, "res": 40, "spd": 48},
+    ClassName.MAGE:     {"hp": 96, "atk": 30, "def": 38, "mag": 78, "res": 66, "spd": 48},
+    ClassName.ASSASSIN: {"hp": 94, "atk": 70, "def": 46, "mag": 28, "res": 48, "spd": 68},
+    ClassName.GUARDIAN: {"hp": 104, "atk": 44, "def": 70, "mag": 44, "res": 66, "spd": 36},
+    ClassName.NEUTRAL:  {"hp": 100, "atk": 56, "def": 46, "mag": 56, "res": 50, "spd": 52},
+    ClassName.SORCERER: {"hp": 94, "atk": 32, "def": 44, "mag": 76, "res": 48, "spd": 60},
 }
 
 EXPECTED_MOVES = {
@@ -38,7 +36,7 @@ def test_unit_can_be_created(cls):
 
 
 @pytest.mark.parametrize("cls", ALL_CLASSES)
-def test_base_stats_match_v21_baseline(cls):
+def test_base_stats_match_v23_chassis(cls):
     unit = create_unit(cls)
     expected = EXPECTED_STATS[cls]
     assert unit.base_hp == expected["hp"]
@@ -51,7 +49,6 @@ def test_base_stats_match_v21_baseline(cls):
 
 @pytest.mark.parametrize("cls", ALL_CLASSES)
 def test_class_stats_table_matches_units(cls):
-    # analysis.ipynb imports CLASS_STATS directly — keep it consistent.
     unit = create_unit(cls)
     stats = CLASS_STATS[cls]
     assert stats["hp"] == unit.base_hp
@@ -108,6 +105,7 @@ def test_move_types_present():
     unit = create_unit(ClassName.GUARDIAN)
     shield_bash = unit.moves[0]
     assert shield_bash.move_type == MoveType.ADAPTIVE
+    assert unit.moves[1].move_type == MoveType.ADAPTIVE
     warrior = create_unit(ClassName.WARRIOR)
     assert warrior.moves[0].move_type == MoveType.PHYSICAL
     mage = create_unit(ClassName.MAGE)

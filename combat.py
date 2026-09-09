@@ -1,9 +1,8 @@
 """
-Crestbound Duelists — Combat Engine (v2.2)
+Crestbound Duelists — Combat Engine (v2.3)
 ============================================
 Compressed damage formula, probabilistic speed, Brace passive,
-move execution with real cooldown windows, stronger Hex interaction,
-and the 1v1 battle loop.
+real cooldown/effect windows, Hex interaction, and the 1v1 battle loop.
 """
 
 from __future__ import annotations
@@ -26,8 +25,8 @@ from loaders import load_combat_config as _load_combat_config
 _config = _load_combat_config()
 
 SPEED_BAND: int = int(_config["speed_band"])
-# Retained as a public constant for v2.1/API compatibility. Initiative in
-# v2.2 is resolved with the same SPD + U(0, band) score used by Godot.
+# Retained as a public constant for v2.1/API compatibility. Initiative is
+# resolved with the same SPD + U(0, band) score used by Godot.
 GUARANTEED_RATIO: float = float(_config["guaranteed_speed_ratio"])
 VARIANCE_LO: float = float(_config["variance_low"])
 VARIANCE_HI: float = float(_config["variance_high"])
@@ -107,17 +106,17 @@ def _resolve_adaptive_type(move: Move, attacker: Unit, defender: Unit) -> str:
 
 
 def _signature_breaks_brace(move: Move, resolved_type: str) -> bool:
-    """High-impact defence-break signatures punch through Brace.
+    """Relevant defence-break Signatures punch through Brace.
 
-    The rule is derived from the move's own rider rather than a class/name
-    check: a Signature that applies at least -10 to the defence channel it
-    attacks ignores Brace for that hit. In the v2.2 kit this covers Armor
-    Break and Mind Pierce while leaving Cripple as an initiative/setup tool.
+    Godot derives this from the guard_break/resistance_break data tags. The
+    Python Move model does not currently carry tactical tags, so the Balance
+    Lab mirrors the v2.3 data contract: a Signature with at least an 8-point
+    debuff to the defence channel it attacks ignores Brace for that hit.
     """
     if move.slot != MoveSlot.SIGNATURE:
         return False
     relevant_stat = "def" if resolved_type == "physical" else "res"
-    return any(stat == relevant_stat and amount <= -10
+    return any(stat == relevant_stat and amount <= -8
                for stat, amount in move.target_stat_mods)
 
 
@@ -156,14 +155,20 @@ def calculate_damage(
 # ── Move Execution ───────────────────────────────────────────────────
 
 def _start_cooldown(attacker: Unit, move: Move) -> None:
-    """Start a cooldown without consuming its first round immediately.
-
-    Cooldowns tick at round end. Storing configured cooldown + 1 means a
-    one-round Signature/Gambit cooldown is still at 1 on the next decision,
-    then reaches 0 after that round. This matches the Godot runtime.
-    """
+    """Start a cooldown without consuming its first round immediately."""
     if move.cooldown_turns > 0:
         attacker.cooldowns[move.name] = move.cooldown_turns + 1
+
+
+def _runtime_duration(configured_rounds: int) -> int:
+    """Store enough ticks for an effect to survive N subsequent rounds.
+
+    Effects are applied during a round and lifecycle counters tick at that
+    same round's end. Adding one prevents the application round from silently
+    consuming one of the configured future decision windows, matching the
+    cooldown convention and the Godot resolver.
+    """
+    return configured_rounds + 1
 
 
 def _purge_positive_modifiers(unit: Unit) -> None:
@@ -175,7 +180,7 @@ def _apply_mod_with_hex_rule(unit: Unit, stat: str, amount: int) -> bool:
     """Apply a stat mod unless Hex suppresses a positive change."""
     if amount > 0 and unit.has_status("hexed"):
         return False
-    unit.apply_stat_mod(stat, amount, STAT_DECAY)
+    unit.apply_stat_mod(stat, amount, _runtime_duration(STAT_DECAY))
     return True
 
 
@@ -237,7 +242,10 @@ def execute_move(
     if move.applies_status:
         if move.applies_status == "hexed":
             _purge_positive_modifiers(defender)
-        defender.apply_status(move.applies_status, move.status_duration)
+        defender.apply_status(
+            move.applies_status,
+            _runtime_duration(move.status_duration),
+        )
         log.status_applied = move.applies_status
 
     _start_cooldown(attacker, move)

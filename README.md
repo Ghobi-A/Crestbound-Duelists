@@ -62,7 +62,7 @@ no balance values. Details: `docs/ARCHITECTURE.md` and
 pip install -r requirements-dev.txt   # app + tests + notebook/Nash toolchain
 
 python -m pytest              # regression suite
-python balance_report.py      # quick balance smell check (~1s)
+python balance_report.py      # quick balance target diagnostics
 python main.py --quick        # reduced simulation suite (~10s)
 python main.py                # full 100k-sims-per-matchup suite
 python nash.py                # stateful game-theoretic analysis
@@ -97,8 +97,9 @@ is reproducible rather than merely statistically similar.
 
 `.github/workflows/balance-snapshot.yml` validates combat changes on pull
 requests. On `main` it reruns the full suite, regenerates YAML-derived
-exports for the Godot client, validates the Godot project, regenerates the
-production balance snapshot, and commits changed generated outputs.
+exports for the Godot client, validates the Godot project, prints the fast
+balance diagnostics, regenerates the production balance snapshot, and
+commits changed generated outputs.
 
 ## Running the game
 
@@ -158,29 +159,52 @@ Sorcerer — each with exactly three moves:
 | **Signature** | Class-defining tactical action (debuffs, buffs, Hex) |
 | **Gambit** | High-impact, higher-risk (more power, less accuracy) |
 
-| Mechanic | v2.2 implementation |
+| Mechanic | v2.3 implementation |
 |----------|---------------------|
 | Damage | `power × 2·ATK/(ATK+DEF) × U(0.85, 1.0)`, minimum 1 |
 | Speed | `SPD + U(0,20)` initiative; gaps ≥20 are deterministic |
-| Brace | `1.20×` relevant DEF/RES; defence-break Signatures punch through it |
+| Brace | `1.15×` relevant DEF/RES; defence-break Signatures punch through it |
 | Hex | Blocks dedicated buff moves, strips active positive stat mods, suppresses new positive stat changes |
 | Cooldowns | Signature/Gambit cooldown 1 means unavailable for the next decision round |
 | Stat decay | Temporary modifiers expire after 3 turns |
 
-The v2.2 pass deliberately leaves the six base stat spreads unchanged and
-fixes structural incentives first. In particular, every Gambit now has
-higher raw `power × accuracy` EV than its class Basic; its downside comes
-from miss variance, cooldown and any self-debuff rather than from being a
-strictly worse average-damage button.
+v2.2 fixed the structural mechanics; v2.3 rebalances the **naked class
+chassis** around a longer tactical horizon. Every class now has exactly
+**260 non-HP stat points**, while HP is tuned separately by archetype. Basic
+power is 15–16, Signature power is 11–12 plus a stronger rider, and Gambits
+sit at 22–25 with 70–80% accuracy. Every Gambit still has higher raw
+`power × accuracy` EV than its class Basic; cooldown, miss variance and
+secondary costs create the trade-off.
 
-| Class | HP | ATK | DEF | MAG | RES | SPD | Role |
-|-------|---:|----:|----:|----:|----:|----:|------|
-| Warrior | 85 | 75 | 70 | 30 | 35 | 40 | Physical bruiser |
-| Mage | 75 | 30 | 35 | 80 | 75 | 42 | Magical specialist |
-| Assassin | 70 | 70 | 35 | 38 | 55 | 80 | Fast striker / initiative control |
-| Guardian | 85 | 40 | 75 | 40 | 75 | 35 | Defensive anchor |
-| Neutral | 78 | 55 | 50 | 55 | 50 | 50 | Adaptive generalist |
-| Sorcerer | 72 | 40 | 30 | 80 | 48 | 80 | Fast curse specialist |
+| Class | HP | ATK | DEF | MAG | RES | SPD | Non-HP | Role |
+|-------|---:|----:|----:|----:|----:|----:|-------:|------|
+| Warrior | 100 | 74 | 68 | 30 | 44 | 44 | 260 | Physical bruiser |
+| Mage | 92 | 30 | 34 | 78 | 70 | 48 | 260 | Magical artillery |
+| Assassin | 88 | 70 | 40 | 34 | 48 | 68 | 260 | Fast striker / initiative control |
+| Guardian | 108 | 40 | 76 | 36 | 72 | 36 | 260 | Defensive anchor |
+| Neutral | 96 | 53 | 50 | 53 | 50 | 54 | 260 | Adaptive generalist |
+| Sorcerer | 90 | 34 | 38 | 76 | 48 | 64 | 260 | Fast disruptive caster |
+
+### v2.3 balance targets
+
+The fast report treats these as diagnostic targets before Crests or Bonded
+Entities are allowed to perturb the baseline:
+
+- average normal 1v1: **6–8 rounds**
+- average class win rate: **47–53%**
+- ordinary matchup: preferably inside **40/60**
+- intentional hard counter: allowed toward roughly **30/70**
+- no accidental matchup beyond **75/25**
+- global Basic usage: roughly **35–50%**
+- Signature usage: roughly **25–35%**
+- Gambit usage: roughly **15–30%**
+- no individual move above **55–60%** under a competent policy
+- most close/mid speed matchups remain probabilistic; only large archetypal
+  gaps become deterministic
+
+Crests and Bonded Entities are deliberately **not** used to compensate for
+class imbalance at this stage. They should become controlled perturbations
+around a known baseline once the six-class chassis is stable.
 
 On top of this, the RPG layer adds **Crests** (behaviour-altering
 passives, per-crest **Resonance** gains, and earned awakenings) and

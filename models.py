@@ -1,12 +1,12 @@
 """
-Crestbound Duelists — Data Models (v2.1)
+Crestbound Duelists — Data Models (v2.3)
 =========================================
 Dataclasses for units, moves, and status effects.
 
 Class stats and move kits are defined in data/classes.yaml and
-data/moves.yaml (v2.1 balance baseline) and loaded via loaders.py.
-This module keeps the engine types plus the backward-compatible
-create_unit / CLASS_STATS / MOVE_FACTORIES / STAT_DECAY API.
+data/moves.yaml and loaded via loaders.py. This module keeps the engine
+types plus the backward-compatible create_unit / CLASS_STATS /
+MOVE_FACTORIES / STAT_DECAY API.
 """
 
 from __future__ import annotations
@@ -107,7 +107,7 @@ class Unit:
     # Moves
     moves: list[Move] = field(default_factory=list)
 
-    # Active stat modifiers (decay over turns)
+    # Active stat modifiers
     stat_modifiers: list[StatModifier] = field(default_factory=list)
 
     # Active status effects
@@ -173,13 +173,30 @@ class Unit:
         self.status_effects = [s for s in self.status_effects if s not in expired_s]
 
     def apply_stat_mod(self, stat: str, amount: int, duration: int = 3):
-        """Apply a temporary stat modifier with decay."""
-        self.stat_modifiers.append(StatModifier(stat=stat, amount=amount, turns_remaining=duration))
+        """Apply or refresh a temporary stat modifier.
+
+        Reapplying the same stat in the same direction refreshes the window
+        and keeps the stronger magnitude instead of stacking another copy.
+        Opposite-direction effects remain independent, so a buff and debuff
+        can coexist and cancel naturally in the effective-stat sum.
+        """
+        if amount == 0:
+            return
+        for modifier in self.stat_modifiers:
+            same_direction = (modifier.amount > 0) == (amount > 0)
+            if modifier.stat == stat and same_direction:
+                if abs(amount) > abs(modifier.amount):
+                    modifier.amount = amount
+                modifier.turns_remaining = max(modifier.turns_remaining, duration)
+                return
+        self.stat_modifiers.append(
+            StatModifier(stat=stat, amount=amount, turns_remaining=duration)
+        )
 
     def apply_status(self, name: str, duration: int):
-        for s in self.status_effects:
-            if s.name == name:
-                s.turns_remaining = duration
+        for status in self.status_effects:
+            if status.name == name:
+                status.turns_remaining = max(status.turns_remaining, duration)
                 return
         self.status_effects.append(StatusEffect(name=name, turns_remaining=duration))
 
