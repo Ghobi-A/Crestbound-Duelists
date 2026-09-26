@@ -2,13 +2,13 @@ extends Node
 ## Deterministic screenshot harness for visual regression baselines.
 ##
 ## Run with a fixed frame delta so every animation phase is reproducible:
-##   godot --path game --fixed-fps 60 --resolution 320x180 \
+##   godot --path game --fixed-fps 60 --resolution 1920x1080 \
 ##     res://scenes/tools/screenshot_capture.tscn -- --target=overworld --out=/abs/dir
 ##
-## The window is driven at exactly the 320x180 internal resolution, so the
-## viewport texture IS the internal game canvas at 1:1 — never an OS-window
-## or browser grab. The 4x copy is produced from that image by
-## nearest-neighbour upscaling, preserving exact pixel boundaries.
+## Layout stays on the 320x180 logical canvas; Godot's canvas_items stretch
+## draws it at the window's integer multiple (2x 640x360, 4x 720p, 6x 1080p),
+## so source art is sampled at the real output resolution. The capture is the
+## root viewport texture at that size, never an OS-window or browser grab.
 ##
 ## Targets:
 ##   boot          — title screen with the main menu.
@@ -17,12 +17,16 @@ extends Node
 ##   battle        — Hollow Court, round 1, command menu open.
 ##   battle_target — Hollow Court, round 1, first move opened against the
 ##                   first target (shows the target-highlight ring/dim).
+##   battle_preview — every action chosen; the round preview is open.
+##   party_formation — party setup with a reordered, all-front formation.
+##   dialogue_long — the longest Greymere line with a portrait.
+##   victory / defeat — result screens via test-only health fixtures.
+##   class_<id>    — Greymere town square as each of Kai's six classes.
 ##
 ## The harness seeds a canonical GameState (warrior, onboarding flags set),
 ## instantiates the target scene as a sibling, advances scripted `interact`
-## presses on fixed frame counts, then writes <out>/<name>.png (320x180
-## internal canvas, canonical) and <out>/<name>_4x.png (nearest-upscaled to
-## 1280x720 for viewing). Exits with code 0 on success.
+## presses on fixed frame counts, then writes <out>/<name>.png at the window
+## resolution. Exits with code 0 on success.
 
 const SCENE_PATHS := {
 	"boot": "res://scenes/boot/boot.tscn",
@@ -38,7 +42,13 @@ const SCENE_PATHS := {
 	"west_lane": "res://scenes/overworld/greymere.tscn",
 	"dialogue_portrait": "res://scenes/overworld/greymere.tscn",
 	"dialogue_notice": "res://scenes/overworld/greymere.tscn",
+	"dialogue_long": "res://scenes/overworld/greymere.tscn",
+	"battle_preview": "res://scenes/battle/party_battle.tscn",
+	"party_formation": "res://scenes/ui/party_setup.tscn",
+	"victory": "res://scenes/battle/party_battle.tscn",
+	"defeat": "res://scenes/battle/party_battle.tscn",
 }
+const LOGICAL := Vector2i(320, 180)
 
 const SETTLE_FRAMES := 30
 const PRESS_GAP_FRAMES := 6
@@ -73,12 +83,43 @@ func _ready() -> void:
 			# Open the first move to leave target selection active, so
 			# the baseline shows the highlight ring and dimming.
 			await _press_times(1)
-	elif target == "dialogue_portrait" or target == "dialogue_notice":
+	elif target in ["battle_preview", "victory", "defeat"]:
+		await _drive_battle(scene)
+	elif target in ["dialogue_portrait", "dialogue_notice", "dialogue_long"]:
 		var dialogue: DialogueBox = scene.get("_dialogue") as DialogueBox
-		dialogue.play("elara_intro" if target == "dialogue_portrait" else "notice_board")
+		dialogue.play({"dialogue_portrait": "elara_intro", "dialogue_notice": "notice_board",
+			"dialogue_long": "toby_flavor"}[target])
 	await _frames(SETTLE_FRAMES)
 	await _capture("baseline_%s" % target)
 	get_tree().quit(0)
+
+
+func _drive_battle(scene: Node) -> void:
+	while scene.dialogue.active:
+		scene.dialogue._advance()
+	if target != "battle_preview":
+		# Same test-only health fixtures as presentation_smoke: the real
+		# runtime still resolves every attack, target and AI choice.
+		var losers: Array = scene.runtime.player_units if target == "defeat" else scene.runtime.enemy_units
+		for unit in losers:
+			unit.hp = 1
+		Engine.time_scale = 50
+	var stop_state: int = scene.State.PREVIEW if target == "battle_preview" else scene.State.RESULT
+	for _step in 20000:
+		if scene.state == stop_state:
+			break
+		if scene.state == scene.State.SELECT_MENU and target == "defeat":
+			scene.hud.action_menu.cursor = scene.hud.action_menu.entries.size() - 1
+		if scene.state in [scene.State.SELECT_MENU, scene.State.SELECT_TARGET, scene.State.PREVIEW]:
+			var event := InputEventAction.new()
+			event.action = "interact"
+			event.pressed = true
+			scene._unhandled_input(event)
+		await get_tree().process_frame
+	Engine.time_scale = 1
+	if scene.state != stop_state:
+		push_error("Battle capture did not reach %s" % target)
+		get_tree().quit(5)
 
 
 func _parse_args() -> void:
@@ -94,9 +135,14 @@ func _seed_state() -> void:
 	if target in ["lena_house","inn","silas_study"]:
 		GameState.location_id = target
 		GameState.location_spawn = "entrance"
-	elif target in ["town_square","court_gate","west_lane","dialogue_portrait","dialogue_notice"] or target.begins_with("class_"):
+	elif target in ["town_square","court_gate","west_lane","dialogue_portrait","dialogue_notice","dialogue_long"] or target.begins_with("class_"):
 		GameState.location_spawn = ""
 		GameState.player_tile = {"town_square":Vector2i(17,20),"court_gate":Vector2i(17,7),"west_lane":Vector2i(10,23)}.get(target, Vector2i(17,20))
+	if target == "party_formation":
+		# Alternative formation: reversed order, everyone in the front row.
+		GameState.party.reverse()
+		for build in GameState.party:
+			build["position"] = "front"
 	GameState.set_flag("overworld_onboarding_seen")
 	GameState.set_flag("battle_onboarding_seen")
 
@@ -127,8 +173,9 @@ func _capture(name: String) -> void:
 	var dir := DirAccess.open(out_dir)
 	if dir == null:
 		DirAccess.make_dir_recursive_absolute(out_dir)
-	if image.get_width() != 320 or image.get_height() != 180:
-		push_error("Expected a 320x180 internal viewport, got %dx%d — run with --resolution 320x180." % [image.get_width(), image.get_height()])
+	var scale := image.get_width() / LOGICAL.x
+	if scale < 1 or image.get_size() != LOGICAL * scale:
+		push_error("Expected an integer multiple of 320x180, got %dx%d." % [image.get_width(), image.get_height()])
 		get_tree().quit(4)
 		return
 	var canonical_path := "%s/%s.png" % [out_dir, name]
@@ -136,7 +183,4 @@ func _capture(name: String) -> void:
 		push_error("Failed to write %s" % canonical_path)
 		get_tree().quit(3)
 		return
-	var upscaled := image.duplicate()
-	upscaled.resize(1280, 720, Image.INTERPOLATE_NEAREST)
-	upscaled.save_png("%s/%s_4x.png" % [out_dir, name])
-	print("Captured %s (320x180) and %s_4x.png" % [canonical_path, name])
+	print("Captured %s (%dx%d, %dx logical)" % [canonical_path, image.get_width(), image.get_height(), scale])

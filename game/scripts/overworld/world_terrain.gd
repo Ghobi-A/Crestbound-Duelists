@@ -8,6 +8,10 @@ const MATERIAL_TILES := 4
 var texture: Texture2D = preload("res://assets/environment/terrain.png")
 var clock := 0.0
 
+func _ready() -> void:
+	# The painted terrain kit is ~157px per tile; filter it down to the output scale.
+	texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
+
 func _process(delta: float) -> void:
 	clock += delta
 	if int(clock*4) != int((clock-delta)*4): queue_redraw()

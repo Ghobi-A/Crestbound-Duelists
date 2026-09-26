@@ -1,7 +1,10 @@
 #!/usr/bin/env bash
 # Deterministic visual baseline capture for Crestbound Duelists.
 #
-#   tools/capture_screenshots.sh [output_dir]
+#   tools/capture_screenshots.sh [output_dir] [resolution]
+#
+# The resolution (default 1280x720) must be an integer multiple of the
+# 320x180 logical canvas; Godot draws the layout at that multiple.
 #
 # Downloads (and caches) a pinned, checksum-verified Godot build, imports the
 # project, then renders one Greymere frame and one Hollow Court command-menu
@@ -22,7 +25,8 @@ GODOT_SHA512="fd52bb4ba8acc30ca5accd1c566d470ad7282f891ccc0995dfafabcf92bcf76280
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 CACHE_DIR="${CRESTBOUND_GODOT_CACHE:-$HOME/.cache/crestbound-godot}"
 OUT_DIR="$(cd "$(dirname "${1:-$REPO_ROOT/docs/visual_refs}")" && pwd)/$(basename "${1:-visual_refs}")"
-TARGETS=(boot party_setup overworld battle battle_target)
+RESOLUTION="${2:-1280x720}"
+TARGETS=(${CRESTBOUND_CAPTURE_TARGETS:-boot party_setup overworld battle battle_target})
 
 mkdir -p "$CACHE_DIR" "$OUT_DIR"
 
@@ -57,10 +61,10 @@ xvfb-run -a "$GODOT" --path "$REPO_ROOT/game" --import --quit-after 200 >/dev/nu
 
 for target in "${TARGETS[@]}"; do
 	echo "Capturing $target ..."
-	# Drive the window at the internal resolution so the captured viewport
-	# texture is the 320x180 game canvas itself, not a scaled OS window.
+	# The captured viewport texture is the game's own render at this size,
+	# not a scaled OS window.
 	xvfb-run -a "$GODOT" --path "$REPO_ROOT/game" --fixed-fps 60 \
-		--resolution 320x180 \
+		--resolution "$RESOLUTION" \
 		"res://scenes/tools/screenshot_capture.tscn" \
 		-- "--target=$target" "--out=$OUT_DIR"
 done
