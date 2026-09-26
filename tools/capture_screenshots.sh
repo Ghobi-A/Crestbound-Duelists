@@ -24,7 +24,11 @@ GODOT_SHA512="fd52bb4ba8acc30ca5accd1c566d470ad7282f891ccc0995dfafabcf92bcf76280
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 CACHE_DIR="${CRESTBOUND_GODOT_CACHE:-$HOME/.cache/crestbound-godot}"
-OUT_DIR="$(cd "$(dirname "${1:-$REPO_ROOT/docs/visual_refs}")" && pwd)/$(basename "${1:-visual_refs}")"
+OUT_ARG="${1:-$REPO_ROOT/docs/visual_refs}"
+# Create the directory before resolving it; a missing parent would
+# otherwise resolve to the filesystem root.
+mkdir -p "$OUT_ARG"
+OUT_DIR="$(cd "$OUT_ARG" && pwd)"
 RESOLUTION="${2:-1280x720}"
 TARGETS=(${CRESTBOUND_CAPTURE_TARGETS:-boot party_setup overworld battle battle_target})
 
