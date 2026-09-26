@@ -141,7 +141,7 @@ func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("cancel"):
 		_menu_open = not _menu_open
 		_menu_status = ""
-		_hud.menu.visible = _menu_open
+		if not _menu_open: _hud.hide_menu()
 	elif _menu_open:
 		if event.is_action_pressed("move_up"): _menu_cursor = wrapi(_menu_cursor-1,0,3)
 		elif event.is_action_pressed("move_down"): _menu_cursor = wrapi(_menu_cursor+1,0,3)
@@ -149,7 +149,7 @@ func _unhandled_input(event: InputEvent) -> void:
 			match _menu_cursor:
 				0:
 					_menu_open = false
-					_hud.menu.visible = false
+					_hud.hide_menu()
 				1:
 					_remember_position()
 					_menu_status = "Saved." if SaveManager.save_game() else "Save failed."

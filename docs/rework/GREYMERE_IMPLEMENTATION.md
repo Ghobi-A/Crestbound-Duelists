@@ -21,6 +21,12 @@ release. Combat resolution and balance are unchanged.
 - Seventeen new runtime overworld sheets share Kai's proportions and four explicit
   directional rows. The central registry records each frame and foot baseline;
   Mage and Sorcerer wear robes, and Neutral keeps the magical sword motif.
+- Shared raised-slate panel surfaces now unify the pause, dialogue, formation and
+  battle status UI. Party cards have separate name/status space, and the details
+  panel shows class/Crest metadata rather than empty missing-art slots. Native
+  HP text and green/amber health bars replace the downsampled status caption.
+- The opening controls objective names Warden Almyra. A player-facing canon
+  guard prevents retired character names from returning in runtime text.
 
 ## Assets and ownership
 
@@ -43,9 +49,8 @@ contact poses still need refinement. See `AUTHORED_OVERWORLD_PASS.md`.
 
 ## Verification evidence
 
-- Local static validator: 50 scripts, 10 scenes, 41 JSON files; passed.
-- Focused tests: 15 passed (world connectivity, presentation contracts, complete
-  character-reference coverage and source existence).
+- Local static validator: 50 scripts, 10 scenes, 42 JSON files; passed.
+- Full Python regression: 259 passed after the interface and canon guard pass.
 - Actual Godot `world_smoke.tscn`: zero failures. Exercises tile movement,
   contextual entry, locked doors, three interior visits, save/load/reload,
   resident dialogue, furniture inspection, return spawn and Court/party setup.
@@ -71,7 +76,13 @@ contact poses still need refinement. See `AUTHORED_OVERWORLD_PASS.md`.
   and browser checks at four viewport sizes. The captured town and interior
   scenes were inspected: the authored walkers align to ground, fit within the
   play area, and the game and browser menus remain within the canvas. This run
-  predates the final pause-menu spacing refinement, which needs a fresh capture.
+  predates the later interface spacing refinement.
+- The interface and dialogue capture pass in [run 36269492378](https://github.com/Ghobi-A/Crestbound-Duelists/actions/runs/36269492378)
+  passed Godot scene captures, both smoke flows, Web export and browser checks.
+  Its party and two dialogue frames were inspected at native pixel scale:
+  portraits remain in their frames, text clears the portraits, no roster row
+  bleeds into the next panel, and missing Crest/entity art no longer creates
+  empty image boxes. The new modal scrim landed after this run.
 
 Captured native-resolution evidence:
 
@@ -97,6 +108,8 @@ also run locally. This is actual Godot rendering, not a screenshot mockup.
 - [ ] Candidate feet, stride alternation and equipment-side continuity verified.
 - [ ] Final environmental composition reaches the supplied reference's quality.
 - [ ] All remaining battle/portrait/VFX presentation gaps closed.
+- [ ] Side contact poses pass `tools/audit_walk_cycles.py` (20/34 facings
+  currently below the visible-change threshold; foot-anchor jitter passes).
 - [ ] Completed visual rebuild merged and deployed to Pages.
 
 ## Remaining limitations
