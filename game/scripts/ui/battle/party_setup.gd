@@ -23,7 +23,8 @@ var _portrait: TextureRect
 var _crest_art: TextureRect
 var _entity_art: TextureRect
 var _roster: Control
-const CARD_HEIGHT := 31.0
+const CARD_HEIGHT := 33.0
+const CARD_PITCH := 35.0
 const VISIBLE_CARDS := 3
 
 const CONTENT_TOP := 30.0
@@ -57,8 +58,11 @@ func _build_ui() -> void:
 	# the detail copy. This remains readable on the native 320x180 canvas.
 	add_child(UiPanel.create(Vector2(8, FOOTER_TOP), Vector2(304, 18), UiStyle.NEUTRAL))
 
-	_title_label = _label(Vector2(0, 10), 10, PlaceholderPalette.TEXT_WARN)
-	_title_label.text = "PARTY SETUP — %s" % _encounter.get("name", "")
+	_title_label = _label(Vector2(16, 9), UiStyle.FONT_SIZE, PlaceholderPalette.TEXT_WARN)
+	_title_label.size = Vector2(288, 12)
+	_title_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	_title_label.clip_text = true
+	_title_label.text = "PARTY  /  %s" % str(_encounter.get("name", "")).to_upper()
 	# Both labels are clamped to their panel's interior; the roster's
 	# Long authority names used to bleed into the detail
 	# column when the label was left at full screen width.
@@ -79,6 +83,8 @@ func _build_ui() -> void:
 	# Abbreviated so the whole hint fits the footer at native font size
 	# (262px of 296px) instead of being shrunk below it.
 	_hint_label.text = "UP/DOWN SELECT  L/R ROW  Z CONFIRM  X BACK"
+	for portrait_x in [190.0, 229.0, 267.0]:
+		add_child(UiPanel.create(Vector2(portrait_x, 33), Vector2(38, 43), UiStyle.NEUTRAL, false))
 	_portrait = TextureRect.new()
 	PresentationLayout.texture_box(_portrait, Rect2(191, 35, 34, 40))
 	_portrait.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
@@ -176,7 +182,7 @@ func _refresh_roster() -> void:
 	var first := maxi(0, mini(_cursor, GameState.party.size() - 1) - VISIBLE_CARDS + 1)
 	for i in range(first, mini(first + VISIBLE_CARDS, GameState.party.size())):
 		var build: Dictionary = GameState.party[i]
-		var card := UiPanel.create(Vector2(12, 34 + (i - first) * 33), Vector2(166, CARD_HEIGHT), UiStyle.COMMAND if i == _cursor else UiStyle.NEUTRAL)
+		var card := UiPanel.create(Vector2(12, 34 + (i - first) * CARD_PITCH), Vector2(166, CARD_HEIGHT), UiStyle.COMMAND if i == _cursor else UiStyle.NEUTRAL)
 		_roster.add_child(card)
 		var portrait := TextureRect.new()
 		PresentationLayout.texture_box(portrait, Rect2(3, 3, 22, 25))
@@ -189,18 +195,26 @@ func _refresh_roster() -> void:
 		name_label.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
 		name_label.text = str(build.get("name", "?"))
 		name_label.add_theme_font_size_override("font_size", UiStyle.FONT_SIZE)
+		name_label.add_theme_color_override("font_color", PlaceholderPalette.TEXT_MAIN if i == _cursor else PlaceholderPalette.TEXT_DIM)
 		card.add_child(name_label)
 		var state := Label.new()
 		state.position = Vector2(30, 17)
-		state.text = "%s · %s" % ["ACTIVE" if i < _slots else "RESERVE", str(build.get("position", "front")).to_upper()]
+		state.size = Vector2(132, 11)
+		state.clip_text = true
+		state.text = "%s  /  %s" % ["ACTIVE" if i < _slots else "RESERVE", str(build.get("position", "front")).to_upper()]
 		state.add_theme_font_size_override("font_size", UiStyle.FONT_SIZE)
 		state.add_theme_color_override("font_color", PlaceholderPalette.TEXT_DIM)
 		card.add_child(state)
+	var start_panel := UiPanel.create(Vector2(12, 139), Vector2(166, 13), UiStyle.COMMAND if _cursor == GameState.party.size() else UiStyle.NEUTRAL, false)
+	_roster.add_child(start_panel)
 	var start := Label.new()
-	start.position = Vector2(16, 138)
-	start.text = ("> " if _cursor == GameState.party.size() else "  ") + "BEGIN ENCOUNTER"
+	start.position = Vector2(5, 1)
+	start.size = Vector2(156, 11)
+	start.clip_text = true
+	start.text = "BEGIN ENCOUNTER  >" if _cursor == GameState.party.size() else "BEGIN ENCOUNTER"
 	start.add_theme_font_size_override("font_size", UiStyle.FONT_SIZE)
-	_roster.add_child(start)
+	start.add_theme_color_override("font_color", PlaceholderPalette.TEXT_WARN if _cursor == GameState.party.size() else PlaceholderPalette.TEXT_DIM)
+	start_panel.add_child(start)
 
 
 func _unhandled_input(event: InputEvent) -> void:

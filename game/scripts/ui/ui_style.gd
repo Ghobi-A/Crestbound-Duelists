@@ -29,6 +29,10 @@ const CORNER_LENGTH := 3
 # Never request less than this; to fit more copy, shorten the string or
 # widen its box rather than shrinking the text.
 const FONT_SIZE := 8
+const SURFACE_OUTER := Color("0b1320")
+const SURFACE_INNER := Color("172235")
+const SURFACE_RAISED := Color("202e43")
+const SURFACE_LINE := Color("52617a")
 
 
 static func accent_color(role: String) -> Color:
@@ -47,16 +51,16 @@ static func accent_color(role: String) -> Color:
 static func draw_panel(canvas: CanvasItem, rect: Rect2, role := NEUTRAL, ornate := true) -> void:
 	## A filled panel with a recessed bevel and a restrained accent border.
 	var accent := accent_color(role)
-	canvas.draw_rect(rect, Color("080e18"))
-	canvas.draw_rect(rect.grow(-1), Color("141e2b"))
-	canvas.draw_rect(rect.grow(-2), Color("192637"), false, 1.0)
+	canvas.draw_rect(rect, SURFACE_OUTER)
+	canvas.draw_rect(rect.grow(-1), SURFACE_INNER)
+	canvas.draw_rect(Rect2(rect.position + Vector2(2, 2), Vector2(rect.size.x - 4, 1)), SURFACE_RAISED)
 	# A single lit top edge reads as a bevel without costing a second
 	# colour ramp step.
 	canvas.draw_rect(
 		Rect2(rect.position + Vector2(1, 1), Vector2(rect.size.x - 2, 1)),
-		Color("46556a")
+		SURFACE_LINE
 	)
-	canvas.draw_rect(rect, accent.darkened(0.4), false, 1.0)
+	canvas.draw_rect(rect, accent.darkened(0.38), false, 1.0)
 	if ornate:
 		draw_corner_marks(canvas, rect, accent)
 
@@ -109,5 +113,6 @@ static func draw_header_underline(canvas: CanvasItem, rect: Rect2, role := COMMA
 static func draw_selection_band(canvas: CanvasItem, rect: Rect2, role := COMMAND) -> void:
 	## The filled band behind a highlighted list row, plus a leading
 	## accent tick so the selected row is readable even in a still frame.
-	canvas.draw_rect(rect, PlaceholderPalette.MOON_INDIGO)
+	canvas.draw_rect(rect, SURFACE_RAISED)
 	canvas.draw_rect(Rect2(rect.position, Vector2(1, rect.size.y)), accent_color(role))
+	canvas.draw_rect(Rect2(rect.position + Vector2(2, rect.size.y - 1), Vector2(rect.size.x - 3, 1)), accent_color(role).darkened(0.63))

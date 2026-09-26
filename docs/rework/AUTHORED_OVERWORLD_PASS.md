@@ -14,3 +14,13 @@ The character identities follow `GREYMERE_CHARACTER_REFERENCE_AUDIT.md`. Kai's f
 ## Remaining review
 
 The fourth side-view pose on several generated sheets resembles the second contact pose too closely. Each manifest entry is marked `animation_review: pending`; replace or hand-correct these source poses before treating walk animation as final. The generated art is more detailed and brighter than some environmental pixels. Review character scale, readability and colour balance against the CI screenshots at the game's native resolution. Battle and portrait assets still have their separate existing presentation contracts.
+
+### Measured walk-cycle audit (`tools/audit_walk_cycles.py`)
+
+Run at the 24 px display height. The first version of this audit compared
+indices 0 and 2, which are both idle poses. Correctly comparing the two
+contact poses (indices 1 and 3) finds that 20 of 34 side facings change less
+than 3% of display pixels. This includes west-facing Kai class sheets and
+several townsfolk; see `python tools/audit_walk_cycles.py` for the full list.
+No facing exceeds 1.5 display-pixel body-height or foot-anchor jitter.
+The tool exits non-zero while contact poses need source-art correction.
