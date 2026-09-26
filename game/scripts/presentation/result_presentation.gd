@@ -9,6 +9,7 @@ var _active := false
 
 func show_result(victory: bool) -> void:
 	layer = 20
+	PresentationLayout.configure_layer(self)
 	_active = true
 	var shade := ColorRect.new()
 	shade.color = Color(0.03, 0.025, 0.06, 0.78)

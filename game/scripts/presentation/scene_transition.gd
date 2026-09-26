@@ -7,6 +7,7 @@ var _busy := false
 
 func _ready() -> void:
 	layer = 100
+	PresentationLayout.configure_layer(self)
 	_veil = ColorRect.new()
 	_veil.size = Vector2(320, 180)
 	_veil.color = Color(0.08, 0.07, 0.12, 0.0)

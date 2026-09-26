@@ -7,6 +7,7 @@ var _lanes: Dictionary = {}
 
 func _ready() -> void:
 	layer = 8
+	PresentationLayout.configure_layer(self)
 
 
 func show_float(unit: BattleUnit, origin: Vector2, kind: String, value := "") -> void:

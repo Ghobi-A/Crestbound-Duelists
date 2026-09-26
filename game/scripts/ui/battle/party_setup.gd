@@ -32,6 +32,7 @@ const FOOTER_TOP := 158.0
 
 
 func _ready() -> void:
+	PresentationLayout.configure_root(self)
 	_encounter = GameData.get_encounter(GameState.pending_encounter)
 	_slots = int(_encounter.get("player_slots", 3))
 	if not bool(_encounter.get("pre_battle_positioning", true)):

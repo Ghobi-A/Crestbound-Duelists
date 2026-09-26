@@ -11,6 +11,7 @@ var active := false
 
 func _ready() -> void:
 	layer = 20
+	PresentationLayout.configure_layer(self)
 	visible = false
 
 

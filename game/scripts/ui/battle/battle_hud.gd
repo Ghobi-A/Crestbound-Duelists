@@ -20,6 +20,7 @@ var _banner_label: Label
 
 func _ready() -> void:
 	layer = 5
+	PresentationLayout.configure_layer(self)
 
 	var top := ColorRect.new()
 	top.color = PlaceholderPalette.MOON_SLATE

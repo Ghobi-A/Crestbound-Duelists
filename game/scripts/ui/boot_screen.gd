@@ -39,6 +39,7 @@ const MENU_BAND := Rect2(20, 0, 128, 14)
 
 
 func _ready() -> void:
+	PresentationLayout.configure_root(self)
 	_build_ui()
 	AudioRouter.play_music("greymere")
 	if not GameData.load_ok:

@@ -3,6 +3,10 @@ extends RefCounted
 ## Presentation geometry only; no battle rules or character statistics.
 
 const CANVAS := Vector2(320, 180)
+# Layout and game rules stay on the 320x180 grid. The viewport samples source
+# textures at twice that resolution before the browser's integer enlargement.
+const RENDER_SCALE := 2
+const RENDER_SIZE := CANVAS * RENDER_SCALE
 const BATTLE_HEIGHT := 122
 const PLAYER_CENTER_X := 82.0
 const ENEMY_CENTER_X := 238.0
@@ -13,6 +17,17 @@ const PORTRAIT_RECT := Rect2(5, 5, 34, 40)
 const TEXT_TOP := 15.0
 const TEXT_HEIGHT := 28.0
 const RIGHT_MARGIN := 14.0
+
+
+static func configure_layer(layer: CanvasLayer) -> void:
+	layer.transform = Transform2D.IDENTITY.scaled(Vector2.ONE * RENDER_SCALE)
+
+
+static func configure_root(control: Control) -> void:
+	control.set_anchors_preset(Control.PRESET_TOP_LEFT)
+	control.position = Vector2.ZERO
+	control.size = CANVAS
+	control.scale = Vector2.ONE * RENDER_SCALE
 
 
 static func texture_box(node: TextureRect, rect: Rect2) -> void:

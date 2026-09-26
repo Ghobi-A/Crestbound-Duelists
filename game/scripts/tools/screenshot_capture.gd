@@ -2,13 +2,12 @@ extends Node
 ## Deterministic screenshot harness for visual regression baselines.
 ##
 ## Run with a fixed frame delta so every animation phase is reproducible:
-##   godot --path game --fixed-fps 60 --resolution 320x180 \
+##   godot --path game --fixed-fps 60 --resolution 640x360 \
 ##     res://scenes/tools/screenshot_capture.tscn -- --target=overworld --out=/abs/dir
 ##
-## The window is driven at exactly the 320x180 internal resolution, so the
-## viewport texture IS the internal game canvas at 1:1 — never an OS-window
-## or browser grab. The 4x copy is produced from that image by
-## nearest-neighbour upscaling, preserving exact pixel boundaries.
+## The window is driven at the 640x360 render buffer. Scene geometry remains
+## on a 320x180 grid while source art receives twice the sampling resolution.
+## The 720p and 1080p copies use nearest-neighbour output enlargement.
 ##
 ## Targets:
 ##   boot          — title screen with the main menu.
@@ -20,9 +19,9 @@ extends Node
 ##
 ## The harness seeds a canonical GameState (warrior, onboarding flags set),
 ## instantiates the target scene as a sibling, advances scripted `interact`
-## presses on fixed frame counts, then writes <out>/<name>.png (320x180
-## internal canvas, canonical) and <out>/<name>_4x.png (nearest-upscaled to
-## 1280x720 for viewing). Exits with code 0 on success.
+## presses on fixed frame counts, then writes <out>/<name>.png (640x360
+## render buffer), <out>/<name>_4x.png (1280x720; legacy filename), and
+## <out>/<name>_1080p.png (1920x1080). Exits with code 0 on success.
 
 const SCENE_PATHS := {
 	"boot": "res://scenes/boot/boot.tscn",
@@ -127,8 +126,8 @@ func _capture(name: String) -> void:
 	var dir := DirAccess.open(out_dir)
 	if dir == null:
 		DirAccess.make_dir_recursive_absolute(out_dir)
-	if image.get_width() != 320 or image.get_height() != 180:
-		push_error("Expected a 320x180 internal viewport, got %dx%d — run with --resolution 320x180." % [image.get_width(), image.get_height()])
+	if image.get_width() != 640 or image.get_height() != 360:
+		push_error("Expected a 640x360 render buffer, got %dx%d — run with --resolution 640x360." % [image.get_width(), image.get_height()])
 		get_tree().quit(4)
 		return
 	var canonical_path := "%s/%s.png" % [out_dir, name]
@@ -139,4 +138,7 @@ func _capture(name: String) -> void:
 	var upscaled := image.duplicate()
 	upscaled.resize(1280, 720, Image.INTERPOLATE_NEAREST)
 	upscaled.save_png("%s/%s_4x.png" % [out_dir, name])
-	print("Captured %s (320x180) and %s_4x.png" % [canonical_path, name])
+	var full_hd := image.duplicate()
+	full_hd.resize(1920, 1080, Image.INTERPOLATE_NEAREST)
+	full_hd.save_png("%s/%s_1080p.png" % [out_dir, name])
+	print("Captured %s (640x360), %s_4x.png (720p), and %s_1080p.png" % [canonical_path, name, name])

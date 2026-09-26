@@ -16,6 +16,7 @@ const CHOICES := ["Resume", "Save game", "Title screen"]
 
 func _ready() -> void:
 	layer = 5
+	PresentationLayout.configure_layer(self)
 	var canvas := PresentationLayout.CANVAS
 	var bar := UiPanel.create(Vector2(0, canvas.y - HUD_HEIGHT),Vector2(canvas.x, HUD_HEIGHT),UiStyle.NEUTRAL,false)
 	add_child(bar)

@@ -41,6 +41,7 @@ var _advance_label: Label
 
 func _ready() -> void:
 	layer = 10
+	PresentationLayout.configure_layer(self)
 	_panel = UiPanel.create(PresentationLayout.DIALOGUE_RECT.position, PresentationLayout.DIALOGUE_RECT.size, UiStyle.COMMAND)
 	_panel.clip_contents = true
 	add_child(_panel)

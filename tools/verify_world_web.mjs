@@ -23,9 +23,9 @@ for (const [width,height] of [[1920,1080],[1280,720],[1024,768],[640,360]]) {
   await page.setViewportSize({width,height});
   await page.waitForTimeout(500);
   const dimensions = await page.locator('canvas').evaluate(c=>({width:c.width,height:c.height,cssWidth:c.getBoundingClientRect().width,cssHeight:c.getBoundingClientRect().height}));
-  const scale = Math.max(1,Math.floor(Math.min(width/320,height/180)));
-  assert.equal(dimensions.width,320*scale);
-  assert.equal(dimensions.height,180*scale);
+  const scale = Math.max(1,Math.floor(Math.min(width/640,height/360)));
+  assert.equal(dimensions.width,640*scale);
+  assert.equal(dimensions.height,360*scale);
   assert.equal(dimensions.cssWidth,dimensions.width);
   assert.equal(dimensions.cssHeight,dimensions.height);
   await page.screenshot({path:`${out}/web-${width}x${height}.png`});

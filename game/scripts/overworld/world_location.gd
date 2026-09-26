@@ -99,6 +99,7 @@ func _build_player() -> void:
 
 func _build_camera() -> void:
 	_camera = Camera2D.new()
+	_camera.zoom = Vector2.ONE * PresentationLayout.RENDER_SCALE
 	_camera.limit_left = 0
 	_camera.limit_top = 0
 	_camera.limit_right = map_width()*TILE

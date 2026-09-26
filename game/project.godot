@@ -3,8 +3,8 @@
 ; since the parameters that go here are not all obvious.
 ;
 ; Crestbound Duelists — Godot 4 pixel-art client.
-; Internal canvas: 320x180 (16:9), integer-scaled, nearest-neighbour
-; filtering, pixel snapping. See docs/GODOT_SETUP.md.
+; Logical layout: 320x180; high-detail render buffer: 640x360 (16:9).
+; Integer-scaled, nearest-neighbour output. See docs/GODOT_SETUP.md.
 
 config_version=5
 
@@ -26,8 +26,8 @@ SceneTransition="*res://scripts/presentation/scene_transition.gd"
 
 [display]
 
-window/size/viewport_width=320
-window/size/viewport_height=180
+window/size/viewport_width=640
+window/size/viewport_height=360
 window/size/window_width_override=1280
 window/size/window_height_override=720
 window/stretch/mode="viewport"

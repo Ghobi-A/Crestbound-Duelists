@@ -20,10 +20,10 @@ jobs:
           mkdir -p "$RUNNER_TEMP/world-qa"
           bash tools/capture_screenshots.sh "$RUNNER_TEMP/world-qa"
           for target in town_square court_gate west_lane lena_house inn silas_study dialogue_portrait dialogue_notice; do
-            xvfb-run -a "$HOME/.cache/crestbound-godot/Godot_v4.3-stable_linux.x86_64" --path game --fixed-fps 60 --resolution 320x180 res://scenes/tools/screenshot_capture.tscn -- "--target=$target" "--out=$RUNNER_TEMP/world-qa"
+            xvfb-run -a "$HOME/.cache/crestbound-godot/Godot_v4.3-stable_linux.x86_64" --path game --fixed-fps 60 --resolution 640x360 res://scenes/tools/screenshot_capture.tscn -- "--target=$target" "--out=$RUNNER_TEMP/world-qa"
           done
           for class_name in neutral warrior guardian mage sorcerer assassin; do
-            xvfb-run -a "$HOME/.cache/crestbound-godot/Godot_v4.3-stable_linux.x86_64" --path game --fixed-fps 60 --resolution 320x180 res://scenes/tools/screenshot_capture.tscn -- "--target=class_$class_name" "--out=$RUNNER_TEMP/world-qa"
+            xvfb-run -a "$HOME/.cache/crestbound-godot/Godot_v4.3-stable_linux.x86_64" --path game --fixed-fps 60 --resolution 640x360 res://scenes/tools/screenshot_capture.tscn -- "--target=class_$class_name" "--out=$RUNNER_TEMP/world-qa"
           done
       - name: Exercise movement, doors, saves and combat
         run: |

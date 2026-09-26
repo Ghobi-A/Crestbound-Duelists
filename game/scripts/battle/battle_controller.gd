@@ -51,6 +51,7 @@ var result_presentation: ResultPresentation
 
 
 func _ready() -> void:
+	scale = Vector2.ONE * PresentationLayout.RENDER_SCALE
 	runtime = EncounterRuntime.start(GameState.pending_encounter, GameData, GameState)
 	resolver = BattleResolver.new(runtime, GameData)
 	crest_runtime = CrestRuntime.new(runtime)
