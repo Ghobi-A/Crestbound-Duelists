@@ -2,29 +2,33 @@ name: Greymere world QA
 on:
   push:
     branches: [world/greymere-rebuild]
+  pull_request:
+    paths: ['game/**', 'tools/**', '.github/workflows/greymere-world-qa.yml']
   workflow_dispatch:
 permissions:
   contents: read
 jobs:
   render:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 40
     steps:
       - uses: actions/checkout@v4
       - run: sudo apt-get update -qq && sudo apt-get install -y xvfb libgl1-mesa-dri
-      - run: python -m pip install pytest pyyaml pillow
+      - run: python -m pip install pytest pyyaml pillow numpy
       - run: python tools/materialize_overworld_v2.py
       - run: python tools/build_overworld_metadata.py && git diff --exit-code game/assets/overworld/authored.json && python tools/validate_godot_project.py && python -m pytest tests/test_authored_overworld.py tests/test_world_locations.py tests/test_presentation_contracts.py tests/test_greymere_character_references.py -q
-      - name: Capture actual Godot scenes
+      - name: Walk-cycle audit (reported; remaining facings need source-art redraws)
+        continue-on-error: true
+        run: python tools/audit_walk_cycles.py
+      - name: Capture actual Godot scenes at 720p and 1080p
         run: |
-          mkdir -p "$RUNNER_TEMP/world-qa"
-          bash tools/capture_screenshots.sh "$RUNNER_TEMP/world-qa"
-          for target in town_square court_gate west_lane lena_house inn silas_study dialogue_portrait dialogue_notice; do
-            xvfb-run -a "$HOME/.cache/crestbound-godot/Godot_v4.3-stable_linux.x86_64" --path game --fixed-fps 60 --resolution 320x180 res://scenes/tools/screenshot_capture.tscn -- "--target=$target" "--out=$RUNNER_TEMP/world-qa"
-          done
-          for class_name in neutral warrior guardian mage sorcerer assassin; do
-            xvfb-run -a "$HOME/.cache/crestbound-godot/Godot_v4.3-stable_linux.x86_64" --path game --fixed-fps 60 --resolution 320x180 res://scenes/tools/screenshot_capture.tscn -- "--target=class_$class_name" "--out=$RUNNER_TEMP/world-qa"
-          done
+          # Every production screen, each Kai class, both formations, both
+          # results. 1080p repeats the screens most sensitive to detail.
+          ALL="boot party_setup party_formation overworld town_square court_gate west_lane lena_house inn silas_study dialogue_portrait dialogue_notice dialogue_long battle battle_target battle_preview victory defeat class_neutral class_warrior class_guardian class_mage class_sorcerer class_assassin"
+          HD="boot party_setup town_square inn dialogue_long battle battle_target battle_preview victory defeat class_mage"
+          CRESTBOUND_CAPTURE_TARGETS="$ALL" bash tools/capture_screenshots.sh "$RUNNER_TEMP/world-qa/720p" 1280x720
+          CRESTBOUND_CAPTURE_TARGETS="$HD" bash tools/capture_screenshots.sh "$RUNNER_TEMP/world-qa/1080p" 1920x1080
+          CRESTBOUND_CAPTURE_TARGETS="town_square battle" bash tools/capture_screenshots.sh "$RUNNER_TEMP/world-qa/360p" 640x360
       - name: Exercise movement, doors, saves and combat
         run: |
           set -o pipefail

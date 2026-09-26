@@ -27,11 +27,11 @@ file and the command to fix it instead of crashing.
 
 | Setting | Value | Why |
 |---------|-------|-----|
-| Viewport | **320x180** | Low-res 16:9 canvas; 16x16 tiles → 20x11.25 visible tiles |
+| Viewport | **320x180** logical | 16:9 layout grid; 16x16 tiles → 20x11.25 visible tiles |
 | Window override | 1280x720 | 4x integer scale on launch |
-| Stretch mode | `canvas_items` | Crisp scaling of the low-res canvas |
+| Stretch mode | `canvas_items` | Draws the layout at output resolution, so 1-2k px source art is sampled at 2x (640x360), 4x (720p) or 6x (1080p) instead of being enlarged from a 320x180 buffer |
 | Stretch scale mode | `integer` | No fractional scaling, no shimmer |
-| Default texture filter | Nearest | No smoothing/blur on pixels |
+| Default texture filter | Nearest | Bitmap font and icons stay crisp; colour-keyed character sheets box-filter their own texels in `colour_key.gdshader`, painted environment atlases use mipmapped filtering |
 | 2D transform/vertex snapping | On | No sub-pixel wobble |
 | Renderer | GL Compatibility | Lightweight, runs anywhere |
 
@@ -96,11 +96,12 @@ verifies it against the official SHA-512 from the release's
 real GL context, so it runs under `xvfb-run` with Mesa llvmpipe
 (`LIBGL_ALWAYS_SOFTWARE=1`); `--headless` cannot rasterize.
 
-Two frames are captured: Greymere at the spawn tile, and the Hollow
-Court round-1 command menu. The window is driven at exactly 320x180 so
-the captured viewport texture *is* the internal game canvas at 1:1; the
-`_4x.png` copies are nearest-neighbour upscales of that image, never OS
-or browser grabs.
+Five frames are captured by default (title, party setup, Greymere at the
+spawn tile, the Hollow Court command menu and target selection) at
+1280x720; pass a second argument such as `1920x1080` for another integer
+multiple of 320x180 and set `CRESTBOUND_CAPTURE_TARGETS` for other
+targets (see `game/scripts/tools/screenshot_capture.gd`). The capture is
+the root viewport texture at the window size, never an OS or browser grab.
 
 Determinism comes from `--fixed-fps 60`, frame-counted waits, `seed(41)`,
 a canonically seeded `GameState`, and scripted input on fixed frames.

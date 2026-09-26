@@ -22,11 +22,11 @@ var _hint_label: Label
 var _portrait: TextureRect
 var _identity_label: Label
 var _roster: Control
-const CARD_HEIGHT := 33.0
-const CARD_PITCH := 35.0
+const CARD_HEIGHT := 31.0
+const CARD_PITCH := 34.0
 const VISIBLE_CARDS := 3
 
-const CONTENT_TOP := 30.0
+const CONTENT_TOP := 26.0
 const CONTENT_BOTTOM := 154.0
 const FOOTER_TOP := 158.0
 
@@ -50,14 +50,14 @@ func _build_ui() -> void:
 	# Roster on the left (the player's choices, so gold), encounter
 	# detail on the right (what it affects, so violet) — the same accent
 	# grammar the battle HUD uses.
-	add_child(UiPanel.create(Vector2(8, 4), Vector2(304, 22), UiStyle.COMMAND))
+	add_child(UiPanel.create(Vector2(8, 4), Vector2(304, 18), UiStyle.COMMAND))
 	add_child(UiPanel.create(Vector2(8, CONTENT_TOP), Vector2(174, CONTENT_BOTTOM - CONTENT_TOP), UiStyle.COMMAND))
 	add_child(UiPanel.create(Vector2(186, CONTENT_TOP), Vector2(126, CONTENT_BOTTOM - CONTENT_TOP), UiStyle.TARGET))
 	# Instructions have their own bounded footer rather than competing with
 	# the detail copy. This remains readable on the native 320x180 canvas.
 	add_child(UiPanel.create(Vector2(8, FOOTER_TOP), Vector2(304, 18), UiStyle.NEUTRAL))
 
-	_title_label = _label(Vector2(16, 9), UiStyle.FONT_SIZE, PlaceholderPalette.TEXT_WARN)
+	_title_label = _label(Vector2(16, 7), UiStyle.FONT_SIZE, PlaceholderPalette.TEXT_WARN)
 	_title_label.size = Vector2(288, 12)
 	_title_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 	_title_label.clip_text = true
@@ -72,7 +72,7 @@ func _build_ui() -> void:
 	_rows_label.visible = false
 	_roster = Control.new()
 	add_child(_roster)
-	_detail_label = _label(Vector2(192, 78), UiStyle.FONT_SIZE, PlaceholderPalette.TEXT_DIM)
+	_detail_label = _label(Vector2(192, 80), UiStyle.FONT_SIZE, PlaceholderPalette.TEXT_DIM)
 	_detail_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 	_detail_label.size = Vector2(114, 70)
 	_detail_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -82,12 +82,12 @@ func _build_ui() -> void:
 	# Abbreviated so the whole hint fits the footer at native font size
 	# (262px of 296px) instead of being shrunk below it.
 	_hint_label.text = "UP/DOWN SELECT  L/R ROW  Z CONFIRM  X BACK"
-	add_child(UiPanel.create(Vector2(190, 33), Vector2(38, 43), UiStyle.NEUTRAL, false))
+	add_child(UiPanel.create(Vector2(190, 31), Vector2(38, 43), UiStyle.NEUTRAL, false))
 	_portrait = TextureRect.new()
-	PresentationLayout.texture_box(_portrait, Rect2(191, 35, 34, 40))
+	PresentationLayout.texture_box(_portrait, Rect2(192, 33, 34, 40))
 	_portrait.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
 	add_child(_portrait)
-	_identity_label = _label(Vector2(233, 40), UiStyle.FONT_SIZE, PlaceholderPalette.TEXT_WARN)
+	_identity_label = _label(Vector2(233, 36), UiStyle.FONT_SIZE, PlaceholderPalette.TEXT_WARN)
 	_identity_label.size = Vector2(70, 33)
 	_identity_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 	_identity_label.clip_text = true
@@ -167,14 +167,14 @@ func _refresh_roster() -> void:
 	var first := maxi(0, mini(_cursor, GameState.party.size() - 1) - VISIBLE_CARDS + 1)
 	for i in range(first, mini(first + VISIBLE_CARDS, GameState.party.size())):
 		var build: Dictionary = GameState.party[i]
-		var card := UiPanel.create(Vector2(12, 34 + (i - first) * CARD_PITCH), Vector2(166, CARD_HEIGHT), UiStyle.COMMAND if i == _cursor else UiStyle.NEUTRAL)
+		var card := UiPanel.create(Vector2(12, 31 + (i - first) * CARD_PITCH), Vector2(166, CARD_HEIGHT), UiStyle.COMMAND if i == _cursor else UiStyle.NEUTRAL)
 		_roster.add_child(card)
 		var portrait := TextureRect.new()
 		PresentationLayout.texture_box(portrait, Rect2(3, 3, 22, 25))
 		card.add_child(portrait)
 		CharacterPresentation.apply_portrait(portrait, str(build.get("sprite_key", "")))
 		var name_label := Label.new()
-		name_label.position = Vector2(30, 3)
+		name_label.position = Vector2(30, 2)
 		name_label.size = Vector2(132, 11)
 		name_label.clip_text = true
 		name_label.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
@@ -183,14 +183,14 @@ func _refresh_roster() -> void:
 		name_label.add_theme_color_override("font_color", PlaceholderPalette.TEXT_MAIN if i == _cursor else PlaceholderPalette.TEXT_DIM)
 		card.add_child(name_label)
 		var state := Label.new()
-		state.position = Vector2(30, 17)
+		state.position = Vector2(30, 16)
 		state.size = Vector2(132, 11)
 		state.clip_text = true
 		state.text = "%s  /  %s" % ["ACTIVE" if i < _slots else "RESERVE", str(build.get("position", "front")).to_upper()]
 		state.add_theme_font_size_override("font_size", UiStyle.FONT_SIZE)
 		state.add_theme_color_override("font_color", PlaceholderPalette.TEXT_DIM)
 		card.add_child(state)
-	var start_panel := UiPanel.create(Vector2(12, 138), Vector2(166, 15), UiStyle.COMMAND if _cursor == GameState.party.size() else UiStyle.NEUTRAL, false)
+	var start_panel := UiPanel.create(Vector2(12, 135), Vector2(166, 15), UiStyle.COMMAND if _cursor == GameState.party.size() else UiStyle.NEUTRAL, false)
 	_roster.add_child(start_panel)
 	var start := Label.new()
 	start.position = Vector2(5, 2)

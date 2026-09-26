@@ -24,3 +24,25 @@ than 3% of display pixels. This includes west-facing Kai class sheets and
 several townsfolk; see `python tools/audit_walk_cycles.py` for the full list.
 No facing exceeds 1.5 display-pixel body-height or foot-anchor jitter.
 The tool exits non-zero while contact poses need source-art correction.
+
+### Stride rebuild (`tools/rebuild_side_strides.py`)
+
+The rebuild tool restores the authored sheets from git, then rebuilds contact
+B of every flagged side facing: the leading leg becomes the far leg (relit in
+a cool shadow tone and drawn behind), both feet close in by a short stride,
+and the trailing near foot peels off the ground in toe-off. The upper body,
+face, clothing, palette, equipment, facing and planted-foot anchor are left
+as authored; nothing is mirrored and the sprite is never translated. It also
+clears torch and spell sparks that bled across a cell's bottom edge from the
+row below. Rebuild metadata afterwards with `tools/build_overworld_metadata.py`,
+which now takes the foot line from the tallest contiguous run of rows, so a
+detached spark can no longer become the anchor (this fixed Ferris, Orrin and
+Silas floating in their east-facing rows).
+
+After the rebuild, 12 of the 20 flagged facings pass. Eight still change less
+than 3% of pixels at the 24 px audit height, because their legs are
+low-contrast against robes or dark trousers: `almyra/west`, `ferris/east`,
+`ferris/west`, `gell/west`, `kai_assassin/west`, `kai_warrior/west`,
+`liora/east`, `stranger/west`. They animate with a visible near/far swap in
+game, but need hand-redrawn contact poses to pass the audit. The QA workflow
+reports the audit without blocking the render and browser checks.

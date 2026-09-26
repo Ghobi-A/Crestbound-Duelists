@@ -205,7 +205,15 @@ func _setup_entity() -> void:
 		raw_offset = [default_offset.x, default_offset.y]
 	_entity_sprite.position = Vector2(float(raw_offset[0]), float(raw_offset[1]))
 	_entity_sprite.z_index = -1
-	_entity_sprite.modulate = Color(1, 1, 1, 0.85)
+	# Bonded Entities are spirits beside the Duelist, not a second body. Their
+	# small source sheets read as an additive, softly filtered apparition at
+	# HD output rather than as enlarged blocks.
+	_entity_sprite.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
+	_entity_sprite.region_filter_clip_enabled = true
+	var spirit := CanvasItemMaterial.new()
+	spirit.blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
+	_entity_sprite.material = spirit
+	_entity_sprite.modulate = Color(1, 1, 1, 0.62)
 	add_child(_entity_sprite)
 
 

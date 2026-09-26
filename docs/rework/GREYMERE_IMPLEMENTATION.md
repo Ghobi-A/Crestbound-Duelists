@@ -108,8 +108,11 @@ also run locally. This is actual Godot rendering, not a screenshot mockup.
 - [ ] Candidate feet, stride alternation and equipment-side continuity verified.
 - [ ] Final environmental composition reaches the supplied reference's quality.
 - [ ] All remaining battle/portrait/VFX presentation gaps closed.
-- [ ] Side contact poses pass `tools/audit_walk_cycles.py` (20/34 facings
-  currently below the visible-change threshold; foot-anchor jitter passes).
+- [ ] Side contact poses pass `tools/audit_walk_cycles.py` (stride rebuild
+  fixed 12 of 20; 8 low-contrast facings still need hand-redrawn contact
+  poses; foot-anchor jitter passes).
+- [x] Native HD output: the 320x180 layout draws at 2x/4x/6x through
+  `canvas_items` stretch, sampling the 1-2k px source sheets at output size.
 - [ ] Completed visual rebuild merged and deployed to Pages.
 
 ## Remaining limitations

@@ -19,6 +19,8 @@ ALIASES = {
     "stranger": ["townsfolk/hooded_stranger", "hooded_stranger", "stranger"],
     "ferris": ["townsfolk/torch_bearer", "torch_bearer", "ferris"],
 }
+MAX_ROW_GAP = 4  # empty rows that separate a spark from the body
+
 for class_name in ("warrior", "guardian", "mage", "sorcerer", "assassin"):
     ALIASES["kai_" + class_name] = ["aren/" + class_name, "kai_" + class_name]
 
@@ -47,7 +49,16 @@ def inspect(path):
             half_strip = (x1 - x0) * 0.08
             body_pixels = [(x, y) for x, y in occupied if abs(x - centre) < half_strip]
             top = min(y for _, y in body_pixels)
-            bottom = max(y for _, y in occupied) + 1
+            # Feet end the tallest contiguous run of occupied rows; detached
+            # sparks from a neighbouring row's torch or magic are not feet.
+            rows = sorted({y for _, y in occupied})
+            runs, start = [], rows[0]
+            for previous, current in zip(rows, rows[1:]):
+                if current - previous > MAX_ROW_GAP:
+                    runs.append((start, previous))
+                    start = current
+            runs.append((start, rows[-1]))
+            bottom = max(runs, key=lambda run: run[1] - run[0])[1] + 1
             heights.append(bottom - top)
             poses.append({"rect": [x0, y0, x1 - x0, y1 - y0],
                           "foot": [(x1 - x0) / 2, bottom - y0]})

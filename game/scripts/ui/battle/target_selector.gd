@@ -30,7 +30,8 @@ func estimate_text(attacker: BattleUnit, move: Dictionary, resolver: BattleResol
 	var estimate := resolver.damage_range(attacker, target, move, attacker.last_move_id)
 	var accuracy := resolver.accuracy_of(attacker, move)
 	var lines: Array[String] = []
-	lines.append("TARGET  %s" % target.display_name)
+	# The violet panel already reads as target info; the name gets the whole line.
+	lines.append(target.display_name)
 	lines.append("%s  HP %d/%d" % [target.class_record.get("name", ""), target.hp, target.max_hp])
 	lines.append("Damage %d-%d   Hit %d%%" % [estimate.x, estimate.y, roundi(accuracy * 100)])
 	var extras: Array[String] = []

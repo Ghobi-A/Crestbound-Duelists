@@ -68,6 +68,9 @@ static func portrait(key: String, expression := "neutral") -> Texture2D:
 		return crop
 	if key.is_empty():
 		return null
+	var authored := authored_portrait(key)
+	if authored != null:
+		return authored
 	# Legacy villagers retain their own portrait, never another character's image.
 	var safe_expression := expression if expression in ["neutral", "determined", "injured", "surprised", "intense"] else "neutral"
 	var path := "res://assets/portraits/%s/%s.png" % [key, safe_expression]
@@ -79,8 +82,39 @@ static func portrait(key: String, expression := "neutral") -> Texture2D:
 	return load(path) as Texture2D
 
 
+# Head-and-shoulders crop of a character's own HD overworld sheet (down-facing
+# idle). Greymere residents share one identity across map and dialogue this
+# way instead of falling back to the older low-resolution portrait set.
+const AUTHORED_PORTRAIT_HEIGHT := 0.5  # of native body height
+const AUTHORED_PORTRAIT_ASPECT := 38.0 / 44.0
+
+
+static func authored_portrait(key: String) -> AtlasTexture:
+	var registry := OverworldSprite.authored_manifest()
+	var aliases: Dictionary = registry.get("aliases", {})
+	if not aliases.has(key):
+		return null
+	var entry: Dictionary = registry.entries[aliases[key]]
+	var pose: Dictionary = entry.frames.down[0]
+	var cell := rect(pose.rect)
+	var body := float(entry.native_body_height)
+	var height := body * AUTHORED_PORTRAIT_HEIGHT
+	var width := height * AUTHORED_PORTRAIT_ASPECT
+	var top := cell.position.y + float(pose.foot[1]) - body * 1.04
+	var crop := AtlasTexture.new()
+	crop.atlas = load(str(entry.atlas)) as Texture2D
+	crop.region = Rect2(cell.position.x + float(pose.foot[0]) - width / 2.0, top, width, height)
+	crop.filter_clip = true
+	return crop
+
+
 static func apply_portrait(node: TextureRect, key: String, expression := "neutral") -> void:
 	node.texture = portrait(key, expression)
-	node.material = key_material(record_for(key)) if not record_for(key).is_empty() else null
+	if not record_for(key).is_empty():
+		node.material = key_material(record_for(key))
+	elif node.texture is AtlasTexture:
+		node.material = key_material({"colour_key": "magenta"})
+	else:
+		node.material = null
 	node.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	node.visible = node.texture != null

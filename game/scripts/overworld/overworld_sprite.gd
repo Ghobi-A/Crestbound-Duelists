@@ -237,9 +237,24 @@ func _attach_authored(parent: Node2D, entry: Dictionary, registry: Dictionary) -
 	_sprite.region_filter_clip_enabled = true
 	_sprite.centered = false
 	_sprite.scale = Vector2.ONE * float(registry.display_height) / float(entry.native_body_height)
+	parent.add_child(contact_shadow())
 	parent.add_child(_sprite)
 	_apply()
 	return true
+
+
+static func contact_shadow() -> Polygon2D:
+	## Soft ellipse under the foot anchor (the parent origin) so authored
+	## characters sit on the painted ground instead of floating over it.
+	var shadow := Polygon2D.new()
+	shadow.name = "ContactShadow"
+	var points := PackedVector2Array()
+	for i in 20:
+		var angle := TAU * i / 20.0
+		points.append(Vector2(cos(angle) * 6.0, sin(angle) * 1.8 - 0.4))
+	shadow.polygon = points
+	shadow.color = Color(0.02, 0.03, 0.05, 0.38)
+	return shadow
 
 
 func set_facing(direction: Vector2i) -> void:

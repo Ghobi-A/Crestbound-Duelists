@@ -47,12 +47,21 @@ func _draw() -> void:
 		draw_rect(Rect2(4, 43, bar_width, 2), UiStyle.SURFACE_OUTER)
 		draw_rect(Rect2(4, 43, bar_width * clampf(unit.resonance / 100.0, 0, 1), 2), PlaceholderPalette.SPECTRAL_VIOLET)
 	var tags: Array[String] = []
-	if not unit.is_alive(): tags.append("DOWN")
-	if unit.is_braced(): tags.append("BRACE")
-	if unit.has_status("hexed"): tags.append("HEX")
-	if unit.awakened: tags.append("AWAKE")
-	if acted_marker: tags.append("READY")
-	draw_string(font, Vector2(4, 52), " ".join(tags), HORIZONTAL_ALIGNMENT_LEFT, size.x - 8, UiStyle.FONT_SIZE, PlaceholderPalette.TEXT_WARN)
+	if not unit.is_alive():
+		tags.append("DOWN")
+	else:
+		if unit.is_braced(): tags.append("BRACE")
+		if unit.has_status("hexed"): tags.append("HEX")
+		if unit.awakened: tags.append("AWAKE")
+		if acted_marker: tags.append("READY")
+	# Whole tags only: drop the lowest-priority ones rather than clip a word.
+	var tag_line := ""
+	for tag in tags:
+		var candidate := tag if tag_line.is_empty() else tag_line + " " + tag
+		if font.get_string_size(candidate, HORIZONTAL_ALIGNMENT_LEFT, -1, UiStyle.FONT_SIZE).x > size.x - 8:
+			break
+		tag_line = candidate
+	draw_string(font, Vector2(4, 52), tag_line, HORIZONTAL_ALIGNMENT_LEFT, size.x - 8, UiStyle.FONT_SIZE, PlaceholderPalette.TEXT_DIM if not unit.is_alive() else PlaceholderPalette.TEXT_WARN)
 	var details: Array[String] = [unit.display_name, "HP %d / %d" % [unit.hp, unit.max_hp], "Resonance %d" % unit.resonance]
 	for status in unit.statuses: details.append(str(status.name))
 	for modifier in unit.stat_mods: details.append("%s %+d" % [modifier.stat, modifier.amount])
