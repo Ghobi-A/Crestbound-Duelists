@@ -13,6 +13,7 @@ class_name OverworldSprite
 const MANIFEST_PATH := "res://assets/battle/sheet_manifest.json"
 const V2_MANIFEST_PATH := "res://assets/rework/overworld_v2.json"
 const CHARACTER_PATH := "res://assets/characters/%s/overworld.png"
+const AUTHORED_MANIFEST_PATH := "res://assets/overworld/authored.json"
 
 var frame_width := 20
 var frame_height := 28
@@ -26,6 +27,7 @@ var _facing := "down"
 var _frame := 0
 var _registered_row := -1
 var _registered_animated := false
+var _authored_frames: Dictionary = {}
 
 static var _cached: Dictionary = {}
 
@@ -90,6 +92,11 @@ func attach(parent: Node2D, sprite_key: String) -> bool:
 	## leaving debug builds free to draw their explicit placeholder chip.
 	if sprite_key == "":
 		return false
+	var authored := authored_manifest()
+	var aliases: Dictionary = authored.get("aliases", {})
+	if aliases.has(sprite_key):
+		# Registered assets must fail visibly instead of reverting to old art.
+		return _attach_authored(parent, authored.entries[aliases[sprite_key]], authored)
 
 	if _attach_v2(parent, sprite_key):
 		return true
@@ -201,6 +208,40 @@ func _attach_v2(parent: Node2D, sprite_key: String) -> bool:
 	return true
 
 
+static func authored_manifest() -> Dictionary:
+	if _cached.has("authored"):
+		return _cached.authored
+	if not FileAccess.file_exists(AUTHORED_MANIFEST_PATH):
+		return {}
+	var json := JSON.new()
+	if json.parse(FileAccess.get_file_as_string(AUTHORED_MANIFEST_PATH)) != OK or not json.data is Dictionary:
+		push_error("OverworldSprite: malformed authored manifest")
+		return {}
+	_cached.authored = json.data
+	return _cached.authored
+
+
+func _attach_authored(parent: Node2D, entry: Dictionary, registry: Dictionary) -> bool:
+	var path: String = entry.atlas
+	if not ResourceLoader.exists(path):
+		push_error("OverworldSprite: required authored atlas missing: " + path)
+		return false
+	_authored_frames = entry.frames
+	walk_frames = 4
+	mirror_side_for_west = false
+	_sprite = Sprite2D.new()
+	_sprite.texture = load(path)
+	_sprite.material = CharacterPresentation.key_material({"colour_key": "magenta"})
+	_sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	_sprite.region_enabled = true
+	_sprite.region_filter_clip_enabled = true
+	_sprite.centered = false
+	_sprite.scale = Vector2.ONE * float(registry.display_height) / float(entry.native_body_height)
+	parent.add_child(_sprite)
+	_apply()
+	return true
+
+
 func set_facing(direction: Vector2i) -> void:
 	if direction.y > 0:
 		_facing = "down"
@@ -235,6 +276,14 @@ func rest() -> void:
 
 func _apply() -> void:
 	if _sprite == null:
+		return
+	if not _authored_frames.is_empty():
+		var pose: Dictionary = _authored_frames[_facing][_frame]
+		_sprite.region_rect = CharacterPresentation.rect(pose.rect)
+		frame_width = int(pose.rect[2])
+		frame_height = int(pose.rect[3])
+		_sprite.offset = -Vector2(float(pose.foot[0]), float(pose.foot[1]))
+		_sprite.flip_h = false
 		return
 	if _registered_row >= 0:
 		var start := int(directions.get(_facing, 0))

@@ -40,6 +40,7 @@ const SCENE_PATHS := {
 
 const SETTLE_FRAMES := 30
 const PRESS_GAP_FRAMES := 6
+const REVIEW_CLASSES := ["neutral", "warrior", "guardian", "mage", "sorcerer", "assassin"]
 
 var target := "overworld"
 var out_dir := ""
@@ -47,14 +48,15 @@ var out_dir := ""
 
 func _ready() -> void:
 	_parse_args()
-	if not SCENE_PATHS.has(target) or out_dir == "":
+	if not SCENE_PATHS.has(target) and not (target.begins_with("class_") and target.trim_prefix("class_") in REVIEW_CLASSES) or out_dir == "":
 		push_error("Usage: -- --target=<%s> --out=<dir>" % "|".join(SCENE_PATHS.keys()))
 		get_tree().quit(2)
 		return
 	seed(41)
 	_seed_state()
 	await get_tree().process_frame
-	var scene: Node = load(SCENE_PATHS[target]).instantiate()
+	var scene_path: String = str(SCENE_PATHS.get(target, SCENE_PATHS.town_square))
+	var scene: Node = load(scene_path).instantiate()
 	get_tree().root.add_child(scene)
 	await _frames(SETTLE_FRAMES)
 	if target == "battle" or target == "battle_target":
@@ -83,13 +85,13 @@ func _parse_args() -> void:
 
 
 func _seed_state() -> void:
-	GameState.start_new_game("warrior")
+	GameState.start_new_game(target.trim_prefix("class_") if target.begins_with("class_") else "warrior")
 	if target in ["lena_house","inn","silas_study"]:
 		GameState.location_id = target
 		GameState.location_spawn = "entrance"
-	elif target in ["town_square","court_gate","west_lane"]:
+	elif target in ["town_square","court_gate","west_lane"] or target.begins_with("class_"):
 		GameState.location_spawn = ""
-		GameState.player_tile = {"town_square":Vector2i(17,20),"court_gate":Vector2i(17,7),"west_lane":Vector2i(10,23)}[target]
+		GameState.player_tile = {"town_square":Vector2i(17,20),"court_gate":Vector2i(17,7),"west_lane":Vector2i(10,23)}.get(target, Vector2i(17,20))
 	GameState.set_flag("overworld_onboarding_seen")
 	GameState.set_flag("battle_onboarding_seen")
 
