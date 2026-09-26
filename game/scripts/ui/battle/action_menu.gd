@@ -4,7 +4,10 @@ class_name ActionMenu
 ## Shows cooldowns, Hex blocks, and a short description of the
 ## highlighted entry. The controller drives cursor movement.
 
-const MENU_SIZE := Vector2(122, 56)
+const MENU_SIZE := Vector2(123, 31)
+# The command list takes the left half; the description panel the right.
+const LIST_WIDTH := 66.0
+const ROW_PITCH := 7.0
 
 var entries: Array = []   # {label, kind, move, enabled, note, description}
 var cursor := 0
@@ -37,7 +40,7 @@ func build_for(unit: BattleUnit) -> void:
 		entries.append(entry)
 	entries.append({
 		"label": "Brace", "kind": "brace", "move": {}, "enabled": true, "note": "",
-		"description": "Defensive stance. Guards this round; feeds some Crests.",
+		"description": "Defensive stance\nGuards this round and feeds some Crests.",
 	})
 	cursor = 0
 	_ensure_valid_cursor(1)
@@ -45,9 +48,8 @@ func build_for(unit: BattleUnit) -> void:
 
 
 func _describe_move(unit: BattleUnit, move: Dictionary) -> String:
-	## Two lines maximum. The panel's description area is 12px tall, which
-	## is exactly two rows of the pixel font at its native size, so any
-	## third line would render outside the panel.
+	## First line is the move's slot and type (drawn gold); the rest wraps
+	## into the description panel, which shows at most four lines.
 	var parts: Array[String] = []
 	parts.append("%s %s" % [str(move.get("slot", "")).capitalize(), str(move.get("move_type", ""))])
 	var stat_line := "PWR %d  ACC %d%%" % [
@@ -60,10 +62,9 @@ func _describe_move(unit: BattleUnit, move: Dictionary) -> String:
 		effects.append("self %s%+d" % [str(mod.stat).to_upper(), int(mod.amount)])
 	for effect in move.get("status_effects", []):
 		effects.append(str(effect.get("status", "")).to_upper())
-	if not effects.is_empty():
-		# Effects share the stat line rather than claiming a third row.
-		stat_line += "  " + " ".join(effects)
 	parts.append(stat_line)
+	if not effects.is_empty():
+		parts.append(" ".join(effects))
 	return "\n".join(parts)
 
 
@@ -86,41 +87,33 @@ func current_entry() -> Dictionary:
 
 
 func _draw() -> void:
-	UiStyle.draw_panel(self, Rect2(Vector2.ZERO, MENU_SIZE), UiStyle.COMMAND)
-	var font := get_theme_default_font()
+	# Command list: framed rows, the focused one lit gold with a pointer.
+	var list := Rect2(0, 0, LIST_WIDTH, MENU_SIZE.y)
+	UiStyle.draw_panel(self, list, UiStyle.COMMAND, false)
 	for i in entries.size():
 		var entry: Dictionary = entries[i]
-		var y := 8 + i * 9
+		var row := Rect2(5, 1.6 + i * ROW_PITCH, LIST_WIDTH - 8, ROW_PITCH - 0.6)
 		if i == cursor:
-			# A filled band, not just a "> " prefix, for real contrast
-			# between the selected and unselected rows.
-			UiStyle.draw_selection_band(self, Rect2(1, y - 7, MENU_SIZE.x - 2, 9), UiStyle.COMMAND)
-		var color := PlaceholderPalette.TEXT_MAIN if entry.enabled else PlaceholderPalette.TEXT_DIM
-		# The icon replaces the old "> " prefix: the selection band already
-		# says which row is focused, so the glyph is free to say what kind
-		# of action it is instead.
-		var icon := "slot_brace" if entry.kind == "brace" else UiIcons.slot_icon(str(entry.move.get("slot", "")))
-		var icon_tint := PlaceholderPalette.CREST_GOLD if entry.enabled else PlaceholderPalette.TEXT_DIM
-		UiIcons.draw_icon(self, icon, Vector2(4, y - 7), icon_tint)
-		var text: String = str(entry.label)
+			UiStyle.draw_selection_band(self, row, UiStyle.COMMAND)
+		var colour := UiStyle.TEXT if entry.enabled else UiStyle.TEXT_FAINT
+		if i == cursor:
+			colour = UiStyle.GOLD_BRIGHT
+		var glyph := "slot_brace" if entry.kind == "brace" else "slot_" + str(entry.move.get("slot", "basic"))
+		UiStyle.draw_glyph(self, glyph, Vector2(row.position.x + 4, row.position.y + row.size.y / 2.0), 1.9,
+			UiStyle.GOLD if entry.enabled else UiStyle.TEXT_FAINT)
+		var text_x := row.position.x + 8.5
+		var note_width := 0.0
 		if entry.note != "":
-			text += "  [%s]" % entry.note
-		draw_string(font, Vector2(14, y), text, HORIZONTAL_ALIGNMENT_LEFT, 106, 8, color)
-	# A thin divider separates the entry list from the description, so
-	# the description reads as its own region rather than trailing text.
-	# Placed just above the description's existing baseline rather than
-	# derived from entry count, so it never pushes the description text
-	# down past the panel's bottom edge (MENU_SIZE.y is fixed at 56).
-	const DESCRIPTION_Y := 46
-	# Divider sits clear of the first description row: text at baseline 46
-	# occupies rows 39-46, so the rule goes at 38.
-	UiStyle.draw_divider(
-		self, Vector2(3, DESCRIPTION_Y - 8), MENU_SIZE.x - 6, PlaceholderPalette.CREST_GOLD
-	)
-	# Description of the highlighted entry, at the font's native size so
-	# it stays pixel-crisp. Two rows fit; anything beyond is clipped
-	# rather than drawn outside the panel.
-	var description: String = str(entries[cursor].description)
-	var lines := description.split("\n")
-	for i in mini(lines.size(), 2):
-		draw_string(font, Vector2(3, DESCRIPTION_Y + i * 8), lines[i], HORIZONTAL_ALIGNMENT_LEFT, 118, 8, PlaceholderPalette.TEXT_DIM)
+			note_width = UiStyle.text_width(entry.note, 5) + 2.0
+			UiStyle.draw_text(self, Vector2(text_x, row.position.y + 4.8), entry.note, 5, UiStyle.TEXT_DIM,
+				row.end.x - text_x - 1.5, HORIZONTAL_ALIGNMENT_RIGHT)
+		UiStyle.draw_text(self, Vector2(text_x, row.position.y + 4.8), str(entry.label), 5, colour,
+			row.end.x - text_x - 1.5 - note_width)
+
+	# Description of the focused entry in its own panel.
+	var info := Rect2(LIST_WIDTH + 2, 0, MENU_SIZE.x - LIST_WIDTH - 2, MENU_SIZE.y)
+	UiStyle.draw_panel(self, info, UiStyle.NEUTRAL, true)
+	var lines := UiStyle.wrap(str(entries[cursor].description), info.size.x - 8)
+	for i in mini(lines.size(), 4):
+		var tint := UiStyle.GOLD if i == 0 else UiStyle.TEXT_DIM
+		UiStyle.draw_text(self, Vector2(info.position.x + 4, 7.2 + i * 6.4), lines[i], 5, tint, info.size.x - 8)

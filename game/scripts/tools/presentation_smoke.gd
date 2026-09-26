@@ -117,7 +117,7 @@ func check_formations() -> void:
 				check(sprite._sprite.flip_h == (unit.team == "enemy"), "Wrong facing " + unit.sprite_key())
 				var anchor := PresentationLayout.mirrored_anchor(sprite._anchor, sprite._frame_w, sprite._sprite.flip_h)
 				check((sprite._sprite.position + anchor * sprite._display_scale).length() < 0.01, "Foot anchor drift")
-				check(sprite.position.y < 110, "Combatant enters HUD")
+				check(sprite.position.y < PresentationLayout.BATTLE_HEIGHT - 8, "Combatant enters HUD")
 				check(sprite.position.x < 160 if unit.team == "player" else sprite.position.x > 160, "Team crosses centre")
 		stage.queue_free()
 		await get_tree().process_frame

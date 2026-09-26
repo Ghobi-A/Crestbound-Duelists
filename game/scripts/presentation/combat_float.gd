@@ -17,10 +17,11 @@ func show_float(unit: BattleUnit, origin: Vector2, kind: String, value := "") ->
 	label.position = origin + Vector2(-10, -22 - lane * 7)
 	label.size = Vector2(44, 12)
 	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	label.add_theme_font_size_override("font_size", 10 if kind in ["damage", "heal"] else 8)
+	label.add_theme_font_override("font", UiStyle.font(UiStyle.SEMIBOLD))
+	label.add_theme_font_size_override("font_size", 9 if kind in ["damage", "heal"] else 6)
 	label.add_theme_color_override("font_color", _color(kind))
 	label.add_theme_color_override("font_outline_color", Color(0.04, 0.03, 0.07, 0.9))
-	label.add_theme_constant_override("outline_size", 2)
+	label.add_theme_constant_override("outline_size", 3)
 	add_child(label)
 	var tween := create_tween()
 	tween.tween_property(label, "position:y", label.position.y - 8, 0.42)

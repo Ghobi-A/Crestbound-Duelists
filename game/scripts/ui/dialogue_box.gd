@@ -45,49 +45,33 @@ func _ready() -> void:
 	_panel.clip_contents = true
 	add_child(_panel)
 
-	_portrait_frame = UiPanel.create(Vector2(3, 3), Vector2(38, 44), UiStyle.NEUTRAL)
+	_portrait_frame = UiPanel.create(PresentationLayout.PORTRAIT_RECT.position - Vector2(1, 1), PresentationLayout.PORTRAIT_RECT.size + Vector2(2, 2), UiStyle.NEUTRAL, false)
 	_portrait_frame.visible = false
 	_panel.add_child(_portrait_frame)
 	_portrait = TextureRect.new()
 	PresentationLayout.texture_box(_portrait, PresentationLayout.PORTRAIT_RECT)
-	# Portraits are painterly renders, not native pixel art like the rest
-	# of the game (which relies on the project-wide nearest filter to
-	# stay crisp) — downscaling one with nearest neighbour aliases badly,
-	# so this node alone opts into smoothing.
-	_portrait.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
 	_portrait.visible = false
 	_panel.add_child(_portrait)
+	# Speaker plate: gold spaced capitals over a short hairline rule.
 	_nameplate = ColorRect.new()
-	_nameplate.color = UiStyle.SURFACE_RAISED
-	_nameplate.position = Vector2(4, 2)
-	_nameplate.size = Vector2(294, 11)
+	_nameplate.color = Color(UiStyle.GOLD, 0.5)
+	_nameplate.position = Vector2(6, 11.5)
+	_nameplate.size = Vector2(80, UiStyle.HAIR)
 	_nameplate.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_panel.add_child(_nameplate)
 
-	_speaker_label = Label.new()
-	_speaker_label.position = Vector2(7, 2)
-	_speaker_label.size = Vector2(300, 10)
-	_speaker_label.clip_text = true
+	_speaker_label = UiStyle.make_label(_panel, Rect2(7, 3, 280, 8), "", 6, UiStyle.GOLD_BRIGHT, UiStyle.MEDIUM, 1)
 	_speaker_label.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
-	_speaker_label.add_theme_font_size_override("font_size", 8)
-	_speaker_label.add_theme_color_override("font_color", PlaceholderPalette.TEXT_WARN)
-	_panel.add_child(_speaker_label)
 
-	_text_label = Label.new()
-	_text_label.position = Vector2(6, PresentationLayout.TEXT_TOP)
-	_text_label.size = Vector2(280, PresentationLayout.TEXT_HEIGHT)
-	_text_label.clip_text = true
+	_text_label = UiStyle.make_label(_panel, Rect2(6, PresentationLayout.TEXT_TOP, 280, PresentationLayout.TEXT_HEIGHT), "", PresentationLayout.DIALOGUE_FONT_SIZE, UiStyle.TEXT)
 	_text_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	_text_label.add_theme_font_size_override("font_size", 8)
-	_text_label.add_theme_color_override("font_color", PlaceholderPalette.TEXT_MAIN)
-	_panel.add_child(_text_label)
+	_text_label.add_theme_constant_override("line_spacing", PresentationLayout.DIALOGUE_LINE_GAP)
 
-	_advance_label = Label.new()
-	_advance_label.text = "Z"
-	_advance_label.position = Vector2(290, 36)
-	_advance_label.add_theme_font_size_override("font_size", 8)
-	_advance_label.add_theme_color_override("font_color", PlaceholderPalette.TEXT_DIM)
-	_panel.add_child(_advance_label)
+	_advance_label = UiStyle.make_label(_panel, Rect2(PresentationLayout.DIALOGUE_RECT.size.x - 12, PresentationLayout.DIALOGUE_RECT.size.y - 9, 8, 7), "Z", 5, UiStyle.GOLD, UiStyle.MEDIUM)
+	_advance_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	var pulse := create_tween().set_loops()
+	pulse.tween_property(_advance_label, "modulate:a", 0.35, 0.7)
+	pulse.tween_property(_advance_label, "modulate:a", 1.0, 0.7)
 
 	visible = false
 
@@ -129,10 +113,10 @@ func play(key: String) -> void:
 
 func _show_current_line() -> void:
 	var entry: Dictionary = _entries[_entry_index]
-	_speaker_label.text = entry.get("speaker", "")
+	_speaker_label.text = str(entry.get("speaker", "")).to_upper()
 	var lines: Array = entry.get("lines", [])
 	_apply_portrait(str(entry.get("portrait", "")), str(entry.get("expression", "neutral")))
-	_pages = paginate(str(lines[_line_index]), _text_label.get_theme_font("font"), 8, _text_label.size.x, PresentationLayout.TEXT_HEIGHT)
+	_pages = paginate(str(lines[_line_index]), _text_label.get_theme_font("font"), PresentationLayout.DIALOGUE_FONT_SIZE, _text_label.size.x, PresentationLayout.TEXT_HEIGHT)
 	_page_index = 0
 	_text_label.text = _pages[0]
 
@@ -143,7 +127,8 @@ static func paginate(text: String, font: Font, font_size: int, width: float, hei
 	var line := ""
 	var page := ""
 	var line_count := 0
-	var capacity := maxi(1, floori((height + 3.0) / (font.get_height(font_size) + 3.0)))
+	var gap := float(PresentationLayout.DIALOGUE_LINE_GAP)
+	var capacity := maxi(1, floori((height + gap) / (font.get_height(font_size) + gap)))
 	var wrapped: Array[String] = []
 	for paragraph in text.split("\n", true):
 		line = ""
@@ -178,8 +163,8 @@ func _apply_portrait(portrait_key: String, expression := "neutral") -> void:
 	_portrait_frame.visible = shown
 	var text_x := PresentationLayout.PORTRAIT_RECT.end.x + 6.0 if shown else 6.0
 	var text_width := _panel.size.x - text_x - PresentationLayout.RIGHT_MARGIN
-	_nameplate.position.x = text_x - 2.0
-	_nameplate.size.x = text_width + 4.0
+	_nameplate.position.x = text_x
+	_nameplate.size.x = minf(text_width, UiStyle.text_width(_speaker_label.text.to_upper(), 6, UiStyle.MEDIUM, 1.0) + 10.0)
 	_speaker_label.position.x = text_x
 	_text_label.position.x = text_x
 	_speaker_label.size.x = text_width

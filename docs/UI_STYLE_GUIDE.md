@@ -12,6 +12,35 @@ Everything here is enforced in code by two files:
   assembled from child nodes
 
 Both render through the same helpers, so the two paths cannot drift.
+`UiDecor` (`game/scripts/ui/ui_decor.gd`) is the node form of the
+ornaments (rules, selection frames, portrait wells, fading plates).
+
+## Visual language (2026 rework)
+
+The interface follows the "moonlit ledger" direction of the Hollow Court
+art-direction reference: deep navy glass panels, gold hairline frames
+with small corner brackets and star-cross ornaments, and letter-spaced
+capitals for titles.
+
+- **Type.** IBM Plex Mono (SIL OFL, `game/assets/ui/fonts/OFL.txt`) in
+  Regular, Medium and SemiBold, imported as MSDF so it stays sharp at
+  every integer output scale. Body copy is 5 logical px (10 physical px
+  at 640x360, 20-30 at 720p-1080p); `UiStyle.MIN_FONT_SIZE` is the floor
+  and every helper clamps to it. Spaced capitals use fractional
+  `tracking` in `UiStyle.draw_text`, not whole-pixel font spacing.
+- **Lines.** Hairlines are `UiStyle.HAIR` (0.5 logical px, ~2-3
+  physical px). Project-wide vertex snapping is off so fractional glyph
+  and hairline geometry is not rounded to the logical grid; transform
+  snapping stays on for sprites.
+- **Battle screen.** Title bar (objective, encounter title between
+  ornaments, round), a 136px battlefield, a 36px command deck with one
+  portrait card per active Duelist (HP and RS values with gauges, one
+  status tag under the portrait), a framed command list with vector
+  glyphs and a pointer, a description panel, and a footer carrying the
+  sub-phase, controls and battlefield effect.
+- **Other screens.** Title, party setup, exploration HUD, pause menu,
+  dialogue, onboarding, round plan and results use the same panels,
+  selection frame, portrait wells and type scale.
 
 ## Accent grammar
 
@@ -151,8 +180,8 @@ renders readable text-only menus.
 
 ## Layout constraints
 
-The internal canvas is **320x180**. Two rules follow from that and have
-both already caused real bugs:
+Layout uses a **320x180** logical canvas drawn at 2x-6x. Two rules
+follow from that and have both already caused real bugs:
 
 1. **Clamp label width to the panel interior.** A label left at default
    width bleeds across panel borders into the neighbouring column. This
@@ -163,7 +192,7 @@ both already caused real bugs:
    when it wrapped, it pushed the panel's last row out of view entirely.
 
 Verify layout changes with `tools/capture_screenshots.sh`, which renders
-every screen at the true internal resolution.
+screens at 640x360, 1280x720 or 1920x1080 through the real game.
 
 ## Current implementation and remaining art review
 
@@ -177,5 +206,5 @@ every screen at the true internal resolution.
 - Walk-cycle contact frames require art polish. The side-facing audit in
   `tools/audit_walk_cycles.py` measures their visible alternation at native
   display height; the incomplete poses remain marked for review.
-- Some compact battle labels still use `PWR`/`ACC` abbreviations because the
-  command panel has a fixed 122px width at the 320x180 logical canvas.
+- Move descriptions keep `PWR`/`ACC` abbreviations; the description panel is
+  57 logical px wide beside the command list.

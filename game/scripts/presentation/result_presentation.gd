@@ -27,15 +27,11 @@ func show_result(victory: bool) -> void:
 		ornament.texture = load(path)
 		PresentationLayout.texture_box(ornament, Rect2(80, 24, 160, 32))
 		add_child(ornament)
-	_line(banner, key.to_upper(), 8, 20, 14,
-		PlaceholderPalette.CREST_GOLD_BRIGHT if victory else Color("b7aec8"))
-	var divider := ColorRect.new()
-	divider.color = (PlaceholderPalette.CREST_GOLD if victory else UiStyle.SURFACE_LINE)
-	divider.position = Vector2(24, 31)
-	divider.size = Vector2(120, 1)
-	banner.add_child(divider)
-	_line(banner, "ENCOUNTER WON" if victory else "THE PARTY HAS FALLEN", 34, 12, 8, PlaceholderPalette.TEXT_MAIN)
-	var prompt := _line(banner, "Z  CONTINUE", 46, 12, 8, PlaceholderPalette.TEXT_DIM)
+	_line(banner, key.to_upper(), 9, 18, 14,
+		UiStyle.GOLD_BRIGHT if victory else Color("b7aec8"), UiStyle.SEMIBOLD, 2)
+	banner.with_divider(30)
+	_line(banner, "ENCOUNTER WON" if victory else "THE PARTY HAS FALLEN", 34, 10, 6, UiStyle.TEXT, UiStyle.MEDIUM, 0)
+	var prompt := _line(banner, "Z  CONTINUE", 46, 8, 5, UiStyle.TEXT_DIM, UiStyle.REGULAR, 0)
 	# Subtle entrance: the shade and banner fade in, the banner settles into
 	# place, and the prompt breathes so the screen never looks frozen.
 	shade.modulate.a = 0.0
@@ -52,17 +48,10 @@ func show_result(victory: bool) -> void:
 	AudioRouter.play_sfx("battle", key)
 
 
-func _line(parent: Control, text: String, y: float, height: float, font_size: int, colour: Color) -> Label:
-	var label := Label.new()
-	label.text = text
+func _line(parent: Control, text: String, y: float, height: float, size: int, colour: Color, weight: String, spacing: int) -> Label:
+	var label := UiStyle.make_label(parent, Rect2(0, y, BANNER_SIZE.x, height), text, size, colour, weight, spacing)
 	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	label.add_theme_font_size_override("font_size", font_size)
-	label.add_theme_color_override("font_color", colour)
-	parent.add_child(label)
-	# Geometry after the theme overrides, so the label keeps the full banner
-	# width instead of the width of whichever line was measured first.
-	label.position = Vector2(0, y)
-	label.size = Vector2(BANNER_SIZE.x, height)
+	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	return label
 
 

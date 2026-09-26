@@ -25,37 +25,22 @@ func _build(title: String, body: String) -> void:
 		child.queue_free()
 
 	var scrim := ColorRect.new()
-	scrim.color = Color(0, 0, 0, 0.55)
+	scrim.color = Color(0.02, 0.03, 0.06, 0.62)
 	scrim.set_anchors_preset(Control.PRESET_FULL_RECT)
 	add_child(scrim)
 
-	var panel := UiPanel.create(Vector2(28, 26), Vector2(264, 128), UiStyle.COMMAND).with_divider(20)
+	var panel := UiPanel.create(Vector2(40, 34), Vector2(240, 108), UiStyle.COMMAND).with_divider(16)
 	add_child(panel)
 
-	var title_label := Label.new()
-	title_label.text = title
-	title_label.position = Vector2(8, 8)
-	title_label.size = Vector2(248, 12)
-	title_label.add_theme_font_size_override("font_size", 9)
-	title_label.add_theme_color_override("font_color", PlaceholderPalette.TEXT_WARN)
-	panel.add_child(title_label)
+	var title_label := UiStyle.make_label(panel, Rect2(0, 5, 240, 9), title.to_upper(), 6, UiStyle.GOLD_BRIGHT, UiStyle.MEDIUM, 2)
+	title_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 
-	var body_label := Label.new()
-	body_label.text = body
-	body_label.position = Vector2(8, 24)
-	body_label.size = Vector2(248, 84)
+	var body_label := UiStyle.make_label(panel, Rect2(12, 22, 216, 70), body, 6, UiStyle.TEXT)
 	body_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	body_label.add_theme_font_size_override("font_size", 8)
-	body_label.add_theme_color_override("font_color", PlaceholderPalette.TEXT_MAIN)
-	panel.add_child(body_label)
+	body_label.add_theme_constant_override("line_spacing", 2)
 
-	var hint_label := Label.new()
-	hint_label.text = "Z / Enter / Space: dismiss"
-	hint_label.position = Vector2(8, 112)
-	hint_label.size = Vector2(248, 10)
-	hint_label.add_theme_font_size_override("font_size", 8)
-	hint_label.add_theme_color_override("font_color", PlaceholderPalette.TEXT_DIM)
-	panel.add_child(hint_label)
+	var hint_label := UiStyle.make_label(panel, Rect2(0, 96, 240, 7), "Z / ENTER / SPACE   ·   DISMISS", 5, UiStyle.TEXT_FAINT, UiStyle.REGULAR, 1)
+	hint_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 
 
 func _unhandled_input(event: InputEvent) -> void:

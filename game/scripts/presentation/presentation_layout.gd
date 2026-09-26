@@ -3,16 +3,23 @@ extends RefCounted
 ## Presentation geometry only; no battle rules or character statistics.
 
 const CANVAS := Vector2(320, 180)
-const BATTLE_HEIGHT := 122
-const PLAYER_CENTER_X := 82.0
-const ENEMY_CENTER_X := 238.0
-const FRONT_Y := 98.0
-const BACK_Y := 80.0
-const DIALOGUE_RECT := Rect2(8, 126, 304, 50)
-const PORTRAIT_RECT := Rect2(5, 5, 34, 40)
-const TEXT_TOP := 15.0
-const TEXT_HEIGHT := 28.0
-const RIGHT_MARGIN := 14.0
+# Battle screen: a title bar over a tall battlefield, a 36px command deck
+# and an 8px footer (see BattleHud). The background covers the field only.
+const BATTLE_HEIGHT := 136
+const TOP_BAR_HEIGHT := 11
+const DECK_HEIGHT := 36
+const FOOTER_TOP := 172
+const PLAYER_CENTER_X := 78.0
+const ENEMY_CENTER_X := 242.0
+const FRONT_Y := 118.0
+const BACK_Y := 101.0
+const DIALOGUE_RECT := Rect2(10, 130, 300, 44)
+const PORTRAIT_RECT := Rect2(4, 4, 30, 36)
+const TEXT_TOP := 14.0
+const TEXT_HEIGHT := 25.0
+const RIGHT_MARGIN := 12.0
+const DIALOGUE_FONT_SIZE := 6
+const DIALOGUE_LINE_GAP := 1
 
 
 static func texture_box(node: TextureRect, rect: Rect2) -> void:

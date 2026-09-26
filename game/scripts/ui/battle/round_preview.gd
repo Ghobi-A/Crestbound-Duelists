@@ -3,11 +3,13 @@ class_name RoundPreview
 ## Pre-commit summary of the round: every planned player action, with
 ## Confirm / Back. Scales from one action (1v1) to three (3v3).
 
-const PANEL_SIZE := Vector2(200, 110)
+const PANEL_SIZE := Vector2(184, 86)
 const MAX_ROWS := 3
-const PORTRAIT_SIZE := Vector2(16, 18)
-const PORTRAIT_X := 8.0
-const TEXT_X := PORTRAIT_X + PORTRAIT_SIZE.x + 6.0   # 30 — clears the portrait
+const PORTRAIT_SIZE := Vector2(12, 14)
+const PORTRAIT_X := 9.0
+const TEXT_X := PORTRAIT_X + PORTRAIT_SIZE.x + 5.0
+const FIRST_ROW := 17.0
+const ROW_PITCH := 17.0
 const PORTRAIT_PATH := "res://assets/portraits/%s/neutral.png"
 
 var planned: Array = []   # action dictionaries
@@ -29,7 +31,6 @@ func _init() -> void:
 	for i in MAX_ROWS:
 		var portrait := TextureRect.new()
 		PresentationLayout.texture_box(portrait, Rect2(Vector2.ZERO, PORTRAIT_SIZE))
-		portrait.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
 		portrait.visible = false
 		add_child(portrait)
 		_portraits.append(portrait)
@@ -52,7 +53,7 @@ func _update_portraits() -> void:
 		var actor: BattleUnit = planned[i].actor
 		CharacterPresentation.apply_portrait(slot, actor.sprite_key())
 		if slot.texture != null:
-			slot.position = Vector2(PORTRAIT_X, 26.0 + i * 22.0 - 9.0)
+			slot.position = Vector2(PORTRAIT_X, FIRST_ROW + i * ROW_PITCH)
 			slot.visible = true
 		else:
 			slot.visible = false
@@ -75,26 +76,30 @@ func _draw() -> void:
 	# Violet framing: this screen reviews who each action affects, the
 	# same "review/target" role violet plays on the battlefield ring.
 	UiStyle.draw_panel(self, Rect2(Vector2.ZERO, PANEL_SIZE), UiStyle.TARGET)
-	var font := get_theme_default_font()
-	draw_string(font, Vector2(6, 12), "ROUND PLAN", HORIZONTAL_ALIGNMENT_LEFT, PANEL_SIZE.x - 12, 8, PlaceholderPalette.TEXT_WARN)
-	UiStyle.draw_divider(self, Vector2(6, 16), PANEL_SIZE.x - 12, PlaceholderPalette.SPECTRAL_VIOLET)
-	var y := 26
-	# Text starts at TEXT_X (clearing the portrait column added in
-	# _init()/_update_portraits()) rather than the original fixed 8/16 —
-	# a unit with no portrait art just leaves that column blank, so the
-	# layout doesn't need two code paths.
-	for action in planned:
+	UiStyle.draw_text(self, Vector2(0, 9.5), "ROUND PLAN", 6, UiStyle.GOLD_BRIGHT, PANEL_SIZE.x, HORIZONTAL_ALIGNMENT_CENTER, UiStyle.MEDIUM, 1.2)
+	UiStyle.draw_divider(self, Vector2(10, 13), PANEL_SIZE.x - 20, PlaceholderPalette.SPECTRAL_VIOLET)
+	var text_width := PANEL_SIZE.x - TEXT_X - 9
+	for i in planned.size():
+		var action: Dictionary = planned[i]
 		var actor: BattleUnit = action.actor
-		var text_width := PANEL_SIZE.x - TEXT_X - 8
-		# Actor and move share the first line; the target gets its own line so
-		# long enemy names are never clipped mid-word.
-		draw_string(font, Vector2(TEXT_X, y), actor.display_name, HORIZONTAL_ALIGNMENT_LEFT, text_width, 8, PlaceholderPalette.TEXT_MAIN)
+		var top := FIRST_ROW + i * ROW_PITCH
+		UiStyle.draw_portrait_frame(self, Rect2(Vector2(PORTRAIT_X, top), PORTRAIT_SIZE).grow(0.75))
+		# Actor and move share the first line; the target gets its own line
+		# so long enemy names are never clipped mid-word.
+		UiStyle.draw_text(self, Vector2(TEXT_X, top + 5.2), actor.display_name.to_upper(), 5, UiStyle.TEXT, text_width, HORIZONTAL_ALIGNMENT_LEFT, UiStyle.MEDIUM)
 		var move_name := "Brace" if action.kind == "brace" else str(action.move.get("name", "?"))
-		draw_string(font, Vector2(TEXT_X, y), move_name, HORIZONTAL_ALIGNMENT_RIGHT, text_width, 8, PlaceholderPalette.TEXT_WARN)
+		UiStyle.draw_text(self, Vector2(TEXT_X, top + 5.2), move_name, 5, UiStyle.GOLD_BRIGHT, text_width, HORIZONTAL_ALIGNMENT_RIGHT)
 		if action.kind != "brace" and action.target != null:
-			draw_string(font, Vector2(TEXT_X + 8, y + 9), "-> " + action.target.display_name, HORIZONTAL_ALIGNMENT_LEFT, text_width - 8, 8, PlaceholderPalette.TEXT_DIM)
-		y += 22
-	var confirm_color := PlaceholderPalette.TEXT_WARN if cursor == 0 else PlaceholderPalette.TEXT_DIM
-	var back_color := PlaceholderPalette.TEXT_WARN if cursor == 1 else PlaceholderPalette.TEXT_DIM
-	draw_string(font, Vector2(24, PANEL_SIZE.y - 8), ("> " if cursor == 0 else "  ") + "CONFIRM ROUND", HORIZONTAL_ALIGNMENT_LEFT, 110, 8, confirm_color)
-	draw_string(font, Vector2(118, PANEL_SIZE.y - 8), ("> " if cursor == 1 else "  ") + "BACK", HORIZONTAL_ALIGNMENT_LEFT, 60, 8, back_color)
+			UiStyle.draw_pointer(self, Vector2(TEXT_X + 3.5, top + 9.8), PlaceholderPalette.SPECTRAL_VIOLET, 1.8)
+			UiStyle.draw_text(self, Vector2(TEXT_X + 6, top + 11.6), action.target.display_name, 5, UiStyle.TEXT_DIM, text_width - 6)
+	# Two framed buttons; the focused one takes the selection style.
+	var buttons := [Rect2(18, PANEL_SIZE.y - 13, 84, 8), Rect2(116, PANEL_SIZE.y - 13, 50, 8)]
+	var labels := ["CONFIRM ROUND", "BACK"]
+	for b in 2:
+		var rect: Rect2 = buttons[b]
+		if cursor == b:
+			UiStyle.draw_selection_band(self, rect, UiStyle.COMMAND)
+		else:
+			UiStyle.draw_frame(self, rect, Color("3b4459"))
+		UiStyle.draw_text(self, Vector2(rect.position.x, rect.position.y + 5.8), labels[b], 5,
+			UiStyle.GOLD_BRIGHT if cursor == b else UiStyle.TEXT_DIM, rect.size.x, HORIZONTAL_ALIGNMENT_CENTER, UiStyle.MEDIUM, 0.6)
