@@ -15,7 +15,8 @@
         "game/assets/ChatGPT Image Aug 6, 2026, 02_02_04 AM (8).png",
         "game/assets/characters/townsfolk/farmboy/overworld.png"
       ],
-      "replacement_status": "not_started"
+      "replacement_status": "in_review",
+      "runtime_sheet": "game/assets/overworld/joey.png"
     },
     {
       "id": "lena",
@@ -29,7 +30,8 @@
         "game/assets/ChatGPT Image Aug 6, 2026, 02_02_04 AM (8).png",
         "game/assets/characters/townsfolk/herbalist_woman/overworld.png"
       ],
-      "replacement_status": "not_started"
+      "replacement_status": "in_review",
+      "runtime_sheet": "game/assets/overworld/lena.png"
     },
     {
       "id": "silas",
@@ -43,7 +45,8 @@
         "game/assets/ChatGPT Image Aug 6, 2026, 02_02_04 AM (8).png",
         "game/assets/characters/townsfolk/village_elder/overworld.png"
       ],
-      "replacement_status": "not_started"
+      "replacement_status": "in_review",
+      "runtime_sheet": "game/assets/overworld/silas.png"
     },
     {
       "id": "gell",
@@ -58,7 +61,8 @@
         "game/assets/characters/townsfolk/farmhand_capped/overworld.png"
       ],
       "replacement_status": "in_review",
-      "candidate": "docs/visual_refs/character_candidates/gell.png"
+      "candidate": "docs/visual_refs/character_candidates/gell.png",
+      "runtime_sheet": "game/assets/overworld/gell.png"
     },
     {
       "id": "danfor",
@@ -72,7 +76,8 @@
         "game/assets/ChatGPT Image Aug 6, 2026, 02_02_04 AM (8).png",
         "game/assets/characters/townsfolk/guard_sword/overworld.png"
       ],
-      "replacement_status": "not_started"
+      "replacement_status": "in_review",
+      "runtime_sheet": "game/assets/overworld/danfor.png"
     },
     {
       "id": "orrin",
@@ -86,7 +91,8 @@
         "game/assets/ChatGPT Image Aug 6, 2026, 02_02_04 AM (8).png",
         "game/assets/characters/townsfolk/guard_spear/overworld.png"
       ],
-      "replacement_status": "not_started"
+      "replacement_status": "in_review",
+      "runtime_sheet": "game/assets/overworld/orrin.png"
     },
     {
       "id": "senna",
@@ -100,7 +106,8 @@
         "game/assets/ChatGPT Image Aug 6, 2026, 02_02_04 AM (8).png",
         "game/assets/characters/townsfolk/elder_woman/overworld.png"
       ],
-      "replacement_status": "not_started"
+      "replacement_status": "in_review",
+      "runtime_sheet": "game/assets/overworld/senna.png"
     },
     {
       "id": "ferris",
@@ -114,7 +121,8 @@
         "game/assets/ChatGPT Image Aug 6, 2026, 02_02_04 AM (5).png",
         "game/assets/characters/townsfolk/torch_bearer/overworld.png"
       ],
-      "replacement_status": "not_started"
+      "replacement_status": "in_review",
+      "runtime_sheet": "game/assets/overworld/ferris.png"
     },
     {
       "id": "stranger",
@@ -128,7 +136,8 @@
         "game/assets/ChatGPT Image Aug 6, 2026, 02_02_04 AM (8).png",
         "game/assets/characters/townsfolk/hooded_stranger/overworld.png"
       ],
-      "replacement_status": "not_started"
+      "replacement_status": "in_review",
+      "runtime_sheet": "game/assets/overworld/stranger.png"
     },
     {
       "id": "almyra",
@@ -144,7 +153,8 @@
         "game/assets/portraits/elara/neutral.png"
       ],
       "replacement_status": "in_review",
-      "candidate": "docs/visual_refs/character_candidates/almyra.png"
+      "candidate": "docs/visual_refs/character_candidates/almyra.png",
+      "runtime_sheet": "game/assets/overworld/almyra.png"
     },
     {
       "id": "liora",
@@ -159,7 +169,8 @@
         "game/assets/rework/overworld_cast.png",
         "game/assets/portraits/mira/neutral.png"
       ],
-      "replacement_status": "not_started"
+      "replacement_status": "in_review",
+      "runtime_sheet": "game/assets/overworld/liora.png"
     },
     {
       "id": "kai_warrior",
@@ -174,7 +185,8 @@
         "game/assets/rework/kai_overworld.png",
         "docs/rework/KAI_CLASS_VISUALS.md"
       ],
-      "replacement_status": "not_started"
+      "replacement_status": "in_review",
+      "runtime_sheet": "game/assets/overworld/kai_warrior.png"
     },
     {
       "id": "kai_guardian",
@@ -189,7 +201,8 @@
         "game/assets/rework/kai_overworld.png",
         "docs/rework/KAI_CLASS_VISUALS.md"
       ],
-      "replacement_status": "not_started"
+      "replacement_status": "in_review",
+      "runtime_sheet": "game/assets/overworld/kai_guardian.png"
     },
     {
       "id": "kai_mage",
@@ -204,7 +217,8 @@
         "game/assets/rework/kai_overworld.png",
         "docs/rework/KAI_CLASS_VISUALS.md"
       ],
-      "replacement_status": "not_started"
+      "replacement_status": "in_review",
+      "runtime_sheet": "game/assets/overworld/kai_mage.png"
     },
     {
       "id": "kai_sorcerer",
@@ -219,7 +233,8 @@
         "game/assets/rework/kai_overworld.png",
         "docs/rework/KAI_CLASS_VISUALS.md"
       ],
-      "replacement_status": "not_started"
+      "replacement_status": "in_review",
+      "runtime_sheet": "game/assets/overworld/kai_sorcerer.png"
     },
     {
       "id": "kai_assassin",
@@ -234,7 +249,8 @@
         "game/assets/rework/kai_overworld.png",
         "docs/rework/KAI_CLASS_VISUALS.md"
       ],
-      "replacement_status": "not_started"
+      "replacement_status": "in_review",
+      "runtime_sheet": "game/assets/overworld/kai_assassin.png"
     },
     {
       "id": "kai_neutral",
@@ -250,7 +266,8 @@
         "docs/rework/KAI_CLASS_VISUALS.md"
       ],
       "replacement_status": "in_review",
-      "candidate": "docs/visual_refs/character_candidates/kai_neutral.png"
+      "candidate": "docs/visual_refs/character_candidates/kai_neutral.png",
+      "runtime_sheet": "game/assets/overworld/kai_neutral.png"
     }
   ]
 }

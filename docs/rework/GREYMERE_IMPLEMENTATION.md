@@ -18,6 +18,9 @@ release. Combat resolution and balance are unchanged.
   size cap, CSS transform or external controls paragraph.
 - Reference audit covering all Greymere residents and six Kai classes. Long
   silver hair for Almyra and green cap for Gell are explicitly locked.
+- Seventeen new runtime overworld sheets share Kai's proportions and four explicit
+  directional rows. The central registry records each frame and foot baseline;
+  Mage and Sorcerer wear robes, and Neutral keeps the magical sword motif.
 
 ## Assets and ownership
 
@@ -33,10 +36,10 @@ than manually edit that output. Narrative/balance YAML and exported combat data
 were not changed. Existing legacy dialogue IDs remain stable compatibility keys;
 the displayed elder is Elder Silas.
 
-Character candidates are in `docs/visual_refs/character_candidates/`, outside the
-Godot project/export. Neutral Kai, Almyra and Gell retain their selected reference
-identities but have not passed animation QA. Their prompts and specific defects
-are recorded beside them. They must not be described as finished runtime sprites.
+Earlier character candidates remain in `docs/visual_refs/character_candidates/`,
+outside the export. The newer production sheets live in `game/assets/overworld/`.
+The sheet registry has `animation_review: pending` on each entry, since side walk
+contact poses still need refinement. See `AUTHORED_OVERWORLD_PASS.md`.
 
 ## Verification evidence
 
@@ -62,6 +65,13 @@ are recorded beside them. They must not be described as finished runtime sprites
   were inspected: terrain is less noisy, floor seams are reduced and the Court
   gate is fully visible from the tested approach. Character/environment mismatch
   remains visible and is not accepted as finished art.
+- The unified overworld pass in [run 36266924359](https://github.com/Ghobi-A/Crestbound-Duelists/actions/runs/36266924359)
+  passed metadata regeneration, 17 focused tests, actual Godot captures of all
+  six Kai classes and the town/interiors, movement/save/combat smoke, Web export
+  and browser checks at four viewport sizes. The captured town and interior
+  scenes were inspected: the authored walkers align to ground, fit within the
+  play area, and the game and browser menus remain within the canvas. This run
+  predates the final pause-menu spacing refinement, which needs a fresh capture.
 
 Captured native-resolution evidence:
 
@@ -82,7 +92,7 @@ also run locally. This is actual Godot rendering, not a screenshot mockup.
 - [x] Native rendering and four supported browser sizes verified.
 - [x] Existing portrait/reference inventory and alias mapping completed.
 - [x] Almyra's long silver hair and Gell's green cap locked in the audit.
-- [ ] New full directional character animation sheets accepted and integrated.
+- [x] New directional sheets for the Greymere cast and six Kai classes integrated.
 - [ ] All residents match the authored environment's style in live gameplay.
 - [ ] Candidate feet, stride alternation and equipment-side continuity verified.
 - [ ] Final environmental composition reaches the supplied reference's quality.
@@ -91,11 +101,10 @@ also run locally. This is actual Godot rendering, not a screenshot mockup.
 
 ## Remaining limitations
 
-The production path still uses the previous procedural character walkers, whose
-identity/style problems motivated the audit. Three better reference-derived
-candidates exist, but repeated stride poses and equipment continuity require
-further work; the other character animation replacements are not started. No
-substitute character art was silently shipped to make checks pass.
+The Greymere cast and Kai now use the authored sheets. Some generated side-view
+contact poses remain similar across the cycle and need an animation polish pass.
+The prior procedural walkers remain available only for unmapped actors elsewhere;
+they are not substituted for registered Greymere characters.
 
 The environment is a substantial functional rebuild, not yet the supplied target
 image's finished art quality. In particular, asset pixel density, lighting,
@@ -118,3 +127,4 @@ success as evidence that every art requirement is complete.
 - QA: `game/scripts/tools/{screenshot_capture,world_smoke}.gd`, `game/scenes/tools/world_smoke.tscn`, `tools/verify_world_web.mjs`, `.github/workflows/greymere-world-qa.yml`
 - Tests: `tests/test_world_locations.py`, `tests/test_presentation_contracts.py`, `tests/test_greymere_character_references.py`
 - Reference records: `docs/rework/GREYMERE_CHARACTER_REFERENCE_AUDIT.md`, `docs/rework/greymere_character_references.json`, and the candidate directory listed above.
+- Character runtime: `game/assets/overworld/{*.png,authored.json}`, `game/scripts/overworld/overworld_sprite.gd`, `tools/build_overworld_metadata.py`, and `tests/test_authored_overworld.py`.
