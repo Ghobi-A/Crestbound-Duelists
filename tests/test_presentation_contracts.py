@@ -192,3 +192,33 @@ def _split_call_args(text: str) -> list[str] | None:
         else:
             current += character
     return None
+
+
+def test_reachable_encounters_have_authored_battle_art() -> None:
+    """Every encounter the client can start must show registered art.
+
+    Data-only encounters may still lack art (presentation_smoke reports them
+    as ART_COVERAGE_GAP); once a script can set one as the pending encounter,
+    each combatant needs a registered battle record rather than a fallback.
+    """
+    reachable = set()
+    for script in SCRIPTS.rglob("*.gd"):
+        reachable.update(re.findall(r'pending_encounter\s*=\s*"([a-z0-9_]+)"', script.read_text(encoding="utf-8")))
+    assert reachable, "no reachable encounter found"
+    encounters = json.loads((GAME / "data/encounters.json").read_text(encoding="utf-8"))
+    manifest = json.loads((GAME / "assets/rework/characters.json").read_text(encoding="utf-8"))
+    registry = manifest["characters"]
+    native_w, native_h = manifest["native_size"]
+    known = set(registry) | {alias for record in registry.values() for alias in record.get("aliases", [])}
+    for encounter_id in sorted(reachable):
+        encounter = encounters[encounter_id]
+        for build in encounter.get("enemy_party", []):
+            key = build.get("sprite_key", "")
+            assert key in known, f"{encounter_id}: {build.get('name')} has no authored battle art ({key!r})"
+            record = next(r for i, r in registry.items() if i == key or key in r.get("aliases", []))
+            for field in ("battle_rect", "foot_anchor", "portrait_rect"):
+                assert field in record, f"{key} missing {field}"
+            x, y, w, h = record["battle_rect"]
+            assert 0 <= x and 0 <= y and x + w <= native_w and y + h <= native_h, f"{key} crop outside atlas"
+            fx, fy = record["foot_anchor"]
+            assert 0 <= fx <= w and 0 <= fy <= h, f"{key} foot anchor outside crop"

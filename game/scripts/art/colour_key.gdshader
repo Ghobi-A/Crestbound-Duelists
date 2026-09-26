@@ -21,8 +21,8 @@ float key_background(vec3 texel) {
 
 // Premultiplied, keyed source texel. texelFetch ignores the node's filter,
 // so the key is applied before any averaging and never leaves a fringe.
-vec4 keyed_texel(ivec2 point, ivec2 size) {
-	vec4 texel = texelFetch(TEXTURE, clamp(point, ivec2(0), size - ivec2(1)), 0);
+vec4 keyed_texel(sampler2D source, ivec2 point, ivec2 size) {
+	vec4 texel = texelFetch(source, clamp(point, ivec2(0), size - ivec2(1)), 0);
 	texel.a *= 1.0 - key_background(texel.rgb);
 	return vec4(texel.rgb * texel.a, texel.a);
 }
@@ -45,7 +45,7 @@ void fragment() {
 				break;
 			}
 			vec2 offset = ((vec2(float(i), float(j)) + 0.5) / float(taps) - 0.5) * footprint;
-			sum += keyed_texel(ivec2(floor(texel_uv + offset)), size);
+			sum += keyed_texel(TEXTURE, ivec2(floor(texel_uv + offset)), size);
 		}
 	}
 	sum /= float(taps * taps);

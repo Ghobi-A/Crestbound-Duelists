@@ -52,7 +52,7 @@ func _update_portraits() -> void:
 		var actor: BattleUnit = planned[i].actor
 		CharacterPresentation.apply_portrait(slot, actor.sprite_key())
 		if slot.texture != null:
-			slot.position = Vector2(PORTRAIT_X, 26.0 + i * 20.0 - 9.0)
+			slot.position = Vector2(PORTRAIT_X, 26.0 + i * 22.0 - 9.0)
 			slot.visible = true
 		else:
 			slot.visible = false
@@ -85,17 +85,15 @@ func _draw() -> void:
 	# layout doesn't need two code paths.
 	for action in planned:
 		var actor: BattleUnit = action.actor
-		var line := actor.display_name
-		draw_string(font, Vector2(TEXT_X, y), line, HORIZONTAL_ALIGNMENT_LEFT, PANEL_SIZE.x - TEXT_X - 8, 8, PlaceholderPalette.TEXT_MAIN)
-		var detail: String
-		if action.kind == "brace":
-			detail = "Brace"
-		else:
-			detail = str(action.move.get("name", "?"))
-			if action.target != null:
-				detail += "  ->  %s" % action.target.display_name
-		draw_string(font, Vector2(TEXT_X + 8, y + 8), detail, HORIZONTAL_ALIGNMENT_LEFT, PANEL_SIZE.x - TEXT_X - 16, 8, PlaceholderPalette.TEXT_DIM)
-		y += 20
+		var text_width := PANEL_SIZE.x - TEXT_X - 8
+		# Actor and move share the first line; the target gets its own line so
+		# long enemy names are never clipped mid-word.
+		draw_string(font, Vector2(TEXT_X, y), actor.display_name, HORIZONTAL_ALIGNMENT_LEFT, text_width, 8, PlaceholderPalette.TEXT_MAIN)
+		var move_name := "Brace" if action.kind == "brace" else str(action.move.get("name", "?"))
+		draw_string(font, Vector2(TEXT_X, y), move_name, HORIZONTAL_ALIGNMENT_RIGHT, text_width, 8, PlaceholderPalette.TEXT_WARN)
+		if action.kind != "brace" and action.target != null:
+			draw_string(font, Vector2(TEXT_X + 8, y + 9), "-> " + action.target.display_name, HORIZONTAL_ALIGNMENT_LEFT, text_width - 8, 8, PlaceholderPalette.TEXT_DIM)
+		y += 22
 	var confirm_color := PlaceholderPalette.TEXT_WARN if cursor == 0 else PlaceholderPalette.TEXT_DIM
 	var back_color := PlaceholderPalette.TEXT_WARN if cursor == 1 else PlaceholderPalette.TEXT_DIM
 	draw_string(font, Vector2(24, PANEL_SIZE.y - 8), ("> " if cursor == 0 else "  ") + "CONFIRM ROUND", HORIZONTAL_ALIGNMENT_LEFT, 110, 8, confirm_color)

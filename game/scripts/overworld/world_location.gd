@@ -60,6 +60,8 @@ func _build_world() -> void:
 		_interactions[WorldCatalog.tile(item.tile)] = item
 	var atmosphere := WorldAtmosphere.new()
 	atmosphere.lights = definition.lights
+	atmosphere.interior = bool(definition.interior)
+	atmosphere.bounds = Rect2(Vector2.ZERO, Vector2(str(definition.rows[0]).length(), definition.rows.size()) * 16.0)
 	atmosphere.z_index = 8
 	add_child(atmosphere)
 
