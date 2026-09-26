@@ -13,7 +13,6 @@ breaks existing saves.
 from __future__ import annotations
 
 import json
-import re
 import struct
 from pathlib import Path
 
@@ -23,7 +22,7 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 ASSETS = REPO_ROOT / "game" / "assets"
 MANIFEST_PATH = ASSETS / "battle" / "sheet_manifest.json"
 HOLLOW_COURT_SIDECAR = ASSETS / "battle" / "backgrounds" / "hollow_court.json"
-GREYMERE_GD = REPO_ROOT / "game" / "scripts" / "overworld" / "greymere.gd"
+WORLD_PATH = REPO_ROOT / "game" / "world" / "locations.json"
 
 # sprite_key values GameState writes into save data (game_state.gd).
 PLAYER_CLASSES = ["warrior", "guardian", "mage", "sorcerer", "assassin", "neutral"]
@@ -32,48 +31,27 @@ ENEMY_KEYS = ["riven_raider", "hexbound_adept", "unbound_mercenary"]
 
 
 def _townsfolk_keys() -> list[str]:
-    """Overworld-only sprite_key values, read straight out of greymere.gd's
-    TOWNSFOLK array rather than hand-duplicated here — a townsfolk NPC
-    added to one and not the other used to go untested silently. These
-    are never part of a save's party/roster, so unlike CHARACTER_KEYS they
-    have no battle.png and don't gate test_save_referenced_sprite_paths_exist."""
-    source = GREYMERE_GD.read_text(encoding="utf-8")
-    match = re.search(r"const TOWNSFOLK: Array\[Dictionary\] = \[(.*?)\n\]", source, re.DOTALL)
-    assert match, "Could not locate the TOWNSFOLK constant in greymere.gd"
-    keys = re.findall(r'"sprite_key":\s*"([^"]+)"', match.group(1))
-    assert keys, "TOWNSFOLK parsed but no sprite_key values were found"
-    return keys
+    """NPC keys from the generated world catalog, including interiors."""
+    locations = json.loads(WORLD_PATH.read_text())["locations"]
+    keys = {npc["sprite_key"] for location in locations.values()
+            for npc in location.get("npcs", []) if npc["sprite_key"].startswith("townsfolk/")}
+    assert keys
+    return sorted(keys)
 
 
 TOWNSFOLK_KEYS = _townsfolk_keys()
 
 
-def _townsfolk_symbols() -> list[str]:
-    source = GREYMERE_GD.read_text(encoding="utf-8")
-    match = re.search(r"const TOWNSFOLK: Array\[Dictionary\] = \[(.*?)\n\]", source, re.DOTALL)
-    assert match
-    return re.findall(r'"tile_symbol":\s*"([^"]+)"', match.group(1))
-
-
-def test_townsfolk_tile_symbols_are_unique() -> None:
-    """Two NPCs sharing a tile_symbol would both resolve to whichever one
-    _find_tile hits first, and the other would silently never spawn."""
-    symbols = _townsfolk_symbols()
-    duplicates = {s for s in symbols if symbols.count(s) > 1}
-    assert not duplicates, f"TOWNSFOLK tile_symbol(s) reused: {sorted(duplicates)}"
-
-
-def test_townsfolk_tile_symbols_appear_exactly_once_on_the_map() -> None:
-    """A TOWNSFOLK entry whose symbol was never placed (or was mistyped)
-    fails _find_tile's push_error at runtime instead of at review time; a
-    symbol placed twice would silently spawn the same NPC on both tiles."""
-    source = GREYMERE_GD.read_text(encoding="utf-8")
-    map_match = re.search(r"const MAP: Array\[String\] = \[(.*?)\n\]", source, re.DOTALL)
-    assert map_match
-    rows = re.findall(r'"([^"]*)"', map_match.group(1))
-    for symbol in _townsfolk_symbols():
-        count = sum(row.count(symbol) for row in rows)
-        assert count == 1, f"MAP contains '{symbol}' {count} time(s), expected exactly 1"
+def test_townsfolk_spawn_tiles_are_unique_and_inside_each_location() -> None:
+    """A duplicate or invalid spawn hides one resident in the authored world."""
+    locations = json.loads(WORLD_PATH.read_text())["locations"]
+    for location in locations.values():
+        rows = location["rows"]
+        tiles = [tuple(npc["tile"]) for npc in location.get("npcs", [])]
+        assert len(tiles) == len(set(tiles)), location["id"]
+        for x, y in tiles:
+            assert 0 <= y < len(rows) and 0 <= x < len(rows[y]), (location["id"], x, y)
+            assert rows[y][x] != "#", (location["id"], x, y)
 
 
 def png_size(path: Path) -> tuple[int, int]:

@@ -11,7 +11,6 @@ extends Node2D
 
 const OVERWORLD_SCENE := "res://scenes/overworld/greymere.tscn"
 const BOOT_SCENE := "res://scenes/boot/boot.tscn"
-const COURT_RETURN_TILE := Vector2i(11, 2)
 
 ## Background height must match where the HUD's opaque bottom panel
 ## starts (battle_hud.gd) or a seam shows between the floor and the
@@ -442,7 +441,9 @@ func _leave_after_victory() -> void:
 	if GameState.pending_encounter == "hollow_court_battle":
 		GameState.set_flag("hollow_court_cleared")
 		GameState.set_flag("post_battle_scene_pending")
-		GameState.player_tile = COURT_RETURN_TILE
+		# WorldLocation resolves this named spawn from the authored map.
+		GameState.location_id = "greymere"
+		GameState.location_spawn = "court_return"
 	SaveManager.save_game()
 	SceneTransition.change_scene(OVERWORLD_SCENE, "gold")
 
