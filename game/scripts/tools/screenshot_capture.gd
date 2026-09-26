@@ -22,6 +22,8 @@ extends Node
 ##   dialogue_long — the longest Greymere line with a portrait.
 ##   victory / defeat — result screens via test-only health fixtures.
 ##   class_<id>    — Greymere town square as each of Kai's six classes.
+##   gell_shop / joey_home / kai_house — the explorable homes and shop.
+##   east_lane     — the east lane with the shop, Joey's home and Kai's house.
 ##
 ## The harness seeds a canonical GameState (warrior, onboarding flags set),
 ## instantiates the target scene as a sibling, advances scripted `interact`
@@ -37,6 +39,10 @@ const SCENE_PATHS := {
 	"lena_house": "res://scenes/overworld/lena_house.tscn",
 	"inn": "res://scenes/overworld/inn.tscn",
 	"silas_study": "res://scenes/overworld/silas_study.tscn",
+	"gell_shop": "res://scenes/overworld/gell_shop.tscn",
+	"joey_home": "res://scenes/overworld/joey_home.tscn",
+	"kai_house": "res://scenes/overworld/kai_house.tscn",
+	"east_lane": "res://scenes/overworld/greymere.tscn",
 	"town_square": "res://scenes/overworld/greymere.tscn",
 	"court_gate": "res://scenes/overworld/greymere.tscn",
 	"west_lane": "res://scenes/overworld/greymere.tscn",
@@ -132,12 +138,12 @@ func _parse_args() -> void:
 
 func _seed_state() -> void:
 	GameState.start_new_game(target.trim_prefix("class_") if target.begins_with("class_") else "warrior")
-	if target in ["lena_house","inn","silas_study"]:
+	if target in ["lena_house","inn","silas_study","gell_shop","joey_home","kai_house"]:
 		GameState.location_id = target
 		GameState.location_spawn = "entrance"
-	elif target in ["town_square","court_gate","west_lane","dialogue_portrait","dialogue_notice","dialogue_long"] or target.begins_with("class_"):
+	elif target in ["town_square","court_gate","west_lane","east_lane","dialogue_portrait","dialogue_notice","dialogue_long"] or target.begins_with("class_"):
 		GameState.location_spawn = ""
-		GameState.player_tile = {"town_square":Vector2i(17,20),"court_gate":Vector2i(17,7),"west_lane":Vector2i(10,23)}.get(target, Vector2i(17,20))
+		GameState.player_tile = {"town_square":Vector2i(17,20),"court_gate":Vector2i(17,7),"west_lane":Vector2i(10,23),"east_lane":Vector2i(36,17)}.get(target, Vector2i(17,20))
 	if target == "party_formation":
 		# Alternative formation: reversed order, everyone in the front row.
 		GameState.party.reverse()

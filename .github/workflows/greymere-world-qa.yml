@@ -24,7 +24,7 @@ jobs:
         run: |
           # Every production screen, each Kai class, both formations, both
           # results. 1080p repeats the screens most sensitive to detail.
-          ALL="boot party_setup party_formation overworld town_square court_gate west_lane lena_house inn silas_study dialogue_portrait dialogue_notice dialogue_long battle battle_target battle_preview victory defeat class_neutral class_warrior class_guardian class_mage class_sorcerer class_assassin"
+          ALL="boot party_setup party_formation overworld town_square court_gate west_lane lena_house inn silas_study gell_shop joey_home kai_house east_lane dialogue_portrait dialogue_notice dialogue_long battle battle_target battle_preview victory defeat class_neutral class_warrior class_guardian class_mage class_sorcerer class_assassin"
           HD="boot party_setup town_square inn dialogue_long battle battle_target battle_preview victory defeat class_mage"
           CRESTBOUND_CAPTURE_TARGETS="$ALL" bash tools/capture_screenshots.sh "$RUNNER_TEMP/world-qa/720p" 1280x720
           CRESTBOUND_CAPTURE_TARGETS="$HD" bash tools/capture_screenshots.sh "$RUNNER_TEMP/world-qa/1080p" 1920x1080

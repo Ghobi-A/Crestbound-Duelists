@@ -62,6 +62,8 @@ func _draw() -> void:
 			var p := Vector2(x*TILE,y*TILE)
 			var symbol: String = rows[y][x]
 			var material := _material(symbol)
+			# Outdoors the map edge is undergrowth, not masonry.
+			if symbol == "#" and not interior: material = Vector2(1,0)
 			var source := material*quadrant + Vector2(x%cycle,y%cycle)*source_cell
 			# Inset a few source px so filtered/mipmapped sampling never pulls in
 			# the neighbouring material quadrant as a faint grid line.
@@ -71,6 +73,8 @@ func _draw() -> void:
 				# Edge marks are 1 logical px rects so they keep their weight at 2x-6x.
 				draw_rect(Rect2(p,Vector2(16,1)),Color("65727a"))
 				draw_rect(Rect2(p+Vector2(0,14),Vector2(16,1)),Color("202c37"))
+			elif symbol == "#" and not interior:
+				draw_rect(Rect2(p,Vector2(16,16)),Color(0.01,0.03,0.02,0.62))
 			elif symbol == "#":
 				draw_rect(Rect2(p,Vector2(16,16)),Color(0.02,0.04,0.08,0.2))
 				if interior: draw_rect(Rect2(p+Vector2(0,15),Vector2(16,1)),Color("59646a"))

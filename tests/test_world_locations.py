@@ -56,3 +56,29 @@ def test_art_regions_and_footprints_have_valid_shapes():
         x,y,rw,rh=a["region"]
         assert min(x,y)>=0 and x+rw<=w and y+rh<=h,key
         assert 0<=a["anchor"][0]<=rw and 0<=a["anchor"][1]<=rh,key
+
+
+def test_reused_building_exteriors_are_declared_placeholders():
+    """Buildings without authored art reuse another exterior, visibly varied.
+
+    Each variant must name the building it reuses, say why, keep the source
+    region, mirror its anchor/footprint consistently when flipped, and be
+    re-roofed so no two buildings in town read as the same house.
+    """
+    used = {item["asset"] for location in LOCATIONS.values() for item in location["props"]}
+    variants = {key: a for key, a in ASSETS.items() if "placeholder" in a}
+    assert {"gell_shop", "joey_home", "kai_house"} <= set(variants)
+    for key, a in variants.items():
+        base = ASSETS[a["placeholder"]["reuses"]]
+        assert a["placeholder"]["reason"], key
+        assert a["region"] == base["region"] and a["sheet"] == base["sheet"], key
+        assert "roof" in a and a["roof"]["hue_shift"] != 0, key
+        if a.get("flip_h"):
+            assert a["anchor"][0] == base["region"][2] - base["anchor"][0], key
+            bx, by, bw, bh = base["collision"]
+            assert a["collision"] == [-(bx + bw - 1), by, bw, bh], key
+        else:
+            assert a["anchor"] == base["anchor"] and a["collision"] == base["collision"], key
+        assert key in used, f"{key} is declared but never placed"
+    signatures = [(a["placeholder"]["reuses"], a.get("flip_h", False), a["roof"]["hue_shift"]) for a in variants.values()]
+    assert len(set(signatures)) == len(signatures), "two variants would look identical"
