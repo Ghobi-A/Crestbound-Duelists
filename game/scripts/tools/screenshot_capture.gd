@@ -36,6 +36,8 @@ const SCENE_PATHS := {
 	"town_square": "res://scenes/overworld/greymere.tscn",
 	"court_gate": "res://scenes/overworld/greymere.tscn",
 	"west_lane": "res://scenes/overworld/greymere.tscn",
+	"dialogue_portrait": "res://scenes/overworld/greymere.tscn",
+	"dialogue_notice": "res://scenes/overworld/greymere.tscn",
 }
 
 const SETTLE_FRAMES := 30
@@ -71,6 +73,9 @@ func _ready() -> void:
 			# Open the first move to leave target selection active, so
 			# the baseline shows the highlight ring and dimming.
 			await _press_times(1)
+	elif target == "dialogue_portrait" or target == "dialogue_notice":
+		var dialogue: DialogueBox = scene.get("_dialogue") as DialogueBox
+		dialogue.play("elara_intro" if target == "dialogue_portrait" else "notice_board")
 	await _frames(SETTLE_FRAMES)
 	await _capture("baseline_%s" % target)
 	get_tree().quit(0)
@@ -89,7 +94,7 @@ func _seed_state() -> void:
 	if target in ["lena_house","inn","silas_study"]:
 		GameState.location_id = target
 		GameState.location_spawn = "entrance"
-	elif target in ["town_square","court_gate","west_lane"] or target.begins_with("class_"):
+	elif target in ["town_square","court_gate","west_lane","dialogue_portrait","dialogue_notice"] or target.begins_with("class_"):
 		GameState.location_spawn = ""
 		GameState.player_tile = {"town_square":Vector2i(17,20),"court_gate":Vector2i(17,7),"west_lane":Vector2i(10,23)}.get(target, Vector2i(17,20))
 	GameState.set_flag("overworld_onboarding_seen")
