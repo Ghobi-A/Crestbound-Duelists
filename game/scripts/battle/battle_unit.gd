@@ -139,6 +139,18 @@ func note_move_used(move: Dictionary) -> void:
 # ── Effects ──────────────────────────────────────────────────────────
 
 func apply_stat_mod(stat_name: String, amount: int, duration: int) -> void:
+	## Same-direction reapplication refreshes the existing rider rather than
+	## stacking another copy. Keep the stronger magnitude; opposite-direction
+	## effects remain independent and cancel naturally in stat().
+	if amount == 0:
+		return
+	for mod in stat_mods:
+		var same_direction := (int(mod.amount) > 0) == (amount > 0)
+		if mod.stat == stat_name and same_direction:
+			if absi(amount) > absi(int(mod.amount)):
+				mod.amount = amount
+			mod.turns = maxi(int(mod.turns), duration)
+			return
 	stat_mods.append({"stat": stat_name, "amount": amount, "turns": duration})
 
 

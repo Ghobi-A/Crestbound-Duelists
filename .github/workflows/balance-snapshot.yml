@@ -14,6 +14,7 @@ on:
       - "ai.py"
       - "simulation.py"
       - "nash.py"
+      - "balance_report.py"
       - "game/scripts/battle/**"
       - "tests/**"
       - "tools/generate_snapshot.py"
@@ -29,6 +30,7 @@ on:
       - "ai.py"
       - "simulation.py"
       - "nash.py"
+      - "balance_report.py"
       - "game/scripts/battle/**"
       - "tests/**"
       - "tools/generate_snapshot.py"
@@ -68,6 +70,12 @@ jobs:
 
       - name: Validate Godot project
         run: python tools/validate_godot_project.py
+
+      - name: Quick greedy diagnostics
+        run: python balance_report.py --sims 500 --policy greedy
+
+      - name: Quick tactical diagnostics
+        run: python balance_report.py --sims 500 --policy lookahead
 
       - name: Validate analytical snapshot on pull request
         if: github.event_name == 'pull_request'

@@ -13,18 +13,16 @@ from loaders import (
     load_combat_config,
     load_moves,
 )
-from models import ClassName, MoveSlot, create_unit
+from models import ClassName, MoveSlot, MoveType, create_unit
 
 
-def test_load_combat_config_values_match_v22():
+def test_load_combat_config_values_match_v23():
     config = load_combat_config()
     assert config["speed_band"] == 20
-    # Retained for v2.1 schema/API compatibility; v2.2 initiative uses
-    # SPD + U(0, speed_band) rather than this ratio threshold.
     assert config["guaranteed_speed_ratio"] == 2.0
     assert config["variance_low"] == 0.85
     assert config["variance_high"] == 1.0
-    assert config["brace_multiplier"] == 1.20
+    assert config["brace_multiplier"] == 1.15
     assert config["max_turns"] == 100
     assert config["stat_decay_duration"] == 3
 
@@ -48,7 +46,7 @@ def test_load_moves_returns_all_eighteen():
 
 def test_loaded_data_is_isolated_from_cache():
     load_classes()["warrior"]["base_stats"]["hp"] = 1
-    assert load_classes()["warrior"]["base_stats"]["hp"] == 85
+    assert load_classes()["warrior"]["base_stats"]["hp"] == 96
 
 
 def test_build_move_matches_engine_expectations():
@@ -57,17 +55,25 @@ def test_build_move_matches_engine_expectations():
     assert hex_move.slot == MoveSlot.SIGNATURE
     assert hex_move.applies_status == "hexed"
     assert hex_move.status_duration == 2
+    assert hex_move.power == 13
+    assert hex_move.target_stat_mods == [("atk", -10), ("mag", -10)]
 
     fortify = build_move("fortify")
     assert fortify.is_buff_move
-    assert ("def", 15) in fortify.self_stat_mods
-    assert ("res", 15) in fortify.self_stat_mods
+    assert fortify.move_type == MoveType.ADAPTIVE
+    assert ("def", 8) in fortify.self_stat_mods
+    assert ("res", 8) in fortify.self_stat_mods
 
     cripple = build_move("cripple")
     assert cripple.target_stat_mods == [
-        ("def", -6),
-        ("res", -6),
-        ("spd", -15),
+        ("def", -8),
+        ("spd", -8),
+    ]
+
+    focus = build_move("focus_shift")
+    assert focus.move_type == MoveType.ADAPTIVE
+    assert focus.self_stat_mods == [
+        ("atk", 13), ("mag", 13), ("def", -2), ("res", -2),
     ]
 
 
@@ -104,7 +110,8 @@ def test_legacy_class_stats_shape():
 
     stats = models.CLASS_STATS
     assert set(stats) == set(ClassName)
-    assert stats[ClassName.WARRIOR]["atk"] == 75
+    assert stats[ClassName.WARRIOR]["atk"] == 70
+    assert stats[ClassName.WARRIOR]["hp"] == 96
 
 
 def test_legacy_move_factories_shape():

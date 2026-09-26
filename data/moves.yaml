@@ -1,14 +1,9 @@
 # Crestbound Duelists — move definitions (single source of truth).
 #
-# Fields used by the Python combat engine today:
-#   move_type, slot, power, accuracy, target_stat_mods, self_stat_mods,
-#   is_buff_move, status_effects (first entry), cooldown_turns.
-# Tactical fields (range, area_shape, target_rule, resource_cost,
-# terrain_effects) are consumed by the Godot client and reserved for the
-# party-battle layer; they do not affect the 1v1 balance simulation.
-#
-# Balance values are the v2.2 structural-balance baseline. Class statlines
-# remain unchanged; this pass fixes action incentives and mechanic semantics.
+# v2.3 numerical chassis. Damage is intentionally lower than v2.2 to create
+# 6–8 round fights. Signature riders are sized by their marginal future HP
+# swing under the real compressed formula; repeated same-direction riders
+# refresh rather than stack.
 
 moves:
   # ── Warrior ────────────────────────────────────────────────────────
@@ -17,7 +12,7 @@ moves:
     class_id: warrior
     move_type: physical
     slot: basic
-    power: 24
+    power: 16
     accuracy: 1.0
     cooldown_turns: 0
     range: 1
@@ -39,14 +34,14 @@ moves:
     class_id: warrior
     move_type: physical
     slot: signature
-    power: 21
+    power: 13
     accuracy: 1.0
     cooldown_turns: 1
     range: 1
     area_shape: single
     target_rule: enemy
     resource_cost: 0
-    target_stat_mods: [{stat: def, amount: -10}]
+    target_stat_mods: [{stat: def, amount: -8}]
     self_stat_mods: []
     is_buff_move: false
     status_effects: []
@@ -61,7 +56,7 @@ moves:
     class_id: warrior
     move_type: physical
     slot: gambit
-    power: 35
+    power: 24
     accuracy: 0.75
     cooldown_turns: 1
     range: 2
@@ -69,7 +64,7 @@ moves:
     target_rule: enemy
     resource_cost: 0
     target_stat_mods: []
-    self_stat_mods: [{stat: def, amount: -6}]
+    self_stat_mods: [{stat: def, amount: -4}]
     is_buff_move: false
     status_effects: []
     terrain_effects: []
@@ -84,7 +79,7 @@ moves:
     class_id: mage
     move_type: magical
     slot: basic
-    power: 24
+    power: 16
     accuracy: 1.0
     cooldown_turns: 0
     range: 3
@@ -106,14 +101,14 @@ moves:
     class_id: mage
     move_type: magical
     slot: signature
-    power: 21
+    power: 13
     accuracy: 1.0
     cooldown_turns: 1
     range: 3
     area_shape: single
     target_rule: enemy
     resource_cost: 0
-    target_stat_mods: [{stat: res, amount: -10}]
+    target_stat_mods: [{stat: res, amount: -8}]
     self_stat_mods: []
     is_buff_move: false
     status_effects: []
@@ -128,7 +123,7 @@ moves:
     class_id: mage
     move_type: magical
     slot: gambit
-    power: 35
+    power: 24
     accuracy: 0.75
     cooldown_turns: 1
     range: 3
@@ -136,7 +131,7 @@ moves:
     target_rule: enemy
     resource_cost: 0
     target_stat_mods: []
-    self_stat_mods: [{stat: res, amount: -6}]
+    self_stat_mods: [{stat: res, amount: -4}]
     is_buff_move: false
     status_effects: []
     terrain_effects: []
@@ -151,7 +146,7 @@ moves:
     class_id: assassin
     move_type: physical
     slot: basic
-    power: 24
+    power: 16
     accuracy: 1.0
     cooldown_turns: 0
     range: 1
@@ -173,7 +168,7 @@ moves:
     class_id: assassin
     move_type: physical
     slot: signature
-    power: 20
+    power: 13
     accuracy: 1.0
     cooldown_turns: 1
     range: 1
@@ -181,9 +176,8 @@ moves:
     target_rule: enemy
     resource_cost: 0
     target_stat_mods:
-      - {stat: def, amount: -6}
-      - {stat: res, amount: -6}
-      - {stat: spd, amount: -15}
+      - {stat: def, amount: -8}
+      - {stat: spd, amount: -8}
     self_stat_mods: []
     is_buff_move: false
     status_effects: []
@@ -198,7 +192,7 @@ moves:
     class_id: assassin
     move_type: physical
     slot: gambit
-    power: 36
+    power: 25
     accuracy: 0.70
     cooldown_turns: 1
     range: 1
@@ -221,7 +215,7 @@ moves:
     class_id: guardian
     move_type: adaptive
     slot: basic
-    power: 23
+    power: 15
     accuracy: 1.0
     cooldown_turns: 0
     range: 1
@@ -241,9 +235,9 @@ moves:
   - id: fortify
     name: Fortify
     class_id: guardian
-    move_type: magical
+    move_type: adaptive
     slot: signature
-    power: 18
+    power: 13
     accuracy: 1.0
     cooldown_turns: 1
     range: 1
@@ -251,11 +245,11 @@ moves:
     target_rule: enemy
     resource_cost: 0
     target_stat_mods: []
-    self_stat_mods: [{stat: def, amount: 15}, {stat: res, amount: 15}]
+    self_stat_mods: [{stat: def, amount: 8}, {stat: res, amount: 8}]
     is_buff_move: true
     status_effects: []
     terrain_effects: []
-    tags: [buff, defensive]
+    tags: [buff, defensive, adaptive]
     animation_key: guard_up
     vfx_key: fortify_glow
     ai_tags: [damage, buff]
@@ -265,7 +259,7 @@ moves:
     class_id: guardian
     move_type: physical
     slot: gambit
-    power: 31
+    power: 22
     accuracy: 0.80
     cooldown_turns: 1
     range: 1
@@ -288,7 +282,7 @@ moves:
     class_id: neutral
     move_type: adaptive
     slot: basic
-    power: 23
+    power: 16
     accuracy: 1.0
     cooldown_turns: 0
     range: 1
@@ -308,9 +302,9 @@ moves:
   - id: focus_shift
     name: Focus Shift
     class_id: neutral
-    move_type: magical
+    move_type: adaptive
     slot: signature
-    power: 20
+    power: 13
     accuracy: 1.0
     cooldown_turns: 1
     range: 2
@@ -319,14 +313,14 @@ moves:
     resource_cost: 0
     target_stat_mods: []
     self_stat_mods:
-      - {stat: atk, amount: 7}
-      - {stat: mag, amount: 7}
-      - {stat: def, amount: -5}
-      - {stat: res, amount: -5}
+      - {stat: atk, amount: 13}
+      - {stat: mag, amount: 13}
+      - {stat: def, amount: -2}
+      - {stat: res, amount: -2}
     is_buff_move: false
     status_effects: []
     terrain_effects: []
-    tags: [stance, tradeoff]
+    tags: [stance, tradeoff, adaptive]
     animation_key: stance_shift
     vfx_key: focus_aura
     ai_tags: [damage, buff, risky]
@@ -336,7 +330,7 @@ moves:
     class_id: neutral
     move_type: adaptive
     slot: gambit
-    power: 34
+    power: 24
     accuracy: 0.75
     cooldown_turns: 1
     range: 2
@@ -359,7 +353,7 @@ moves:
     class_id: sorcerer
     move_type: magical
     slot: basic
-    power: 24
+    power: 16
     accuracy: 1.0
     cooldown_turns: 0
     range: 3
@@ -381,29 +375,31 @@ moves:
     class_id: sorcerer
     move_type: magical
     slot: signature
-    power: 19
+    power: 13
     accuracy: 1.0
     cooldown_turns: 1
     range: 3
     area_shape: single
     target_rule: enemy
     resource_cost: 0
-    target_stat_mods: []
+    target_stat_mods:
+      - {stat: atk, amount: -10}
+      - {stat: mag, amount: -10}
     self_stat_mods: []
     is_buff_move: false
     status_effects: [{status: hexed, duration: 2, target: enemy}]
     terrain_effects: []
-    tags: [curse, anti_buff, ranged]
+    tags: [curse, anti_buff, debuff, ranged]
     animation_key: curse
     vfx_key: hex_sigil
-    ai_tags: [damage, status]
+    ai_tags: [damage, status, debuff]
 
   - id: voidfire
     name: Voidfire
     class_id: sorcerer
     move_type: magical
     slot: gambit
-    power: 35
+    power: 24
     accuracy: 0.75
     cooldown_turns: 1
     range: 3
@@ -411,7 +407,7 @@ moves:
     target_rule: enemy
     resource_cost: 0
     target_stat_mods: []
-    self_stat_mods: [{stat: res, amount: -6}]
+    self_stat_mods: [{stat: res, amount: -4}]
     is_buff_move: false
     status_effects: []
     terrain_effects: []
