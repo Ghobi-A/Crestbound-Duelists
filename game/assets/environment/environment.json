@@ -1,0 +1,444 @@
+{
+  "assets": {
+    "herbalist": {
+      "sheet": "res://assets/environment/buildings.png",
+      "region": [
+        80,
+        0,
+        510,
+        570
+      ],
+      "anchor": [
+        284,
+        550
+      ],
+      "width": 96,
+      "collision": [
+        -3,
+        -5,
+        6,
+        6
+      ]
+    },
+    "inn": {
+      "sheet": "res://assets/environment/buildings.png",
+      "region": [
+        650,
+        0,
+        580,
+        580
+      ],
+      "anchor": [
+        268,
+        559
+      ],
+      "width": 112,
+      "collision": [
+        -3,
+        -5,
+        7,
+        6
+      ]
+    },
+    "study": {
+      "sheet": "res://assets/environment/buildings.png",
+      "region": [
+        130,
+        580,
+        400,
+        615
+      ],
+      "anchor": [
+        186,
+        592
+      ],
+      "width": 80,
+      "collision": [
+        -2,
+        -6,
+        5,
+        7
+      ]
+    },
+    "guardhouse": {
+      "sheet": "res://assets/environment/buildings.png",
+      "region": [
+        675,
+        620,
+        535,
+        580
+      ],
+      "anchor": [
+        257,
+        550
+      ],
+      "width": 96,
+      "collision": [
+        -3,
+        -5,
+        6,
+        6
+      ]
+    },
+    "gate": {
+      "sheet": "res://assets/environment/outdoors.png",
+      "region": [
+        0,
+        0,
+        418,
+        418
+      ],
+      "anchor": [
+        209,
+        400
+      ],
+      "width": 80,
+      "collision": [
+        -2,
+        -4,
+        5,
+        5
+      ]
+    },
+    "tree": {
+      "sheet": "res://assets/environment/outdoors.png",
+      "region": [
+        418,
+        0,
+        418,
+        418
+      ],
+      "anchor": [
+        209,
+        411
+      ],
+      "width": 80,
+      "collision": [
+        -1,
+        -1,
+        2,
+        2
+      ]
+    },
+    "spring": {
+      "sheet": "res://assets/environment/outdoors.png",
+      "region": [
+        836,
+        0,
+        418,
+        418
+      ],
+      "anchor": [
+        209,
+        410
+      ],
+      "width": 64,
+      "collision": [
+        -2,
+        -2,
+        4,
+        3
+      ]
+    },
+    "hedge": {
+      "sheet": "res://assets/environment/outdoors.png",
+      "region": [
+        0,
+        418,
+        418,
+        418
+      ],
+      "anchor": [
+        209,
+        365
+      ],
+      "width": 48,
+      "collision": [
+        -1,
+        0,
+        3,
+        1
+      ]
+    },
+    "wall": {
+      "sheet": "res://assets/environment/outdoors.png",
+      "region": [
+        418,
+        418,
+        418,
+        418
+      ],
+      "anchor": [
+        209,
+        365
+      ],
+      "width": 48,
+      "collision": [
+        -1,
+        -1,
+        3,
+        2
+      ]
+    },
+    "bridge": {
+      "sheet": "res://assets/environment/outdoors.png",
+      "region": [
+        836,
+        418,
+        418,
+        418
+      ],
+      "anchor": [
+        209,
+        367
+      ],
+      "width": 48,
+      "collision": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "crates": {
+      "sheet": "res://assets/environment/outdoors.png",
+      "region": [
+        0,
+        836,
+        418,
+        418
+      ],
+      "anchor": [
+        209,
+        325
+      ],
+      "width": 32,
+      "collision": [
+        -1,
+        -1,
+        2,
+        2
+      ]
+    },
+    "notice": {
+      "sheet": "res://assets/environment/outdoors.png",
+      "region": [
+        418,
+        836,
+        418,
+        418
+      ],
+      "anchor": [
+        209,
+        338
+      ],
+      "width": 32,
+      "collision": [
+        -1,
+        0,
+        2,
+        1
+      ]
+    },
+    "lamp": {
+      "sheet": "res://assets/environment/outdoors.png",
+      "region": [
+        836,
+        836,
+        418,
+        418
+      ],
+      "anchor": [
+        209,
+        346
+      ],
+      "width": 24,
+      "collision": [
+        0,
+        0,
+        1,
+        1
+      ]
+    },
+    "hearth": {
+      "sheet": "res://assets/environment/furniture.png",
+      "region": [
+        0,
+        0,
+        418,
+        418
+      ],
+      "anchor": [
+        209,
+        411
+      ],
+      "width": 48,
+      "collision": [
+        -1,
+        -2,
+        3,
+        3
+      ]
+    },
+    "books": {
+      "sheet": "res://assets/environment/furniture.png",
+      "region": [
+        418,
+        0,
+        418,
+        418
+      ],
+      "anchor": [
+        209,
+        413
+      ],
+      "width": 48,
+      "collision": [
+        -1,
+        -2,
+        3,
+        3
+      ]
+    },
+    "bed": {
+      "sheet": "res://assets/environment/furniture.png",
+      "region": [
+        836,
+        0,
+        418,
+        418
+      ],
+      "anchor": [
+        209,
+        414
+      ],
+      "width": 32,
+      "collision": [
+        -1,
+        -2,
+        2,
+        3
+      ]
+    },
+    "workbench": {
+      "sheet": "res://assets/environment/furniture.png",
+      "region": [
+        0,
+        418,
+        418,
+        418
+      ],
+      "anchor": [
+        209,
+        387
+      ],
+      "width": 48,
+      "collision": [
+        -1,
+        -1,
+        3,
+        2
+      ]
+    },
+    "counter": {
+      "sheet": "res://assets/environment/furniture.png",
+      "region": [
+        418,
+        418,
+        418,
+        418
+      ],
+      "anchor": [
+        209,
+        372
+      ],
+      "width": 64,
+      "collision": [
+        -2,
+        -1,
+        4,
+        2
+      ]
+    },
+    "table": {
+      "sheet": "res://assets/environment/furniture.png",
+      "region": [
+        836,
+        418,
+        418,
+        418
+      ],
+      "anchor": [
+        209,
+        388
+      ],
+      "width": 40,
+      "collision": [
+        -1,
+        -1,
+        3,
+        2
+      ]
+    },
+    "chest": {
+      "sheet": "res://assets/environment/furniture.png",
+      "region": [
+        0,
+        836,
+        418,
+        418
+      ],
+      "anchor": [
+        209,
+        322
+      ],
+      "width": 32,
+      "collision": [
+        -1,
+        0,
+        2,
+        1
+      ]
+    },
+    "desk": {
+      "sheet": "res://assets/environment/furniture.png",
+      "region": [
+        418,
+        836,
+        418,
+        418
+      ],
+      "anchor": [
+        209,
+        360
+      ],
+      "width": 48,
+      "collision": [
+        -1,
+        -1,
+        3,
+        2
+      ]
+    },
+    "jars": {
+      "sheet": "res://assets/environment/furniture.png",
+      "region": [
+        836,
+        836,
+        418,
+        418
+      ],
+      "anchor": [
+        209,
+        350
+      ],
+      "width": 40,
+      "collision": [
+        -1,
+        -1,
+        3,
+        2
+      ]
+    }
+  }
+}

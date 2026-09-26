@@ -9,7 +9,7 @@ const PARTY_SETUP_SCENE := "res://scenes/ui/party_setup.tscn"
 # so a recruiter reaches gameplay in one press.
 const QUICK_BATTLE_CLASS := "warrior"
 
-const CONTROLS_TEXT := "MOVE        WASD / Arrow keys\nCONFIRM     Z / Enter / Space\nBACK        X / Escape\n\nObjective: speak to Warden Elara, then investigate the Hollow Court."
+const CONTROLS_TEXT := "MOVE        WASD / Arrow keys\nCONFIRM     Z / Enter / Space\nBACK        X / Escape\n\nObjective: speak to Warden Almyra, then investigate the Hollow Court."
 
 enum Screen { MENU, CLASS_SELECT, CONTROLS }
 

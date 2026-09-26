@@ -165,12 +165,17 @@ both already caused real bugs:
 Verify layout changes with `tools/capture_screenshots.sh`, which renders
 every screen at the true internal resolution.
 
-## Known gaps
+## Current implementation and remaining art review
 
-- **No portraits.** The reference art direction pairs each party row with
-  a character portrait; none exist yet, and they are the clearest
-  remaining gap between this interface and the target.
-- **Copywriting is unrevised.** Labels still read `PWR 24  ACC 100%`
-  rather than `Power 24 / Accuracy 100%`, and strings are inline in
-  GDScript rather than centralised. That is its own pass, with a text
-  audit as the deliverable.
+- Party rows, battle status cards and dialogue use bounded character portraits.
+  Party setup shows class and Crest names beside the portrait rather than
+  reserving empty slots for nonexistent icon/card paths.
+- The shared `SURFACE_OUTER`, `SURFACE_INNER`, `SURFACE_RAISED` and
+  `SURFACE_LINE` tokens give menus, status cards and dialogue consistent depth.
+- Dialogue captures now cover portrait and text-only conversations in the
+  Greymere world QA workflow.
+- Walk-cycle contact frames require art polish. The side-facing audit in
+  `tools/audit_walk_cycles.py` measures their visible alternation at native
+  display height; the incomplete poses remain marked for review.
+- Some compact battle labels still use `PWR`/`ACC` abbreviations because the
+  command panel has a fixed 122px width at the 320x180 logical canvas.

@@ -30,10 +30,19 @@ const SCENE_PATHS := {
 	"overworld": "res://scenes/overworld/greymere.tscn",
 	"battle": "res://scenes/battle/party_battle.tscn",
 	"battle_target": "res://scenes/battle/party_battle.tscn",
+	"lena_house": "res://scenes/overworld/lena_house.tscn",
+	"inn": "res://scenes/overworld/inn.tscn",
+	"silas_study": "res://scenes/overworld/silas_study.tscn",
+	"town_square": "res://scenes/overworld/greymere.tscn",
+	"court_gate": "res://scenes/overworld/greymere.tscn",
+	"west_lane": "res://scenes/overworld/greymere.tscn",
+	"dialogue_portrait": "res://scenes/overworld/greymere.tscn",
+	"dialogue_notice": "res://scenes/overworld/greymere.tscn",
 }
 
 const SETTLE_FRAMES := 30
 const PRESS_GAP_FRAMES := 6
+const REVIEW_CLASSES := ["neutral", "warrior", "guardian", "mage", "sorcerer", "assassin"]
 
 var target := "overworld"
 var out_dir := ""
@@ -41,14 +50,15 @@ var out_dir := ""
 
 func _ready() -> void:
 	_parse_args()
-	if not SCENE_PATHS.has(target) or out_dir == "":
+	if not SCENE_PATHS.has(target) and not (target.begins_with("class_") and target.trim_prefix("class_") in REVIEW_CLASSES) or out_dir == "":
 		push_error("Usage: -- --target=<%s> --out=<dir>" % "|".join(SCENE_PATHS.keys()))
 		get_tree().quit(2)
 		return
 	seed(41)
 	_seed_state()
 	await get_tree().process_frame
-	var scene: Node = load(SCENE_PATHS[target]).instantiate()
+	var scene_path: String = str(SCENE_PATHS.get(target, SCENE_PATHS.town_square))
+	var scene: Node = load(scene_path).instantiate()
 	get_tree().root.add_child(scene)
 	await _frames(SETTLE_FRAMES)
 	if target == "battle" or target == "battle_target":
@@ -63,6 +73,9 @@ func _ready() -> void:
 			# Open the first move to leave target selection active, so
 			# the baseline shows the highlight ring and dimming.
 			await _press_times(1)
+	elif target == "dialogue_portrait" or target == "dialogue_notice":
+		var dialogue: DialogueBox = scene.get("_dialogue") as DialogueBox
+		dialogue.play("elara_intro" if target == "dialogue_portrait" else "notice_board")
 	await _frames(SETTLE_FRAMES)
 	await _capture("baseline_%s" % target)
 	get_tree().quit(0)
@@ -77,7 +90,13 @@ func _parse_args() -> void:
 
 
 func _seed_state() -> void:
-	GameState.start_new_game("warrior")
+	GameState.start_new_game(target.trim_prefix("class_") if target.begins_with("class_") else "warrior")
+	if target in ["lena_house","inn","silas_study"]:
+		GameState.location_id = target
+		GameState.location_spawn = "entrance"
+	elif target in ["town_square","court_gate","west_lane","dialogue_portrait","dialogue_notice"] or target.begins_with("class_"):
+		GameState.location_spawn = ""
+		GameState.player_tile = {"town_square":Vector2i(17,20),"court_gate":Vector2i(17,7),"west_lane":Vector2i(10,23)}.get(target, Vector2i(17,20))
 	GameState.set_flag("overworld_onboarding_seen")
 	GameState.set_flag("battle_onboarding_seen")
 

@@ -33,6 +33,7 @@ var _page_index := 0
 var _panel: UiPanel
 var _portrait: TextureRect
 var _portrait_frame: UiPanel
+var _nameplate: ColorRect
 var _speaker_label: Label
 var _text_label: Label
 var _advance_label: Label
@@ -56,9 +57,15 @@ func _ready() -> void:
 	_portrait.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
 	_portrait.visible = false
 	_panel.add_child(_portrait)
+	_nameplate = ColorRect.new()
+	_nameplate.color = UiStyle.SURFACE_RAISED
+	_nameplate.position = Vector2(4, 2)
+	_nameplate.size = Vector2(294, 11)
+	_nameplate.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_panel.add_child(_nameplate)
 
 	_speaker_label = Label.new()
-	_speaker_label.position = Vector2(6, 2)
+	_speaker_label.position = Vector2(7, 2)
 	_speaker_label.size = Vector2(300, 10)
 	_speaker_label.clip_text = true
 	_speaker_label.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
@@ -76,7 +83,7 @@ func _ready() -> void:
 	_panel.add_child(_text_label)
 
 	_advance_label = Label.new()
-	_advance_label.text = "v"
+	_advance_label.text = "Z"
 	_advance_label.position = Vector2(290, 36)
 	_advance_label.add_theme_font_size_override("font_size", 8)
 	_advance_label.add_theme_color_override("font_color", PlaceholderPalette.TEXT_DIM)
@@ -171,6 +178,8 @@ func _apply_portrait(portrait_key: String, expression := "neutral") -> void:
 	_portrait_frame.visible = shown
 	var text_x := PresentationLayout.PORTRAIT_RECT.end.x + 6.0 if shown else 6.0
 	var text_width := _panel.size.x - text_x - PresentationLayout.RIGHT_MARGIN
+	_nameplate.position.x = text_x - 2.0
+	_nameplate.size.x = text_width + 4.0
 	_speaker_label.position.x = text_x
 	_text_label.position.x = text_x
 	_speaker_label.size.x = text_width

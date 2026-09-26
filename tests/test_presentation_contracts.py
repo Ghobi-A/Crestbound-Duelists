@@ -67,10 +67,14 @@ def test_optional_focal_assets_have_runtime_fallbacks() -> None:
     result = source("scripts/presentation/result_presentation.gd")
     assert '_title_label.text = "CRESTBOUND"' in boot
     assert '_subtitle_label.text = "D U E L I S T S"' in boot
-    assert "assets/landmarks/greymere_court_arch.png" in world
-    assert "if not ResourceLoader.exists(path):\n\t\treturn" in world
+    assert "extends WorldLocation" in world
+    assert "WorldCatalog" in source("scripts/overworld/world_location.gd")
     assert "assets/ui/results/%s.png" in result and "key.to_upper()" in result
-    assert "_optional_texture" in setup
+    # The formation panel now shows class/Crest metadata beside the
+    # established portrait; there are no nonexistent icon/card paths.
+    assert "_identity_label.text" in setup
+    assert "assets/crests/%s/icon.png" not in setup
+    assert "assets/entities/%s/card.png" not in setup
 
 
 def test_audio_missing_files_are_cached_and_silent() -> None:

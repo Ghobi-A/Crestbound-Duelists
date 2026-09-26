@@ -157,10 +157,12 @@ func check_battle_flow(force_defeat: bool) -> void:
 	add_child(scene)
 	await get_tree().process_frame
 	while scene.dialogue.active: scene.dialogue._advance()
-	# Test-only health fixture accelerates defeat; the normal victory run uses
-	# unmodified combat data, targeting, AI and damage calculations.
+	# Test-only health fixtures make both result screens deterministic while
+	# attacks, targeting, AI and damage still run through the actual runtime.
 	if force_defeat:
 		for unit in scene.runtime.player_units: unit.hp = 1
+	else:
+		for unit in scene.runtime.enemy_units: unit.hp = 1
 	Engine.time_scale = 50
 	var steps := 0
 	while scene.state != scene.State.RESULT and steps < 20000:
@@ -174,6 +176,7 @@ func check_battle_flow(force_defeat: bool) -> void:
 		await get_tree().process_frame
 		steps += 1
 	check(scene.state == scene.State.RESULT, "Battle did not reach result")
+	print("BATTLE_SMOKE_RESULT: force_defeat=%s victory=%s defeat=%s" % [force_defeat, scene.runtime.victory(), scene.runtime.defeat()])
 	check(scene.runtime.defeat() if force_defeat else scene.runtime.victory(), "Unexpected battle result")
 	check(scene.result_presentation != null, "Result presentation missing")
 	Engine.time_scale = 1
