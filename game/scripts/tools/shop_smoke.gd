@@ -34,5 +34,19 @@ func _ready() -> void:
 	legacy.erase("inventory")
 	GameState.from_save_dict(legacy)
 	check(GameState.crowns == 60 and GameState.inventory.is_empty(), "old save defaults")
+	var panel := TradePanel.new()
+	add_child(panel)
+	await get_tree().process_frame
+	panel.open(true)
+	var press := InputEventAction.new()
+	press.action = "interact"
+	press.pressed = true
+	panel._unhandled_input(press)
+	check(GameState.crowns == 42 and GameState.inventory.potion == 1, "shop UI commits purchase")
+	GameState.party[0]["current_hp"] = 10
+	panel.open(false)
+	panel._unhandled_input(press)
+	check(GameState.party[0].current_hp == 35 and GameState.inventory.potion == 0, "field UI commits use")
+	panel.close()
 	print("SHOP_SMOKE: %d failures" % failures.size())
 	get_tree().quit(0 if failures.is_empty() else 1)

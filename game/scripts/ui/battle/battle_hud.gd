@@ -87,9 +87,10 @@ func _ready() -> void:
 
 func build_rows(player_units: Array) -> void:
 	var count := maxi(1, player_units.size())
-	# Cards share the card area but never stretch past a comfortable width
-	# for 1v1 and 2v2 encounters.
-	var card_width := minf(92.0, (CARD_AREA.size.x - 3.0 * (count - 1)) / count)
+	# A duel gets one substantial centered card; full parties divide the
+	# same bounded area without reserving blank slots for absent members.
+	var card_width := minf(130.0, (CARD_AREA.size.x - 3.0 * (count - 1)) / count)
+	_rows_container.position.x = CARD_AREA.position.x + (CARD_AREA.size.x - card_width * count - 3.0 * (count - 1)) / 2.0
 	for unit in player_units:
 		var row := UnitStatusPanel.new()
 		row.custom_minimum_size = Vector2(card_width, CARD_AREA.size.y)
@@ -99,13 +100,13 @@ func build_rows(player_units: Array) -> void:
 		_rows[unit] = row
 
 
-func build_enemy_plates(enemy_units: Array) -> void:
+func build_enemy_plates(enemy_units: Array, player_count: int = 3) -> void:
 	var count := maxi(1, enemy_units.size())
 	var width := minf(76.0, 122.0 / count - 2.0)
 	for unit in enemy_units:
 		var plate := EnemyStatusPlate.new()
 		add_child(plate)
-		var home := PresentationLayout.stage_position("enemy", unit.slot_index, count, unit.position)
+		var home := PresentationLayout.stage_position("enemy", unit.slot_index, count, unit.position, player_count)
 		plate.bind(unit, width, home.x)
 		_enemy_plates[unit] = plate
 

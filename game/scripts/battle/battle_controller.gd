@@ -104,19 +104,21 @@ func _stage_background() -> void:
 func _stage_units() -> void:
 	for unit in runtime.all_units():
 		var count := runtime.player_units.size() if unit.team == "player" else runtime.enemy_units.size()
-		sprites[unit] = (stage as BattleStage).add_combatant(unit, count)
+		var opposing := runtime.enemy_units.size() if unit.team == "player" else runtime.player_units.size()
+		sprites[unit] = (stage as BattleStage).add_combatant(unit, count, opposing)
 
 
 func stage_position(unit: BattleUnit) -> Vector2:
 	var count := runtime.player_units.size() if unit.team == "player" else runtime.enemy_units.size()
-	return PresentationLayout.stage_position(unit.team, unit.slot_index, count, unit.position)
+	var opposing := runtime.enemy_units.size() if unit.team == "player" else runtime.player_units.size()
+	return PresentationLayout.stage_position(unit.team, unit.slot_index, count, unit.position, opposing)
 
 
 func _build_hud() -> void:
 	hud = BattleHud.new()
 	add_child(hud)
 	hud.build_rows(runtime.player_units)
-	hud.build_enemy_plates(runtime.enemy_units)
+	hud.build_enemy_plates(runtime.enemy_units, runtime.player_units.size())
 
 
 func _build_dialogue() -> void:
