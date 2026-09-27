@@ -22,6 +22,9 @@ func _draw() -> void:
 	draw_rect(Rect2(Vector2.ZERO, size), Color(0.025, 0.035, 0.06, 0.88))
 	draw_rect(Rect2(0, 0, size.x, 0.5), rim)
 	var label := "DOWN" if not unit.is_alive() else unit.display_name.to_upper()
+	if UiStyle.text_width(label, 5, UiStyle.MEDIUM) > size.x - 6:
+		var words := label.split(" ", false)
+		label = words[words.size() - 1]
 	while label.length() > 1 and UiStyle.text_width(label, 5, UiStyle.MEDIUM) > size.x - 6:
 		label = label.left(label.length() - 2) + "…"
 	UiStyle.draw_text(self, Vector2(3, 7), label, 5, UiStyle.TEXT if unit.is_alive() else UiStyle.TEXT_FAINT, size.x - 6, HORIZONTAL_ALIGNMENT_CENTER, UiStyle.MEDIUM)

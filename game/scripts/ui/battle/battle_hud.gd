@@ -102,7 +102,9 @@ func build_rows(player_units: Array) -> void:
 
 func build_enemy_plates(enemy_units: Array, player_count: int = 3) -> void:
 	var count := maxi(1, enemy_units.size())
-	var width := minf(76.0, 122.0 / count - 2.0)
+	# The stage spaces two/three slots 42px apart. Cap each plate below
+	# that stride rather than allocating half the whole enemy side for 2v2.
+	var width := 76.0 if count == 1 else minf(40.0, 122.0 / count - 2.0)
 	for unit in enemy_units:
 		var plate := EnemyStatusPlate.new()
 		add_child(plate)
