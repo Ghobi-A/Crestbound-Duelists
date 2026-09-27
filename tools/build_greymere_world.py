@@ -47,7 +47,7 @@ def compile_world():
     props = buildings + [prop("gate",17,5),prop("spring",22,24),prop("notice",20,12),prop("bridge",4,26)]
     props += [prop("wall",x,8) for x in [12,22]]
     props += [prop("wall",x,29) for x in [10,24]]
-    props += [prop("crates",x,y) for x,y in [(5,22),(28,21),(28,11),(5,11)]]
+    props += [prop("crates",x,y) for x,y in [(5,22),(28,21),(28,11),(5,11),(30,14),(43,18)]]
     props += [prop("hedge",x,y) for x,y in [(12,22),(28,24),(12,11),(21,10),(28,15),(6,15),(23,28),(11,28)]]
     props += [prop("lamp",x,y) for x,y in [(13,21),(26,20),(13,10),(27,10),(15,7),(19,7),(15,28),(19,28),(32,19),(37,19),(39,27)]]
     props += [prop("hedge",x,y) for x,y in [(32,22),(32,26)]]
@@ -67,14 +67,14 @@ def compile_world():
     # a cottage reads smaller than a shop. The doormat and exit stay at x=10.
     full=(1,20)
     definitions=[
-      dict(id="lena_house",name="LENA'S HOUSE",subtitle="Herbs, hearth and home",return_spawn="lena_return",walls=full,
+      dict(id="lena_house",name="LENA'S HOUSE",subtitle="Herbs, hearth and home",return_spawn="lena_return",walls=(3,16),
            props=[prop("hearth",5,5),prop("jars",15,5),prop("workbench",5,8),prop("bed",16,8),prop("chest",17,10),prop("table",9,8)],
            npcs=[npc("Lena","townsfolk/herbalist_woman","wren_flavor",6,10)],
            inspect={(5,8):"Dried herbs hang above clean bottles. Everything is within easy reach."},
            lights=[(5,4),(15,8)]),
       dict(id="inn",name="GREYMERE INN",subtitle="Warmth along the road",return_spawn="inn_return",walls=full,
-           props=[prop("hearth",5,4),prop("counter",14,6),prop("jars",15,3),prop("table",5,9),prop("table",14,10),prop("crates",17,10),prop("bed",17,4)],
-           npcs=[npc("Goodwife Senna","townsfolk/elder_woman","senna_flavor",12,4),npc("Joey","townsfolk/farmboy","toby_flavor",7,10)],
+           props=[prop("hearth",5,4),prop("counter",14,6),prop("jars",16,4),prop("table",5,9),prop("table",14,10),prop("crates",17,10),prop("table",8,5)],
+           npcs=[npc("Goodwife Senna","townsfolk/elder_woman","senna_flavor",12,4),npc("Joey","townsfolk/farmboy","toby_flavor",7,10),npc("Old Ferris","townsfolk/torch_bearer","ferris_flavor",18,8,(-1,0))],
            inspect={(14,6):"The timber smells of smoke and spilled ale. Someone has set out fresh mugs."},
            lights=[(5,4),(15,8)]),
       dict(id="silas_study",name="SILAS'S STUDY",subtitle="Old papers. Older questions.",return_spawn="silas_return",walls=full,
@@ -112,7 +112,8 @@ def compile_world():
         rect(grid,10,11,2,1,":")
         rooms[id]=dict(id=id,name=room["name"],subtitle=room["subtitle"],scene=f"res://scenes/overworld/{id}.tscn",rows=["".join(r) for r in grid],interior=True,music_id="greymere",props=room["props"],npcs=room["npcs"],spawn_points={"entrance":spawn(10,10,(0,-1))},
           doors=[dict(building_id=id,tile=[10,12],destination_location="greymere",destination_scene="res://scenes/overworld/greymere.tscn",destination_spawn=room["return_spawn"],return_spawn="entrance",locked=False,locked_dialogue_id="locked_door",transition_type="fade",verb="Leave")],
-          interactions=[dict(tile=list(tile),verb="Inspect",text=text) for tile,text in room["inspect"].items()],
+          interactions=[dict(tile=list(tile),verb="Browse" if id == "gell_shop" and tile == (9,6) else "Inspect",text=text,
+                             **({"kind":"shop"} if id == "gell_shop" and tile == (9,6) else {})) for tile,text in room["inspect"].items()],
           lights=[dict(tile=list(tile),color="warm") for tile in room["lights"]])
     OUT.mkdir(exist_ok=True)
     (OUT/"locations.json").write_text(json.dumps({"revision":1,"locations":{"greymere":town,**rooms}},indent=2)+"\n")

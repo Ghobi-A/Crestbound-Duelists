@@ -116,6 +116,7 @@ func _build_hud() -> void:
 	hud = BattleHud.new()
 	add_child(hud)
 	hud.build_rows(runtime.player_units)
+	hud.build_enemy_plates(runtime.enemy_units)
 
 
 func _build_dialogue() -> void:
@@ -174,6 +175,7 @@ func _open_menu_for_current() -> void:
 func _clear_all_highlights() -> void:
 	for u in sprites:
 		sprites[u].clear_highlight()
+	hud.highlight_enemy(null)
 	_clear_target_dim()
 
 
@@ -187,10 +189,12 @@ func _clear_target_side() -> void:
 		if sprites.has(u):
 			sprites[u].clear_highlight()
 	_clear_target_dim()
+	hud.highlight_enemy(null)
 
 
 func _refresh_target_highlights() -> void:
 	var current := target_selector.current()
+	hud.highlight_enemy(current)
 	for u in target_selector.targets:
 		if sprites.has(u):
 			sprites[u].set_highlighted("target" if u == current else "")
@@ -438,6 +442,13 @@ func _after_result(player_won: bool) -> void:
 
 
 func _leave_after_victory() -> void:
+	# Carry damage into the field so purchased supplies have a meaningful use.
+	# The roster keeps its original order even when party setup selects a subset.
+	for unit in runtime.player_units:
+		for member in GameState.party:
+			if str(member.get("name", "")) == unit.display_name:
+				member["current_hp"] = maxi(1, unit.hp)
+				break
 	var encounter_id: String = runtime.encounter.get("id", GameState.pending_encounter)
 	GameState.set_flag("%s_won" % encounter_id)
 	if GameState.pending_encounter == "hollow_court_battle":

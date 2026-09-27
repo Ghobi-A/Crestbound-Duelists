@@ -1,0 +1,6 @@
+{
+  "items": [
+    {"id": "potion", "name": "Potion", "description": "Restores 25 HP to a wounded Duelist between battles.", "price": 18, "heal": 25},
+    {"id": "hi_potion", "name": "Hi-Potion", "description": "Restores 55 HP to a wounded Duelist between battles.", "price": 42, "heal": 55}
+  ]
+}

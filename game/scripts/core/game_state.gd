@@ -42,6 +42,8 @@ var location_id := "greymere"
 var location_spawn := "approach"
 var location_revision := 1
 var player_facing := Vector2i(0,-1)
+var crowns := 60
+var inventory: Dictionary = {} # item id -> quantity
 
 
 func start_new_game(class_id: String) -> void:
@@ -54,6 +56,8 @@ func start_new_game(class_id: String) -> void:
 	location_spawn = "approach"
 	location_revision = 1
 	player_facing = Vector2i(0,-1)
+	crowns = 60
+	inventory = {}
 	pending_encounter = "hollow_court_battle"
 	_build_default_party()
 
@@ -106,6 +110,34 @@ func has_flag(flag_name: String) -> bool:
 	return flags.get(flag_name, false)
 
 
+func purchase_item(id: String) -> String:
+	var item := ItemCatalog.get_item(id)
+	if item.is_empty():
+		return "Unavailable."
+	var price := int(item.get("price", 0))
+	if price <= 0 or crowns < price:
+		return "Not enough crowns."
+	crowns -= price
+	inventory[id] = int(inventory.get(id, 0)) + 1
+	return "Purchased %s." % str(item.name)
+
+
+func use_item(id: String, party_index: int) -> String:
+	var item := ItemCatalog.get_item(id)
+	if item.is_empty() or int(inventory.get(id, 0)) <= 0:
+		return "None left."
+	if party_index < 0 or party_index >= party.size():
+		return "No such Duelist."
+	var member: Dictionary = party[party_index]
+	var hp_max := int(GameData.get_class_record(str(member.get("class_id", "neutral"))).get("base_stats", {}).get("hp", 1))
+	var hp := int(member.get("current_hp", hp_max))
+	if hp >= hp_max:
+		return "Already at full health."
+	member["current_hp"] = mini(hp_max, hp + int(item.get("heal", 0)))
+	inventory[id] = int(inventory[id]) - 1
+	return "%s recovered %d HP." % [str(member.name), int(member.current_hp) - hp]
+
+
 func to_save_dict() -> Dictionary:
 	return {
 		"player_name": player_name,
@@ -120,6 +152,8 @@ func to_save_dict() -> Dictionary:
 		"location_spawn": location_spawn,
 		"location_revision": location_revision,
 		"player_facing": [player_facing.x, player_facing.y],
+		"crowns": crowns,
+		"inventory": inventory,
 	}
 
 
@@ -141,3 +175,5 @@ func from_save_dict(data: Dictionary) -> void:
 	location_revision = int(data.get("location_revision",0))
 	var facing: Array = data.get("player_facing",[0,1])
 	player_facing = Vector2i(int(facing[0]),int(facing[1]))
+	crowns = maxi(0, int(data.get("crowns", 60)))
+	inventory = data.get("inventory", {}) if typeof(data.get("inventory", {})) == TYPE_DICTIONARY else {}

@@ -20,6 +20,7 @@ var _message_plate: ColorRect
 var _info_label: Label
 var _info_panel: UiPanel
 var _rows: Dictionary = {}   # BattleUnit -> UnitStatusPanel
+var _enemy_plates: Dictionary = {} # BattleUnit -> EnemyStatusPlate
 var _rows_container: HBoxContainer
 var _flash_rect: ColorRect
 var _banner_label: Label
@@ -98,9 +99,28 @@ func build_rows(player_units: Array) -> void:
 		_rows[unit] = row
 
 
+func build_enemy_plates(enemy_units: Array) -> void:
+	var count := maxi(1, enemy_units.size())
+	var width := minf(76.0, 122.0 / count - 2.0)
+	for unit in enemy_units:
+		var plate := EnemyStatusPlate.new()
+		add_child(plate)
+		var home := PresentationLayout.stage_position("enemy", unit.slot_index, count, unit.position)
+		plate.bind(unit, width, home.x)
+		_enemy_plates[unit] = plate
+
+
+func highlight_enemy(unit: BattleUnit) -> void:
+	for enemy in _enemy_plates:
+		_enemy_plates[enemy].selected = enemy == unit
+		_enemy_plates[enemy].refresh()
+
+
 func refresh_rows() -> void:
 	for row in _rows.values():
 		row.refresh()
+	for plate in _enemy_plates.values():
+		plate.refresh()
 
 
 func highlight_unit(unit: BattleUnit) -> void:

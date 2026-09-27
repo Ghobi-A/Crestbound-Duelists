@@ -179,6 +179,20 @@
           ]
         },
         {
+          "asset": "crates",
+          "tile": [
+            30,
+            14
+          ]
+        },
+        {
+          "asset": "crates",
+          "tile": [
+            43,
+            18
+          ]
+        },
+        {
           "asset": "hedge",
           "tile": [
             12,
@@ -924,18 +938,18 @@
       "scene": "res://scenes/overworld/lena_house.tscn",
       "rows": [
         "______________________",
-        "_####################_",
-        "_####################_",
-        "_#wwwwwwwwwwwwwwwwww#_",
-        "_#wwwwwwwwwwwwwwwwww#_",
-        "_#wwwwwwwwwwwwwwwwww#_",
-        "_#wwwwwwwwwwwwwwwwww#_",
-        "_#wwwwwwwwwwwwwwwwww#_",
-        "_#wwwwwwwwwwwwwwwwww#_",
-        "_#wwwwwwwwwwwwwwwwww#_",
-        "_#wwwwwwwwwwwwwwwwww#_",
-        "_#wwwwwwww::wwwwwwww#_",
-        "_####################_",
+        "___################___",
+        "___################___",
+        "___#wwwwwwwwwwwwww#___",
+        "___#wwwwwwwwwwwwww#___",
+        "___#wwwwwwwwwwwwww#___",
+        "___#wwwwwwwwwwwwww#___",
+        "___#wwwwwwwwwwwwww#___",
+        "___#wwwwwwwwwwwwww#___",
+        "___#wwwwwwwwwwwwww#___",
+        "___#wwwwwwwwwwwwww#___",
+        "___#wwwwww::wwwwww#___",
+        "___################___",
         "______________________"
       ],
       "interior": true,
@@ -1096,8 +1110,8 @@
         {
           "asset": "jars",
           "tile": [
-            15,
-            3
+            16,
+            4
           ]
         },
         {
@@ -1122,10 +1136,10 @@
           ]
         },
         {
-          "asset": "bed",
+          "asset": "table",
           "tile": [
-            17,
-            4
+            8,
+            5
           ]
         }
       ],
@@ -1154,6 +1168,19 @@
           "facing": [
             0,
             1
+          ]
+        },
+        {
+          "name": "Old Ferris",
+          "sprite_key": "townsfolk/torch_bearer",
+          "dialogue": "ferris_flavor",
+          "tile": [
+            18,
+            8
+          ],
+          "facing": [
+            -1,
+            0
           ]
         }
       ],
@@ -1482,8 +1509,9 @@
             9,
             6
           ],
-          "verb": "Inspect",
-          "text": "Gell's ledger lies open beside a stack of Civara broadsheets he insists are recent."
+          "verb": "Browse",
+          "text": "Gell's ledger lies open beside a stack of Civara broadsheets he insists are recent.",
+          "kind": "shop"
         },
         {
           "tile": [

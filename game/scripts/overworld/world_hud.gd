@@ -15,7 +15,7 @@ const MENU_PADDING := 10.0
 const HUD_HEIGHT := 12.0
 const ROW_TOP := 22.0
 const ROW_HEIGHT := 11.0
-const CHOICES := ["Resume", "Save game", "Title screen"]
+const CHOICES := ["Resume", "Save game", "Inventory", "Title screen"]
 
 func _ready() -> void:
 	layer = 5
