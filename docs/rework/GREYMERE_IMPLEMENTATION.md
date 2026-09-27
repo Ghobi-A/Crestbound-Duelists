@@ -14,8 +14,9 @@ release. Combat resolution and balance are unchanged.
   footprints, Y-sorted actors/props, bounded rounded camera follow and transitions.
 - Location-aware save/load including current tile/facing; migration of older saves.
 - Bottom location/context HUD and working Resume / Save game / Title screen menu.
-- Native 320x180 viewport rendering and integer browser scaling without the old
-  size cap, CSS transform or external controls paragraph.
+- Logical 320x180 layout rendered into a 640x360 buffer. Source art now receives
+  twice as many display samples on each axis before integer scaling to 720p
+  (2x) or 1080p (3x), without changing collision, camera coverage or UI geometry.
 - Reference audit covering all Greymere residents and six Kai classes. Long
   silver hair for Almyra and green cap for Gell are explicitly locked.
 - Seventeen new runtime overworld sheets share Kai's proportions and four explicit
@@ -83,6 +84,11 @@ contact poses still need refinement. See `AUTHORED_OVERWORLD_PASS.md`.
   portraits remain in their frames, text clears the portraits, no roster row
   bleeds into the next panel, and missing Crest/entity art no longer creates
   empty image boxes. The new modal scrim landed after this run.
+- The high-detail render pass in [run 36270775603](https://github.com/Ghobi-A/Crestbound-Duelists/actions/runs/36270775603)
+  passed Godot scene capture, movement/combat smoke, Web export, and browser
+  checks at 640x360, 1024x768, 1280x720, and 1920x1080. The 720p town,
+  formation, battle and 1080p browser frames were inspected: their source art
+  has clearer detail without shifting feet, formation positions or UI bounds.
 
 Captured native-resolution evidence:
 
@@ -122,8 +128,8 @@ they are not substituted for registered Greymere characters.
 The environment is a substantial functional rebuild, not yet the supplied target
 image's finished art quality. In particular, asset pixel density, lighting,
 terrain transitions and character/environment cohesion still need visual work.
-The browser supports integer fit at or above 320x180; a smaller browser window
-cannot display that native viewport in full without scrolling/cropping. Touch
+The browser supports integer fit at or above 640x360; a smaller browser window
+cannot display the render buffer in full without scrolling/cropping. Touch
 movement controls are not implemented.
 
 The broader combat presentation pass remains separate: existing system-pulse VFX

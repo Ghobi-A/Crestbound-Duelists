@@ -26,9 +26,12 @@ extends Node
 const SCENE_PATHS := {
 	"boot": "res://scenes/boot/boot.tscn",
 	"party_setup": "res://scenes/ui/party_setup.tscn",
+	"party_back_row": "res://scenes/ui/party_setup.tscn",
 	"overworld": "res://scenes/overworld/greymere.tscn",
 	"battle": "res://scenes/battle/party_battle.tscn",
 	"battle_target": "res://scenes/battle/party_battle.tscn",
+	"battle_victory": "res://scenes/battle/party_battle.tscn",
+	"battle_defeat": "res://scenes/battle/party_battle.tscn",
 	"lena_house": "res://scenes/overworld/lena_house.tscn",
 	"inn": "res://scenes/overworld/inn.tscn",
 	"silas_study": "res://scenes/overworld/silas_study.tscn",
@@ -37,10 +40,12 @@ const SCENE_PATHS := {
 	"west_lane": "res://scenes/overworld/greymere.tscn",
 	"dialogue_portrait": "res://scenes/overworld/greymere.tscn",
 	"dialogue_notice": "res://scenes/overworld/greymere.tscn",
+	"dialogue_long": "res://scenes/overworld/greymere.tscn",
 }
 
 const SETTLE_FRAMES := 30
 const PRESS_GAP_FRAMES := 6
+const QA_LONG_KEY := "qa_long"
 const REVIEW_CLASSES := ["neutral", "warrior", "guardian", "mage", "sorcerer", "assassin"]
 
 var target := "overworld"
@@ -60,7 +65,7 @@ func _ready() -> void:
 	var scene: Node = load(scene_path).instantiate()
 	get_tree().root.add_child(scene)
 	await _frames(SETTLE_FRAMES)
-	if target == "battle" or target == "battle_target":
+	if target in ["battle", "battle_target", "battle_victory", "battle_defeat"]:
 		# battle_intro is 3 entries totalling 6 lines; one press per line
 		# leaves the round-1 command menu open.
 		for _page in 100:
@@ -72,9 +77,19 @@ func _ready() -> void:
 			# Open the first move to leave target selection active, so
 			# the baseline shows the highlight ring and dimming.
 			await _press_times(1)
-	elif target == "dialogue_portrait" or target == "dialogue_notice":
+		elif target in ["battle_victory", "battle_defeat"]:
+			scene._finish(target == "battle_victory")
+	elif target in ["dialogue_portrait", "dialogue_notice", "dialogue_long"]:
 		var dialogue: DialogueBox = scene.get("_dialogue") as DialogueBox
-		dialogue.play("elara_intro" if target == "dialogue_portrait" else "notice_board")
+		if target == "dialogue_long":
+			dialogue._dialogue_data[QA_LONG_KEY] = [{
+				"speaker": "Warden Almyra",
+				"portrait": "elara",
+				"lines": ["The Court was sealed before anyone in Greymere could remember its purpose. This unusually long line tests the portrait margin, actual font measurement, wrapping and pagination without changing story dialogue."],
+			}]
+			dialogue.play(QA_LONG_KEY)
+		else:
+			dialogue.play("elara_intro" if target == "dialogue_portrait" else "notice_board")
 	await _frames(SETTLE_FRAMES)
 	await _capture("baseline_%s" % target)
 	get_tree().quit(0)
@@ -90,10 +105,13 @@ func _parse_args() -> void:
 
 func _seed_state() -> void:
 	GameState.start_new_game(target.trim_prefix("class_") if target.begins_with("class_") else "warrior")
+	if target == "party_back_row":
+		GameState.party[0]["position"] = "back"
+		GameState.party[2]["position"] = "front"
 	if target in ["lena_house","inn","silas_study"]:
 		GameState.location_id = target
 		GameState.location_spawn = "entrance"
-	elif target in ["town_square","court_gate","west_lane","dialogue_portrait","dialogue_notice"] or target.begins_with("class_"):
+	elif target in ["town_square","court_gate","west_lane","dialogue_portrait","dialogue_notice","dialogue_long"] or target.begins_with("class_"):
 		GameState.location_spawn = ""
 		GameState.player_tile = {"town_square":Vector2i(17,20),"court_gate":Vector2i(17,7),"west_lane":Vector2i(10,23)}.get(target, Vector2i(17,20))
 	GameState.set_flag("overworld_onboarding_seen")

@@ -151,7 +151,10 @@ renders readable text-only menus.
 
 ## Layout constraints
 
-The internal canvas is **320x180**. Two rules follow from that and have
+The layout canvas is **320x180**, rendered at **640x360**. Browser output is
+integer-scaled to **1280x720** or **1920x1080**; source textures gain detail
+at the 640x360 stage while UI coordinates and font sizes stay consistent.
+Two rules follow from the compact layout and have
 both already caused real bugs:
 
 1. **Clamp label width to the panel interior.** A label left at default
