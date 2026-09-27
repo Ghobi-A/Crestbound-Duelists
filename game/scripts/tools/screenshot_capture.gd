@@ -45,6 +45,7 @@ const SCENE_PATHS := {
 	"shop_insufficient": "res://scenes/overworld/gell_shop.tscn",
 	"inventory_open": "res://scenes/overworld/greymere.tscn",
 	"inventory_used": "res://scenes/overworld/greymere.tscn",
+	"pause_menu": "res://scenes/overworld/greymere.tscn",
 	"joey_home": "res://scenes/overworld/joey_home.tscn",
 	"kai_house": "res://scenes/overworld/kai_house.tscn",
 	"east_lane": "res://scenes/overworld/greymere.tscn",
@@ -113,6 +114,9 @@ func _ready() -> void:
 		if target == "inventory_used": GameState.party[0]["current_hp"] = 30
 		scene._trade.open(false)
 		if target == "inventory_used": _press_trade(scene._trade)
+	elif target == "pause_menu":
+		scene._menu_open = true
+		scene._hud.show_menu(2, "")
 	await _frames(SETTLE_FRAMES)
 	await _capture("baseline_%s" % target)
 	get_tree().quit(0)

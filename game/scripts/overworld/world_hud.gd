@@ -10,7 +10,7 @@ var _scrim: ColorRect
 var menu_status: Label
 var _menu_rows: Array[Label] = []
 var _menu_band: UiDecor
-const MENU_SIZE := Vector2(150, 92)
+const MENU_SIZE := Vector2(150, 102)
 const MENU_PADDING := 10.0
 const HUD_HEIGHT := 12.0
 const ROW_TOP := 22.0
@@ -46,9 +46,9 @@ func _ready() -> void:
 		var row := UiStyle.make_label(menu, Rect2(MENU_PADDING + 11, ROW_TOP + i * ROW_HEIGHT, 110, ROW_HEIGHT - 2), CHOICES[i], 6, UiStyle.TEXT, UiStyle.MEDIUM)
 		row.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 		_menu_rows.append(row)
-	menu_status = UiStyle.make_label(menu, Rect2(MENU_PADDING, 60, MENU_SIZE.x - 2 * MENU_PADDING, 8), "", 5, UiStyle.TEXT_DIM)
+	menu_status = UiStyle.make_label(menu, Rect2(MENU_PADDING, 72, MENU_SIZE.x - 2 * MENU_PADDING, 8), "", 5, UiStyle.TEXT_DIM)
 	menu_status.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	var hints := UiStyle.make_label(menu, Rect2(MENU_PADDING, 77, MENU_SIZE.x - 2 * MENU_PADDING, 8), "Z SELECT   ·   ESC RETURN", 5, UiStyle.TEXT_FAINT, UiStyle.REGULAR, 1)
+	var hints := UiStyle.make_label(menu, Rect2(MENU_PADDING, 88, MENU_SIZE.x - 2 * MENU_PADDING, 8), "Z SELECT   ·   ESC RETURN", 5, UiStyle.TEXT_FAINT, UiStyle.REGULAR, 1)
 	hints.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	menu.visible = false
 
