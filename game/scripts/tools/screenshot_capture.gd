@@ -41,7 +41,10 @@ const SCENE_PATHS := {
 	"silas_study": "res://scenes/overworld/silas_study.tscn",
 	"gell_shop": "res://scenes/overworld/gell_shop.tscn",
 	"shop_open": "res://scenes/overworld/gell_shop.tscn",
+	"shop_purchased": "res://scenes/overworld/gell_shop.tscn",
+	"shop_insufficient": "res://scenes/overworld/gell_shop.tscn",
 	"inventory_open": "res://scenes/overworld/greymere.tscn",
+	"inventory_used": "res://scenes/overworld/greymere.tscn",
 	"joey_home": "res://scenes/overworld/joey_home.tscn",
 	"kai_house": "res://scenes/overworld/kai_house.tscn",
 	"east_lane": "res://scenes/overworld/greymere.tscn",
@@ -100,11 +103,16 @@ func _ready() -> void:
 		var dialogue: DialogueBox = scene.get("_dialogue") as DialogueBox
 		dialogue.play({"dialogue_portrait": "elara_intro", "dialogue_notice": "notice_board",
 			"dialogue_long": "toby_flavor"}[target])
-	elif target == "shop_open":
+	elif target in ["shop_open", "shop_purchased", "shop_insufficient"]:
+		if target == "shop_insufficient": GameState.crowns = 0
 		scene._trade.open(true)
-	elif target == "inventory_open":
+		if target != "shop_open":
+			_press_trade(scene._trade)
+	elif target in ["inventory_open", "inventory_used"]:
 		GameState.purchase_item("potion")
+		if target == "inventory_used": GameState.party[0]["current_hp"] = 30
 		scene._trade.open(false)
+		if target == "inventory_used": _press_trade(scene._trade)
 	await _frames(SETTLE_FRAMES)
 	await _capture("baseline_%s" % target)
 	get_tree().quit(0)
@@ -146,6 +154,13 @@ func _parse_args() -> void:
 			out_dir = arg.trim_prefix("--out=")
 
 
+func _press_trade(panel: TradePanel) -> void:
+	var event := InputEventAction.new()
+	event.action = "interact"
+	event.pressed = true
+	panel._unhandled_input(event)
+
+
 func _seed_state() -> void:
 	GameState.start_new_game(target.trim_prefix("class_") if target.begins_with("class_") else "warrior")
 	if target.begins_with("battle_") and target in ["battle_1v1", "battle_2v2", "battle_3v1"]:
@@ -156,8 +171,8 @@ func _seed_state() -> void:
 		fixture["intro_dialogue"] = ""
 		GameData.datasets.encounters[target] = fixture
 		GameState.pending_encounter = target
-	if target in ["lena_house","inn","silas_study","gell_shop","shop_open","joey_home","kai_house"]:
-		GameState.location_id = "gell_shop" if target == "shop_open" else target
+	if target in ["lena_house","inn","silas_study","gell_shop","shop_open","shop_purchased","shop_insufficient","joey_home","kai_house"]:
+		GameState.location_id = "gell_shop" if target.begins_with("shop_") else target
 		GameState.location_spawn = "entrance"
 	elif target in ["town_square","court_gate","west_lane","east_lane","dialogue_portrait","dialogue_notice","dialogue_long"] or target.begins_with("class_"):
 		GameState.location_spawn = ""
