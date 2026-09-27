@@ -56,7 +56,7 @@ static func create(build: Dictionary, team_: String, game_data: Node) -> BattleU
 	unit.moves = game_data.moves_for_class(unit.class_id)
 	var stats: Dictionary = unit.class_record.get("base_stats", {})
 	unit.max_hp = int(stats.get("hp", 1))
-	unit.hp = unit.max_hp
+	unit.hp = clampi(int(build.get("current_hp", unit.max_hp)), 1, unit.max_hp) if team_ == "player" else unit.max_hp
 	return unit
 
 

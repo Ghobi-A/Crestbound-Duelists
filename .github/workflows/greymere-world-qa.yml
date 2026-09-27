@@ -24,8 +24,8 @@ jobs:
         run: |
           # Every production screen, each Kai class, both formations, both
           # results. 1080p repeats the screens most sensitive to detail.
-          ALL="boot party_setup party_formation overworld town_square court_gate west_lane lena_house inn silas_study gell_shop joey_home kai_house east_lane dialogue_portrait dialogue_notice dialogue_long battle battle_target battle_preview victory defeat class_neutral class_warrior class_guardian class_mage class_sorcerer class_assassin"
-          HD="boot party_setup town_square inn dialogue_long battle battle_target battle_preview victory defeat class_mage"
+          ALL="boot party_setup party_formation overworld pause_menu town_square court_gate west_lane lena_house inn silas_study gell_shop shop_open shop_purchased shop_insufficient inventory_open inventory_used joey_home kai_house east_lane dialogue_portrait dialogue_notice dialogue_long battle battle_target battle_1v1 battle_2v2 battle_3v1 battle_preview victory defeat class_neutral class_warrior class_guardian class_mage class_sorcerer class_assassin"
+          HD="boot party_setup town_square inn shop_open shop_purchased inventory_open dialogue_long battle battle_target battle_1v1 battle_2v2 battle_3v1 battle_preview victory defeat class_mage"
           CRESTBOUND_CAPTURE_TARGETS="$ALL" bash tools/capture_screenshots.sh "$RUNNER_TEMP/world-qa/720p" 1280x720
           CRESTBOUND_CAPTURE_TARGETS="$HD" bash tools/capture_screenshots.sh "$RUNNER_TEMP/world-qa/1080p" 1920x1080
           CRESTBOUND_CAPTURE_TARGETS="town_square battle" bash tools/capture_screenshots.sh "$RUNNER_TEMP/world-qa/360p" 640x360
@@ -38,6 +38,8 @@ jobs:
           grep -q 'WORLD_SMOKE: 0 failures' "$RUNNER_TEMP/world-qa/world.log"
           timeout 90s "$GODOT" --headless --max-fps 120 --path game res://scenes/tools/presentation_smoke.tscn 2>&1 | tee "$RUNNER_TEMP/world-qa/presentation.log"
           grep -q 'PRESENTATION_SMOKE: 0 failures' "$RUNNER_TEMP/world-qa/presentation.log"
+          timeout 30s "$GODOT" --headless --path game res://scenes/tools/shop_smoke.tscn 2>&1 | tee "$RUNNER_TEMP/world-qa/shop.log"
+          grep -q 'SHOP_SMOKE: 0 failures' "$RUNNER_TEMP/world-qa/shop.log"
       - name: Export and exercise browser build
         run: |
           curl -fsSL https://github.com/godotengine/godot/releases/download/4.3-stable/Godot_v4.3-stable_export_templates.tpz -o "$RUNNER_TEMP/templates.zip"

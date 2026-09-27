@@ -8,6 +8,7 @@ var _player: OverworldPlayer
 var _camera: Camera2D
 var _dialogue: DialogueBox
 var _hud: WorldHud
+var _trade: TradePanel
 var _npc_tiles: Dictionary = {}
 var _blocked: Dictionary = {}
 var _doors: Dictionary = {}
@@ -31,6 +32,8 @@ func _ready() -> void:
 	_build_camera()
 	_hud = WorldHud.new()
 	add_child(_hud)
+	_trade = TradePanel.new()
+	add_child(_trade)
 	_hud.location_label.text = str(definition.name).to_upper()
 	GameState.current_scene = str(definition.scene)
 	GameState.location_id = location_id
@@ -124,14 +127,14 @@ func is_walkable(tile: Vector2i) -> bool:
 
 func _process(delta: float) -> void:
 	if _player == null: return
-	_player.movement_locked = _dialogue.active or _menu_open or SceneTransition._busy
+	_player.movement_locked = _dialogue.active or _menu_open or _trade.active or SceneTransition._busy
 	_camera_follow = _camera_follow.lerp(_player.position + CAMERA_LOOK_AHEAD,1.0-exp(-10.0*delta))
 	_camera.position = _camera_follow.round()
 	_hud.visible = not _dialogue.active
 	_hud.show_context(context_verb())
 
 func context_verb() -> String:
-	if _player.is_moving() or _menu_open or _dialogue.active: return ""
+	if _player.is_moving() or _menu_open or _dialogue.active or _trade.active: return ""
 	var target := _player.tile + _player.facing
 	if _npc_tiles.has(target): return "Talk"
 	if _doors.has(target): return "Inspect" if _doors[target].locked else str(_doors[target].verb)
@@ -139,14 +142,14 @@ func context_verb() -> String:
 	return ""
 
 func _unhandled_input(event: InputEvent) -> void:
-	if not event.is_pressed() or event.is_echo() or _dialogue.active or SceneTransition._busy or _player.is_moving(): return
+	if not event.is_pressed() or event.is_echo() or _dialogue.active or _trade.active or SceneTransition._busy or _player.is_moving(): return
 	if event.is_action_pressed("cancel"):
 		_menu_open = not _menu_open
 		_menu_status = ""
 		if not _menu_open: _hud.hide_menu()
 	elif _menu_open:
-		if event.is_action_pressed("move_up"): _menu_cursor = wrapi(_menu_cursor-1,0,3)
-		elif event.is_action_pressed("move_down"): _menu_cursor = wrapi(_menu_cursor+1,0,3)
+		if event.is_action_pressed("move_up"): _menu_cursor = wrapi(_menu_cursor-1,0,WorldHud.CHOICES.size())
+		elif event.is_action_pressed("move_down"): _menu_cursor = wrapi(_menu_cursor+1,0,WorldHud.CHOICES.size())
 		elif event.is_action_pressed("interact"):
 			match _menu_cursor:
 				0:
@@ -155,7 +158,11 @@ func _unhandled_input(event: InputEvent) -> void:
 				1:
 					_remember_position()
 					_menu_status = "Saved." if SaveManager.save_game() else "Save failed."
-				2: SceneTransition.change_scene("res://scenes/boot/boot.tscn")
+				2:
+					_menu_open = false
+					_hud.hide_menu()
+					_trade.open(false)
+				3: SceneTransition.change_scene("res://scenes/boot/boot.tscn")
 	elif event.is_action_pressed("interact"):
 		_try_interact()
 	if _menu_open: _hud.show_menu(_menu_cursor,_menu_status)
@@ -163,7 +170,10 @@ func _unhandled_input(event: InputEvent) -> void:
 func _try_interact() -> void:
 	var target := _player.tile + _player.facing
 	if _npc_tiles.has(target):
-		_play_dialogue(_npc_tiles[target].dialogue_key)
+		if location_id == "gell_shop" and _npc_tiles[target].npc_name == "Gell":
+			_trade.open(true)
+		else:
+			_play_dialogue(_npc_tiles[target].dialogue_key)
 	elif _doors.has(target):
 		var door: Dictionary = _doors[target]
 		if bool(door.locked): _play_dialogue(str(door.locked_dialogue_id))
@@ -172,7 +182,9 @@ func _try_interact() -> void:
 			if WorldCatalog.travel(door): _player.movement_locked = true
 	elif _interactions.has(target):
 		var interaction: Dictionary = _interactions[target]
-		if interaction.get("kind", "") == "court":
+		if interaction.get("kind", "") == "shop":
+			_trade.open(true)
+		elif interaction.get("kind", "") == "court":
 			_play_dialogue("court_entrance_cleared" if GameState.has_flag("hollow_court_cleared") else "court_entrance")
 		elif interaction.has("dialogue"): _play_dialogue(str(interaction.dialogue))
 		else:

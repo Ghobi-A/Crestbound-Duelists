@@ -45,13 +45,21 @@ func _ready() -> void:
 		for tile in world._npc_tiles:
 			await approach(tile)
 			interact()
-			check(world._dialogue.active, "resident dialogue")
-			while world._dialogue.active: world._dialogue._advance()
+			if world.location_id == "gell_shop":
+				check(world._trade.active, "shopkeeper opens shop")
+				world._trade.close()
+			else:
+				check(world._dialogue.active, "resident dialogue")
+				while world._dialogue.active: world._dialogue._advance()
 		for tile in world._interactions:
 			await approach(tile)
 			interact()
-			check(world._dialogue.active, "furniture inspection")
-			while world._dialogue.active: world._dialogue._advance()
+			if world._trade.active:
+				check(world.location_id == "gell_shop", "only shop counter opens trade")
+				world._trade.close()
+			else:
+				check(world._dialogue.active, "furniture inspection")
+				while world._dialogue.active: world._dialogue._advance()
 		var exit_tile := WorldCatalog.tile(world.definition.doors[0].tile)
 		await approach(exit_tile)
 		check(world.context_verb() == "Leave", "contextual exit")

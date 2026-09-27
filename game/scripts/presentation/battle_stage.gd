@@ -16,10 +16,10 @@ func build_background(location: String) -> void:
 	add_child(background)
 
 
-func add_combatant(unit: BattleUnit, count: int) -> DuelistSprite:
+func add_combatant(unit: BattleUnit, count: int, opponent_count: int = 3) -> DuelistSprite:
 	var sprite := DuelistSprite.new()
 	add_child(sprite)
-	var home := PresentationLayout.stage_position(unit.team, unit.slot_index, count, unit.position)
+	var home := PresentationLayout.stage_position(unit.team, unit.slot_index, count, unit.position, opponent_count)
 	sprite.configure(unit, home)
 	sprite.z_index = int(home.y)
 	return sprite
