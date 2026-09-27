@@ -17,10 +17,13 @@ func _ready() -> void:
 	await settled()
 	check(world.location_id == "greymere", "new game location")
 	check(world._player.tile == Vector2i(17,29), "approach spawn")
-	for building in ["lena", "inn", "silas"]:
-		var door: Dictionary = {}
-		for candidate in world.definition.doors:
-			if candidate.building_id == building: door = candidate
+	# Every unlocked building in town, including ones added later.
+	var buildings: Array[Dictionary] = []
+	for candidate in world.definition.doors:
+		if not bool(candidate.get("locked", false)): buildings.append(candidate)
+	check(buildings.size() >= 6, "explorable buildings")
+	for door in buildings:
+		var building: String = str(door.building_id)
 		var target := WorldCatalog.tile(door.tile)
 		await walk_to(target + Vector2i.DOWN)
 		world._player.facing = Vector2i.UP

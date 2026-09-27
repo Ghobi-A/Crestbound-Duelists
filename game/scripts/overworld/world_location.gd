@@ -31,7 +31,7 @@ func _ready() -> void:
 	_build_camera()
 	_hud = WorldHud.new()
 	add_child(_hud)
-	_hud.location_label.text = str(definition.name)
+	_hud.location_label.text = str(definition.name).to_upper()
 	GameState.current_scene = str(definition.scene)
 	GameState.location_id = location_id
 	GameState.location_revision = 1

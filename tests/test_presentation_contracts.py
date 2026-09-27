@@ -102,96 +102,34 @@ def test_scene_changes_use_semantic_transition_gateway() -> None:
         assert "SceneTransition.change_scene" in source(relative)
 
 
-def test_no_ui_text_is_rendered_below_the_bitmap_font_native_size() -> None:
-    """`crestbound_font.fnt` is an 8px bitmap face.
+def test_ui_uses_the_licensed_vector_face_at_a_readable_size() -> None:
+    """The interface face is IBM Plex Mono (OFL), rendered as MSDF.
 
-    Godot rescales bitmap glyphs to any requested size, and a factor below
-    1.0 drops whole pixel rows: strokes vanish and letters turn into other
-    letters. Party setup shipped at 6-7px and rendered "ACTIVE" as "NCTIVE"
-    and "Liora" as "L:ora". Sub-native sizes must never come back.
+    The layout is drawn at 2x-6x of 320x180, so a vector face stays crisp at
+    every output size. UiStyle clamps every size to MIN_FONT_SIZE (5 logical
+    px = 10 physical px at the smallest supported 640x360 output); direct
+    theme overrides must respect the same floor.
     """
-    fnt = (GAME / "assets/ui/crestbound_font.fnt").read_text(encoding="utf-8")
-    native = int(re.search(r"\bsize=(\d+)", fnt).group(1))
-    assert native == 8
+    project = (GAME / "project.godot").read_text(encoding="utf-8")
+    assert 'theme/custom_font="res://assets/ui/fonts/IBMPlexMono-Regular.ttf"' in project
+    assert (GAME / "assets/ui/fonts/OFL.txt").read_text(encoding="utf-8").startswith("Copyright")
+    for weight in ("Regular", "Medium", "SemiBold"):
+        imported = (GAME / f"assets/ui/fonts/IBMPlexMono-{weight}.ttf.import").read_text(encoding="utf-8")
+        assert "multichannel_signed_distance_field=true" in imported
+    style = source("scripts/ui/ui_style.gd")
+    floor = int(re.search(r"const MIN_FONT_SIZE := (\d+)", style).group(1))
+    assert floor >= 5
+    assert "maxi(size, MIN_FONT_SIZE)" in style
 
     offenders: list[str] = []
     for path in sorted(SCRIPTS.rglob("*.gd")):
-        text = path.read_text(encoding="utf-8")
-        lines = text.splitlines()
-
-        # Sizes written straight into the override.
-        for number, line in enumerate(lines, start=1):
-            for size in re.findall(
-                r'add_theme_font_size_override\(\s*"font_size"\s*,\s*(\d+)', line
-            ):
-                if int(size) < native:
-                    offenders.append(f"{path.relative_to(GAME)}:{number} uses {size}px")
-
-        # Sizes handed to a label helper that forwards them to the override
-        # (party_setup._label, boot_screen._make_label). A literal at the
-        # call site never reaches the regex above, which is exactly how the
-        # 6px footer survived the first version of this check.
-        for helper, index in _font_size_forwarding_helpers(text).items():
-            for number, line in enumerate(lines, start=1):
-                for call in re.finditer(rf"\b{helper}\(", line):
-                    args = _split_call_args(line[call.end() - 1 :])
-                    if args is None or index >= len(args):
-                        continue
-                    argument = args[index].strip()
-                    if argument.isdigit() and int(argument) < native:
-                        offenders.append(
-                            f"{path.relative_to(GAME)}:{number}"
-                            f" passes {argument}px to {helper}()"
-                        )
-    assert not offenders, "text below the font's native size: " + "; ".join(offenders)
-
-
-def _font_size_forwarding_helpers(text: str) -> dict[str, int]:
-    """Map helper name -> index of its font-size parameter.
-
-    Only functions that actually forward the parameter into the theme
-    override count, so an unrelated `font_size` local cannot flag callers.
-    """
-    helpers: dict[str, int] = {}
-    for match in re.finditer(r"^func (\w+)\(([^)]*)\)", text, re.MULTILINE):
-        name, signature = match.group(1), match.group(2)
-        parameters = [p.split(":")[0].strip() for p in signature.split(",") if p.strip()]
-        if "font_size" not in parameters:
-            continue
-        body = text[match.end() :]
-        next_func = body.find("\nfunc ")
-        if next_func != -1:
-            body = body[:next_func]
-        if 'add_theme_font_size_override("font_size", font_size)' in body:
-            helpers[name] = parameters.index("font_size")
-    return helpers
-
-
-def _split_call_args(text: str) -> list[str] | None:
-    """Split the argument list of a call, ignoring commas nested in parens.
-
-    `text` starts at the opening paren. Returns None if the call is not
-    closed on this line.
-    """
-    depth = 0
-    args: list[str] = []
-    current = ""
-    for character in text:
-        if character in "([":
-            depth += 1
-            if depth == 1:
+        for number, line in enumerate(path.read_text(encoding="utf-8").splitlines(), start=1):
+            if "add_theme_font_size_override" not in line:
                 continue
-        elif character in ")]":
-            depth -= 1
-            if depth == 0:
-                args.append(current)
-                return args
-        if depth == 1 and character == ",":
-            args.append(current)
-            current = ""
-        else:
-            current += character
-    return None
+            for size in re.findall(r"\b(\d+)\b", line.split("font_size", 1)[-1]):
+                if int(size) < floor:
+                    offenders.append(f"{path.relative_to(GAME)}:{number} uses {size}px")
+    assert not offenders, "text below the minimum size: " + "; ".join(offenders)
 
 
 def test_reachable_encounters_have_authored_battle_art() -> None:

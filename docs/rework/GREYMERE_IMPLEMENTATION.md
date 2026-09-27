@@ -144,3 +144,36 @@ success as evidence that every art requirement is complete.
 - Tests: `tests/test_world_locations.py`, `tests/test_presentation_contracts.py`, `tests/test_greymere_character_references.py`
 - Reference records: `docs/rework/GREYMERE_CHARACTER_REFERENCE_AUDIT.md`, `docs/rework/greymere_character_references.json`, and the candidate directory listed above.
 - Character runtime: `game/assets/overworld/{*.png,authored.json}`, `game/scripts/overworld/overworld_sprite.gd`, `tools/build_overworld_metadata.py`, and `tests/test_authored_overworld.py`.
+
+## East lane and explorable homes
+
+Greymere is now 46x34 tiles. A cobbled east lane leaves the square past the
+inn to three new explorable buildings, each with its own interior scene,
+room size, furnishings and inspection text:
+
+| Building | Door | Interior | Inside |
+| --- | --- | --- | --- |
+| Gell's shop | (33,15) | `gell_shop` | Gell at the counter; ledger and Civara broadsheets, priced goods, merchants' wares |
+| Joey's family home | (40,15) | `joey_home` | Two beds, banked hearth, cards and a wager slip, a chest of "found" things |
+| Kai's house | (36,27) | `kai_house` | Bed, hearth, table with Lena's note, work chest and workbench |
+
+Gell now stands in his shop instead of on the lane. The guardhouse stays
+locked. Outdoors, the map edge is drawn as shadowed undergrowth rather than
+masonry.
+
+**Placeholder exteriors.** No authored exterior art exists yet for these three
+buildings. Each one is an `environment.json` variant that reuses an existing
+exterior, declared under `placeholder` with the reason. Gell's shop is the
+herbalist cottage, mirrored, with a terracotta roof. Kai's house is the study,
+mirrored, with a slate-teal roof. Joey's home is the study with a moss-green
+roof. `scripts/overworld/roof_variant.gdshader` rotates only the painted roof
+slate hue. `tests/test_world_locations.py` requires every variant to declare
+what it reuses, stay consistent when mirrored and differ from every other
+variant. Joey's home still shows the study's moon-and-star banner, and Gell's
+shop still shows the herbalist's hanging herbs. Both go away when authored
+exteriors replace these entries.
+
+`world_smoke` now enters every unlocked building. It talks to each resident,
+inspects every furnishing, saves and loads indoors, and leaves by the door it
+came in through. The capture harness adds `gell_shop`, `joey_home`,
+`kai_house` and `east_lane`.

@@ -7,40 +7,40 @@
       "subtitle": "Above the Hollow Court",
       "scene": "res://scenes/overworld/greymere.tscn",
       "rows": [
-        "##################################",
-        "##################################",
-        "##..............................##",
-        "##..............................##",
-        "##..............................##",
-        "##..............................##",
-        "##.............^^^^^............##",
-        "##.............^^^^^............##",
-        "##.............^^^^^............##",
-        "##..............:::.............##",
-        "##......::::::::::::::::::......##",
-        "##......::::::::::::::::::......##",
-        "##.......::.....:::....::.......##",
-        "##.......::...:::::::..::.......##",
-        "##.......::...:::::::..::.......##",
-        "##.......::...:::::::..::.......##",
-        "##.......::.:::::::::::::.......##",
-        "##.......::.:::::::::::::.......##",
-        "##.......::.:::::::::::::.......##",
-        "##.......::.:::::::::::::.......##",
-        "##.......::::::::::::::::.......##",
-        "##.~~~...::::::::::::::::.......##",
-        "##.~~~...::::::::::::::::.......##",
-        "##.~~~...::.....:::.............##",
-        "##.~~~..........:::.............##",
-        "##.===:::::::::.:::.............##",
-        "##.===:::::::::.:::.............##",
-        "##.~~~..........:::.............##",
-        "##.~~~..........:::.............##",
-        "##.~~~..........:::.............##",
-        "##.~~~..........:::.............##",
-        "##..............:::.............##",
-        "##################################",
-        "##################################"
+        "##############################################",
+        "##############################################",
+        "##..........................................##",
+        "##..........................................##",
+        "##..........................................##",
+        "##..........................................##",
+        "##.............^^^^^........................##",
+        "##.............^^^^^........................##",
+        "##.............^^^^^........................##",
+        "##..............:::.........................##",
+        "##......::::::::::::::::::..................##",
+        "##......::::::::::::::::::..................##",
+        "##.......::.....:::....::...................##",
+        "##.......::...:::::::..::...................##",
+        "##.......::...:::::::..::...................##",
+        "##.......::...:::::::..::...................##",
+        "##.......::.:::::::::::::::::::::::::::::::.##",
+        "##.......::.:::::::::::::::::::::::::::::::.##",
+        "##.......::.:::::::::::::::::::::::::::::::.##",
+        "##.......::.:::::::::::::...............:::.##",
+        "##.......::::::::::::::::...............:::.##",
+        "##.~~~...::::::::::::::::...............:::.##",
+        "##.~~~...::::::::::::::::...............:::.##",
+        "##.~~~...::.....:::.....................:::.##",
+        "##.~~~..........:::.....................:::.##",
+        "##.===:::::::::.:::.....................:::.##",
+        "##.===:::::::::.:::.....................:::.##",
+        "##.~~~..........:::.....................:::.##",
+        "##.~~~..........:::..............::::::::::.##",
+        "##.~~~..........:::..............::::::::::.##",
+        "##.~~~..........:::.........................##",
+        "##..............:::.........................##",
+        "##############################################",
+        "##############################################"
       ],
       "music_id": "greymere",
       "interior": false,
@@ -71,6 +71,27 @@
           "tile": [
             23,
             20
+          ]
+        },
+        {
+          "asset": "gell_shop",
+          "tile": [
+            33,
+            15
+          ]
+        },
+        {
+          "asset": "joey_home",
+          "tile": [
+            40,
+            15
+          ]
+        },
+        {
+          "asset": "kai_house",
+          "tile": [
+            36,
+            27
           ]
         },
         {
@@ -270,6 +291,41 @@
           ]
         },
         {
+          "asset": "lamp",
+          "tile": [
+            32,
+            19
+          ]
+        },
+        {
+          "asset": "lamp",
+          "tile": [
+            37,
+            19
+          ]
+        },
+        {
+          "asset": "lamp",
+          "tile": [
+            39,
+            27
+          ]
+        },
+        {
+          "asset": "hedge",
+          "tile": [
+            32,
+            22
+          ]
+        },
+        {
+          "asset": "hedge",
+          "tile": [
+            32,
+            26
+          ]
+        },
+        {
           "asset": "tree",
           "tile": [
             3,
@@ -415,6 +471,76 @@
             25,
             16
           ]
+        },
+        {
+          "asset": "tree",
+          "tile": [
+            34,
+            3
+          ]
+        },
+        {
+          "asset": "tree",
+          "tile": [
+            40,
+            3
+          ]
+        },
+        {
+          "asset": "tree",
+          "tile": [
+            44,
+            7
+          ]
+        },
+        {
+          "asset": "tree",
+          "tile": [
+            44,
+            13
+          ]
+        },
+        {
+          "asset": "tree",
+          "tile": [
+            44,
+            20
+          ]
+        },
+        {
+          "asset": "tree",
+          "tile": [
+            44,
+            26
+          ]
+        },
+        {
+          "asset": "tree",
+          "tile": [
+            33,
+            33
+          ]
+        },
+        {
+          "asset": "tree",
+          "tile": [
+            39,
+            33
+          ]
+        },
+        {
+          "asset": "tree",
+          "tile": [
+            44,
+            31
+          ]
+        },
+        {
+          "asset": "tree",
+          "tile": [
+            31,
+            24
+          ]
         }
       ],
       "spawn_points": {
@@ -467,6 +593,36 @@
             0,
             1
           ]
+        },
+        "gell_return": {
+          "tile": [
+            33,
+            16
+          ],
+          "facing": [
+            0,
+            1
+          ]
+        },
+        "joey_return": {
+          "tile": [
+            40,
+            16
+          ],
+          "facing": [
+            0,
+            1
+          ]
+        },
+        "kai_return": {
+          "tile": [
+            36,
+            28
+          ],
+          "facing": [
+            0,
+            1
+          ]
         }
       },
       "doors": [
@@ -510,6 +666,51 @@
           "destination_scene": "res://scenes/overworld/silas_study.tscn",
           "destination_spawn": "entrance",
           "return_spawn": "silas_return",
+          "locked": false,
+          "locked_dialogue_id": "locked_door",
+          "transition_type": "fade",
+          "verb": "Enter"
+        },
+        {
+          "building_id": "gell",
+          "tile": [
+            33,
+            15
+          ],
+          "destination_location": "gell_shop",
+          "destination_scene": "res://scenes/overworld/gell_shop.tscn",
+          "destination_spawn": "entrance",
+          "return_spawn": "gell_return",
+          "locked": false,
+          "locked_dialogue_id": "locked_door",
+          "transition_type": "fade",
+          "verb": "Enter"
+        },
+        {
+          "building_id": "joey",
+          "tile": [
+            40,
+            15
+          ],
+          "destination_location": "joey_home",
+          "destination_scene": "res://scenes/overworld/joey_home.tscn",
+          "destination_spawn": "entrance",
+          "return_spawn": "joey_return",
+          "locked": false,
+          "locked_dialogue_id": "locked_door",
+          "transition_type": "fade",
+          "verb": "Enter"
+        },
+        {
+          "building_id": "kai",
+          "tile": [
+            36,
+            27
+          ],
+          "destination_location": "kai_house",
+          "destination_scene": "res://scenes/overworld/kai_house.tscn",
+          "destination_spawn": "entrance",
+          "return_spawn": "kai_return",
           "locked": false,
           "locked_dialogue_id": "locked_door",
           "transition_type": "fade",
@@ -588,19 +789,6 @@
           "facing": [
             0,
             1
-          ]
-        },
-        {
-          "name": "Gell",
-          "sprite_key": "townsfolk/farmhand_capped",
-          "dialogue": "pell_flavor",
-          "tile": [
-            27,
-            23
-          ],
-          "facing": [
-            -1,
-            0
           ]
         },
         {
@@ -696,6 +884,27 @@
           "tile": [
             19,
             28
+          ],
+          "color": "warm"
+        },
+        {
+          "tile": [
+            33,
+            15
+          ],
+          "color": "warm"
+        },
+        {
+          "tile": [
+            40,
+            15
+          ],
+          "color": "warm"
+        },
+        {
+          "tile": [
+            36,
+            27
           ],
           "color": "warm"
         },
@@ -1144,6 +1353,462 @@
           "tile": [
             15,
             8
+          ],
+          "color": "warm"
+        }
+      ]
+    },
+    "gell_shop": {
+      "id": "gell_shop",
+      "name": "GELL'S SHOP",
+      "subtitle": "Goods from everywhere, says Gell",
+      "scene": "res://scenes/overworld/gell_shop.tscn",
+      "rows": [
+        "______________________",
+        "_####################_",
+        "_####################_",
+        "_#wwwwwwwwwwwwwwwwww#_",
+        "_#wwwwwwwwwwwwwwwwww#_",
+        "_#wwwwwwwwwwwwwwwwww#_",
+        "_#wwwwwwwwwwwwwwwwww#_",
+        "_#wwwwwwwwwwwwwwwwww#_",
+        "_#wwwwwwwwwwwwwwwwww#_",
+        "_#wwwwwwwwwwwwwwwwww#_",
+        "_#wwwwwwwwwwwwwwwwww#_",
+        "_#wwwwwwww::wwwwwwww#_",
+        "_####################_",
+        "______________________"
+      ],
+      "interior": true,
+      "music_id": "greymere",
+      "props": [
+        {
+          "asset": "counter",
+          "tile": [
+            9,
+            6
+          ]
+        },
+        {
+          "asset": "books",
+          "tile": [
+            4,
+            5
+          ]
+        },
+        {
+          "asset": "books",
+          "tile": [
+            16,
+            5
+          ]
+        },
+        {
+          "asset": "jars",
+          "tile": [
+            15,
+            9
+          ]
+        },
+        {
+          "asset": "crates",
+          "tile": [
+            4,
+            10
+          ]
+        },
+        {
+          "asset": "crates",
+          "tile": [
+            17,
+            10
+          ]
+        },
+        {
+          "asset": "chest",
+          "tile": [
+            6,
+            10
+          ]
+        }
+      ],
+      "npcs": [
+        {
+          "name": "Gell",
+          "sprite_key": "townsfolk/farmhand_capped",
+          "dialogue": "pell_flavor",
+          "tile": [
+            11,
+            5
+          ],
+          "facing": [
+            0,
+            1
+          ]
+        }
+      ],
+      "spawn_points": {
+        "entrance": {
+          "tile": [
+            10,
+            10
+          ],
+          "facing": [
+            0,
+            -1
+          ]
+        }
+      },
+      "doors": [
+        {
+          "building_id": "gell_shop",
+          "tile": [
+            10,
+            12
+          ],
+          "destination_location": "greymere",
+          "destination_scene": "res://scenes/overworld/greymere.tscn",
+          "destination_spawn": "gell_return",
+          "return_spawn": "entrance",
+          "locked": false,
+          "locked_dialogue_id": "locked_door",
+          "transition_type": "fade",
+          "verb": "Leave"
+        }
+      ],
+      "interactions": [
+        {
+          "tile": [
+            9,
+            6
+          ],
+          "verb": "Inspect",
+          "text": "Gell's ledger lies open beside a stack of Civara broadsheets he insists are recent."
+        },
+        {
+          "tile": [
+            15,
+            9
+          ],
+          "verb": "Inspect",
+          "text": "Lamp oil, salt, needles and thread, each priced in Gell's careful hand."
+        },
+        {
+          "tile": [
+            16,
+            5
+          ],
+          "verb": "Inspect",
+          "text": "Wares from passing merchants. Gell can say where each one was made, accurately or not."
+        }
+      ],
+      "lights": [
+        {
+          "tile": [
+            9,
+            4
+          ],
+          "color": "warm"
+        },
+        {
+          "tile": [
+            15,
+            7
+          ],
+          "color": "warm"
+        }
+      ]
+    },
+    "joey_home": {
+      "id": "joey_home",
+      "name": "JOEY'S HOME",
+      "subtitle": "Never quite tidy",
+      "scene": "res://scenes/overworld/joey_home.tscn",
+      "rows": [
+        "______________________",
+        "___################___",
+        "___################___",
+        "___#wwwwwwwwwwwwww#___",
+        "___#wwwwwwwwwwwwww#___",
+        "___#wwwwwwwwwwwwww#___",
+        "___#wwwwwwwwwwwwww#___",
+        "___#wwwwwwwwwwwwww#___",
+        "___#wwwwwwwwwwwwww#___",
+        "___#wwwwwwwwwwwwww#___",
+        "___#wwwwwwwwwwwwww#___",
+        "___#wwwwww::wwwwww#___",
+        "___################___",
+        "______________________"
+      ],
+      "interior": true,
+      "music_id": "greymere",
+      "props": [
+        {
+          "asset": "hearth",
+          "tile": [
+            6,
+            4
+          ]
+        },
+        {
+          "asset": "bed",
+          "tile": [
+            13,
+            5
+          ]
+        },
+        {
+          "asset": "bed",
+          "tile": [
+            16,
+            5
+          ]
+        },
+        {
+          "asset": "table",
+          "tile": [
+            10,
+            8
+          ]
+        },
+        {
+          "asset": "chest",
+          "tile": [
+            5,
+            10
+          ]
+        },
+        {
+          "asset": "crates",
+          "tile": [
+            16,
+            10
+          ]
+        },
+        {
+          "asset": "jars",
+          "tile": [
+            6,
+            8
+          ]
+        }
+      ],
+      "npcs": [],
+      "spawn_points": {
+        "entrance": {
+          "tile": [
+            10,
+            10
+          ],
+          "facing": [
+            0,
+            -1
+          ]
+        }
+      },
+      "doors": [
+        {
+          "building_id": "joey_home",
+          "tile": [
+            10,
+            12
+          ],
+          "destination_location": "greymere",
+          "destination_scene": "res://scenes/overworld/greymere.tscn",
+          "destination_spawn": "joey_return",
+          "return_spawn": "entrance",
+          "locked": false,
+          "locked_dialogue_id": "locked_door",
+          "transition_type": "fade",
+          "verb": "Leave"
+        }
+      ],
+      "interactions": [
+        {
+          "tile": [
+            10,
+            8
+          ],
+          "verb": "Inspect",
+          "text": "A deck of cards, a half-finished wager slip and three mugs nobody has washed."
+        },
+        {
+          "tile": [
+            5,
+            10
+          ],
+          "verb": "Inspect",
+          "text": "The lid won't quite close over the things Joey swears he found."
+        },
+        {
+          "tile": [
+            6,
+            4
+          ],
+          "verb": "Inspect",
+          "text": "The fire is banked low. Joey's ma keeps a pot on it whatever the hour."
+        }
+      ],
+      "lights": [
+        {
+          "tile": [
+            6,
+            3
+          ],
+          "color": "warm"
+        },
+        {
+          "tile": [
+            12,
+            7
+          ],
+          "color": "warm"
+        }
+      ]
+    },
+    "kai_house": {
+      "id": "kai_house",
+      "name": "KAI'S HOUSE",
+      "subtitle": "Home",
+      "scene": "res://scenes/overworld/kai_house.tscn",
+      "rows": [
+        "______________________",
+        "____##############____",
+        "____##############____",
+        "____#wwwwwwwwwwww#____",
+        "____#wwwwwwwwwwww#____",
+        "____#wwwwwwwwwwww#____",
+        "____#wwwwwwwwwwww#____",
+        "____#wwwwwwwwwwww#____",
+        "____#wwwwwwwwwwww#____",
+        "____#wwwwwwwwwwww#____",
+        "____#wwwwwwwwwwww#____",
+        "____#wwwww::wwwww#____",
+        "____##############____",
+        "______________________"
+      ],
+      "interior": true,
+      "music_id": "greymere",
+      "props": [
+        {
+          "asset": "hearth",
+          "tile": [
+            7,
+            4
+          ]
+        },
+        {
+          "asset": "bed",
+          "tile": [
+            15,
+            5
+          ]
+        },
+        {
+          "asset": "table",
+          "tile": [
+            10,
+            7
+          ]
+        },
+        {
+          "asset": "chest",
+          "tile": [
+            15,
+            9
+          ]
+        },
+        {
+          "asset": "books",
+          "tile": [
+            6,
+            9
+          ]
+        },
+        {
+          "asset": "workbench",
+          "tile": [
+            13,
+            10
+          ]
+        }
+      ],
+      "npcs": [],
+      "spawn_points": {
+        "entrance": {
+          "tile": [
+            10,
+            10
+          ],
+          "facing": [
+            0,
+            -1
+          ]
+        }
+      },
+      "doors": [
+        {
+          "building_id": "kai_house",
+          "tile": [
+            10,
+            12
+          ],
+          "destination_location": "greymere",
+          "destination_scene": "res://scenes/overworld/greymere.tscn",
+          "destination_spawn": "kai_return",
+          "return_spawn": "entrance",
+          "locked": false,
+          "locked_dialogue_id": "locked_door",
+          "transition_type": "fade",
+          "verb": "Leave"
+        }
+      ],
+      "interactions": [
+        {
+          "tile": [
+            15,
+            5
+          ],
+          "verb": "Inspect",
+          "text": "Your bed. Made this morning, mostly."
+        },
+        {
+          "tile": [
+            15,
+            9
+          ],
+          "verb": "Inspect",
+          "text": "Work gloves, a spare shirt and the rope from yesterday's job."
+        },
+        {
+          "tile": [
+            10,
+            7
+          ],
+          "verb": "Inspect",
+          "text": "Bread, a knife and a note in Lena's hand: EAT SOMETHING."
+        },
+        {
+          "tile": [
+            13,
+            10
+          ],
+          "verb": "Inspect",
+          "text": "Tools for tomorrow's work, laid out the way you like them."
+        }
+      ],
+      "lights": [
+        {
+          "tile": [
+            7,
+            3
+          ],
+          "color": "warm"
+        },
+        {
+          "tile": [
+            12,
+            7
           ],
           "color": "warm"
         }

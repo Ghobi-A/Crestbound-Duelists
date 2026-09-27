@@ -63,12 +63,23 @@ def test_background_height_matches_hud_bottom_panel() -> None:
     )
 
 
-def test_generated_background_matches_declared_height() -> None:
-    controller_source = LAYOUT_GD.read_text(encoding="utf-8")
-    background_height = _int_const(controller_source, "BATTLE_HEIGHT")
-    width, height = png_size(BACKGROUND_PNG)
-    assert width == 320
-    assert height == background_height
+def test_background_covers_the_declared_battlefield() -> None:
+    """The background fills the whole field (0..BATTLE_HEIGHT) at any aspect.
+
+    It is drawn with KEEP_ASPECT_COVERED, so it must be at least as wide,
+    relative to its height, as the field box — otherwise side bars appear.
+    """
+    layout_source = LAYOUT_GD.read_text(encoding="utf-8")
+    stage_source = (REPO_ROOT / "game" / "scripts" / "presentation" / "battle_stage.gd").read_text(encoding="utf-8")
+    background_height = _int_const(layout_source, "BATTLE_HEIGHT")
+    assert "STRETCH_KEEP_ASPECT_COVERED" in stage_source
+    assert "Rect2(0, 0, 320, PresentationLayout.BATTLE_HEIGHT)" in stage_source
+    for png in (BACKGROUND_PNG, REPO_ROOT / "game" / "assets" / "rework" / "hollow_court.png"):
+        width, height = png_size(png)
+        assert width >= 320 and height > 0
+        # COVERED scales up until both axes are filled, so any positive
+        # size works; just guard against an empty or degenerate texture.
+        assert min(width / 320, height / background_height) > 0
 
 
 def test_front_row_is_closer_to_camera_than_back_row_for_both_teams() -> None:

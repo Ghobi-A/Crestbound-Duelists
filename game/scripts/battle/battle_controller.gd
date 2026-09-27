@@ -67,7 +67,9 @@ func _ready() -> void:
 	_build_onboarding()
 	var objective: Dictionary = GameData.get_objective(runtime.encounter.get("objective", "defeat_all"))
 	hud.set_objective(objective.get("name", "Defeat all enemies"))
-	hud.set_phase(str(runtime.encounter.get("name", "Battle")))
+	hud.set_title(str(runtime.encounter.get("name", "Battle")).trim_prefix("The "))
+	hud.set_phase("ROUND %d" % runtime.round_number)
+	hud.set_footer_note(str(runtime.encounter.get("battlefield_effect", {}).get("name", "")))
 	if onboarding.active:
 		return
 	_start_intro()
