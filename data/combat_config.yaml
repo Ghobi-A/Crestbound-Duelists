@@ -14,9 +14,10 @@ variance_low: 0.85
 variance_high: 1.0
 
 # Brace: acting second in the 1v1 lab / committing Brace in the game
-# multiplies the relevant defence stat. 1.20 is roughly 9% mitigation
-# at equal attacking and defending stats under the compressed formula.
-brace_multiplier: 1.20
+# multiplies the relevant defence stat. v2.3 uses 1.15 because base HP is
+# materially higher and move power is lower; Brace should be meaningful
+# without stretching tank matchups beyond the target combat horizon.
+brace_multiplier: 1.15
 
 # Hard cap on battle length; ties resolve by remaining HP.
 max_turns: 100

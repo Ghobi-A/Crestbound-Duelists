@@ -1,0 +1,2175 @@
+{
+  "damage": [
+    {
+      "actor": "warrior",
+      "target": "warrior",
+      "move": 0,
+      "braced": false,
+      "bounds": [
+        13,
+        16
+      ]
+    },
+    {
+      "actor": "warrior",
+      "target": "warrior",
+      "move": 0,
+      "braced": true,
+      "bounds": [
+        12,
+        15
+      ]
+    },
+    {
+      "actor": "warrior",
+      "target": "warrior",
+      "move": 1,
+      "braced": false,
+      "bounds": [
+        11,
+        13
+      ]
+    },
+    {
+      "actor": "warrior",
+      "target": "warrior",
+      "move": 1,
+      "braced": true,
+      "bounds": [
+        11,
+        13
+      ]
+    },
+    {
+      "actor": "warrior",
+      "target": "warrior",
+      "move": 2,
+      "braced": false,
+      "bounds": [
+        20,
+        24
+      ]
+    },
+    {
+      "actor": "warrior",
+      "target": "warrior",
+      "move": 2,
+      "braced": true,
+      "bounds": [
+        19,
+        22
+      ]
+    },
+    {
+      "actor": "warrior",
+      "target": "mage",
+      "move": 0,
+      "braced": false,
+      "bounds": [
+        17,
+        20
+      ]
+    },
+    {
+      "actor": "warrior",
+      "target": "mage",
+      "move": 0,
+      "braced": true,
+      "bounds": [
+        16,
+        19
+      ]
+    },
+    {
+      "actor": "warrior",
+      "target": "mage",
+      "move": 1,
+      "braced": false,
+      "bounds": [
+        14,
+        16
+      ]
+    },
+    {
+      "actor": "warrior",
+      "target": "mage",
+      "move": 1,
+      "braced": true,
+      "bounds": [
+        14,
+        16
+      ]
+    },
+    {
+      "actor": "warrior",
+      "target": "mage",
+      "move": 2,
+      "braced": false,
+      "bounds": [
+        26,
+        31
+      ]
+    },
+    {
+      "actor": "warrior",
+      "target": "mage",
+      "move": 2,
+      "braced": true,
+      "bounds": [
+        25,
+        29
+      ]
+    },
+    {
+      "actor": "warrior",
+      "target": "assassin",
+      "move": 0,
+      "braced": false,
+      "bounds": [
+        16,
+        19
+      ]
+    },
+    {
+      "actor": "warrior",
+      "target": "assassin",
+      "move": 0,
+      "braced": true,
+      "bounds": [
+        15,
+        18
+      ]
+    },
+    {
+      "actor": "warrior",
+      "target": "assassin",
+      "move": 1,
+      "braced": false,
+      "bounds": [
+        13,
+        15
+      ]
+    },
+    {
+      "actor": "warrior",
+      "target": "assassin",
+      "move": 1,
+      "braced": true,
+      "bounds": [
+        13,
+        15
+      ]
+    },
+    {
+      "actor": "warrior",
+      "target": "assassin",
+      "move": 2,
+      "braced": false,
+      "bounds": [
+        24,
+        28
+      ]
+    },
+    {
+      "actor": "warrior",
+      "target": "assassin",
+      "move": 2,
+      "braced": true,
+      "bounds": [
+        23,
+        27
+      ]
+    },
+    {
+      "actor": "warrior",
+      "target": "guardian",
+      "move": 0,
+      "braced": false,
+      "bounds": [
+        13,
+        16
+      ]
+    },
+    {
+      "actor": "warrior",
+      "target": "guardian",
+      "move": 0,
+      "braced": true,
+      "bounds": [
+        12,
+        14
+      ]
+    },
+    {
+      "actor": "warrior",
+      "target": "guardian",
+      "move": 1,
+      "braced": false,
+      "bounds": [
+        11,
+        13
+      ]
+    },
+    {
+      "actor": "warrior",
+      "target": "guardian",
+      "move": 1,
+      "braced": true,
+      "bounds": [
+        11,
+        13
+      ]
+    },
+    {
+      "actor": "warrior",
+      "target": "guardian",
+      "move": 2,
+      "braced": false,
+      "bounds": [
+        20,
+        24
+      ]
+    },
+    {
+      "actor": "warrior",
+      "target": "guardian",
+      "move": 2,
+      "braced": true,
+      "bounds": [
+        19,
+        22
+      ]
+    },
+    {
+      "actor": "warrior",
+      "target": "neutral",
+      "move": 0,
+      "braced": false,
+      "bounds": [
+        16,
+        19
+      ]
+    },
+    {
+      "actor": "warrior",
+      "target": "neutral",
+      "move": 0,
+      "braced": true,
+      "bounds": [
+        15,
+        18
+      ]
+    },
+    {
+      "actor": "warrior",
+      "target": "neutral",
+      "move": 1,
+      "braced": false,
+      "bounds": [
+        13,
+        15
+      ]
+    },
+    {
+      "actor": "warrior",
+      "target": "neutral",
+      "move": 1,
+      "braced": true,
+      "bounds": [
+        13,
+        15
+      ]
+    },
+    {
+      "actor": "warrior",
+      "target": "neutral",
+      "move": 2,
+      "braced": false,
+      "bounds": [
+        24,
+        28
+      ]
+    },
+    {
+      "actor": "warrior",
+      "target": "neutral",
+      "move": 2,
+      "braced": true,
+      "bounds": [
+        23,
+        27
+      ]
+    },
+    {
+      "actor": "warrior",
+      "target": "sorcerer",
+      "move": 0,
+      "braced": false,
+      "bounds": [
+        16,
+        19
+      ]
+    },
+    {
+      "actor": "warrior",
+      "target": "sorcerer",
+      "move": 0,
+      "braced": true,
+      "bounds": [
+        15,
+        18
+      ]
+    },
+    {
+      "actor": "warrior",
+      "target": "sorcerer",
+      "move": 1,
+      "braced": false,
+      "bounds": [
+        13,
+        15
+      ]
+    },
+    {
+      "actor": "warrior",
+      "target": "sorcerer",
+      "move": 1,
+      "braced": true,
+      "bounds": [
+        13,
+        15
+      ]
+    },
+    {
+      "actor": "warrior",
+      "target": "sorcerer",
+      "move": 2,
+      "braced": false,
+      "bounds": [
+        25,
+        29
+      ]
+    },
+    {
+      "actor": "warrior",
+      "target": "sorcerer",
+      "move": 2,
+      "braced": true,
+      "bounds": [
+        23,
+        28
+      ]
+    },
+    {
+      "actor": "mage",
+      "target": "warrior",
+      "move": 0,
+      "braced": false,
+      "bounds": [
+        17,
+        21
+      ]
+    },
+    {
+      "actor": "mage",
+      "target": "warrior",
+      "move": 0,
+      "braced": true,
+      "bounds": [
+        17,
+        20
+      ]
+    },
+    {
+      "actor": "mage",
+      "target": "warrior",
+      "move": 1,
+      "braced": false,
+      "bounds": [
+        14,
+        17
+      ]
+    },
+    {
+      "actor": "mage",
+      "target": "warrior",
+      "move": 1,
+      "braced": true,
+      "bounds": [
+        14,
+        17
+      ]
+    },
+    {
+      "actor": "mage",
+      "target": "warrior",
+      "move": 2,
+      "braced": false,
+      "bounds": [
+        26,
+        31
+      ]
+    },
+    {
+      "actor": "mage",
+      "target": "warrior",
+      "move": 2,
+      "braced": true,
+      "bounds": [
+        25,
+        30
+      ]
+    },
+    {
+      "actor": "mage",
+      "target": "mage",
+      "move": 0,
+      "braced": false,
+      "bounds": [
+        14,
+        17
+      ]
+    },
+    {
+      "actor": "mage",
+      "target": "mage",
+      "move": 0,
+      "braced": true,
+      "bounds": [
+        13,
+        16
+      ]
+    },
+    {
+      "actor": "mage",
+      "target": "mage",
+      "move": 1,
+      "braced": false,
+      "bounds": [
+        11,
+        14
+      ]
+    },
+    {
+      "actor": "mage",
+      "target": "mage",
+      "move": 1,
+      "braced": true,
+      "bounds": [
+        11,
+        14
+      ]
+    },
+    {
+      "actor": "mage",
+      "target": "mage",
+      "move": 2,
+      "braced": false,
+      "bounds": [
+        22,
+        26
+      ]
+    },
+    {
+      "actor": "mage",
+      "target": "mage",
+      "move": 2,
+      "braced": true,
+      "bounds": [
+        20,
+        24
+      ]
+    },
+    {
+      "actor": "mage",
+      "target": "assassin",
+      "move": 0,
+      "braced": false,
+      "bounds": [
+        16,
+        19
+      ]
+    },
+    {
+      "actor": "mage",
+      "target": "assassin",
+      "move": 0,
+      "braced": true,
+      "bounds": [
+        15,
+        18
+      ]
+    },
+    {
+      "actor": "mage",
+      "target": "assassin",
+      "move": 1,
+      "braced": false,
+      "bounds": [
+        13,
+        16
+      ]
+    },
+    {
+      "actor": "mage",
+      "target": "assassin",
+      "move": 1,
+      "braced": true,
+      "bounds": [
+        13,
+        16
+      ]
+    },
+    {
+      "actor": "mage",
+      "target": "assassin",
+      "move": 2,
+      "braced": false,
+      "bounds": [
+        25,
+        29
+      ]
+    },
+    {
+      "actor": "mage",
+      "target": "assassin",
+      "move": 2,
+      "braced": true,
+      "bounds": [
+        23,
+        28
+      ]
+    },
+    {
+      "actor": "mage",
+      "target": "guardian",
+      "move": 0,
+      "braced": false,
+      "bounds": [
+        14,
+        17
+      ]
+    },
+    {
+      "actor": "mage",
+      "target": "guardian",
+      "move": 0,
+      "braced": true,
+      "bounds": [
+        13,
+        16
+      ]
+    },
+    {
+      "actor": "mage",
+      "target": "guardian",
+      "move": 1,
+      "braced": false,
+      "bounds": [
+        11,
+        14
+      ]
+    },
+    {
+      "actor": "mage",
+      "target": "guardian",
+      "move": 1,
+      "braced": true,
+      "bounds": [
+        11,
+        14
+      ]
+    },
+    {
+      "actor": "mage",
+      "target": "guardian",
+      "move": 2,
+      "braced": false,
+      "bounds": [
+        22,
+        26
+      ]
+    },
+    {
+      "actor": "mage",
+      "target": "guardian",
+      "move": 2,
+      "braced": true,
+      "bounds": [
+        20,
+        24
+      ]
+    },
+    {
+      "actor": "mage",
+      "target": "neutral",
+      "move": 0,
+      "braced": false,
+      "bounds": [
+        16,
+        19
+      ]
+    },
+    {
+      "actor": "mage",
+      "target": "neutral",
+      "move": 0,
+      "braced": true,
+      "bounds": [
+        15,
+        18
+      ]
+    },
+    {
+      "actor": "mage",
+      "target": "neutral",
+      "move": 1,
+      "braced": false,
+      "bounds": [
+        13,
+        15
+      ]
+    },
+    {
+      "actor": "mage",
+      "target": "neutral",
+      "move": 1,
+      "braced": true,
+      "bounds": [
+        13,
+        15
+      ]
+    },
+    {
+      "actor": "mage",
+      "target": "neutral",
+      "move": 2,
+      "braced": false,
+      "bounds": [
+        24,
+        29
+      ]
+    },
+    {
+      "actor": "mage",
+      "target": "neutral",
+      "move": 2,
+      "braced": true,
+      "bounds": [
+        23,
+        27
+      ]
+    },
+    {
+      "actor": "mage",
+      "target": "sorcerer",
+      "move": 0,
+      "braced": false,
+      "bounds": [
+        16,
+        19
+      ]
+    },
+    {
+      "actor": "mage",
+      "target": "sorcerer",
+      "move": 0,
+      "braced": true,
+      "bounds": [
+        15,
+        18
+      ]
+    },
+    {
+      "actor": "mage",
+      "target": "sorcerer",
+      "move": 1,
+      "braced": false,
+      "bounds": [
+        13,
+        16
+      ]
+    },
+    {
+      "actor": "mage",
+      "target": "sorcerer",
+      "move": 1,
+      "braced": true,
+      "bounds": [
+        13,
+        16
+      ]
+    },
+    {
+      "actor": "mage",
+      "target": "sorcerer",
+      "move": 2,
+      "braced": false,
+      "bounds": [
+        25,
+        29
+      ]
+    },
+    {
+      "actor": "mage",
+      "target": "sorcerer",
+      "move": 2,
+      "braced": true,
+      "bounds": [
+        23,
+        28
+      ]
+    },
+    {
+      "actor": "assassin",
+      "target": "warrior",
+      "move": 0,
+      "braced": false,
+      "bounds": [
+        13,
+        16
+      ]
+    },
+    {
+      "actor": "assassin",
+      "target": "warrior",
+      "move": 0,
+      "braced": true,
+      "bounds": [
+        12,
+        15
+      ]
+    },
+    {
+      "actor": "assassin",
+      "target": "warrior",
+      "move": 1,
+      "braced": false,
+      "bounds": [
+        11,
+        13
+      ]
+    },
+    {
+      "actor": "assassin",
+      "target": "warrior",
+      "move": 1,
+      "braced": true,
+      "bounds": [
+        10,
+        12
+      ]
+    },
+    {
+      "actor": "assassin",
+      "target": "warrior",
+      "move": 2,
+      "braced": false,
+      "bounds": [
+        21,
+        25
+      ]
+    },
+    {
+      "actor": "assassin",
+      "target": "warrior",
+      "move": 2,
+      "braced": true,
+      "bounds": [
+        20,
+        23
+      ]
+    },
+    {
+      "actor": "assassin",
+      "target": "mage",
+      "move": 0,
+      "braced": false,
+      "bounds": [
+        17,
+        20
+      ]
+    },
+    {
+      "actor": "assassin",
+      "target": "mage",
+      "move": 0,
+      "braced": true,
+      "bounds": [
+        16,
+        19
+      ]
+    },
+    {
+      "actor": "assassin",
+      "target": "mage",
+      "move": 1,
+      "braced": false,
+      "bounds": [
+        14,
+        16
+      ]
+    },
+    {
+      "actor": "assassin",
+      "target": "mage",
+      "move": 1,
+      "braced": true,
+      "bounds": [
+        13,
+        16
+      ]
+    },
+    {
+      "actor": "assassin",
+      "target": "mage",
+      "move": 2,
+      "braced": false,
+      "bounds": [
+        27,
+        32
+      ]
+    },
+    {
+      "actor": "assassin",
+      "target": "mage",
+      "move": 2,
+      "braced": true,
+      "bounds": [
+        26,
+        30
+      ]
+    },
+    {
+      "actor": "assassin",
+      "target": "assassin",
+      "move": 0,
+      "braced": false,
+      "bounds": [
+        16,
+        19
+      ]
+    },
+    {
+      "actor": "assassin",
+      "target": "assassin",
+      "move": 0,
+      "braced": true,
+      "bounds": [
+        15,
+        18
+      ]
+    },
+    {
+      "actor": "assassin",
+      "target": "assassin",
+      "move": 1,
+      "braced": false,
+      "bounds": [
+        13,
+        15
+      ]
+    },
+    {
+      "actor": "assassin",
+      "target": "assassin",
+      "move": 1,
+      "braced": true,
+      "bounds": [
+        12,
+        14
+      ]
+    },
+    {
+      "actor": "assassin",
+      "target": "assassin",
+      "move": 2,
+      "braced": false,
+      "bounds": [
+        25,
+        30
+      ]
+    },
+    {
+      "actor": "assassin",
+      "target": "assassin",
+      "move": 2,
+      "braced": true,
+      "bounds": [
+        24,
+        28
+      ]
+    },
+    {
+      "actor": "assassin",
+      "target": "guardian",
+      "move": 0,
+      "braced": false,
+      "bounds": [
+        13,
+        16
+      ]
+    },
+    {
+      "actor": "assassin",
+      "target": "guardian",
+      "move": 0,
+      "braced": true,
+      "bounds": [
+        12,
+        14
+      ]
+    },
+    {
+      "actor": "assassin",
+      "target": "guardian",
+      "move": 1,
+      "braced": false,
+      "bounds": [
+        11,
+        13
+      ]
+    },
+    {
+      "actor": "assassin",
+      "target": "guardian",
+      "move": 1,
+      "braced": true,
+      "bounds": [
+        10,
+        12
+      ]
+    },
+    {
+      "actor": "assassin",
+      "target": "guardian",
+      "move": 2,
+      "braced": false,
+      "bounds": [
+        21,
+        25
+      ]
+    },
+    {
+      "actor": "assassin",
+      "target": "guardian",
+      "move": 2,
+      "braced": true,
+      "bounds": [
+        19,
+        23
+      ]
+    },
+    {
+      "actor": "assassin",
+      "target": "neutral",
+      "move": 0,
+      "braced": false,
+      "bounds": [
+        16,
+        19
+      ]
+    },
+    {
+      "actor": "assassin",
+      "target": "neutral",
+      "move": 0,
+      "braced": true,
+      "bounds": [
+        15,
+        18
+      ]
+    },
+    {
+      "actor": "assassin",
+      "target": "neutral",
+      "move": 1,
+      "braced": false,
+      "bounds": [
+        13,
+        15
+      ]
+    },
+    {
+      "actor": "assassin",
+      "target": "neutral",
+      "move": 1,
+      "braced": true,
+      "bounds": [
+        12,
+        14
+      ]
+    },
+    {
+      "actor": "assassin",
+      "target": "neutral",
+      "move": 2,
+      "braced": false,
+      "bounds": [
+        25,
+        30
+      ]
+    },
+    {
+      "actor": "assassin",
+      "target": "neutral",
+      "move": 2,
+      "braced": true,
+      "bounds": [
+        24,
+        28
+      ]
+    },
+    {
+      "actor": "assassin",
+      "target": "sorcerer",
+      "move": 0,
+      "braced": false,
+      "bounds": [
+        16,
+        19
+      ]
+    },
+    {
+      "actor": "assassin",
+      "target": "sorcerer",
+      "move": 0,
+      "braced": true,
+      "bounds": [
+        15,
+        18
+      ]
+    },
+    {
+      "actor": "assassin",
+      "target": "sorcerer",
+      "move": 1,
+      "braced": false,
+      "bounds": [
+        13,
+        15
+      ]
+    },
+    {
+      "actor": "assassin",
+      "target": "sorcerer",
+      "move": 1,
+      "braced": true,
+      "bounds": [
+        12,
+        15
+      ]
+    },
+    {
+      "actor": "assassin",
+      "target": "sorcerer",
+      "move": 2,
+      "braced": false,
+      "bounds": [
+        26,
+        30
+      ]
+    },
+    {
+      "actor": "assassin",
+      "target": "sorcerer",
+      "move": 2,
+      "braced": true,
+      "bounds": [
+        24,
+        29
+      ]
+    },
+    {
+      "actor": "guardian",
+      "target": "warrior",
+      "move": 0,
+      "braced": false,
+      "bounds": [
+        13,
+        15
+      ]
+    },
+    {
+      "actor": "guardian",
+      "target": "warrior",
+      "move": 0,
+      "braced": true,
+      "bounds": [
+        12,
+        14
+      ]
+    },
+    {
+      "actor": "guardian",
+      "target": "warrior",
+      "move": 1,
+      "braced": false,
+      "bounds": [
+        11,
+        13
+      ]
+    },
+    {
+      "actor": "guardian",
+      "target": "warrior",
+      "move": 1,
+      "braced": true,
+      "bounds": [
+        10,
+        12
+      ]
+    },
+    {
+      "actor": "guardian",
+      "target": "warrior",
+      "move": 2,
+      "braced": false,
+      "bounds": [
+        14,
+        17
+      ]
+    },
+    {
+      "actor": "guardian",
+      "target": "warrior",
+      "move": 2,
+      "braced": true,
+      "bounds": [
+        13,
+        15
+      ]
+    },
+    {
+      "actor": "guardian",
+      "target": "mage",
+      "move": 0,
+      "braced": false,
+      "bounds": [
+        13,
+        16
+      ]
+    },
+    {
+      "actor": "guardian",
+      "target": "mage",
+      "move": 0,
+      "braced": true,
+      "bounds": [
+        12,
+        15
+      ]
+    },
+    {
+      "actor": "guardian",
+      "target": "mage",
+      "move": 1,
+      "braced": false,
+      "bounds": [
+        11,
+        13
+      ]
+    },
+    {
+      "actor": "guardian",
+      "target": "mage",
+      "move": 1,
+      "braced": true,
+      "bounds": [
+        11,
+        13
+      ]
+    },
+    {
+      "actor": "guardian",
+      "target": "mage",
+      "move": 2,
+      "braced": false,
+      "bounds": [
+        20,
+        23
+      ]
+    },
+    {
+      "actor": "guardian",
+      "target": "mage",
+      "move": 2,
+      "braced": true,
+      "bounds": [
+        18,
+        22
+      ]
+    },
+    {
+      "actor": "guardian",
+      "target": "assassin",
+      "move": 0,
+      "braced": false,
+      "bounds": [
+        12,
+        14
+      ]
+    },
+    {
+      "actor": "guardian",
+      "target": "assassin",
+      "move": 0,
+      "braced": true,
+      "bounds": [
+        11,
+        13
+      ]
+    },
+    {
+      "actor": "guardian",
+      "target": "assassin",
+      "move": 1,
+      "braced": false,
+      "bounds": [
+        10,
+        12
+      ]
+    },
+    {
+      "actor": "guardian",
+      "target": "assassin",
+      "move": 1,
+      "braced": true,
+      "bounds": [
+        10,
+        11
+      ]
+    },
+    {
+      "actor": "guardian",
+      "target": "assassin",
+      "move": 2,
+      "braced": false,
+      "bounds": [
+        18,
+        21
+      ]
+    },
+    {
+      "actor": "guardian",
+      "target": "assassin",
+      "move": 2,
+      "braced": true,
+      "bounds": [
+        17,
+        20
+      ]
+    },
+    {
+      "actor": "guardian",
+      "target": "guardian",
+      "move": 0,
+      "braced": false,
+      "bounds": [
+        10,
+        12
+      ]
+    },
+    {
+      "actor": "guardian",
+      "target": "guardian",
+      "move": 0,
+      "braced": true,
+      "bounds": [
+        9,
+        11
+      ]
+    },
+    {
+      "actor": "guardian",
+      "target": "guardian",
+      "move": 1,
+      "braced": false,
+      "bounds": [
+        8,
+        10
+      ]
+    },
+    {
+      "actor": "guardian",
+      "target": "guardian",
+      "move": 1,
+      "braced": true,
+      "bounds": [
+        8,
+        9
+      ]
+    },
+    {
+      "actor": "guardian",
+      "target": "guardian",
+      "move": 2,
+      "braced": false,
+      "bounds": [
+        14,
+        16
+      ]
+    },
+    {
+      "actor": "guardian",
+      "target": "guardian",
+      "move": 2,
+      "braced": true,
+      "bounds": [
+        13,
+        15
+      ]
+    },
+    {
+      "actor": "guardian",
+      "target": "neutral",
+      "move": 0,
+      "braced": false,
+      "bounds": [
+        12,
+        14
+      ]
+    },
+    {
+      "actor": "guardian",
+      "target": "neutral",
+      "move": 0,
+      "braced": true,
+      "bounds": [
+        11,
+        13
+      ]
+    },
+    {
+      "actor": "guardian",
+      "target": "neutral",
+      "move": 1,
+      "braced": false,
+      "bounds": [
+        10,
+        12
+      ]
+    },
+    {
+      "actor": "guardian",
+      "target": "neutral",
+      "move": 1,
+      "braced": true,
+      "bounds": [
+        10,
+        11
+      ]
+    },
+    {
+      "actor": "guardian",
+      "target": "neutral",
+      "move": 2,
+      "braced": false,
+      "bounds": [
+        18,
+        21
+      ]
+    },
+    {
+      "actor": "guardian",
+      "target": "neutral",
+      "move": 2,
+      "braced": true,
+      "bounds": [
+        17,
+        20
+      ]
+    },
+    {
+      "actor": "guardian",
+      "target": "sorcerer",
+      "move": 0,
+      "braced": false,
+      "bounds": [
+        12,
+        15
+      ]
+    },
+    {
+      "actor": "guardian",
+      "target": "sorcerer",
+      "move": 0,
+      "braced": true,
+      "bounds": [
+        11,
+        14
+      ]
+    },
+    {
+      "actor": "guardian",
+      "target": "sorcerer",
+      "move": 1,
+      "braced": false,
+      "bounds": [
+        11,
+        13
+      ]
+    },
+    {
+      "actor": "guardian",
+      "target": "sorcerer",
+      "move": 1,
+      "braced": true,
+      "bounds": [
+        10,
+        12
+      ]
+    },
+    {
+      "actor": "guardian",
+      "target": "sorcerer",
+      "move": 2,
+      "braced": false,
+      "bounds": [
+        18,
+        22
+      ]
+    },
+    {
+      "actor": "guardian",
+      "target": "sorcerer",
+      "move": 2,
+      "braced": true,
+      "bounds": [
+        17,
+        20
+      ]
+    },
+    {
+      "actor": "neutral",
+      "target": "warrior",
+      "move": 0,
+      "braced": false,
+      "bounds": [
+        15,
+        18
+      ]
+    },
+    {
+      "actor": "neutral",
+      "target": "warrior",
+      "move": 0,
+      "braced": true,
+      "bounds": [
+        14,
+        17
+      ]
+    },
+    {
+      "actor": "neutral",
+      "target": "warrior",
+      "move": 1,
+      "braced": false,
+      "bounds": [
+        12,
+        15
+      ]
+    },
+    {
+      "actor": "neutral",
+      "target": "warrior",
+      "move": 1,
+      "braced": true,
+      "bounds": [
+        12,
+        14
+      ]
+    },
+    {
+      "actor": "neutral",
+      "target": "warrior",
+      "move": 2,
+      "braced": false,
+      "bounds": [
+        23,
+        28
+      ]
+    },
+    {
+      "actor": "neutral",
+      "target": "warrior",
+      "move": 2,
+      "braced": true,
+      "bounds": [
+        22,
+        26
+      ]
+    },
+    {
+      "actor": "neutral",
+      "target": "mage",
+      "move": 0,
+      "braced": false,
+      "bounds": [
+        16,
+        19
+      ]
+    },
+    {
+      "actor": "neutral",
+      "target": "mage",
+      "move": 0,
+      "braced": true,
+      "bounds": [
+        15,
+        18
+      ]
+    },
+    {
+      "actor": "neutral",
+      "target": "mage",
+      "move": 1,
+      "braced": false,
+      "bounds": [
+        13,
+        15
+      ]
+    },
+    {
+      "actor": "neutral",
+      "target": "mage",
+      "move": 1,
+      "braced": true,
+      "bounds": [
+        12,
+        14
+      ]
+    },
+    {
+      "actor": "neutral",
+      "target": "mage",
+      "move": 2,
+      "braced": false,
+      "bounds": [
+        24,
+        28
+      ]
+    },
+    {
+      "actor": "neutral",
+      "target": "mage",
+      "move": 2,
+      "braced": true,
+      "bounds": [
+        23,
+        27
+      ]
+    },
+    {
+      "actor": "neutral",
+      "target": "assassin",
+      "move": 0,
+      "braced": false,
+      "bounds": [
+        14,
+        17
+      ]
+    },
+    {
+      "actor": "neutral",
+      "target": "assassin",
+      "move": 0,
+      "braced": true,
+      "bounds": [
+        14,
+        16
+      ]
+    },
+    {
+      "actor": "neutral",
+      "target": "assassin",
+      "move": 1,
+      "braced": false,
+      "bounds": [
+        12,
+        14
+      ]
+    },
+    {
+      "actor": "neutral",
+      "target": "assassin",
+      "move": 1,
+      "braced": true,
+      "bounds": [
+        11,
+        13
+      ]
+    },
+    {
+      "actor": "neutral",
+      "target": "assassin",
+      "move": 2,
+      "braced": false,
+      "bounds": [
+        22,
+        26
+      ]
+    },
+    {
+      "actor": "neutral",
+      "target": "assassin",
+      "move": 2,
+      "braced": true,
+      "bounds": [
+        21,
+        24
+      ]
+    },
+    {
+      "actor": "neutral",
+      "target": "guardian",
+      "move": 0,
+      "braced": false,
+      "bounds": [
+        12,
+        14
+      ]
+    },
+    {
+      "actor": "neutral",
+      "target": "guardian",
+      "move": 0,
+      "braced": true,
+      "bounds": [
+        11,
+        13
+      ]
+    },
+    {
+      "actor": "neutral",
+      "target": "guardian",
+      "move": 1,
+      "braced": false,
+      "bounds": [
+        10,
+        11
+      ]
+    },
+    {
+      "actor": "neutral",
+      "target": "guardian",
+      "move": 1,
+      "braced": true,
+      "bounds": [
+        9,
+        11
+      ]
+    },
+    {
+      "actor": "neutral",
+      "target": "guardian",
+      "move": 2,
+      "braced": false,
+      "bounds": [
+        18,
+        22
+      ]
+    },
+    {
+      "actor": "neutral",
+      "target": "guardian",
+      "move": 2,
+      "braced": true,
+      "bounds": [
+        17,
+        20
+      ]
+    },
+    {
+      "actor": "neutral",
+      "target": "neutral",
+      "move": 0,
+      "braced": false,
+      "bounds": [
+        14,
+        17
+      ]
+    },
+    {
+      "actor": "neutral",
+      "target": "neutral",
+      "move": 0,
+      "braced": true,
+      "bounds": [
+        14,
+        16
+      ]
+    },
+    {
+      "actor": "neutral",
+      "target": "neutral",
+      "move": 1,
+      "braced": false,
+      "bounds": [
+        12,
+        14
+      ]
+    },
+    {
+      "actor": "neutral",
+      "target": "neutral",
+      "move": 1,
+      "braced": true,
+      "bounds": [
+        11,
+        13
+      ]
+    },
+    {
+      "actor": "neutral",
+      "target": "neutral",
+      "move": 2,
+      "braced": false,
+      "bounds": [
+        22,
+        26
+      ]
+    },
+    {
+      "actor": "neutral",
+      "target": "neutral",
+      "move": 2,
+      "braced": true,
+      "bounds": [
+        21,
+        24
+      ]
+    },
+    {
+      "actor": "neutral",
+      "target": "sorcerer",
+      "move": 0,
+      "braced": false,
+      "bounds": [
+        15,
+        17
+      ]
+    },
+    {
+      "actor": "neutral",
+      "target": "sorcerer",
+      "move": 0,
+      "braced": true,
+      "bounds": [
+        14,
+        16
+      ]
+    },
+    {
+      "actor": "neutral",
+      "target": "sorcerer",
+      "move": 1,
+      "braced": false,
+      "bounds": [
+        12,
+        14
+      ]
+    },
+    {
+      "actor": "neutral",
+      "target": "sorcerer",
+      "move": 1,
+      "braced": true,
+      "bounds": [
+        11,
+        13
+      ]
+    },
+    {
+      "actor": "neutral",
+      "target": "sorcerer",
+      "move": 2,
+      "braced": false,
+      "bounds": [
+        22,
+        26
+      ]
+    },
+    {
+      "actor": "neutral",
+      "target": "sorcerer",
+      "move": 2,
+      "braced": true,
+      "bounds": [
+        21,
+        25
+      ]
+    },
+    {
+      "actor": "sorcerer",
+      "target": "warrior",
+      "move": 0,
+      "braced": false,
+      "bounds": [
+        17,
+        20
+      ]
+    },
+    {
+      "actor": "sorcerer",
+      "target": "warrior",
+      "move": 0,
+      "braced": true,
+      "bounds": [
+        16,
+        19
+      ]
+    },
+    {
+      "actor": "sorcerer",
+      "target": "warrior",
+      "move": 1,
+      "braced": false,
+      "bounds": [
+        14,
+        17
+      ]
+    },
+    {
+      "actor": "sorcerer",
+      "target": "warrior",
+      "move": 1,
+      "braced": true,
+      "bounds": [
+        13,
+        16
+      ]
+    },
+    {
+      "actor": "sorcerer",
+      "target": "warrior",
+      "move": 2,
+      "braced": false,
+      "bounds": [
+        26,
+        31
+      ]
+    },
+    {
+      "actor": "sorcerer",
+      "target": "warrior",
+      "move": 2,
+      "braced": true,
+      "bounds": [
+        25,
+        29
+      ]
+    },
+    {
+      "actor": "sorcerer",
+      "target": "mage",
+      "move": 0,
+      "braced": false,
+      "bounds": [
+        14,
+        17
+      ]
+    },
+    {
+      "actor": "sorcerer",
+      "target": "mage",
+      "move": 0,
+      "braced": true,
+      "bounds": [
+        13,
+        16
+      ]
+    },
+    {
+      "actor": "sorcerer",
+      "target": "mage",
+      "move": 1,
+      "braced": false,
+      "bounds": [
+        11,
+        13
+      ]
+    },
+    {
+      "actor": "sorcerer",
+      "target": "mage",
+      "move": 1,
+      "braced": true,
+      "bounds": [
+        11,
+        13
+      ]
+    },
+    {
+      "actor": "sorcerer",
+      "target": "mage",
+      "move": 2,
+      "braced": false,
+      "bounds": [
+        21,
+        25
+      ]
+    },
+    {
+      "actor": "sorcerer",
+      "target": "mage",
+      "move": 2,
+      "braced": true,
+      "bounds": [
+        20,
+        24
+      ]
+    },
+    {
+      "actor": "sorcerer",
+      "target": "assassin",
+      "move": 0,
+      "braced": false,
+      "bounds": [
+        16,
+        19
+      ]
+    },
+    {
+      "actor": "sorcerer",
+      "target": "assassin",
+      "move": 0,
+      "braced": true,
+      "bounds": [
+        15,
+        18
+      ]
+    },
+    {
+      "actor": "sorcerer",
+      "target": "assassin",
+      "move": 1,
+      "braced": false,
+      "bounds": [
+        13,
+        15
+      ]
+    },
+    {
+      "actor": "sorcerer",
+      "target": "assassin",
+      "move": 1,
+      "braced": true,
+      "bounds": [
+        12,
+        15
+      ]
+    },
+    {
+      "actor": "sorcerer",
+      "target": "assassin",
+      "move": 2,
+      "braced": false,
+      "bounds": [
+        25,
+        29
+      ]
+    },
+    {
+      "actor": "sorcerer",
+      "target": "assassin",
+      "move": 2,
+      "braced": true,
+      "bounds": [
+        23,
+        27
+      ]
+    },
+    {
+      "actor": "sorcerer",
+      "target": "guardian",
+      "move": 0,
+      "braced": false,
+      "bounds": [
+        14,
+        17
+      ]
+    },
+    {
+      "actor": "sorcerer",
+      "target": "guardian",
+      "move": 0,
+      "braced": true,
+      "bounds": [
+        13,
+        16
+      ]
+    },
+    {
+      "actor": "sorcerer",
+      "target": "guardian",
+      "move": 1,
+      "braced": false,
+      "bounds": [
+        11,
+        13
+      ]
+    },
+    {
+      "actor": "sorcerer",
+      "target": "guardian",
+      "move": 1,
+      "braced": true,
+      "bounds": [
+        11,
+        13
+      ]
+    },
+    {
+      "actor": "sorcerer",
+      "target": "guardian",
+      "move": 2,
+      "braced": false,
+      "bounds": [
+        21,
+        25
+      ]
+    },
+    {
+      "actor": "sorcerer",
+      "target": "guardian",
+      "move": 2,
+      "braced": true,
+      "bounds": [
+        20,
+        24
+      ]
+    },
+    {
+      "actor": "sorcerer",
+      "target": "neutral",
+      "move": 0,
+      "braced": false,
+      "bounds": [
+        16,
+        19
+      ]
+    },
+    {
+      "actor": "sorcerer",
+      "target": "neutral",
+      "move": 0,
+      "braced": true,
+      "bounds": [
+        15,
+        18
+      ]
+    },
+    {
+      "actor": "sorcerer",
+      "target": "neutral",
+      "move": 1,
+      "braced": false,
+      "bounds": [
+        13,
+        15
+      ]
+    },
+    {
+      "actor": "sorcerer",
+      "target": "neutral",
+      "move": 1,
+      "braced": true,
+      "bounds": [
+        12,
+        14
+      ]
+    },
+    {
+      "actor": "sorcerer",
+      "target": "neutral",
+      "move": 2,
+      "braced": false,
+      "bounds": [
+        24,
+        28
+      ]
+    },
+    {
+      "actor": "sorcerer",
+      "target": "neutral",
+      "move": 2,
+      "braced": true,
+      "bounds": [
+        23,
+        27
+      ]
+    },
+    {
+      "actor": "sorcerer",
+      "target": "sorcerer",
+      "move": 0,
+      "braced": false,
+      "bounds": [
+        16,
+        19
+      ]
+    },
+    {
+      "actor": "sorcerer",
+      "target": "sorcerer",
+      "move": 0,
+      "braced": true,
+      "bounds": [
+        15,
+        18
+      ]
+    },
+    {
+      "actor": "sorcerer",
+      "target": "sorcerer",
+      "move": 1,
+      "braced": false,
+      "bounds": [
+        13,
+        15
+      ]
+    },
+    {
+      "actor": "sorcerer",
+      "target": "sorcerer",
+      "move": 1,
+      "braced": true,
+      "bounds": [
+        12,
+        15
+      ]
+    },
+    {
+      "actor": "sorcerer",
+      "target": "sorcerer",
+      "move": 2,
+      "braced": false,
+      "bounds": [
+        25,
+        29
+      ]
+    },
+    {
+      "actor": "sorcerer",
+      "target": "sorcerer",
+      "move": 2,
+      "braced": true,
+      "bounds": [
+        23,
+        27
+      ]
+    }
+  ],
+  "hex_stats": [
+    56,
+    56,
+    44,
+    48
+  ],
+  "refresh": {
+    "value": 78,
+    "count": 1,
+    "turns": 4
+  }
+}

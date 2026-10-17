@@ -73,3 +73,8 @@ jobs:
           set -o pipefail
           ~/godot/Godot --headless --path game --editor --import --quit 2>&1 | tee /tmp/godot-import.log
           ! grep -E "SCRIPT ERROR: Parse Error|Failed to load script" /tmp/godot-import.log
+      - name: Check Python and Godot combat parity
+        run: |
+          set -o pipefail
+          ~/godot/Godot --headless --path game --script res://scripts/tools/combat_parity_smoke.gd 2>&1 | tee /tmp/combat-parity.log
+          grep -q 'COMBAT_PARITY: 216 damage cases, 0 failures' /tmp/combat-parity.log
