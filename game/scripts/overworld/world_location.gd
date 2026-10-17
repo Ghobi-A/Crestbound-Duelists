@@ -139,7 +139,7 @@ func tile_char(tile: Vector2i) -> String:
 	return definition.rows[tile.y][tile.x]
 
 func is_walkable(tile: Vector2i) -> bool:
-	return not tile_char(tile) in ["#","~","_"] and not _blocked.has(tile) and not _npc_tiles.has(tile)
+	return not tile_char(tile) in definition.get("blocked_symbols", ["#","~","_"]) and not _blocked.has(tile) and not _npc_tiles.has(tile)
 
 func _process(delta: float) -> void:
 	if _player == null: return

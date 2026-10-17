@@ -90,3 +90,23 @@ PixelLab's Pillow-based materializer was invoked before dependencies were
 installed. Presentation validation now installs development dependencies first;
 Web deployment explicitly installs Pillow before materialization. Render QA's
 existing dependency setup already installs Pillow.
+
+
+## Final local check results
+
+- 266 Python tests passed; focused route/navigation tests passed after formatting.
+- Ruff passed for the new Python route definition and route tests; Python source
+  compilation and JavaScript syntax checking passed.
+- Godot editor import/static checks passed; the walk audit reported no flags.
+- The final real-client route harness reported `ROUTE_SMOKE: 0 failures`.
+- Existing `WORLD_SMOKE: 0 failures` verified the six interior transitions.
+- Release Web export succeeded. Playwright ran against that exported build with
+  no page errors, checked four viewport sizes, and captured route travel, the
+  route menu and return to Greymere. Those browser renders were inspected and
+  showed the correct route/town HUD and corresponding scene in each direction.
+- Four native 720p captures were inspected. CI additionally repeats selected
+  route/battle captures at 1080p and runs the gameplay/Web checks.
+
+The headless dummy renderer can emit a custom-sampler diagnostic and existing
+missing move-VFX warnings. These did not cause gameplay failures; the actual
+OpenGL/native and browser renders were inspected separately.

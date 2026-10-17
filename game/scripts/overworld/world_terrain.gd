@@ -68,7 +68,18 @@ func _draw() -> void:
 			# Inset a few source px so filtered/mipmapped sampling never pulls in
 			# the neighbouring material quadrant as a faint grid line.
 			draw_texture_rect_region(texture,Rect2(p,Vector2(16,16)),Rect2(source+Vector2.ONE*SOURCE_INSET,source_cell-Vector2.ONE*SOURCE_INSET*2.0))
-			if symbol == ",":
+			if symbol == "|":
+				draw_rect(Rect2(p+Vector2(1,7),Vector2(14,2)),Color("82623f"))
+				draw_rect(Rect2(p+Vector2(1,12),Vector2(14,2)),Color("61482f"))
+				for post in [2,12]:
+					draw_rect(Rect2(p+Vector2(post,4),Vector2(2,12)),Color("4b3928"))
+					draw_rect(Rect2(p+Vector2(post,3),Vector2(2,2)),Color("a38758"))
+			elif symbol == "r":
+				draw_rect(Rect2(p+Vector2(2,7),Vector2(12,7)),Color("30373b"))
+				draw_rect(Rect2(p+Vector2(3,5),Vector2(9,7)),Color("6b7070"))
+				draw_rect(Rect2(p+Vector2(5,4),Vector2(6,2)),Color("93988b"))
+				draw_rect(Rect2(p+Vector2(10,8),Vector2(2,4)),Color("4d5556"))
+			elif symbol == ",":
 				draw_rect(Rect2(p,Vector2(16,16)),Color(0.40,0.29,0.13,0.85))
 				for mark in 3: draw_rect(Rect2(p+Vector2((x*3+mark*5)%15,(y*5+mark*3)%15),Vector2(2,1)),Color("80683c"))
 			elif symbol == "g":
