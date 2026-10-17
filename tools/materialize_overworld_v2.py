@@ -5,6 +5,7 @@ from __future__ import annotations
 from pathlib import Path
 
 from overworld_v2_art import CAST, KAI, build_sheet
+from apply_pixellab_walks import apply_walks
 
 ROOT = Path(__file__).resolve().parents[1]
 REWORK = ROOT / "game" / "assets" / "rework"
@@ -22,6 +23,7 @@ def materialize() -> None:
         if not payload.startswith(PNG_SIGNATURE):
             raise RuntimeError(f"generated asset is not a PNG: {target}")
         print(f"materialized {target.relative_to(ROOT)} {expected[0]}x{expected[1]} ({len(payload)} bytes)")
+    apply_walks()
 
 
 if __name__ == "__main__":

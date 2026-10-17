@@ -13,6 +13,8 @@ on:
       - "tests/test_overworld_v2.py"
       - "tools/overworld_v2_art.py"
       - "tools/materialize_overworld_v2.py"
+      - "tools/apply_pixellab_walks.py"
+      - "tools/walk_sources/**"
       - "tools/validate_godot_project.py"
       - ".github/workflows/presentation-validation.yml"
   workflow_dispatch: {}

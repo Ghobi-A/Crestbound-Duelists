@@ -12,6 +12,8 @@ on:
       - "game/**"
       - "tools/overworld_v2_art.py"
       - "tools/materialize_overworld_v2.py"
+      - "tools/apply_pixellab_walks.py"
+      - "tools/walk_sources/**"
       - ".github/workflows/godot-web-deploy.yml"
   workflow_dispatch: {}
 
