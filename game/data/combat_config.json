@@ -1,5 +1,5 @@
 {
-  "brace_multiplier": 1.2,
+  "brace_multiplier": 1.15,
   "guaranteed_speed_ratio": 2.0,
   "max_turns": 100,
   "speed_band": 20,

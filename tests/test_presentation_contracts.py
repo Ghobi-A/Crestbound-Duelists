@@ -65,11 +65,16 @@ def test_optional_focal_assets_have_runtime_fallbacks() -> None:
     setup = source("scripts/ui/battle/party_setup.gd")
     world = source("scripts/overworld/greymere.gd")
     result = source("scripts/presentation/result_presentation.gd")
-    assert "assets/ui/title_mark.png" in boot and "CRESTBOUND DUELISTS" in boot
-    assert "assets/landmarks/greymere_court_arch.png" in world
-    assert "if not ResourceLoader.exists(path):\n\t\treturn" in world
+    assert '_title_label.text = "CRESTBOUND"' in boot
+    assert '_subtitle_label.text = "D U E L I S T S"' in boot
+    assert "extends WorldLocation" in world
+    assert "WorldCatalog" in source("scripts/overworld/world_location.gd")
     assert "assets/ui/results/%s.png" in result and "key.to_upper()" in result
-    assert "_optional_texture" in setup
+    # The formation panel now shows class/Crest metadata beside the
+    # established portrait; there are no nonexistent icon/card paths.
+    assert "_identity_label.text" in setup
+    assert "assets/crests/%s/icon.png" not in setup
+    assert "assets/entities/%s/card.png" not in setup
 
 
 def test_audio_missing_files_are_cached_and_silent() -> None:
@@ -97,93 +102,61 @@ def test_scene_changes_use_semantic_transition_gateway() -> None:
         assert "SceneTransition.change_scene" in source(relative)
 
 
-def test_no_ui_text_is_rendered_below_the_bitmap_font_native_size() -> None:
-    """`crestbound_font.fnt` is an 8px bitmap face.
+def test_ui_uses_the_licensed_vector_face_at_a_readable_size() -> None:
+    """The interface face is IBM Plex Mono (OFL), rendered as MSDF.
 
-    Godot rescales bitmap glyphs to any requested size, and a factor below
-    1.0 drops whole pixel rows: strokes vanish and letters turn into other
-    letters. Party setup shipped at 6-7px and rendered "ACTIVE" as "NCTIVE"
-    and "Liora" as "L:ora". Sub-native sizes must never come back.
+    The layout is drawn at 2x-6x of 320x180, so a vector face stays crisp at
+    every output size. UiStyle clamps every size to MIN_FONT_SIZE (5 logical
+    px = 10 physical px at the smallest supported 640x360 output); direct
+    theme overrides must respect the same floor.
     """
-    fnt = (GAME / "assets/ui/crestbound_font.fnt").read_text(encoding="utf-8")
-    native = int(re.search(r"\bsize=(\d+)", fnt).group(1))
-    assert native == 8
+    project = (GAME / "project.godot").read_text(encoding="utf-8")
+    assert 'theme/custom_font="res://assets/ui/fonts/IBMPlexMono-Regular.ttf"' in project
+    assert (GAME / "assets/ui/fonts/OFL.txt").read_text(encoding="utf-8").startswith("Copyright")
+    for weight in ("Regular", "Medium", "SemiBold"):
+        imported = (GAME / f"assets/ui/fonts/IBMPlexMono-{weight}.ttf.import").read_text(encoding="utf-8")
+        assert "multichannel_signed_distance_field=true" in imported
+    style = source("scripts/ui/ui_style.gd")
+    floor = int(re.search(r"const MIN_FONT_SIZE := (\d+)", style).group(1))
+    assert floor >= 5
+    assert "maxi(size, MIN_FONT_SIZE)" in style
 
     offenders: list[str] = []
     for path in sorted(SCRIPTS.rglob("*.gd")):
-        text = path.read_text(encoding="utf-8")
-        lines = text.splitlines()
-
-        # Sizes written straight into the override.
-        for number, line in enumerate(lines, start=1):
-            for size in re.findall(
-                r'add_theme_font_size_override\(\s*"font_size"\s*,\s*(\d+)', line
-            ):
-                if int(size) < native:
-                    offenders.append(f"{path.relative_to(GAME)}:{number} uses {size}px")
-
-        # Sizes handed to a label helper that forwards them to the override
-        # (party_setup._label, boot_screen._make_label). A literal at the
-        # call site never reaches the regex above, which is exactly how the
-        # 6px footer survived the first version of this check.
-        for helper, index in _font_size_forwarding_helpers(text).items():
-            for number, line in enumerate(lines, start=1):
-                for call in re.finditer(rf"\b{helper}\(", line):
-                    args = _split_call_args(line[call.end() - 1 :])
-                    if args is None or index >= len(args):
-                        continue
-                    argument = args[index].strip()
-                    if argument.isdigit() and int(argument) < native:
-                        offenders.append(
-                            f"{path.relative_to(GAME)}:{number}"
-                            f" passes {argument}px to {helper}()"
-                        )
-    assert not offenders, "text below the font's native size: " + "; ".join(offenders)
-
-
-def _font_size_forwarding_helpers(text: str) -> dict[str, int]:
-    """Map helper name -> index of its font-size parameter.
-
-    Only functions that actually forward the parameter into the theme
-    override count, so an unrelated `font_size` local cannot flag callers.
-    """
-    helpers: dict[str, int] = {}
-    for match in re.finditer(r"^func (\w+)\(([^)]*)\)", text, re.MULTILINE):
-        name, signature = match.group(1), match.group(2)
-        parameters = [p.split(":")[0].strip() for p in signature.split(",") if p.strip()]
-        if "font_size" not in parameters:
-            continue
-        body = text[match.end() :]
-        next_func = body.find("\nfunc ")
-        if next_func != -1:
-            body = body[:next_func]
-        if 'add_theme_font_size_override("font_size", font_size)' in body:
-            helpers[name] = parameters.index("font_size")
-    return helpers
-
-
-def _split_call_args(text: str) -> list[str] | None:
-    """Split the argument list of a call, ignoring commas nested in parens.
-
-    `text` starts at the opening paren. Returns None if the call is not
-    closed on this line.
-    """
-    depth = 0
-    args: list[str] = []
-    current = ""
-    for character in text:
-        if character in "([":
-            depth += 1
-            if depth == 1:
+        for number, line in enumerate(path.read_text(encoding="utf-8").splitlines(), start=1):
+            if "add_theme_font_size_override" not in line:
                 continue
-        elif character in ")]":
-            depth -= 1
-            if depth == 0:
-                args.append(current)
-                return args
-        if depth == 1 and character == ",":
-            args.append(current)
-            current = ""
-        else:
-            current += character
-    return None
+            for size in re.findall(r"\b(\d+)\b", line.split("font_size", 1)[-1]):
+                if int(size) < floor:
+                    offenders.append(f"{path.relative_to(GAME)}:{number} uses {size}px")
+    assert not offenders, "text below the minimum size: " + "; ".join(offenders)
+
+
+def test_reachable_encounters_have_authored_battle_art() -> None:
+    """Every encounter the client can start must show registered art.
+
+    Data-only encounters may still lack art (presentation_smoke reports them
+    as ART_COVERAGE_GAP); once a script can set one as the pending encounter,
+    each combatant needs a registered battle record rather than a fallback.
+    """
+    reachable = set()
+    for script in SCRIPTS.rglob("*.gd"):
+        reachable.update(re.findall(r'pending_encounter\s*=\s*"([a-z0-9_]+)"', script.read_text(encoding="utf-8")))
+    assert reachable, "no reachable encounter found"
+    encounters = json.loads((GAME / "data/encounters.json").read_text(encoding="utf-8"))
+    manifest = json.loads((GAME / "assets/rework/characters.json").read_text(encoding="utf-8"))
+    registry = manifest["characters"]
+    native_w, native_h = manifest["native_size"]
+    known = set(registry) | {alias for record in registry.values() for alias in record.get("aliases", [])}
+    for encounter_id in sorted(reachable):
+        encounter = encounters[encounter_id]
+        for build in encounter.get("enemy_party", []):
+            key = build.get("sprite_key", "")
+            assert key in known, f"{encounter_id}: {build.get('name')} has no authored battle art ({key!r})"
+            record = next(r for i, r in registry.items() if i == key or key in r.get("aliases", []))
+            for field in ("battle_rect", "foot_anchor", "portrait_rect"):
+                assert field in record, f"{key} missing {field}"
+            x, y, w, h = record["battle_rect"]
+            assert 0 <= x and 0 <= y and x + w <= native_w and y + h <= native_h, f"{key} crop outside atlas"
+            fx, fy = record["foot_anchor"]
+            assert 0 <= fx <= w and 0 <= fy <= h, f"{key} foot anchor outside crop"

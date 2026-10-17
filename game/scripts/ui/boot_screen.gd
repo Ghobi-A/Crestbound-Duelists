@@ -9,7 +9,7 @@ const PARTY_SETUP_SCENE := "res://scenes/ui/party_setup.tscn"
 # so a recruiter reaches gameplay in one press.
 const QUICK_BATTLE_CLASS := "warrior"
 
-const CONTROLS_TEXT := "MOVE        WASD / Arrow keys\nCONFIRM     Z / Enter / Space\nBACK        X / Escape\n\nObjective: speak to Warden Elara, then investigate the Hollow Court."
+const CONTROLS_TEXT := "MOVE        WASD / Arrow keys\nCONFIRM     Z / Enter / Space\nBACK        X / Escape\n\nObjective: speak to Warden Almyra, then investigate the Hollow Court."
 
 enum Screen { MENU, CLASS_SELECT, CONTROLS }
 
@@ -28,14 +28,13 @@ var _error_label: Label
 var _preview: TextureRect
 var _body_panel: UiPanel
 var _menu_rows: Array[Label] = []
-var _menu_band: ColorRect
-var _menu_tick: ColorRect
+var _menu_band: UiDecor
 
 # Menu row geometry, shared by the labels and the selection band drawn
 # behind them, so the two can never disagree about where a row sits.
-const MENU_TOP := 64.0
-const MENU_PITCH := 12.0
-const MENU_BAND := Rect2(44, 0, 232, 12)
+const MENU_TOP := 80.0
+const MENU_PITCH := 11.0
+const MENU_BAND := Rect2(24, 0, 98, 9)
 
 
 func _ready() -> void:
@@ -57,48 +56,44 @@ func _build_ui() -> void:
 	background.color = PlaceholderPalette.BG_DARK
 	background.set_anchors_preset(Control.PRESET_FULL_RECT)
 	add_child(background)
+	var scenery := TextureRect.new()
+	PresentationLayout.texture_box(scenery, Rect2(0, 0, 320, 180))
+	scenery.texture = load("res://assets/rework/hollow_court.png")
+	scenery.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+	scenery.modulate = Color(0.35, 0.42, 0.55)
+	add_child(scenery)
 
 	# The identity floats in open atmosphere; only the actionable menu is framed.
-	_body_panel = UiPanel.create(Vector2(36, 56), Vector2(248, 98), UiStyle.NEUTRAL)
+	_body_panel = UiPanel.create(Vector2(14, 70), Vector2(118, 58), UiStyle.NEUTRAL)
 	add_child(_body_panel)
-	var title_path := "res://assets/ui/title_mark.png" # optional-authored-asset
-	if ResourceLoader.exists(title_path):
-		var mark := TextureRect.new()
-		mark.texture = load(title_path)
-		mark.position = Vector2(40, 8)
-		mark.size = Vector2(240, 48)
-		mark.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-		add_child(mark)
+	add_child(UiDecor.create("rule", Rect2(92, 44, 136, 4)))
 
 	# Added after the panel and before the labels, so the band layers
 	# correctly: panel, band, text.
-	_menu_band = ColorRect.new()
-	_menu_band.color = PlaceholderPalette.MOON_INDIGO
-	_menu_band.size = MENU_BAND.size
+	_menu_band = UiDecor.create("selection", MENU_BAND)
 	_menu_band.visible = false
 	add_child(_menu_band)
-	_menu_tick = ColorRect.new()
-	_menu_tick.color = PlaceholderPalette.CREST_GOLD
-	_menu_tick.size = Vector2(1, MENU_BAND.size.y)
-	_menu_tick.visible = false
-	add_child(_menu_tick)
 
-	_title_label = _make_label(Vector2(0, 18), 12, PlaceholderPalette.TEXT_WARN)
-	_title_label.text = "CRESTBOUND DUELISTS"
-	_title_label.visible = not ResourceLoader.exists(title_path)
-	_subtitle_label = _make_label(Vector2(0, 34), 8, PlaceholderPalette.TEXT_DIM)
-	_subtitle_label.text = "The Crest at Greymere — prototype"
-	_list_label = _make_label(Vector2(0, 62), 8, PlaceholderPalette.TEXT_MAIN)
+	_title_label = _make_label(Vector2(0, 18), 18, UiStyle.GOLD_BRIGHT, UiStyle.SEMIBOLD, 3)
+	_title_label.text = "CRESTBOUND"
+	_title_label.visible = true
+	_subtitle_label = _make_label(Vector2(0, 49), 6, UiStyle.TEXT_DIM, UiStyle.MEDIUM)
+	_subtitle_label.text = "D U E L I S T S"
+	_list_label = _make_label(Vector2(0, 64), 6, UiStyle.TEXT, UiStyle.MEDIUM)
 	# One label per menu row (rather than a single joined-text label) so a
 	# selection band can sit behind exactly the highlighted row, matching
 	# the battle action menu's treatment.
 	for i in 4:
-		var row := _make_label(Vector2(0, MENU_TOP + i * MENU_PITCH), 8, PlaceholderPalette.TEXT_MAIN)
+		var row := _make_label(Vector2(0, MENU_TOP + i * MENU_PITCH), 6, UiStyle.TEXT, UiStyle.MEDIUM)
+		row.position.x = MENU_BAND.position.x + 5
+		row.size = Vector2(MENU_BAND.size.x - 6, MENU_BAND.size.y)
+		row.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+		row.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 		row.visible = false
 		_menu_rows.append(row)
-	_detail_label = _make_label(Vector2(30, 96), 8, PlaceholderPalette.TEXT_DIM)
-	_hint_label = _make_label(Vector2(0, 164), 8, PlaceholderPalette.TEXT_DIM)
-	_error_label = _make_label(Vector2(0, 80), 8, PlaceholderPalette.TEXT_DANGER)
+	_detail_label = _make_label(Vector2(30, 96), 6, UiStyle.TEXT_DIM)
+	_hint_label = _make_label(Vector2(0, 166), 5, UiStyle.TEXT_FAINT, UiStyle.REGULAR, 1)
+	_error_label = _make_label(Vector2(0, 80), 6, PlaceholderPalette.TEXT_DANGER)
 
 	_preview = TextureRect.new()
 	PresentationLayout.texture_box(_preview, Rect2(232, 88, 64, 64))
@@ -107,14 +102,10 @@ func _build_ui() -> void:
 	add_child(_preview)
 
 
-func _make_label(top_left: Vector2, font_size: int, color: Color) -> Label:
-	var label := Label.new()
-	label.position = top_left
-	label.size = Vector2(320, 180 - top_left.y)
+func _make_label(top_left: Vector2, font_size: int, color: Color, weight := UiStyle.REGULAR, spacing := 0) -> Label:
+	var label := UiStyle.make_label(self, Rect2(top_left, Vector2(320, 180 - top_left.y)), "", font_size, color, weight, spacing)
+	label.clip_text = false
 	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	label.add_theme_font_size_override("font_size", font_size)
-	label.add_theme_color_override("font_color", color)
-	add_child(label)
 	return label
 
 
@@ -132,12 +123,9 @@ func _position_menu_band() -> void:
 	## sit under this screen's full-rect background and never be seen.
 	var showing := _screen == Screen.MENU and not _menu_options.is_empty()
 	_menu_band.visible = showing
-	_menu_tick.visible = showing
 	if not showing:
 		return
-	var y := MENU_TOP + _menu_index * MENU_PITCH - 1
-	_menu_band.position = Vector2(MENU_BAND.position.x, y)
-	_menu_tick.position = Vector2(MENU_BAND.position.x, y)
+	_menu_band.position = Vector2(MENU_BAND.position.x, MENU_TOP + _menu_index * MENU_PITCH)
 
 
 func _refresh() -> void:
@@ -149,6 +137,11 @@ func _refresh() -> void:
 	_detail_label.size.x = 260
 	match _screen:
 		Screen.MENU:
+			# The panel hugs however many options this run offers.
+			var menu_height := 12.0 + _menu_options.size() * MENU_PITCH
+			_body_panel.position = Vector2(14, 72)
+			_body_panel.custom_minimum_size = Vector2(118, menu_height)
+			_body_panel.size = Vector2(118, menu_height)
 			_list_label.text = ""
 			for i in _menu_rows.size():
 				var row := _menu_rows[i]
@@ -158,12 +151,17 @@ func _refresh() -> void:
 				row.text = _menu_options[i]
 				row.add_theme_color_override(
 					"font_color",
-					PlaceholderPalette.TEXT_MAIN if i == _menu_index else PlaceholderPalette.TEXT_DIM
+					UiStyle.GOLD_BRIGHT if i == _menu_index else UiStyle.TEXT_DIM
 				)
 			_detail_label.text = ""
-			_preview.visible = false
-			_hint_label.text = "Arrows: choose   Z/Enter: confirm"
+			PresentationLayout.texture_box(_preview, Rect2(168, 54, 140, 106))
+			_update_preview("neutral")
+			_hint_label.text = "ARROWS CHOOSE   ·   Z / ENTER CONFIRM"
 		Screen.CLASS_SELECT:
+			_body_panel.custom_minimum_size = Vector2(296, 98)
+			_body_panel.size = Vector2(296, 98)
+			_body_panel.position = Vector2(12, 56)
+			PresentationLayout.texture_box(_preview, Rect2(222, 80, 80, 70))
 			_detail_label.size.x = 190
 			_detail_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 			var class_id: String = _class_list[_class_index]
@@ -181,14 +179,17 @@ func _refresh() -> void:
 					crest.get("name", "—"),
 				]
 			)
-			_hint_label.text = "Left/Right: class   Z/Enter: begin   X: back"
+			_hint_label.text = "LEFT / RIGHT CLASS   ·   Z / ENTER BEGIN   ·   X BACK"
 			_update_preview(class_id)
 		Screen.CONTROLS:
+			_body_panel.custom_minimum_size = Vector2(296, 98)
+			_body_panel.size = Vector2(296, 98)
+			_body_panel.position = Vector2(12, 56)
 			_list_label.text = "Controls"
 			_detail_label.text = CONTROLS_TEXT
 			_detail_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 			_preview.visible = false
-			_hint_label.text = "X/Escape: back"
+			_hint_label.text = "X / ESCAPE BACK"
 
 
 func _update_preview(class_id: String) -> void:

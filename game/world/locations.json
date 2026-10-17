@@ -1,0 +1,2634 @@
+{
+  "revision": 1,
+  "locations": {
+    "greymere": {
+      "id": "greymere",
+      "name": "GREYMERE TOWN",
+      "subtitle": "Above the Hollow Court",
+      "scene": "res://scenes/overworld/greymere.tscn",
+      "rows": [
+        "##############################################",
+        "##############################################",
+        "##..........................................##",
+        "##..........................................##",
+        "##..........................................##",
+        "##..........................................##",
+        "##.............^^^^^........................##",
+        "##.............^^^^^........................##",
+        "##.............^^^^^........................##",
+        "##..............:::.........................##",
+        "##......::::::::::::::::::..................##",
+        "##......::::::::::::::::::..................##",
+        "##.......::.....:::....::...................##",
+        "##.......::...:::::::..::...................##",
+        "##.......::...:::::::..::...................##",
+        "##.......::...:::::::..::...................##",
+        "##.......::.:::::::::::::::::::::::::::::::.##",
+        "##.......::.:::::::::::::::::::::::::::::::.##",
+        "##.......::.:::::::::::::::::::::::::::::::.##",
+        "##.......::.:::::::::::::...............:::.##",
+        "##.......::::::::::::::::...............:::.##",
+        "##.~~~...::::::::::::::::...............:::.##",
+        "##.~~~...::::::::::::::::...............:::.##",
+        "##.~~~...::.....:::.....................:::.##",
+        "##.~~~..........:::.....................:::.##",
+        "##.===:::::::::.:::.....................:::.##",
+        "##.===:::::::::.:::.....................:::.##",
+        "##.~~~..........:::.....................:::.##",
+        "##.~~~..........:::..............::::::::::.##",
+        "##.~~~..........:::..............::::::::::.##",
+        "##.~~~..........:::.........................##",
+        "##..............:::.........................##",
+        "##############################################",
+        "##############################################"
+      ],
+      "music_id": "greymere",
+      "interior": false,
+      "props": [
+        {
+          "asset": "study",
+          "tile": [
+            10,
+            10
+          ]
+        },
+        {
+          "asset": "guardhouse",
+          "tile": [
+            24,
+            10
+          ]
+        },
+        {
+          "asset": "herbalist",
+          "tile": [
+            10,
+            21
+          ]
+        },
+        {
+          "asset": "inn",
+          "tile": [
+            23,
+            20
+          ]
+        },
+        {
+          "asset": "gell_shop",
+          "tile": [
+            33,
+            15
+          ]
+        },
+        {
+          "asset": "joey_home",
+          "tile": [
+            40,
+            15
+          ]
+        },
+        {
+          "asset": "kai_house",
+          "tile": [
+            36,
+            27
+          ]
+        },
+        {
+          "asset": "gate",
+          "tile": [
+            17,
+            5
+          ]
+        },
+        {
+          "asset": "spring",
+          "tile": [
+            22,
+            24
+          ]
+        },
+        {
+          "asset": "notice",
+          "tile": [
+            20,
+            12
+          ]
+        },
+        {
+          "asset": "bridge",
+          "tile": [
+            4,
+            26
+          ]
+        },
+        {
+          "asset": "wall",
+          "tile": [
+            12,
+            8
+          ]
+        },
+        {
+          "asset": "wall",
+          "tile": [
+            22,
+            8
+          ]
+        },
+        {
+          "asset": "wall",
+          "tile": [
+            10,
+            29
+          ]
+        },
+        {
+          "asset": "wall",
+          "tile": [
+            24,
+            29
+          ]
+        },
+        {
+          "asset": "crates",
+          "tile": [
+            5,
+            22
+          ]
+        },
+        {
+          "asset": "crates",
+          "tile": [
+            28,
+            21
+          ]
+        },
+        {
+          "asset": "crates",
+          "tile": [
+            28,
+            11
+          ]
+        },
+        {
+          "asset": "crates",
+          "tile": [
+            5,
+            11
+          ]
+        },
+        {
+          "asset": "crates",
+          "tile": [
+            30,
+            14
+          ]
+        },
+        {
+          "asset": "crates",
+          "tile": [
+            43,
+            18
+          ]
+        },
+        {
+          "asset": "hedge",
+          "tile": [
+            12,
+            22
+          ]
+        },
+        {
+          "asset": "hedge",
+          "tile": [
+            28,
+            24
+          ]
+        },
+        {
+          "asset": "hedge",
+          "tile": [
+            12,
+            11
+          ]
+        },
+        {
+          "asset": "hedge",
+          "tile": [
+            21,
+            10
+          ]
+        },
+        {
+          "asset": "hedge",
+          "tile": [
+            28,
+            15
+          ]
+        },
+        {
+          "asset": "hedge",
+          "tile": [
+            6,
+            15
+          ]
+        },
+        {
+          "asset": "hedge",
+          "tile": [
+            23,
+            28
+          ]
+        },
+        {
+          "asset": "hedge",
+          "tile": [
+            11,
+            28
+          ]
+        },
+        {
+          "asset": "lamp",
+          "tile": [
+            13,
+            21
+          ]
+        },
+        {
+          "asset": "lamp",
+          "tile": [
+            26,
+            20
+          ]
+        },
+        {
+          "asset": "lamp",
+          "tile": [
+            13,
+            10
+          ]
+        },
+        {
+          "asset": "lamp",
+          "tile": [
+            27,
+            10
+          ]
+        },
+        {
+          "asset": "lamp",
+          "tile": [
+            15,
+            7
+          ]
+        },
+        {
+          "asset": "lamp",
+          "tile": [
+            19,
+            7
+          ]
+        },
+        {
+          "asset": "lamp",
+          "tile": [
+            15,
+            28
+          ]
+        },
+        {
+          "asset": "lamp",
+          "tile": [
+            19,
+            28
+          ]
+        },
+        {
+          "asset": "lamp",
+          "tile": [
+            32,
+            19
+          ]
+        },
+        {
+          "asset": "lamp",
+          "tile": [
+            37,
+            19
+          ]
+        },
+        {
+          "asset": "lamp",
+          "tile": [
+            39,
+            27
+          ]
+        },
+        {
+          "asset": "hedge",
+          "tile": [
+            32,
+            22
+          ]
+        },
+        {
+          "asset": "hedge",
+          "tile": [
+            32,
+            26
+          ]
+        },
+        {
+          "asset": "tree",
+          "tile": [
+            3,
+            6
+          ]
+        },
+        {
+          "asset": "tree",
+          "tile": [
+            3,
+            12
+          ]
+        },
+        {
+          "asset": "tree",
+          "tile": [
+            3,
+            18
+          ]
+        },
+        {
+          "asset": "tree",
+          "tile": [
+            3,
+            24
+          ]
+        },
+        {
+          "asset": "tree",
+          "tile": [
+            3,
+            31
+          ]
+        },
+        {
+          "asset": "tree",
+          "tile": [
+            30,
+            6
+          ]
+        },
+        {
+          "asset": "tree",
+          "tile": [
+            30,
+            14
+          ]
+        },
+        {
+          "asset": "tree",
+          "tile": [
+            30,
+            20
+          ]
+        },
+        {
+          "asset": "tree",
+          "tile": [
+            30,
+            29
+          ]
+        },
+        {
+          "asset": "tree",
+          "tile": [
+            7,
+            32
+          ]
+        },
+        {
+          "asset": "tree",
+          "tile": [
+            12,
+            33
+          ]
+        },
+        {
+          "asset": "tree",
+          "tile": [
+            23,
+            33
+          ]
+        },
+        {
+          "asset": "tree",
+          "tile": [
+            28,
+            33
+          ]
+        },
+        {
+          "asset": "tree",
+          "tile": [
+            8,
+            3
+          ]
+        },
+        {
+          "asset": "tree",
+          "tile": [
+            13,
+            3
+          ]
+        },
+        {
+          "asset": "tree",
+          "tile": [
+            22,
+            3
+          ]
+        },
+        {
+          "asset": "tree",
+          "tile": [
+            28,
+            3
+          ]
+        },
+        {
+          "asset": "tree",
+          "tile": [
+            11,
+            27
+          ]
+        },
+        {
+          "asset": "tree",
+          "tile": [
+            25,
+            28
+          ]
+        },
+        {
+          "asset": "tree",
+          "tile": [
+            12,
+            16
+          ]
+        },
+        {
+          "asset": "tree",
+          "tile": [
+            25,
+            16
+          ]
+        },
+        {
+          "asset": "tree",
+          "tile": [
+            34,
+            3
+          ]
+        },
+        {
+          "asset": "tree",
+          "tile": [
+            40,
+            3
+          ]
+        },
+        {
+          "asset": "tree",
+          "tile": [
+            44,
+            7
+          ]
+        },
+        {
+          "asset": "tree",
+          "tile": [
+            44,
+            13
+          ]
+        },
+        {
+          "asset": "tree",
+          "tile": [
+            44,
+            20
+          ]
+        },
+        {
+          "asset": "tree",
+          "tile": [
+            44,
+            26
+          ]
+        },
+        {
+          "asset": "tree",
+          "tile": [
+            33,
+            33
+          ]
+        },
+        {
+          "asset": "tree",
+          "tile": [
+            39,
+            33
+          ]
+        },
+        {
+          "asset": "tree",
+          "tile": [
+            44,
+            31
+          ]
+        },
+        {
+          "asset": "tree",
+          "tile": [
+            31,
+            24
+          ]
+        }
+      ],
+      "spawn_points": {
+        "approach": {
+          "tile": [
+            17,
+            29
+          ],
+          "facing": [
+            0,
+            -1
+          ]
+        },
+        "court_return": {
+          "tile": [
+            17,
+            7
+          ],
+          "facing": [
+            0,
+            1
+          ]
+        },
+        "lena_return": {
+          "tile": [
+            10,
+            22
+          ],
+          "facing": [
+            0,
+            1
+          ]
+        },
+        "inn_return": {
+          "tile": [
+            23,
+            21
+          ],
+          "facing": [
+            0,
+            1
+          ]
+        },
+        "silas_return": {
+          "tile": [
+            10,
+            11
+          ],
+          "facing": [
+            0,
+            1
+          ]
+        },
+        "gell_return": {
+          "tile": [
+            33,
+            16
+          ],
+          "facing": [
+            0,
+            1
+          ]
+        },
+        "joey_return": {
+          "tile": [
+            40,
+            16
+          ],
+          "facing": [
+            0,
+            1
+          ]
+        },
+        "kai_return": {
+          "tile": [
+            36,
+            28
+          ],
+          "facing": [
+            0,
+            1
+          ]
+        },
+        "route_return": {
+          "tile": [
+            17,
+            29
+          ],
+          "facing": [
+            0,
+            -1
+          ]
+        }
+      },
+      "doors": [
+        {
+          "building_id": "lena",
+          "tile": [
+            10,
+            21
+          ],
+          "destination_location": "lena_house",
+          "destination_scene": "res://scenes/overworld/lena_house.tscn",
+          "destination_spawn": "entrance",
+          "return_spawn": "lena_return",
+          "locked": false,
+          "locked_dialogue_id": "locked_door",
+          "transition_type": "fade",
+          "verb": "Enter"
+        },
+        {
+          "building_id": "inn",
+          "tile": [
+            23,
+            20
+          ],
+          "destination_location": "inn",
+          "destination_scene": "res://scenes/overworld/inn.tscn",
+          "destination_spawn": "entrance",
+          "return_spawn": "inn_return",
+          "locked": false,
+          "locked_dialogue_id": "locked_door",
+          "transition_type": "fade",
+          "verb": "Enter"
+        },
+        {
+          "building_id": "silas",
+          "tile": [
+            10,
+            10
+          ],
+          "destination_location": "silas_study",
+          "destination_scene": "res://scenes/overworld/silas_study.tscn",
+          "destination_spawn": "entrance",
+          "return_spawn": "silas_return",
+          "locked": false,
+          "locked_dialogue_id": "locked_door",
+          "transition_type": "fade",
+          "verb": "Enter"
+        },
+        {
+          "building_id": "gell",
+          "tile": [
+            33,
+            15
+          ],
+          "destination_location": "gell_shop",
+          "destination_scene": "res://scenes/overworld/gell_shop.tscn",
+          "destination_spawn": "entrance",
+          "return_spawn": "gell_return",
+          "locked": false,
+          "locked_dialogue_id": "locked_door",
+          "transition_type": "fade",
+          "verb": "Enter"
+        },
+        {
+          "building_id": "joey",
+          "tile": [
+            40,
+            15
+          ],
+          "destination_location": "joey_home",
+          "destination_scene": "res://scenes/overworld/joey_home.tscn",
+          "destination_spawn": "entrance",
+          "return_spawn": "joey_return",
+          "locked": false,
+          "locked_dialogue_id": "locked_door",
+          "transition_type": "fade",
+          "verb": "Enter"
+        },
+        {
+          "building_id": "kai",
+          "tile": [
+            36,
+            27
+          ],
+          "destination_location": "kai_house",
+          "destination_scene": "res://scenes/overworld/kai_house.tscn",
+          "destination_spawn": "entrance",
+          "return_spawn": "kai_return",
+          "locked": false,
+          "locked_dialogue_id": "locked_door",
+          "transition_type": "fade",
+          "verb": "Enter"
+        },
+        {
+          "building_id": "guard",
+          "tile": [
+            24,
+            10
+          ],
+          "destination_location": "greymere",
+          "destination_scene": "res://scenes/overworld/greymere.tscn",
+          "destination_spawn": "approach",
+          "return_spawn": "approach",
+          "locked": true,
+          "locked_dialogue_id": "locked_door",
+          "transition_type": "fade",
+          "verb": "Enter"
+        },
+        {
+          "building_id": "outskirts",
+          "tile": [
+            17,
+            31
+          ],
+          "destination_location": "route_01",
+          "destination_scene": "res://scenes/overworld/route_01.tscn",
+          "destination_spawn": "greymere",
+          "return_spawn": "route_return",
+          "locked": false,
+          "locked_dialogue_id": "",
+          "transition_type": "fade",
+          "verb": "Travel"
+        }
+      ],
+      "interactions": [
+        {
+          "tile": [
+            17,
+            5
+          ],
+          "verb": "Inspect",
+          "dialogue": "court_entrance",
+          "kind": "court"
+        },
+        {
+          "tile": [
+            20,
+            12
+          ],
+          "verb": "Read",
+          "dialogue": "notice_board"
+        }
+      ],
+      "npcs": [
+        {
+          "name": "Warden Almyra",
+          "sprite_key": "elara",
+          "dialogue": "elara_intro",
+          "tile": [
+            19,
+            9
+          ],
+          "facing": [
+            0,
+            1
+          ]
+        },
+        {
+          "name": "Liora Sen",
+          "sprite_key": "mira",
+          "dialogue": "mira_intro",
+          "tile": [
+            14,
+            13
+          ],
+          "facing": [
+            1,
+            0
+          ]
+        },
+        {
+          "name": "Joey",
+          "sprite_key": "townsfolk/farmboy",
+          "dialogue": "toby_flavor",
+          "tile": [
+            15,
+            20
+          ],
+          "facing": [
+            0,
+            1
+          ]
+        },
+        {
+          "name": "Danfor",
+          "sprite_key": "townsfolk/guard_sword",
+          "dialogue": "guard_flavor",
+          "tile": [
+            25,
+            12
+          ],
+          "facing": [
+            0,
+            1
+          ]
+        },
+        {
+          "name": "Watchman Orrin",
+          "sprite_key": "townsfolk/guard_spear",
+          "dialogue": "watchman_flavor",
+          "tile": [
+            20,
+            6
+          ],
+          "facing": [
+            0,
+            1
+          ]
+        },
+        {
+          "name": "Old Ferris",
+          "sprite_key": "townsfolk/torch_bearer",
+          "dialogue": "ferris_flavor",
+          "tile": [
+            14,
+            27
+          ],
+          "facing": [
+            0,
+            1
+          ]
+        },
+        {
+          "name": "Hooded Stranger",
+          "sprite_key": "townsfolk/hooded_stranger",
+          "dialogue": "stranger_flavor",
+          "tile": [
+            6,
+            27
+          ],
+          "facing": [
+            0,
+            1
+          ]
+        }
+      ],
+      "lights": [
+        {
+          "tile": [
+            10,
+            21
+          ],
+          "color": "warm"
+        },
+        {
+          "tile": [
+            23,
+            20
+          ],
+          "color": "warm"
+        },
+        {
+          "tile": [
+            10,
+            10
+          ],
+          "color": "warm"
+        },
+        {
+          "tile": [
+            24,
+            10
+          ],
+          "color": "warm"
+        },
+        {
+          "tile": [
+            15,
+            28
+          ],
+          "color": "warm"
+        },
+        {
+          "tile": [
+            19,
+            28
+          ],
+          "color": "warm"
+        },
+        {
+          "tile": [
+            33,
+            15
+          ],
+          "color": "warm"
+        },
+        {
+          "tile": [
+            40,
+            15
+          ],
+          "color": "warm"
+        },
+        {
+          "tile": [
+            36,
+            27
+          ],
+          "color": "warm"
+        },
+        {
+          "tile": [
+            17,
+            5
+          ],
+          "color": "violet"
+        }
+      ]
+    },
+    "lena_house": {
+      "id": "lena_house",
+      "name": "LENA'S HOUSE",
+      "subtitle": "Herbs, hearth and home",
+      "scene": "res://scenes/overworld/lena_house.tscn",
+      "rows": [
+        "______________________",
+        "___################___",
+        "___################___",
+        "___#wwwwwwwwwwwwww#___",
+        "___#wwwwwwwwwwwwww#___",
+        "___#wwwwwwwwwwwwww#___",
+        "___#wwwwwwwwwwwwww#___",
+        "___#wwwwwwwwwwwwww#___",
+        "___#wwwwwwwwwwwwww#___",
+        "___#wwwwwwwwwwwwww#___",
+        "___#wwwwwwwwwwwwww#___",
+        "___#wwwwww::wwwwww#___",
+        "___################___",
+        "______________________"
+      ],
+      "interior": true,
+      "music_id": "greymere",
+      "props": [
+        {
+          "asset": "hearth",
+          "tile": [
+            5,
+            5
+          ]
+        },
+        {
+          "asset": "jars",
+          "tile": [
+            15,
+            5
+          ]
+        },
+        {
+          "asset": "workbench",
+          "tile": [
+            5,
+            8
+          ]
+        },
+        {
+          "asset": "bed",
+          "tile": [
+            16,
+            8
+          ]
+        },
+        {
+          "asset": "chest",
+          "tile": [
+            17,
+            10
+          ]
+        },
+        {
+          "asset": "table",
+          "tile": [
+            9,
+            8
+          ]
+        }
+      ],
+      "npcs": [
+        {
+          "name": "Lena",
+          "sprite_key": "townsfolk/herbalist_woman",
+          "dialogue": "wren_flavor",
+          "tile": [
+            6,
+            10
+          ],
+          "facing": [
+            0,
+            1
+          ]
+        }
+      ],
+      "spawn_points": {
+        "entrance": {
+          "tile": [
+            10,
+            10
+          ],
+          "facing": [
+            0,
+            -1
+          ]
+        }
+      },
+      "doors": [
+        {
+          "building_id": "lena_house",
+          "tile": [
+            10,
+            12
+          ],
+          "destination_location": "greymere",
+          "destination_scene": "res://scenes/overworld/greymere.tscn",
+          "destination_spawn": "lena_return",
+          "return_spawn": "entrance",
+          "locked": false,
+          "locked_dialogue_id": "locked_door",
+          "transition_type": "fade",
+          "verb": "Leave"
+        }
+      ],
+      "interactions": [
+        {
+          "tile": [
+            5,
+            8
+          ],
+          "verb": "Inspect",
+          "text": "Dried herbs hang above clean bottles. Everything is within easy reach."
+        }
+      ],
+      "lights": [
+        {
+          "tile": [
+            5,
+            4
+          ],
+          "color": "warm"
+        },
+        {
+          "tile": [
+            15,
+            8
+          ],
+          "color": "warm"
+        }
+      ]
+    },
+    "inn": {
+      "id": "inn",
+      "name": "GREYMERE INN",
+      "subtitle": "Warmth along the road",
+      "scene": "res://scenes/overworld/inn.tscn",
+      "rows": [
+        "______________________",
+        "_####################_",
+        "_####################_",
+        "_#wwwwwwwwwwwwwwwwww#_",
+        "_#wwwwwwwwwwwwwwwwww#_",
+        "_#wwwwwwwwwwwwwwwwww#_",
+        "_#wwwwwwwwwwwwwwwwww#_",
+        "_#wwwwwwwwwwwwwwwwww#_",
+        "_#wwwwwwwwwwwwwwwwww#_",
+        "_#wwwwwwwwwwwwwwwwww#_",
+        "_#wwwwwwwwwwwwwwwwww#_",
+        "_#wwwwwwww::wwwwwwww#_",
+        "_####################_",
+        "______________________"
+      ],
+      "interior": true,
+      "music_id": "greymere",
+      "props": [
+        {
+          "asset": "hearth",
+          "tile": [
+            5,
+            4
+          ]
+        },
+        {
+          "asset": "counter",
+          "tile": [
+            14,
+            6
+          ]
+        },
+        {
+          "asset": "jars",
+          "tile": [
+            16,
+            4
+          ]
+        },
+        {
+          "asset": "table",
+          "tile": [
+            5,
+            9
+          ]
+        },
+        {
+          "asset": "table",
+          "tile": [
+            14,
+            10
+          ]
+        },
+        {
+          "asset": "crates",
+          "tile": [
+            17,
+            10
+          ]
+        },
+        {
+          "asset": "table",
+          "tile": [
+            8,
+            5
+          ]
+        }
+      ],
+      "npcs": [
+        {
+          "name": "Goodwife Senna",
+          "sprite_key": "townsfolk/elder_woman",
+          "dialogue": "senna_flavor",
+          "tile": [
+            12,
+            4
+          ],
+          "facing": [
+            0,
+            1
+          ]
+        },
+        {
+          "name": "Joey",
+          "sprite_key": "townsfolk/farmboy",
+          "dialogue": "toby_flavor",
+          "tile": [
+            7,
+            10
+          ],
+          "facing": [
+            0,
+            1
+          ]
+        },
+        {
+          "name": "Old Ferris",
+          "sprite_key": "townsfolk/torch_bearer",
+          "dialogue": "ferris_flavor",
+          "tile": [
+            18,
+            8
+          ],
+          "facing": [
+            -1,
+            0
+          ]
+        }
+      ],
+      "spawn_points": {
+        "entrance": {
+          "tile": [
+            10,
+            10
+          ],
+          "facing": [
+            0,
+            -1
+          ]
+        }
+      },
+      "doors": [
+        {
+          "building_id": "inn",
+          "tile": [
+            10,
+            12
+          ],
+          "destination_location": "greymere",
+          "destination_scene": "res://scenes/overworld/greymere.tscn",
+          "destination_spawn": "inn_return",
+          "return_spawn": "entrance",
+          "locked": false,
+          "locked_dialogue_id": "locked_door",
+          "transition_type": "fade",
+          "verb": "Leave"
+        }
+      ],
+      "interactions": [
+        {
+          "tile": [
+            14,
+            6
+          ],
+          "verb": "Inspect",
+          "text": "The timber smells of smoke and spilled ale. Someone has set out fresh mugs."
+        }
+      ],
+      "lights": [
+        {
+          "tile": [
+            5,
+            4
+          ],
+          "color": "warm"
+        },
+        {
+          "tile": [
+            15,
+            8
+          ],
+          "color": "warm"
+        }
+      ]
+    },
+    "silas_study": {
+      "id": "silas_study",
+      "name": "SILAS'S STUDY",
+      "subtitle": "Old papers. Older questions.",
+      "scene": "res://scenes/overworld/silas_study.tscn",
+      "rows": [
+        "______________________",
+        "_####################_",
+        "_####################_",
+        "_#wwwwwwwwwwwwwwwwww#_",
+        "_#wwwwwwwwwwwwwwwwww#_",
+        "_#wwwwwwwwwwwwwwwwww#_",
+        "_#wwwwwwwwwwwwwwwwww#_",
+        "_#wwwwwwwwwwwwwwwwww#_",
+        "_#wwwwwwwwwwwwwwwwww#_",
+        "_#wwwwwwwwwwwwwwwwww#_",
+        "_#wwwwwwwwwwwwwwwwww#_",
+        "_#wwwwwwww::wwwwwwww#_",
+        "_####################_",
+        "______________________"
+      ],
+      "interior": true,
+      "music_id": "greymere",
+      "props": [
+        {
+          "asset": "books",
+          "tile": [
+            5,
+            5
+          ]
+        },
+        {
+          "asset": "books",
+          "tile": [
+            10,
+            5
+          ]
+        },
+        {
+          "asset": "books",
+          "tile": [
+            15,
+            5
+          ]
+        },
+        {
+          "asset": "desk",
+          "tile": [
+            8,
+            8
+          ]
+        },
+        {
+          "asset": "bed",
+          "tile": [
+            17,
+            8
+          ]
+        },
+        {
+          "asset": "chest",
+          "tile": [
+            4,
+            11
+          ]
+        },
+        {
+          "asset": "jars",
+          "tile": [
+            15,
+            10
+          ]
+        }
+      ],
+      "npcs": [
+        {
+          "name": "Elder Silas",
+          "sprite_key": "townsfolk/village_elder",
+          "dialogue": "kassian_flavor",
+          "tile": [
+            10,
+            9
+          ],
+          "facing": [
+            0,
+            1
+          ]
+        }
+      ],
+      "spawn_points": {
+        "entrance": {
+          "tile": [
+            10,
+            10
+          ],
+          "facing": [
+            0,
+            -1
+          ]
+        }
+      },
+      "doors": [
+        {
+          "building_id": "silas_study",
+          "tile": [
+            10,
+            12
+          ],
+          "destination_location": "greymere",
+          "destination_scene": "res://scenes/overworld/greymere.tscn",
+          "destination_spawn": "silas_return",
+          "return_spawn": "entrance",
+          "locked": false,
+          "locked_dialogue_id": "locked_door",
+          "transition_type": "fade",
+          "verb": "Leave"
+        }
+      ],
+      "interactions": [
+        {
+          "tile": [
+            8,
+            8
+          ],
+          "verb": "Inspect",
+          "text": "Old maps lie beneath fresh notes. Several passages have been carefully covered."
+        }
+      ],
+      "lights": [
+        {
+          "tile": [
+            5,
+            4
+          ],
+          "color": "warm"
+        },
+        {
+          "tile": [
+            15,
+            8
+          ],
+          "color": "warm"
+        }
+      ]
+    },
+    "gell_shop": {
+      "id": "gell_shop",
+      "name": "GELL'S SHOP",
+      "subtitle": "Goods from everywhere, says Gell",
+      "scene": "res://scenes/overworld/gell_shop.tscn",
+      "rows": [
+        "______________________",
+        "_####################_",
+        "_####################_",
+        "_#wwwwwwwwwwwwwwwwww#_",
+        "_#wwwwwwwwwwwwwwwwww#_",
+        "_#wwwwwwwwwwwwwwwwww#_",
+        "_#wwwwwwwwwwwwwwwwww#_",
+        "_#wwwwwwwwwwwwwwwwww#_",
+        "_#wwwwwwwwwwwwwwwwww#_",
+        "_#wwwwwwwwwwwwwwwwww#_",
+        "_#wwwwwwwwwwwwwwwwww#_",
+        "_#wwwwwwww::wwwwwwww#_",
+        "_####################_",
+        "______________________"
+      ],
+      "interior": true,
+      "music_id": "greymere",
+      "props": [
+        {
+          "asset": "counter",
+          "tile": [
+            9,
+            6
+          ]
+        },
+        {
+          "asset": "books",
+          "tile": [
+            4,
+            5
+          ]
+        },
+        {
+          "asset": "books",
+          "tile": [
+            16,
+            5
+          ]
+        },
+        {
+          "asset": "jars",
+          "tile": [
+            15,
+            9
+          ]
+        },
+        {
+          "asset": "crates",
+          "tile": [
+            4,
+            10
+          ]
+        },
+        {
+          "asset": "crates",
+          "tile": [
+            17,
+            10
+          ]
+        },
+        {
+          "asset": "chest",
+          "tile": [
+            6,
+            10
+          ]
+        }
+      ],
+      "npcs": [
+        {
+          "name": "Gell",
+          "sprite_key": "townsfolk/farmhand_capped",
+          "dialogue": "pell_flavor",
+          "tile": [
+            11,
+            5
+          ],
+          "facing": [
+            0,
+            1
+          ]
+        }
+      ],
+      "spawn_points": {
+        "entrance": {
+          "tile": [
+            10,
+            10
+          ],
+          "facing": [
+            0,
+            -1
+          ]
+        }
+      },
+      "doors": [
+        {
+          "building_id": "gell_shop",
+          "tile": [
+            10,
+            12
+          ],
+          "destination_location": "greymere",
+          "destination_scene": "res://scenes/overworld/greymere.tscn",
+          "destination_spawn": "gell_return",
+          "return_spawn": "entrance",
+          "locked": false,
+          "locked_dialogue_id": "locked_door",
+          "transition_type": "fade",
+          "verb": "Leave"
+        }
+      ],
+      "interactions": [
+        {
+          "tile": [
+            9,
+            6
+          ],
+          "verb": "Browse",
+          "text": "Gell's ledger lies open beside a stack of Civara broadsheets he insists are recent.",
+          "kind": "shop"
+        },
+        {
+          "tile": [
+            15,
+            9
+          ],
+          "verb": "Inspect",
+          "text": "Lamp oil, salt, needles and thread, each priced in Gell's careful hand."
+        },
+        {
+          "tile": [
+            16,
+            5
+          ],
+          "verb": "Inspect",
+          "text": "Wares from passing merchants. Gell can say where each one was made, accurately or not."
+        }
+      ],
+      "lights": [
+        {
+          "tile": [
+            9,
+            4
+          ],
+          "color": "warm"
+        },
+        {
+          "tile": [
+            15,
+            7
+          ],
+          "color": "warm"
+        }
+      ]
+    },
+    "joey_home": {
+      "id": "joey_home",
+      "name": "JOEY'S HOME",
+      "subtitle": "Never quite tidy",
+      "scene": "res://scenes/overworld/joey_home.tscn",
+      "rows": [
+        "______________________",
+        "___################___",
+        "___################___",
+        "___#wwwwwwwwwwwwww#___",
+        "___#wwwwwwwwwwwwww#___",
+        "___#wwwwwwwwwwwwww#___",
+        "___#wwwwwwwwwwwwww#___",
+        "___#wwwwwwwwwwwwww#___",
+        "___#wwwwwwwwwwwwww#___",
+        "___#wwwwwwwwwwwwww#___",
+        "___#wwwwwwwwwwwwww#___",
+        "___#wwwwww::wwwwww#___",
+        "___################___",
+        "______________________"
+      ],
+      "interior": true,
+      "music_id": "greymere",
+      "props": [
+        {
+          "asset": "hearth",
+          "tile": [
+            6,
+            4
+          ]
+        },
+        {
+          "asset": "bed",
+          "tile": [
+            13,
+            5
+          ]
+        },
+        {
+          "asset": "bed",
+          "tile": [
+            16,
+            5
+          ]
+        },
+        {
+          "asset": "table",
+          "tile": [
+            10,
+            8
+          ]
+        },
+        {
+          "asset": "chest",
+          "tile": [
+            5,
+            10
+          ]
+        },
+        {
+          "asset": "crates",
+          "tile": [
+            16,
+            10
+          ]
+        },
+        {
+          "asset": "jars",
+          "tile": [
+            6,
+            8
+          ]
+        }
+      ],
+      "npcs": [],
+      "spawn_points": {
+        "entrance": {
+          "tile": [
+            10,
+            10
+          ],
+          "facing": [
+            0,
+            -1
+          ]
+        }
+      },
+      "doors": [
+        {
+          "building_id": "joey_home",
+          "tile": [
+            10,
+            12
+          ],
+          "destination_location": "greymere",
+          "destination_scene": "res://scenes/overworld/greymere.tscn",
+          "destination_spawn": "joey_return",
+          "return_spawn": "entrance",
+          "locked": false,
+          "locked_dialogue_id": "locked_door",
+          "transition_type": "fade",
+          "verb": "Leave"
+        }
+      ],
+      "interactions": [
+        {
+          "tile": [
+            10,
+            8
+          ],
+          "verb": "Inspect",
+          "text": "A deck of cards, a half-finished wager slip and three mugs nobody has washed."
+        },
+        {
+          "tile": [
+            5,
+            10
+          ],
+          "verb": "Inspect",
+          "text": "The lid won't quite close over the things Joey swears he found."
+        },
+        {
+          "tile": [
+            6,
+            4
+          ],
+          "verb": "Inspect",
+          "text": "The fire is banked low. Joey's ma keeps a pot on it whatever the hour."
+        }
+      ],
+      "lights": [
+        {
+          "tile": [
+            6,
+            3
+          ],
+          "color": "warm"
+        },
+        {
+          "tile": [
+            12,
+            7
+          ],
+          "color": "warm"
+        }
+      ]
+    },
+    "kai_house": {
+      "id": "kai_house",
+      "name": "KAI'S HOUSE",
+      "subtitle": "Home",
+      "scene": "res://scenes/overworld/kai_house.tscn",
+      "rows": [
+        "______________________",
+        "____##############____",
+        "____##############____",
+        "____#wwwwwwwwwwww#____",
+        "____#wwwwwwwwwwww#____",
+        "____#wwwwwwwwwwww#____",
+        "____#wwwwwwwwwwww#____",
+        "____#wwwwwwwwwwww#____",
+        "____#wwwwwwwwwwww#____",
+        "____#wwwwwwwwwwww#____",
+        "____#wwwwwwwwwwww#____",
+        "____#wwwww::wwwww#____",
+        "____##############____",
+        "______________________"
+      ],
+      "interior": true,
+      "music_id": "greymere",
+      "props": [
+        {
+          "asset": "hearth",
+          "tile": [
+            7,
+            4
+          ]
+        },
+        {
+          "asset": "bed",
+          "tile": [
+            15,
+            5
+          ]
+        },
+        {
+          "asset": "table",
+          "tile": [
+            10,
+            7
+          ]
+        },
+        {
+          "asset": "chest",
+          "tile": [
+            15,
+            9
+          ]
+        },
+        {
+          "asset": "books",
+          "tile": [
+            6,
+            9
+          ]
+        },
+        {
+          "asset": "workbench",
+          "tile": [
+            13,
+            10
+          ]
+        }
+      ],
+      "npcs": [],
+      "spawn_points": {
+        "entrance": {
+          "tile": [
+            10,
+            10
+          ],
+          "facing": [
+            0,
+            -1
+          ]
+        }
+      },
+      "doors": [
+        {
+          "building_id": "kai_house",
+          "tile": [
+            10,
+            12
+          ],
+          "destination_location": "greymere",
+          "destination_scene": "res://scenes/overworld/greymere.tscn",
+          "destination_spawn": "kai_return",
+          "return_spawn": "entrance",
+          "locked": false,
+          "locked_dialogue_id": "locked_door",
+          "transition_type": "fade",
+          "verb": "Leave"
+        }
+      ],
+      "interactions": [
+        {
+          "tile": [
+            15,
+            5
+          ],
+          "verb": "Inspect",
+          "text": "Your bed. Made this morning, mostly."
+        },
+        {
+          "tile": [
+            15,
+            9
+          ],
+          "verb": "Inspect",
+          "text": "Work gloves, a spare shirt and the rope from yesterday's job."
+        },
+        {
+          "tile": [
+            10,
+            7
+          ],
+          "verb": "Inspect",
+          "text": "Bread, a knife and a note in Lena's hand: EAT SOMETHING."
+        },
+        {
+          "tile": [
+            13,
+            10
+          ],
+          "verb": "Inspect",
+          "text": "Tools for tomorrow's work, laid out the way you like them."
+        }
+      ],
+      "lights": [
+        {
+          "tile": [
+            7,
+            3
+          ],
+          "color": "warm"
+        },
+        {
+          "tile": [
+            12,
+            7
+          ],
+          "color": "warm"
+        }
+      ]
+    },
+    "route_01": {
+      "id": "route_01",
+      "name": "Greymere Outskirts \u2014 Route 01",
+      "subtitle": "The road beyond home",
+      "scene": "res://scenes/overworld/route_01.tscn",
+      "rows": [
+        "############################################################",
+        "############################################################",
+        "#########################...............####################",
+        "#########################..~~~~~~~~~~...####################",
+        "#########################..~~~~~~~~~~...####################",
+        "#########################..~~~~~~~~~~...##########.......###",
+        "#####################ff##..~~~~~~~~~~...##########ff.###.###",
+        "#####################ff#ff.~~~~~~~~~~...##########ff.,,,.###",
+        "#################.......ff.................#######...,,,.###",
+        "######.....................................#######...,,,.###",
+        "######............,,,,,,,,,,,,,,,,,,,,,,,..#######...,,,.###",
+        "######..ggggggggg.,,,,,,,,,,,,,,,,,,,,,,,..##ff###...,,,.###",
+        "######..ggggggggg.,,,,,,,,,,,,,,,,,,,,,,,..##ff###...,,,.###",
+        "######..ggggggggg.,,,....gggggggggg...,,,..#######...,,,.###",
+        "###.....ggggggggg.,,,....gggggggggg...,,,#########...,,,.###",
+        "###.....ggggggggg.,,,r...gggggggggg...,,,#########...,,,.###",
+        "###.........,,,...,,,....gggggggggg...,,,#########...,,,.###",
+        "###,,,,,,,,,,,,,,,,,,##..gggggggggg...,,,#...........,,,.###",
+        "###,,,,,,,,,,,,,,,,,,##..ggggggggggr..,,,............,,,.###",
+        "###,,,,,,,,,,,,,,,,,,##...............,,,............,,,.###",
+        "###..................##...............,,,...ggggggg..,,,.###",
+        "###..................##.,,,...........,,,...ggggggg..,,,.###",
+        "###...f|||...........##.,,,.......ff..,,,...ggggggg..,,,.###",
+        "######ff###############.,,,.......ff..,,,...ggggggg..,,,.###",
+        "#######################.,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,.###",
+        "#########ff############.,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,.###",
+        "#########ff############.,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,.###",
+        "#######################..................................###",
+        "#######################.........................r........###",
+        "################################################ff##########",
+        "################################################ff##########",
+        "############################################################",
+        "############################################################",
+        "############################################################",
+        "############################################################"
+      ],
+      "music_id": "greymere",
+      "interior": false,
+      "props": [
+        {
+          "asset": "route_sign",
+          "tile": [
+            6,
+            16
+          ]
+        },
+        {
+          "asset": "route_sign",
+          "tile": [
+            54,
+            6
+          ]
+        },
+        {
+          "asset": "route_chest",
+          "tile": [
+            25,
+            23
+          ],
+          "collected_asset": "route_chest_open",
+          "collected_flag": "route01_supplies_collected"
+        },
+        {
+          "asset": "crates",
+          "tile": [
+            46,
+            27
+          ]
+        },
+        {
+          "asset": "route_rock",
+          "tile": [
+            21,
+            15
+          ]
+        },
+        {
+          "asset": "route_fence",
+          "tile": [
+            8,
+            22
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            4,
+            7
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            10,
+            7
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            16,
+            7
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            23,
+            7
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            41,
+            7
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            48,
+            7
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            57,
+            6
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            4,
+            28
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            10,
+            30
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            17,
+            30
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            22,
+            30
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            30,
+            31
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            37,
+            32
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            45,
+            32
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            53,
+            32
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            57,
+            17
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            3,
+            13
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            32,
+            23
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            45,
+            17
+          ]
+        },
+        {
+          "asset": "hedge",
+          "tile": [
+            22,
+            17
+          ]
+        },
+        {
+          "asset": "hedge",
+          "tile": [
+            22,
+            19
+          ]
+        },
+        {
+          "asset": "hedge",
+          "tile": [
+            36,
+            16
+          ]
+        },
+        {
+          "asset": "hedge",
+          "tile": [
+            36,
+            18
+          ]
+        },
+        {
+          "asset": "hedge",
+          "tile": [
+            42,
+            21
+          ]
+        },
+        {
+          "asset": "hedge",
+          "tile": [
+            48,
+            15
+          ]
+        },
+        {
+          "asset": "hedge",
+          "tile": [
+            51,
+            15
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            3,
+            3
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            7,
+            3
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            11,
+            3
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            15,
+            3
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            19,
+            3
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            23,
+            3
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            43,
+            3
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            47,
+            3
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            51,
+            3
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            55,
+            3
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            3,
+            7
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            7,
+            7
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            11,
+            7
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            15,
+            7
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            19,
+            7
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            43,
+            7
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            47,
+            7
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            3,
+            11
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            43,
+            15
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            47,
+            15
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            3,
+            27
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            7,
+            27
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            15,
+            27
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            19,
+            27
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            3,
+            31
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            7,
+            31
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            11,
+            31
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            15,
+            31
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            19,
+            31
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            23,
+            31
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            27,
+            31
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            31,
+            31
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            35,
+            31
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            39,
+            31
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            43,
+            31
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            47,
+            31
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            51,
+            31
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            55,
+            31
+          ]
+        }
+      ],
+      "lights": [],
+      "spawn_points": {
+        "greymere": {
+          "tile": [
+            5,
+            18
+          ],
+          "facing": [
+            1,
+            0
+          ]
+        },
+        "entrance": {
+          "tile": [
+            5,
+            18
+          ],
+          "facing": [
+            1,
+            0
+          ]
+        },
+        "far_end": {
+          "tile": [
+            54,
+            9
+          ],
+          "facing": [
+            0,
+            1
+          ]
+        }
+      },
+      "doors": [
+        {
+          "building_id": "greymere_road",
+          "tile": [
+            3,
+            18
+          ],
+          "destination_location": "greymere",
+          "destination_scene": "res://scenes/overworld/greymere.tscn",
+          "destination_spawn": "route_return",
+          "return_spawn": "greymere",
+          "locked": false,
+          "locked_dialogue_id": "",
+          "transition_type": "fade",
+          "verb": "Travel"
+        }
+      ],
+      "npcs": [
+        {
+          "name": "Apprentice Rowan",
+          "sprite_key": "route01_rowan",
+          "dialogue": "",
+          "tile": [
+            11,
+            16
+          ],
+          "facing": [
+            0,
+            1
+          ],
+          "id": "route01_rowan",
+          "encounter": "route01_rowan",
+          "sight": 4,
+          "intro": "Heading into Greymere? Let's see if you've got what it takes!",
+          "after": "That was a good lesson. Keep an eye on the grass off the road."
+        },
+        {
+          "name": "Travelling Squire",
+          "sprite_key": "route01_squire",
+          "dialogue": "",
+          "tile": [
+            22,
+            10
+          ],
+          "facing": [
+            -1,
+            0
+          ],
+          "id": "route01_squire",
+          "encounter": "route01_squire",
+          "sight": 4,
+          "intro": "A good duelist should always be prepared. Show me your technique!",
+          "after": "Well fought. Supplies from Gell will help on a longer journey."
+        },
+        {
+          "name": "Wandering Challenger",
+          "sprite_key": "route01_challenger",
+          "dialogue": "",
+          "tile": [
+            41,
+            24
+          ],
+          "facing": [
+            -1,
+            0
+          ],
+          "id": "route01_challenger",
+          "encounter": "route01_challenger",
+          "sight": 4,
+          "intro": "I've been waiting for someone worth challenging!",
+          "after": "A fine match. The road beyond the north gate is closed for now."
+        },
+        {
+          "name": "Roadside Traveller",
+          "sprite_key": "townsfolk/elder_woman",
+          "dialogue": "",
+          "tile": [
+            29,
+            25
+          ],
+          "facing": [
+            0,
+            -1
+          ],
+          "text": "The main road is safe to follow. Training parties gather in the tall grass. There are supplies along the western clearing."
+        }
+      ],
+      "interactions": [
+        {
+          "tile": [
+            6,
+            16
+          ],
+          "verb": "Read",
+          "text": "Greymere Outskirts \u2014 Travellers beware. Duelists often train along these roads."
+        },
+        {
+          "tile": [
+            25,
+            23
+          ],
+          "verb": "Open",
+          "kind": "chest",
+          "flag": "route01_supplies_collected",
+          "item": "potion",
+          "quantity": 2
+        },
+        {
+          "tile": [
+            54,
+            6
+          ],
+          "verb": "Read",
+          "text": "North road closed. The next region will open in a future chapter."
+        }
+      ],
+      "encounter_zones": [
+        {
+          "symbol": "g",
+          "probability": 0.12,
+          "cooldown_steps": 8,
+          "encounters": [
+            "route01_roadside"
+          ]
+        }
+      ],
+      "blocked_symbols": [
+        "#",
+        "~",
+        "_",
+        "|",
+        "r"
+      ],
+      "hud_name": "GREYMERE OUTSKIRTS",
+      "arrival_grace_steps": 6,
+      "encounter_message": "A roadside raider emerges from the tall grass. Prepare your party!",
+      "recovery": {
+        "location": "greymere",
+        "spawn": "route_return"
+      },
+      "return_grace_steps": 8,
+      "battle_background": {
+        "rows": [
+          "....................",
+          "....................",
+          "....................",
+          "....................",
+          ",,,,,,,,,,,,,,,,,,,,",
+          ",,,,,,,,,,,,,,,,,,,,",
+          ",,,,,,,,,,,,,,,,,,,,",
+          ",,,,,,,,,,,,,,,,,,,,",
+          ",,,,,,,,,,,,,,,,,,,,"
+        ],
+        "props": [
+          {
+            "asset": "route_oak",
+            "tile": [
+              1,
+              2
+            ]
+          },
+          {
+            "asset": "route_oak",
+            "tile": [
+              5,
+              2
+            ]
+          },
+          {
+            "asset": "route_oak",
+            "tile": [
+              10,
+              2
+            ]
+          },
+          {
+            "asset": "route_oak",
+            "tile": [
+              15,
+              2
+            ]
+          },
+          {
+            "asset": "route_oak",
+            "tile": [
+              19,
+              2
+            ]
+          }
+        ]
+      }
+    }
+  }
+}

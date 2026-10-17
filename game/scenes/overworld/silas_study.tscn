@@ -1,0 +1,5 @@
+[gd_scene load_steps=2 format=3]
+[ext_resource type="Script" path="res://scripts/overworld/world_location.gd" id="1"]
+[node name="SilasStudy" type="Node2D"]
+script = ExtResource("1")
+location_id = "silas_study"

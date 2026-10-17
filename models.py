@@ -80,6 +80,7 @@ class Move:
     is_buff_move: bool = False  # blocked by Hex
     applies_status: Optional[str] = None
     status_duration: int = 0
+    tags: list[str] = field(default_factory=list)
 
     @property
     def cooldown_turns(self) -> int:

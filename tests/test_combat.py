@@ -348,8 +348,8 @@ def test_hex_suppresses_positive_but_not_negative_tradeoff_mods():
     execute_move(neutral, sorcerer, focus_shift, 1, False, False)
     assert neutral.atk == neutral.base_atk
     assert neutral.mag == neutral.base_mag
-    assert neutral.def_ == neutral.base_def - 5
-    assert neutral.res == neutral.base_res - 5
+    assert neutral.def_ == neutral.base_def - 2
+    assert neutral.res == neutral.base_res - 2
 
 
 # ── Speed resolution ─────────────────────────────────────────────────

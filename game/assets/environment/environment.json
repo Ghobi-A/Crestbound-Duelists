@@ -1,0 +1,659 @@
+{
+  "assets": {
+    "herbalist": {
+      "sheet": "res://assets/environment/buildings.png",
+      "region": [
+        80,
+        0,
+        510,
+        570
+      ],
+      "anchor": [
+        284,
+        550
+      ],
+      "width": 96,
+      "collision": [
+        -3,
+        -5,
+        6,
+        6
+      ]
+    },
+    "inn": {
+      "sheet": "res://assets/environment/buildings.png",
+      "region": [
+        650,
+        0,
+        580,
+        580
+      ],
+      "anchor": [
+        268,
+        559
+      ],
+      "width": 112,
+      "collision": [
+        -3,
+        -5,
+        7,
+        6
+      ]
+    },
+    "study": {
+      "sheet": "res://assets/environment/buildings.png",
+      "region": [
+        130,
+        580,
+        400,
+        615
+      ],
+      "anchor": [
+        186,
+        592
+      ],
+      "width": 80,
+      "collision": [
+        -2,
+        -6,
+        5,
+        7
+      ]
+    },
+    "guardhouse": {
+      "sheet": "res://assets/environment/buildings.png",
+      "region": [
+        675,
+        620,
+        535,
+        580
+      ],
+      "anchor": [
+        257,
+        550
+      ],
+      "width": 96,
+      "collision": [
+        -3,
+        -5,
+        6,
+        6
+      ]
+    },
+    "gate": {
+      "sheet": "res://assets/environment/outdoors.png",
+      "region": [
+        0,
+        0,
+        418,
+        418
+      ],
+      "anchor": [
+        209,
+        400
+      ],
+      "width": 80,
+      "collision": [
+        -2,
+        -4,
+        5,
+        5
+      ]
+    },
+    "tree": {
+      "sheet": "res://assets/environment/outdoors.png",
+      "region": [
+        418,
+        0,
+        418,
+        418
+      ],
+      "anchor": [
+        209,
+        411
+      ],
+      "width": 80,
+      "collision": [
+        -1,
+        -1,
+        2,
+        2
+      ]
+    },
+    "spring": {
+      "sheet": "res://assets/environment/outdoors.png",
+      "region": [
+        836,
+        0,
+        418,
+        418
+      ],
+      "anchor": [
+        209,
+        410
+      ],
+      "width": 64,
+      "collision": [
+        -2,
+        -2,
+        4,
+        3
+      ]
+    },
+    "hedge": {
+      "sheet": "res://assets/environment/outdoors.png",
+      "region": [
+        0,
+        418,
+        418,
+        418
+      ],
+      "anchor": [
+        209,
+        365
+      ],
+      "width": 48,
+      "collision": [
+        -1,
+        0,
+        3,
+        1
+      ]
+    },
+    "wall": {
+      "sheet": "res://assets/environment/outdoors.png",
+      "region": [
+        418,
+        418,
+        418,
+        418
+      ],
+      "anchor": [
+        209,
+        365
+      ],
+      "width": 48,
+      "collision": [
+        -1,
+        -1,
+        3,
+        2
+      ]
+    },
+    "bridge": {
+      "sheet": "res://assets/environment/outdoors.png",
+      "region": [
+        836,
+        418,
+        418,
+        418
+      ],
+      "anchor": [
+        209,
+        367
+      ],
+      "width": 48,
+      "collision": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "crates": {
+      "sheet": "res://assets/environment/outdoors.png",
+      "region": [
+        0,
+        836,
+        418,
+        418
+      ],
+      "anchor": [
+        209,
+        325
+      ],
+      "width": 32,
+      "collision": [
+        -1,
+        -1,
+        2,
+        2
+      ]
+    },
+    "notice": {
+      "sheet": "res://assets/environment/outdoors.png",
+      "region": [
+        418,
+        836,
+        418,
+        418
+      ],
+      "anchor": [
+        209,
+        338
+      ],
+      "width": 32,
+      "collision": [
+        -1,
+        0,
+        2,
+        1
+      ]
+    },
+    "lamp": {
+      "sheet": "res://assets/environment/outdoors.png",
+      "region": [
+        836,
+        836,
+        418,
+        418
+      ],
+      "anchor": [
+        209,
+        346
+      ],
+      "width": 24,
+      "collision": [
+        0,
+        0,
+        1,
+        1
+      ]
+    },
+    "hearth": {
+      "sheet": "res://assets/environment/furniture.png",
+      "region": [
+        0,
+        0,
+        418,
+        418
+      ],
+      "anchor": [
+        209,
+        411
+      ],
+      "width": 48,
+      "collision": [
+        -1,
+        -2,
+        3,
+        3
+      ]
+    },
+    "books": {
+      "sheet": "res://assets/environment/furniture.png",
+      "region": [
+        418,
+        0,
+        418,
+        418
+      ],
+      "anchor": [
+        209,
+        413
+      ],
+      "width": 48,
+      "collision": [
+        -1,
+        -2,
+        3,
+        3
+      ]
+    },
+    "bed": {
+      "sheet": "res://assets/environment/furniture.png",
+      "region": [
+        836,
+        0,
+        418,
+        418
+      ],
+      "anchor": [
+        209,
+        414
+      ],
+      "width": 32,
+      "collision": [
+        -1,
+        -2,
+        2,
+        3
+      ]
+    },
+    "workbench": {
+      "sheet": "res://assets/environment/furniture.png",
+      "region": [
+        0,
+        418,
+        418,
+        418
+      ],
+      "anchor": [
+        209,
+        387
+      ],
+      "width": 48,
+      "collision": [
+        -1,
+        -1,
+        3,
+        2
+      ]
+    },
+    "counter": {
+      "sheet": "res://assets/environment/furniture.png",
+      "region": [
+        418,
+        418,
+        418,
+        418
+      ],
+      "anchor": [
+        209,
+        372
+      ],
+      "width": 64,
+      "collision": [
+        -2,
+        -1,
+        4,
+        2
+      ]
+    },
+    "table": {
+      "sheet": "res://assets/environment/furniture.png",
+      "region": [
+        836,
+        418,
+        418,
+        418
+      ],
+      "anchor": [
+        209,
+        388
+      ],
+      "width": 40,
+      "collision": [
+        -1,
+        -1,
+        3,
+        2
+      ]
+    },
+    "chest": {
+      "sheet": "res://assets/environment/furniture.png",
+      "region": [
+        0,
+        836,
+        418,
+        418
+      ],
+      "anchor": [
+        209,
+        322
+      ],
+      "width": 32,
+      "collision": [
+        -1,
+        0,
+        2,
+        1
+      ]
+    },
+    "desk": {
+      "sheet": "res://assets/environment/furniture.png",
+      "region": [
+        418,
+        836,
+        418,
+        418
+      ],
+      "anchor": [
+        209,
+        360
+      ],
+      "width": 48,
+      "collision": [
+        -1,
+        -1,
+        3,
+        2
+      ]
+    },
+    "jars": {
+      "sheet": "res://assets/environment/furniture.png",
+      "region": [
+        836,
+        836,
+        418,
+        418
+      ],
+      "anchor": [
+        209,
+        350
+      ],
+      "width": 40,
+      "collision": [
+        -1,
+        -1,
+        3,
+        2
+      ]
+    },
+    "gell_shop": {
+      "sheet": "res://assets/environment/buildings.png",
+      "region": [
+        80,
+        0,
+        510,
+        570
+      ],
+      "width": 96,
+      "anchor": [
+        226,
+        550
+      ],
+      "collision": [
+        -2,
+        -5,
+        6,
+        6
+      ],
+      "flip_h": true,
+      "roof": {
+        "hue_shift": 0.42,
+        "saturation_scale": 0.9,
+        "value_scale": 1.05
+      },
+      "placeholder": {
+        "reuses": "herbalist",
+        "reason": "Gell's shop awaits authored exterior art; reuses the herbalist cottage mirrored with a terracotta roof."
+      }
+    },
+    "kai_house": {
+      "sheet": "res://assets/environment/buildings.png",
+      "region": [
+        130,
+        580,
+        400,
+        615
+      ],
+      "width": 80,
+      "anchor": [
+        214,
+        592
+      ],
+      "collision": [
+        -2,
+        -6,
+        5,
+        7
+      ],
+      "flip_h": true,
+      "roof": {
+        "hue_shift": 0.87,
+        "saturation_scale": 0.55,
+        "value_scale": 1.0
+      },
+      "placeholder": {
+        "reuses": "study",
+        "reason": "Kai's house awaits authored exterior art; reuses the study mirrored with a slate-teal roof."
+      }
+    },
+    "joey_home": {
+      "sheet": "res://assets/environment/buildings.png",
+      "region": [
+        130,
+        580,
+        400,
+        615
+      ],
+      "width": 80,
+      "anchor": [
+        186,
+        592
+      ],
+      "collision": [
+        -2,
+        -6,
+        5,
+        7
+      ],
+      "roof": {
+        "hue_shift": 0.67,
+        "saturation_scale": 0.5,
+        "value_scale": 0.95
+      },
+      "placeholder": {
+        "reuses": "study",
+        "reason": "Joey's family home awaits authored exterior art; reuses the study with a moss-green roof."
+      }
+    },
+    "route_oak": {
+      "sheet": "res://assets/route01/scenery.png",
+      "region": [
+        0,
+        0,
+        530,
+        580
+      ],
+      "anchor": [
+        270,
+        555
+      ],
+      "width": 48,
+      "collision": [
+        -1,
+        -1,
+        2,
+        2
+      ],
+      "nearest": true
+    },
+    "route_sign": {
+      "sheet": "res://assets/route01/scenery.png",
+      "region": [
+        590,
+        40,
+        390,
+        540
+      ],
+      "anchor": [
+        195,
+        500
+      ],
+      "width": 16,
+      "collision": [
+        -1,
+        0,
+        2,
+        1
+      ],
+      "nearest": true
+    },
+    "route_rock": {
+      "sheet": "res://assets/route01/scenery.png",
+      "region": [
+        1024,
+        260,
+        512,
+        320
+      ],
+      "anchor": [
+        256,
+        280
+      ],
+      "width": 24,
+      "collision": [
+        -1,
+        0,
+        2,
+        1
+      ],
+      "nearest": true
+    },
+    "route_chest": {
+      "sheet": "res://assets/route01/scenery.png",
+      "region": [
+        80,
+        650,
+        400,
+        330
+      ],
+      "anchor": [
+        200,
+        300
+      ],
+      "width": 18,
+      "collision": [
+        -1,
+        0,
+        2,
+        1
+      ],
+      "nearest": true
+    },
+    "route_chest_open": {
+      "sheet": "res://assets/route01/scenery.png",
+      "region": [
+        570,
+        590,
+        410,
+        390
+      ],
+      "anchor": [
+        205,
+        360
+      ],
+      "width": 18,
+      "collision": [
+        -1,
+        0,
+        2,
+        1
+      ],
+      "nearest": true
+    },
+    "route_fence": {
+      "sheet": "res://assets/route01/scenery.png",
+      "region": [
+        1024,
+        650,
+        512,
+        330
+      ],
+      "anchor": [
+        256,
+        295
+      ],
+      "width": 32,
+      "collision": [
+        -1,
+        0,
+        2,
+        1
+      ],
+      "nearest": true
+    }
+  }
+}

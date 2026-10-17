@@ -25,11 +25,11 @@
   ],
   "notice_board": [
     {
-      "speaker": "Royal Notice",
+      "speaker": "Avelan Notice",
       "lines": [
-        "BY ORDER OF THE CROWN OF AVELAINE:",
+        "BY ORDER OF THE DUCHY OF AVELAN:",
         "Unsanctioned Crest possession, use, or study is forbidden under the Veiled Accord.",
-        "Resonance events must be reported to Warden Thorne without delay."
+        "Resonance events must be reported to Warden Almyra without delay."
       ]
     }
   ],
@@ -45,7 +45,7 @@
     {
       "speaker": "",
       "lines": [
-        "The south road runs toward Veyrhold.",
+        "The south road runs toward Civara.",
         "Whatever is happening at the Hollow Court feels more urgent than leaving town."
       ]
     }
@@ -89,7 +89,7 @@
       "lines": [
         "Everyone still standing? Good.",
         "Those were not looters. Someone sent them, and they knew the seal would be open.",
-        "This goes to Veyrhold. All of it — including what that Crest just did."
+        "This goes to Civara. All of it — including what that Crest just did."
       ]
     },
     {
@@ -117,7 +117,7 @@
       "portrait": "townsfolk/herbalist_woman",
       "lines": [
         "Feverbalm, willowbark, a little dried nettle for the swelling. Nothing fancy, but it keeps Greymere on its feet.",
-        "Warden Thorne came through here last week smelling of Court dust. Didn't like that one bit."
+        "Warden Almyra came through here last week smelling of Court dust. Didn't like that one bit."
       ]
     }
   ],
@@ -147,7 +147,7 @@
       "speaker": "Danfor",
       "portrait": "townsfolk/guard_sword",
       "lines": [
-        "Move along toward Veyrhold if you're heading out — I'm not paid to make conversation, I'm paid to watch that road.",
+        "Move along toward Civara if you're heading out — I'm not paid to make conversation, I'm paid to watch that road.",
         "And the arch. Mostly the arch, if I'm honest."
       ]
     }
@@ -158,7 +158,7 @@
       "portrait": "townsfolk/guard_spear",
       "lines": [
         "I've stood under this arch every day for six years. Never once had to do anything about it.",
-        "Warden Thorne changed my watch orders last week. Didn't say why. Didn't like that either."
+        "Warden Almyra changed my watch orders last week. Didn't say why. Didn't like that either."
       ]
     }
   ],

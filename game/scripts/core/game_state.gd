@@ -38,6 +38,14 @@ var pending_encounter := "hollow_court_battle"
 var current_scene := "res://scenes/overworld/greymere.tscn"
 var player_tile := Vector2i(11, 9)
 var flags: Dictionary = {}  # e.g. {"hollow_court_cleared": true}
+var location_id := "greymere"
+var location_spawn := "approach"
+var location_revision := 1
+var player_facing := Vector2i(0,-1)
+var world_encounters: Dictionary = {} # saved cooldowns and RNG states by location
+var world_battle: Dictionary = {} # transient return context, never serialized
+var crowns := 60
+var inventory: Dictionary = {} # item id -> quantity
 
 
 func start_new_game(class_id: String) -> void:
@@ -45,6 +53,15 @@ func start_new_game(class_id: String) -> void:
 	player_crest_id = DEFAULT_CREST_BY_CLASS.get(class_id, "")
 	player_tile = Vector2i(11, 9)
 	flags = {}
+	world_encounters = {}
+	world_battle = {}
+	current_scene = "res://scenes/overworld/greymere.tscn"
+	location_id = "greymere"
+	location_spawn = "approach"
+	location_revision = 1
+	player_facing = Vector2i(0,-1)
+	crowns = 60
+	inventory = {}
 	pending_encounter = "hollow_court_battle"
 	_build_default_party()
 
@@ -97,6 +114,34 @@ func has_flag(flag_name: String) -> bool:
 	return flags.get(flag_name, false)
 
 
+func purchase_item(id: String) -> String:
+	var item := ItemCatalog.get_item(id)
+	if item.is_empty():
+		return "Unavailable."
+	var price := int(item.get("price", 0))
+	if price <= 0 or crowns < price:
+		return "Not enough crowns."
+	crowns -= price
+	inventory[id] = int(inventory.get(id, 0)) + 1
+	return "Purchased %s." % str(item.name)
+
+
+func use_item(id: String, party_index: int) -> String:
+	var item := ItemCatalog.get_item(id)
+	if item.is_empty() or int(inventory.get(id, 0)) <= 0:
+		return "None left."
+	if party_index < 0 or party_index >= party.size():
+		return "No such Duelist."
+	var member: Dictionary = party[party_index]
+	var hp_max := int(GameData.get_class_record(str(member.get("class_id", "neutral"))).get("base_stats", {}).get("hp", 1))
+	var hp := int(member.get("current_hp", hp_max))
+	if hp >= hp_max:
+		return "Already at full health."
+	member["current_hp"] = mini(hp_max, hp + int(item.get("heal", 0)))
+	inventory[id] = int(inventory[id]) - 1
+	return "%s recovered %d HP." % [str(member.name), int(member.current_hp) - hp]
+
+
 func to_save_dict() -> Dictionary:
 	return {
 		"player_name": player_name,
@@ -107,10 +152,19 @@ func to_save_dict() -> Dictionary:
 		"current_scene": current_scene,
 		"player_tile": {"x": player_tile.x, "y": player_tile.y},
 		"flags": flags,
+		"location_id": location_id,
+		"location_spawn": location_spawn,
+		"location_revision": location_revision,
+		"player_facing": [player_facing.x, player_facing.y],
+		"crowns": crowns,
+		"inventory": inventory,
+		"world_encounters": world_encounters,
 	}
 
 
 func from_save_dict(data: Dictionary) -> void:
+	world_battle = {}
+	world_encounters = data.get("world_encounters", {}) if typeof(data.get("world_encounters", {})) == TYPE_DICTIONARY else {}
 	player_name = data.get("player_name", DEFAULT_PLAYER_NAME)
 	player_class_id = data.get("player_class_id", "")
 	player_crest_id = data.get("player_crest_id", "")
@@ -123,3 +177,63 @@ func from_save_dict(data: Dictionary) -> void:
 	var tile: Dictionary = data.get("player_tile", {"x": 11, "y": 9})
 	player_tile = Vector2i(int(tile.get("x", 11)), int(tile.get("y", 9)))
 	flags = data.get("flags", {})
+	location_id = str(data.get("location_id","greymere"))
+	location_spawn = str(data.get("location_spawn","approach"))
+	location_revision = int(data.get("location_revision",0))
+	var facing: Array = data.get("player_facing",[0,1])
+	player_facing = Vector2i(int(facing[0]),int(facing[1]))
+	crowns = maxi(0, int(data.get("crowns", 60)))
+	inventory = data.get("inventory", {}) if typeof(data.get("inventory", {})) == TYPE_DICTIONARY else {}
+
+
+func collect_world_item(item: Dictionary) -> String:
+	var flag := str(item.get("flag", ""))
+	var id := str(item.get("item", ""))
+	var quantity := int(item.get("quantity", 1))
+	if has_flag(flag): return "The chest is empty."
+	var record := ItemCatalog.get_item(id)
+	if flag == "" or quantity < 1 or record.is_empty(): return "These supplies are unavailable."
+	inventory[id] = int(inventory.get(id, 0)) + quantity
+	set_flag(flag)
+	SaveManager.save_game()
+	return "Found %d × %s." % [quantity, str(record.name)]
+
+
+func begin_world_battle(encounter_id: String, victory_flag: String = "") -> bool:
+	if not world_battle.is_empty() or GameData.get_encounter(encounter_id).is_empty() or party.is_empty(): return false
+	var map_data := WorldCatalog.location(location_id)
+	world_battle = {
+		"recovery": map_data.get("recovery", {"location":"greymere", "spawn":"approach"}),
+		"grace": int(map_data.get("return_grace_steps", 8)),
+		"scene": current_scene,
+		"location": location_id,
+		"tile": player_tile,
+		"facing": player_facing,
+		"victory_flag": victory_flag,
+	}
+	pending_encounter = encounter_id
+	location_spawn = ""
+	return true
+
+
+func finish_world_battle(outcome: String) -> String:
+	if world_battle.is_empty(): return ""
+	var context := world_battle.duplicate()
+	world_battle = {}
+	current_scene = str(context.scene)
+	location_id = str(context.location)
+	location_spawn = ""
+	player_tile = context.tile
+	player_facing = context.facing
+	var encounter_state: Dictionary = world_encounters.get(location_id, {})
+	encounter_state.cooldown = int(context.get("grace", 8))
+	world_encounters[location_id] = encounter_state
+	if outcome == "victory" and str(context.victory_flag) != "": set_flag(str(context.victory_flag))
+	if outcome == "defeat":
+		# A lost roadside bout retreats home, with a usable party and no win flag.
+		for member in party: member.erase("current_hp")
+		location_id = str(context.recovery.location)
+		location_spawn = str(context.recovery.spawn)
+		current_scene = str(WorldCatalog.location(location_id).scene)
+	SaveManager.save_game()
+	return current_scene

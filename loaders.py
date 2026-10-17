@@ -230,6 +230,7 @@ def build_move(move_id: str) -> Move:
         target_stat_mods=[(m["stat"], m["amount"]) for m in record.get("target_stat_mods", [])],
         self_stat_mods=[(m["stat"], m["amount"]) for m in record.get("self_stat_mods", [])],
         is_buff_move=bool(record.get("is_buff_move", False)),
+        tags=list(record.get("tags", [])),
         applies_status=first_status["status"] if first_status else None,
         status_duration=first_status["duration"] if first_status else 0,
     )

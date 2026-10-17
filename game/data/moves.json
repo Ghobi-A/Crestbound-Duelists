@@ -12,7 +12,7 @@
     "is_buff_move": false,
     "move_type": "magical",
     "name": "Arcane Bolt",
-    "power": 24,
+    "power": 16,
     "range": 3,
     "resource_cost": 0,
     "self_stat_mods": [],
@@ -41,7 +41,7 @@
     "is_buff_move": false,
     "move_type": "physical",
     "name": "Armor Break",
-    "power": 21,
+    "power": 13,
     "range": 1,
     "resource_cost": 0,
     "self_stat_mods": [],
@@ -54,7 +54,7 @@
     "target_rule": "enemy",
     "target_stat_mods": [
       {
-        "amount": -10,
+        "amount": -8,
         "stat": "def"
       }
     ],
@@ -75,7 +75,7 @@
     "is_buff_move": false,
     "move_type": "physical",
     "name": "Avalanche",
-    "power": 31,
+    "power": 22,
     "range": 1,
     "resource_cost": 0,
     "self_stat_mods": [],
@@ -104,7 +104,7 @@
     "is_buff_move": false,
     "move_type": "physical",
     "name": "Cripple",
-    "power": 20,
+    "power": 13,
     "range": 1,
     "resource_cost": 0,
     "self_stat_mods": [],
@@ -118,15 +118,11 @@
     "target_rule": "enemy",
     "target_stat_mods": [
       {
-        "amount": -6,
+        "amount": -8,
         "stat": "def"
       },
       {
-        "amount": -6,
-        "stat": "res"
-      },
-      {
-        "amount": -15,
+        "amount": -8,
         "stat": "spd"
       }
     ],
@@ -146,7 +142,7 @@
     "is_buff_move": false,
     "move_type": "magical",
     "name": "Flame",
-    "power": 24,
+    "power": 16,
     "range": 3,
     "resource_cost": 0,
     "self_stat_mods": [],
@@ -174,26 +170,26 @@
     "cooldown_turns": 1,
     "id": "focus_shift",
     "is_buff_move": false,
-    "move_type": "magical",
+    "move_type": "adaptive",
     "name": "Focus Shift",
-    "power": 20,
+    "power": 13,
     "range": 2,
     "resource_cost": 0,
     "self_stat_mods": [
       {
-        "amount": 7,
+        "amount": 13,
         "stat": "atk"
       },
       {
-        "amount": 7,
+        "amount": 13,
         "stat": "mag"
       },
       {
-        "amount": -5,
+        "amount": -2,
         "stat": "def"
       },
       {
-        "amount": -5,
+        "amount": -2,
         "stat": "res"
       }
     ],
@@ -201,7 +197,8 @@
     "status_effects": [],
     "tags": [
       "stance",
-      "tradeoff"
+      "tradeoff",
+      "adaptive"
     ],
     "target_rule": "enemy",
     "target_stat_mods": [],
@@ -220,18 +217,18 @@
     "cooldown_turns": 1,
     "id": "fortify",
     "is_buff_move": true,
-    "move_type": "magical",
+    "move_type": "adaptive",
     "name": "Fortify",
-    "power": 18,
+    "power": 13,
     "range": 1,
     "resource_cost": 0,
     "self_stat_mods": [
       {
-        "amount": 15,
+        "amount": 8,
         "stat": "def"
       },
       {
-        "amount": 15,
+        "amount": 8,
         "stat": "res"
       }
     ],
@@ -239,7 +236,8 @@
     "status_effects": [],
     "tags": [
       "buff",
-      "defensive"
+      "defensive",
+      "adaptive"
     ],
     "target_rule": "enemy",
     "target_stat_mods": [],
@@ -250,7 +248,8 @@
     "accuracy": 1.0,
     "ai_tags": [
       "damage",
-      "status"
+      "status",
+      "debuff"
     ],
     "animation_key": "curse",
     "area_shape": "single",
@@ -260,7 +259,7 @@
     "is_buff_move": false,
     "move_type": "magical",
     "name": "Hex",
-    "power": 19,
+    "power": 13,
     "range": 3,
     "resource_cost": 0,
     "self_stat_mods": [],
@@ -275,10 +274,20 @@
     "tags": [
       "curse",
       "anti_buff",
+      "debuff",
       "ranged"
     ],
     "target_rule": "enemy",
-    "target_stat_mods": [],
+    "target_stat_mods": [
+      {
+        "amount": -10,
+        "stat": "atk"
+      },
+      {
+        "amount": -10,
+        "stat": "mag"
+      }
+    ],
     "terrain_effects": [],
     "vfx_key": "hex_sigil"
   },
@@ -295,7 +304,7 @@
     "is_buff_move": false,
     "move_type": "adaptive",
     "name": "Hybrid Strike",
-    "power": 23,
+    "power": 16,
     "range": 1,
     "resource_cost": 0,
     "self_stat_mods": [],
@@ -325,7 +334,7 @@
     "is_buff_move": false,
     "move_type": "physical",
     "name": "Lethal Edge",
-    "power": 36,
+    "power": 25,
     "range": 1,
     "resource_cost": 0,
     "self_stat_mods": [],
@@ -354,7 +363,7 @@
     "is_buff_move": false,
     "move_type": "magical",
     "name": "Mind Pierce",
-    "power": 21,
+    "power": 13,
     "range": 3,
     "resource_cost": 0,
     "self_stat_mods": [],
@@ -368,7 +377,7 @@
     "target_rule": "enemy",
     "target_stat_mods": [
       {
-        "amount": -10,
+        "amount": -8,
         "stat": "res"
       }
     ],
@@ -389,12 +398,12 @@
     "is_buff_move": false,
     "move_type": "magical",
     "name": "Overload",
-    "power": 35,
+    "power": 24,
     "range": 3,
     "resource_cost": 0,
     "self_stat_mods": [
       {
-        "amount": -6,
+        "amount": -4,
         "stat": "res"
       }
     ],
@@ -422,7 +431,7 @@
     "is_buff_move": false,
     "move_type": "physical",
     "name": "Power Slash",
-    "power": 24,
+    "power": 16,
     "range": 1,
     "resource_cost": 0,
     "self_stat_mods": [],
@@ -449,7 +458,7 @@
     "is_buff_move": false,
     "move_type": "physical",
     "name": "Quick Strike",
-    "power": 24,
+    "power": 16,
     "range": 1,
     "resource_cost": 0,
     "self_stat_mods": [],
@@ -478,12 +487,12 @@
     "is_buff_move": false,
     "move_type": "physical",
     "name": "Reckless Charge",
-    "power": 35,
+    "power": 24,
     "range": 2,
     "resource_cost": 0,
     "self_stat_mods": [
       {
-        "amount": -6,
+        "amount": -4,
         "stat": "def"
       }
     ],
@@ -511,7 +520,7 @@
     "is_buff_move": false,
     "move_type": "adaptive",
     "name": "Shield Bash",
-    "power": 23,
+    "power": 15,
     "range": 1,
     "resource_cost": 0,
     "self_stat_mods": [],
@@ -540,12 +549,12 @@
     "is_buff_move": false,
     "move_type": "magical",
     "name": "Voidfire",
-    "power": 35,
+    "power": 24,
     "range": 3,
     "resource_cost": 0,
     "self_stat_mods": [
       {
-        "amount": -6,
+        "amount": -4,
         "stat": "res"
       }
     ],
@@ -574,7 +583,7 @@
     "is_buff_move": false,
     "move_type": "adaptive",
     "name": "Wild Card",
-    "power": 34,
+    "power": 24,
     "range": 2,
     "resource_cost": 0,
     "self_stat_mods": [],

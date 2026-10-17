@@ -121,7 +121,16 @@ controls and the objective the first time you enter Greymere, and
 battle basics the first time you enter a battle. Battle rules:
 `docs/BATTLE_SYSTEM.md`; setup details: `docs/GODOT_SETUP.md`.
 
+**Greymere Outskirts — Route 01:** Travel through the village’s southern road
+exit with Z. Explore the forest road, challenge three duelists, investigate tall
+grass and find supplies in the optional clearing. See
+[Route 01 implementation notes](docs/rework/ROUTE_01_IMPLEMENTATION.md).
+
 **Locally (Godot editor):**
+
+Run `python tools/materialize_overworld_v2.py` before opening Godot. This also
+applies the reviewed PixelLab side-walk source strips to the runtime atlases;
+CI and Web export run the same deterministic asset step.
 
 1. Install **Godot 4.3+** (https://godotengine.org/download).
 2. Open `game/project.godot` in the editor and press **F5**.
@@ -171,19 +180,19 @@ Sorcerer — each with exactly three moves:
 v2.2 fixed the structural mechanics; v2.3 rebalances the **naked class
 chassis** around a longer tactical horizon. Every class now has exactly
 **260 non-HP stat points**, while HP is tuned separately by archetype. Basic
-power is 15–16, Signature power is 11–12 plus a stronger rider, and Gambits
+power is 15–16, Signature power is 11–13 plus a stronger rider, and Gambits
 sit at 22–25 with 70–80% accuracy. Every Gambit still has higher raw
 `power × accuracy` EV than its class Basic; cooldown, miss variance and
 secondary costs create the trade-off.
 
 | Class | HP | ATK | DEF | MAG | RES | SPD | Non-HP | Role |
 |-------|---:|----:|----:|----:|----:|----:|-------:|------|
-| Warrior | 100 | 74 | 68 | 30 | 44 | 44 | 260 | Physical bruiser |
-| Mage | 92 | 30 | 34 | 78 | 70 | 48 | 260 | Magical artillery |
-| Assassin | 88 | 70 | 40 | 34 | 48 | 68 | 260 | Fast striker / initiative control |
-| Guardian | 108 | 40 | 76 | 36 | 72 | 36 | 260 | Defensive anchor |
-| Neutral | 96 | 53 | 50 | 53 | 50 | 54 | 260 | Adaptive generalist |
-| Sorcerer | 90 | 34 | 38 | 76 | 48 | 64 | 260 | Fast disruptive caster |
+| Warrior | 96 | 70 | 68 | 34 | 40 | 48 | 260 | Physical bruiser |
+| Mage | 96 | 30 | 38 | 78 | 66 | 48 | 260 | Magical artillery |
+| Assassin | 94 | 70 | 46 | 28 | 48 | 68 | 260 | Fast striker / initiative control |
+| Guardian | 104 | 44 | 70 | 44 | 66 | 36 | 260 | Defensive anchor |
+| Neutral | 100 | 56 | 46 | 56 | 50 | 52 | 260 | Adaptive generalist |
+| Sorcerer | 94 | 32 | 44 | 76 | 48 | 60 | 260 | Fast disruptive caster |
 
 ### v2.3 balance targets
 

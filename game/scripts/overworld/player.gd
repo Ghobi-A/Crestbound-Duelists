@@ -1,9 +1,8 @@
 extends Node2D
 class_name OverworldPlayer
-## Grid-aligned four-direction player movement. Renders the generated
-## 16x24 overworld sprite for the protagonist's class (falls back to a
-## placeholder chip if art is missing). The owning map provides
-## collision through `is_walkable(tile)`.
+## Grid-aligned four-direction player movement. The protagonist resolves through
+## the shared overworld presentation registry, including class-specific v2
+## walk cycles, and falls back to a debug chip only when art is unavailable.
 
 signal stepped_onto(tile: Vector2i)
 
@@ -44,6 +43,8 @@ func is_moving() -> bool:
 func _process(delta: float) -> void:
 	if is_moving():
 		_step_progress = minf(_step_progress + delta / STEP_TIME, 1.0)
+		if _has_sheet:
+			_sprite.set_walk_phase(_step_progress)
 		position = _step_from.lerp(_step_to, _step_progress)
 		if not is_moving():
 			position = _step_to
@@ -52,6 +53,8 @@ func _process(delta: float) -> void:
 		return
 
 	if movement_locked:
+		if _has_sheet:
+			_sprite.rest()
 		return
 
 	var direction := Vector2i.ZERO
@@ -77,6 +80,8 @@ func _process(delta: float) -> void:
 
 	var next := tile + direction
 	if not _map.is_walkable(next):
+		if _has_sheet:
+			_sprite.rest()
 		return
 
 	tile = next
@@ -84,7 +89,7 @@ func _process(delta: float) -> void:
 	_step_to = Vector2(tile * TILE) + Vector2(TILE / 2.0, TILE / 2.0)
 	_step_progress = 0.0
 	if _has_sheet:
-		_sprite.advance()
+		_sprite.set_walk_phase(0.0)
 
 
 func _draw() -> void:
@@ -92,7 +97,7 @@ func _draw() -> void:
 		return
 	if not OS.is_debug_build():
 		return
-	# Placeholder chip when class art is missing.
+	# Explicit debug-only fallback when class art is missing.
 	var body_color := PlaceholderPalette.class_color(GameState.player_class_id)
 	draw_rect(Rect2(-4, -2, 8, 8), PlaceholderPalette.PLAYER_OUTLINE)
 	draw_rect(Rect2(-3, -1, 6, 6), body_color)

@@ -1,10 +1,18 @@
 class_name BattleVfx
 extends Node2D
 ## Authored VFX player. Mechanics never enter sidecars; move.vfx_key selects art.
+##
+## Missing authored sheets use the deliberately-designed system pulse below. This
+## is a production presentation primitive, not PlaceholderPalette/debug art, so
+## an absent optional effect can never leak the old placeholder visual language
+## back into the shipped game.
 
 signal effect_finished
 
 const ROOTS := ["res://assets/vfx/moves/", "res://assets/vfx/actions/", "res://assets/vfx/status/", "res://assets/vfx/awakening/"]
+const SYSTEM_MAGIC := Color("9d8cff")
+const SYSTEM_PHYSICAL := Color("e7c38c")
+const SYSTEM_CORE := Color("f5f0df")
 
 
 static func path_for(key: String) -> String:
@@ -23,6 +31,8 @@ func play_effect(key: String, at: Vector2, fallback_kind := "magic", weight := "
 	if path != "":
 		await _play_authored(path, at, state)
 	else:
+		if OS.is_debug_build():
+			push_warning("BattleVfx: authored effect unavailable for '%s'; using system pulse." % key)
 		await _play_fallback(at, fallback_kind, weight)
 	effect_finished.emit()
 
@@ -62,20 +72,42 @@ func _play_authored(path: String, at: Vector2, state_name: String) -> void:
 
 
 func _play_fallback(at: Vector2, kind: String, weight: String) -> void:
-	var mark := Polygon2D.new()
-	var radius := 6.0 if weight == "basic" else (9.0 if weight == "signature" else 11.0)
-	var points := PackedVector2Array()
-	for i in 8:
-		var r := radius if i % 2 == 0 else radius * 0.4
-		var angle := TAU * float(i) / 8.0
-		points.append(Vector2(cos(angle), sin(angle)) * r)
-	mark.polygon = points
-	mark.color = PlaceholderPalette.SPECTRAL_VIOLET if kind == "magic" else Color("ffe0a3")
-	mark.position = at
-	mark.z_index = 120
-	add_child(mark)
+	## Coherent production-safe baseline for moves whose authored sheet has not
+	## landed yet. Two restrained diamond pulses match the slate/cream UI and
+	## avoid the old debug-star/PlaceholderPalette look.
+	var radius := 5.0 if weight == "basic" else (7.0 if weight == "signature" else 9.0)
+	var accent := SYSTEM_MAGIC if kind == "magic" else SYSTEM_PHYSICAL
+	var outer := Polygon2D.new()
+	outer.polygon = PackedVector2Array([
+		Vector2(0, -radius),
+		Vector2(radius, 0),
+		Vector2(0, radius),
+		Vector2(-radius, 0),
+	])
+	outer.color = accent
+	outer.position = at
+	outer.z_index = 120
+	add_child(outer)
+
+	var core := Polygon2D.new()
+	var core_radius := maxf(2.0, radius * 0.38)
+	core.polygon = PackedVector2Array([
+		Vector2(0, -core_radius),
+		Vector2(core_radius, 0),
+		Vector2(0, core_radius),
+		Vector2(-core_radius, 0),
+	])
+	core.color = SYSTEM_CORE
+	core.position = at
+	core.z_index = 121
+	add_child(core)
+
 	var tween := create_tween()
-	tween.tween_property(mark, "scale", Vector2(1.35, 1.35), 0.08)
-	tween.parallel().tween_property(mark, "modulate:a", 0.0, 0.16)
+	tween.set_parallel(true)
+	tween.tween_property(outer, "scale", Vector2(1.45, 1.45), 0.16)
+	tween.tween_property(outer, "modulate:a", 0.0, 0.16)
+	tween.tween_property(core, "scale", Vector2(0.45, 0.45), 0.12)
+	tween.tween_property(core, "modulate:a", 0.0, 0.14)
 	await tween.finished
-	mark.queue_free()
+	outer.queue_free()
+	core.queue_free()

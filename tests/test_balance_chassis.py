@@ -38,12 +38,12 @@ def test_v23_speed_tiers_are_soft_except_large_archetypal_gaps():
     classes = load_classes()
     speeds = {class_id: record["base_stats"]["spd"] for class_id, record in classes.items()}
     assert speeds == {
-        "warrior": 44,
+        "warrior": 48,
         "mage": 48,
         "assassin": 68,
         "guardian": 36,
-        "neutral": 54,
-        "sorcerer": 64,
+        "neutral": 52,
+        "sorcerer": 60,
     }
     assert load_combat_config()["speed_band"] == 20
 
@@ -96,7 +96,7 @@ def test_signature_riders_match_v23_class_identity():
     assert moves["armor_break"]["target_stat_mods"] == [{"stat": "def", "amount": -8}]
     assert moves["mind_pierce"]["target_stat_mods"] == [{"stat": "res", "amount": -8}]
     assert moves["cripple"]["target_stat_mods"] == [
-        {"stat": "def", "amount": -6},
+        {"stat": "def", "amount": -8},
         {"stat": "spd", "amount": -8},
     ]
     assert moves["fortify"]["self_stat_mods"] == [

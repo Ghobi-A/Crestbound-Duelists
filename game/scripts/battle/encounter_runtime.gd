@@ -8,11 +8,14 @@ var encounter: Dictionary = {}
 var player_units: Array = []   # BattleUnit
 var enemy_units: Array = []    # BattleUnit
 var round_number := 1
+var retreat_allowed := false
+var fled := false
 
 
 static func start(encounter_id: String, game_data: Node, game_state: Node) -> EncounterRuntime:
 	var runtime := EncounterRuntime.new()
 	runtime.encounter = game_data.get_encounter(encounter_id)
+	runtime.retreat_allowed = not game_state.world_battle.is_empty()
 	if runtime.encounter.is_empty():
 		push_error("Cannot start unknown encounter '%s'." % encounter_id)
 		return runtime
@@ -72,3 +75,14 @@ func victory() -> bool:
 
 func defeat() -> bool:
 	return living("player").is_empty()
+
+
+func can_flee() -> bool:
+	return retreat_allowed and not fled and not victory() and not defeat()
+
+
+func flee() -> bool:
+	# Guaranteed withdrawal is a field-adventure action, outside simulated duels.
+	if not can_flee(): return false
+	fled = true
+	return true

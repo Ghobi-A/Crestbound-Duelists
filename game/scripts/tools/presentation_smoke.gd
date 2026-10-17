@@ -16,6 +16,7 @@ func _ready() -> void:
 	await check_classes()
 	await check_dialogue()
 	await check_formations()
+	await check_enemy_hud()
 	await check_world_and_setup()
 	await check_battle_flow(false)
 	await check_battle_flow(true)
@@ -117,9 +118,43 @@ func check_formations() -> void:
 				check(sprite._sprite.flip_h == (unit.team == "enemy"), "Wrong facing " + unit.sprite_key())
 				var anchor := PresentationLayout.mirrored_anchor(sprite._anchor, sprite._frame_w, sprite._sprite.flip_h)
 				check((sprite._sprite.position + anchor * sprite._display_scale).length() < 0.01, "Foot anchor drift")
-				check(sprite.position.y < 110, "Combatant enters HUD")
+				check(sprite.position.y < PresentationLayout.BATTLE_HEIGHT - 8, "Combatant enters HUD")
 				check(sprite.position.x < 160 if unit.team == "player" else sprite.position.x > 160, "Team crosses centre")
 		stage.queue_free()
+		await get_tree().process_frame
+
+
+func check_enemy_hud() -> void:
+	seed_party()
+	var builds: Array = GameData.get_encounter("hollow_court_battle").enemy_party
+	for sizes in [[1,1],[2,2],[3,1],[3,3]]:
+		var hud := BattleHud.new()
+		add_child(hud)
+		await get_tree().process_frame
+		var players: Array = []
+		var enemies: Array = []
+		for i in sizes[0]:
+			var player := BattleUnit.create(GameState.party[i], "player", GameData)
+			player.slot_index = i
+			players.append(player)
+		for i in sizes[1]:
+			var enemy := BattleUnit.create(builds[i], "enemy", GameData)
+			enemy.slot_index = i
+			enemies.append(enemy)
+		hud.build_rows(players)
+		hud.build_enemy_plates(enemies, players.size())
+		check(hud._enemy_plates.size() == enemies.size(), "Enemy HUD count %s" % str(sizes))
+		var prior_end := 0.0
+		for enemy in enemies:
+			var plate: EnemyStatusPlate = hud._enemy_plates[enemy]
+			check(plate.unit == enemy, "Enemy plate must read authoritative unit")
+			check(plate.position.x >= prior_end and plate.position.x + plate.size.x <= 320, "Enemy plates overlap or leave screen")
+			prior_end = plate.position.x + plate.size.x
+		enemies[0].take_damage(5)
+		hud.refresh_rows()
+		hud.highlight_enemy(enemies[0])
+		check(hud._enemy_plates[enemies[0]].selected, "Selected enemy plate")
+		hud.queue_free()
 		await get_tree().process_frame
 
 
@@ -157,10 +192,12 @@ func check_battle_flow(force_defeat: bool) -> void:
 	add_child(scene)
 	await get_tree().process_frame
 	while scene.dialogue.active: scene.dialogue._advance()
-	# Test-only health fixture accelerates defeat; the normal victory run uses
-	# unmodified combat data, targeting, AI and damage calculations.
+	# Test-only health fixtures make both result screens deterministic while
+	# attacks, targeting, AI and damage still run through the actual runtime.
 	if force_defeat:
 		for unit in scene.runtime.player_units: unit.hp = 1
+	else:
+		for unit in scene.runtime.enemy_units: unit.hp = 1
 	Engine.time_scale = 50
 	var steps := 0
 	while scene.state != scene.State.RESULT and steps < 20000:
@@ -174,6 +211,7 @@ func check_battle_flow(force_defeat: bool) -> void:
 		await get_tree().process_frame
 		steps += 1
 	check(scene.state == scene.State.RESULT, "Battle did not reach result")
+	print("BATTLE_SMOKE_RESULT: force_defeat=%s victory=%s defeat=%s" % [force_defeat, scene.runtime.victory(), scene.runtime.defeat()])
 	check(scene.runtime.defeat() if force_defeat else scene.runtime.victory(), "Unexpected battle result")
 	check(scene.result_presentation != null, "Result presentation missing")
 	Engine.time_scale = 1

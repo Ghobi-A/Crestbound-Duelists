@@ -2,11 +2,11 @@
   "assassin": {
     "base_stats": {
       "atk": 70,
-      "def": 35,
-      "hp": 70,
-      "mag": 38,
-      "res": 55,
-      "spd": 80
+      "def": 46,
+      "hp": 94,
+      "mag": 28,
+      "res": 48,
+      "spd": 68
     },
     "description": "A fast striker who exploits openings with precision and decisiveness. Excels at flanking and finishing weakened targets.",
     "id": "assassin",
@@ -25,12 +25,12 @@
   },
   "guardian": {
     "base_stats": {
-      "atk": 40,
-      "def": 75,
-      "hp": 85,
-      "mag": 40,
-      "res": 75,
-      "spd": 35
+      "atk": 44,
+      "def": 70,
+      "hp": 104,
+      "mag": 44,
+      "res": 66,
+      "spd": 36
     },
     "description": "A defensive anchor bound to protection and endurance. Guardians hold ground, absorb pressure, and reward patient Brace play.",
     "id": "guardian",
@@ -50,11 +50,11 @@
   "mage": {
     "base_stats": {
       "atk": 30,
-      "def": 35,
-      "hp": 75,
-      "mag": 80,
-      "res": 75,
-      "spd": 42
+      "def": 38,
+      "hp": 96,
+      "mag": 78,
+      "res": 66,
+      "spd": 48
     },
     "description": "A magical specialist with structured control over Crest resonance. Mages trade raw force for a wider, more technical toolkit.",
     "id": "mage",
@@ -73,12 +73,12 @@
   },
   "neutral": {
     "base_stats": {
-      "atk": 55,
-      "def": 50,
-      "hp": 78,
-      "mag": 55,
+      "atk": 56,
+      "def": 46,
+      "hp": 100,
+      "mag": 56,
       "res": 50,
-      "spd": 50
+      "spd": 52
     },
     "description": "An extremely rare adaptive generalist whose Crest expression refuses to settle. Unpredictable, flexible, and politically valuable.",
     "id": "neutral",
@@ -97,12 +97,12 @@
   },
   "sorcerer": {
     "base_stats": {
-      "atk": 40,
-      "def": 30,
-      "hp": 72,
-      "mag": 80,
+      "atk": 32,
+      "def": 44,
+      "hp": 94,
+      "mag": 76,
       "res": 48,
-      "spd": 80
+      "spd": 60
     },
     "description": "A fast curse specialist channelling instinctive, aggressive magic. Sorcerers deny buffs and control fights through Hex.",
     "id": "sorcerer",
@@ -122,12 +122,12 @@
   },
   "warrior": {
     "base_stats": {
-      "atk": 75,
-      "def": 70,
-      "hp": 85,
-      "mag": 30,
-      "res": 35,
-      "spd": 40
+      "atk": 70,
+      "def": 68,
+      "hp": 96,
+      "mag": 34,
+      "res": 40,
+      "spd": 48
     },
     "description": "A frontline bruiser whose Crest expression favours direct action and guard-breaking pressure. Associated with conviction and confrontation.",
     "id": "warrior",

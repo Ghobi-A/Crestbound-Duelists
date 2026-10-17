@@ -105,19 +105,9 @@ def _resolve_adaptive_type(move: Move, attacker: Unit, defender: Unit) -> str:
     return "physical" if phys_ratio >= mag_ratio else "magical"
 
 
-def _signature_breaks_brace(move: Move, resolved_type: str) -> bool:
-    """Relevant defence-break Signatures punch through Brace.
-
-    Godot derives this from the guard_break/resistance_break data tags. The
-    Python Move model does not currently carry tactical tags, so the Balance
-    Lab mirrors the v2.3 data contract: a Signature with at least an 8-point
-    debuff to the defence channel it attacks ignores Brace for that hit.
-    """
-    if move.slot != MoveSlot.SIGNATURE:
-        return False
-    relevant_stat = "def" if resolved_type == "physical" else "res"
-    return any(stat == relevant_stat and amount <= -8
-               for stat, amount in move.target_stat_mods)
+def move_breaks_brace(move: Move) -> bool:
+    """Use the same YAML tactical tags as the playable Godot runtime."""
+    return "guard_break" in move.tags or "resistance_break" in move.tags
 
 
 def calculate_damage(
@@ -141,7 +131,7 @@ def calculate_damage(
         atk_stat = attacker.mag
         def_stat = defender.res
 
-    if defender_braced and not _signature_breaks_brace(move, resolved):
+    if defender_braced and not move_breaks_brace(move):
         def_stat = math.floor(def_stat * BRACE_MULTIPLIER)
 
     v = random.uniform(VARIANCE_LO, VARIANCE_HI)

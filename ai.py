@@ -21,29 +21,19 @@ import math
 import random
 
 from models import Unit, Move, MoveType, MoveSlot
-from combat import BRACE_MULTIPLIER, VARIANCE_LO, VARIANCE_HI
+from combat import BRACE_MULTIPLIER, VARIANCE_LO, VARIANCE_HI, STAT_DECAY, move_breaks_brace, _resolve_adaptive_type
 
 
 # ── Expected Damage Helper ───────────────────────────────────────────
 
 def expected_damage(move: Move, attacker: Unit, defender: Unit, defender_braced: bool = False) -> float:
     """Expected damage = power × compressed_ratio × avg_variance × accuracy."""
-    if move.move_type == MoveType.ADAPTIVE:
-        phys_ratio = 2 * attacker.atk / max(1, attacker.atk + defender.def_)
-        mag_ratio = 2 * attacker.mag / max(1, attacker.mag + defender.res)
-        ratio = max(phys_ratio, mag_ratio)
-    elif move.move_type == MoveType.PHYSICAL:
-        atk = attacker.atk
-        dfn = defender.def_
-        if defender_braced:
-            dfn = math.floor(dfn * BRACE_MULTIPLIER)
-        ratio = 2 * atk / max(1, atk + dfn)
-    else:
-        atk = attacker.mag
-        dfn = defender.res
-        if defender_braced:
-            dfn = math.floor(dfn * BRACE_MULTIPLIER)
-        ratio = 2 * atk / max(1, atk + dfn)
+    resolved = _resolve_adaptive_type(move, attacker, defender) if move.move_type == MoveType.ADAPTIVE else ("physical" if move.move_type == MoveType.PHYSICAL else "magical")
+    atk = attacker.atk if resolved == "physical" else attacker.mag
+    dfn = defender.def_ if resolved == "physical" else defender.res
+    if defender_braced and not move_breaks_brace(move):
+        dfn = math.floor(dfn * BRACE_MULTIPLIER)
+    ratio = 2 * atk / max(1, atk + dfn)
 
     avg_variance = (VARIANCE_LO + VARIANCE_HI) / 2
     return move.power * ratio * avg_variance * move.accuracy
@@ -94,12 +84,12 @@ def _apply_projected_riders(attacker: Unit, defender: Unit, move: Move) -> tuple
     for stat, amount in move.target_stat_mods:
         if amount > 0 and projected_defender.has_status("hexed"):
             continue
-        projected_defender.apply_stat_mod(stat, amount, 3)
+        projected_defender.apply_stat_mod(stat, amount, STAT_DECAY)
 
     for stat, amount in move.self_stat_mods:
         if amount > 0 and projected_attacker.has_status("hexed"):
             continue
-        projected_attacker.apply_stat_mod(stat, amount, 3)
+        projected_attacker.apply_stat_mod(stat, amount, STAT_DECAY)
 
     if move.applies_status == "hexed":
         projected_defender.stat_modifiers = [
@@ -113,8 +103,8 @@ def _apply_projected_riders(attacker: Unit, defender: Unit, move: Move) -> tuple
 def projected_move_value(attacker: Unit, defender: Unit, move: Move) -> float:
     """Immediate EV plus marginal value of the resulting multi-turn state.
 
-    A three-round stat modifier is worth exactly the change it causes to three
-    subsequent reliable damage exchanges. Accuracy naturally discounts both
+    A stat modifier is approximated by the change it causes over the configured
+    number of subsequent reliable damage exchanges. Accuracy naturally discounts both
     immediate Gambit damage and any riders that only apply on hit. This keeps
     the heuristic in combat units (expected HP swing) instead of arbitrary
     'points per stat' coefficients.
@@ -131,7 +121,7 @@ def projected_move_value(attacker: Unit, defender: Unit, move: Move) -> float:
     after = _exchange_value(projected_attacker, projected_defender)
 
     if move.target_stat_mods or move.self_stat_mods:
-        horizon = 3
+        horizon = STAT_DECAY
     elif move.applies_status:
         horizon = max(1, move.status_duration)
     else:

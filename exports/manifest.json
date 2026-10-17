@@ -11,14 +11,14 @@
     "moves",
     "terrain"
   ],
-  "exported_at": "2026-09-06T21:48:21+00:00",
+  "exported_at": "2026-10-17T13:54:55+00:00",
   "record_counts": {
     "battle_objectives": 4,
     "characters": 6,
     "classes": 6,
     "combat_config": 7,
     "crests": 6,
-    "encounters": 4,
+    "encounters": 8,
     "entities": 6,
     "locations": 8,
     "moves": 18,

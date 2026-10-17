@@ -10,3 +10,6 @@ matplotlib>=3.7
 seaborn>=0.12
 scipy>=1.10
 jupyter>=1.0
+
+# Image materialization and visual QA tools.
+Pillow>=10.0

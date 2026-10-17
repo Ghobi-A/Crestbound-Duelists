@@ -10,21 +10,23 @@ for each visual phase and as the visual-regression baseline.
 
 | File | Contents |
 | --- | --- |
-| `baseline_overworld.png` | Greymere at the default spawn tile (320x180, canonical) |
-| `baseline_overworld_4x.png` | Same frame, nearest-upscaled to 1280x720 for viewing |
-| `baseline_battle.png` | Hollow Court, round 1, command menu open (320x180, canonical) |
-| `baseline_battle_4x.png` | Same frame, nearest-upscaled to 1280x720 for viewing |
+| `baseline_boot.png` | Title screen with the main menu (1280x720) |
+| `baseline_party_setup.png` | Pre-battle roster and formation (1280x720) |
+| `baseline_overworld.png` | Greymere at the default spawn tile (1280x720) |
+| `baseline_battle.png` | Hollow Court, round 1, command menu open (1280x720) |
+| `baseline_battle_target.png` | Hollow Court, first move aimed at the first target (1280x720) |
 
-The 320x180 file is the canonical artifact: it is the internal game viewport
-captured at 1:1, never an OS-window or browser grab. The `_4x` copy is derived
-from it by nearest-neighbour upscaling, so it adds no information and
-introduces no filtering.
+Layout lives on a 320x180 logical canvas, but Godot's `canvas_items` stretch
+draws it at the window's integer multiple, so a 1280x720 capture is the game's
+own 4x render with HD source art sampled at that size — never an OS-window or
+browser grab, and not an enlargement of a 320x180 image.
 
 Regenerate with:
 
 ```bash
-tools/capture_screenshots.sh                 # writes into docs/visual_refs/
-tools/capture_screenshots.sh /tmp/candidate  # writes elsewhere for comparison
+tools/capture_screenshots.sh                           # 1280x720 into docs/visual_refs/
+tools/capture_screenshots.sh /tmp/candidate            # writes elsewhere for comparison
+tools/capture_screenshots.sh /tmp/hd 1920x1080         # any integer multiple of 320x180
 ```
 
 Compare a candidate run against the committed baselines:
