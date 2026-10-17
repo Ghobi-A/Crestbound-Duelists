@@ -36,11 +36,11 @@ jobs:
           python-version: "3.11"
           cache: pip
 
-      - name: Materialize authored overworld v2 atlases
-        run: python tools/materialize_overworld_v2.py
-
       - name: Install test dependencies
         run: pip install -r requirements-dev.txt
+
+      - name: Materialize authored overworld v2 atlases
+        run: python tools/materialize_overworld_v2.py
 
       - name: Run regression suite
         run: python -m pytest -q

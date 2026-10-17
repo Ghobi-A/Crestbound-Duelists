@@ -73,3 +73,20 @@ is not itself a claim that every check has completed.
 - No in-battle flee mechanic was added. Existing party-setup cancellation works.
 - The northern gate is intentionally closed, with explanatory text, rather than
   linking to a missing scene. No unrelated world-map or engine rewrite is included.
+
+
+## Inspected native renders
+
+The following are actual Godot 4.3 llvmpipe renders at 1280×720, captured and
+visually inspected during this implementation, not mock-ups:
+
+![Route entrance](../visual_refs/route_01/baseline_route_01.png)
+![Grass approach](../visual_refs/route_01/baseline_route_grass.png)
+![Optional supply clearing](../visual_refs/route_01/baseline_route_clearing.png)
+![Outdoor battle](../visual_refs/route_01/baseline_battle_route.png)
+
+The initial presentation CI run exposed an asset-build dependency ordering bug:
+PixelLab's Pillow-based materializer was invoked before dependencies were
+installed. Presentation validation now installs development dependencies first;
+Web deployment explicitly installs Pillow before materialization. Render QA's
+existing dependency setup already installs Pillow.
