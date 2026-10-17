@@ -12,7 +12,7 @@ from dataclasses import dataclass, field
 from typing import Optional
 
 from models import (
-    Unit, Move, MoveType, MoveSlot, StatModifier, StatusEffect,
+    Unit, Move, MoveType, StatModifier, StatusEffect,
     STAT_DECAY, ClassName
 )
 
