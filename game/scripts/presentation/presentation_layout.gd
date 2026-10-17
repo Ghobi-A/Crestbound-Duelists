@@ -32,8 +32,16 @@ static func texture_box(node: TextureRect, rect: Rect2) -> void:
 	node.mouse_filter = Control.MOUSE_FILTER_IGNORE
 
 
-static func stage_position(team: String, slot: int, count: int, row: String) -> Vector2:
+static func stage_position(team: String, slot: int, count: int, row: String, opponent_count: int = 3) -> Vector2:
 	var center_x := PLAYER_CENTER_X if team == "player" else ENEMY_CENTER_X
+	# A duel closes the gap; smaller formations move inward without leaving
+	# the positions of existing full-party encounters behind.
+	if count == 1 and opponent_count == 1:
+		center_x = 110.0 if team == "player" else 210.0
+	elif count == 2 and opponent_count == 2:
+		center_x = 88.0 if team == "player" else 232.0
+	elif count == 1 and opponent_count == 3 and team == "enemy":
+		center_x = 230.0
 	# Each team has a bounded 124px span even for larger asymmetric encounters.
 	var spread := minf(42.0, 94.0 / maxf(1.0, float(count - 1)))
 	var x := center_x + (slot - (count - 1) / 2.0) * spread

@@ -528,6 +528,132 @@
         "reuses": "study",
         "reason": "Joey's family home awaits authored exterior art; reuses the study with a moss-green roof."
       }
+    },
+    "route_oak": {
+      "sheet": "res://assets/route01/scenery.png",
+      "region": [
+        0,
+        0,
+        530,
+        580
+      ],
+      "anchor": [
+        270,
+        555
+      ],
+      "width": 48,
+      "collision": [
+        -1,
+        -1,
+        2,
+        2
+      ],
+      "nearest": true
+    },
+    "route_sign": {
+      "sheet": "res://assets/route01/scenery.png",
+      "region": [
+        590,
+        40,
+        390,
+        540
+      ],
+      "anchor": [
+        195,
+        500
+      ],
+      "width": 16,
+      "collision": [
+        -1,
+        0,
+        2,
+        1
+      ],
+      "nearest": true
+    },
+    "route_rock": {
+      "sheet": "res://assets/route01/scenery.png",
+      "region": [
+        1024,
+        260,
+        512,
+        320
+      ],
+      "anchor": [
+        256,
+        280
+      ],
+      "width": 24,
+      "collision": [
+        -1,
+        0,
+        2,
+        1
+      ],
+      "nearest": true
+    },
+    "route_chest": {
+      "sheet": "res://assets/route01/scenery.png",
+      "region": [
+        80,
+        650,
+        400,
+        330
+      ],
+      "anchor": [
+        200,
+        300
+      ],
+      "width": 18,
+      "collision": [
+        -1,
+        0,
+        2,
+        1
+      ],
+      "nearest": true
+    },
+    "route_chest_open": {
+      "sheet": "res://assets/route01/scenery.png",
+      "region": [
+        570,
+        590,
+        410,
+        390
+      ],
+      "anchor": [
+        205,
+        360
+      ],
+      "width": 18,
+      "collision": [
+        -1,
+        0,
+        2,
+        1
+      ],
+      "nearest": true
+    },
+    "route_fence": {
+      "sheet": "res://assets/route01/scenery.png",
+      "region": [
+        1024,
+        650,
+        512,
+        330
+      ],
+      "anchor": [
+        256,
+        295
+      ],
+      "width": 32,
+      "collision": [
+        -1,
+        0,
+        2,
+        1
+      ],
+      "nearest": true
     }
   }
 }

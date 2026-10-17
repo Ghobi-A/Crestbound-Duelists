@@ -10,7 +10,7 @@ DIRS = [(1,0),(-1,0),(0,1),(0,-1)]
 
 def walkable(location):
     rows = location["rows"]
-    cells = {(x,y) for y,row in enumerate(rows) for x,c in enumerate(row) if c not in "#~_"}
+    cells = {(x,y) for y,row in enumerate(rows) for x,c in enumerate(row) if c not in location.get("blocked_symbols", "#~_")}
     for item in location["props"]:
         x,y = item["tile"]
         dx,dy,w,h = ASSETS[item["asset"]]["collision"]

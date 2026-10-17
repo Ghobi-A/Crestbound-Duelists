@@ -31,6 +31,10 @@ extends Node
 ## resolution. Exits with code 0 on success.
 
 const SCENE_PATHS := {
+	"route_01": "res://scenes/overworld/route_01.tscn",
+	"route_grass": "res://scenes/overworld/route_01.tscn",
+	"route_clearing": "res://scenes/overworld/route_01.tscn",
+	"battle_route": "res://scenes/battle/party_battle.tscn",
 	"boot": "res://scenes/boot/boot.tscn",
 	"party_setup": "res://scenes/ui/party_setup.tscn",
 	"overworld": "res://scenes/overworld/greymere.tscn",
@@ -40,6 +44,12 @@ const SCENE_PATHS := {
 	"inn": "res://scenes/overworld/inn.tscn",
 	"silas_study": "res://scenes/overworld/silas_study.tscn",
 	"gell_shop": "res://scenes/overworld/gell_shop.tscn",
+	"shop_open": "res://scenes/overworld/gell_shop.tscn",
+	"shop_purchased": "res://scenes/overworld/gell_shop.tscn",
+	"shop_insufficient": "res://scenes/overworld/gell_shop.tscn",
+	"inventory_open": "res://scenes/overworld/greymere.tscn",
+	"inventory_used": "res://scenes/overworld/greymere.tscn",
+	"pause_menu": "res://scenes/overworld/greymere.tscn",
 	"joey_home": "res://scenes/overworld/joey_home.tscn",
 	"kai_house": "res://scenes/overworld/kai_house.tscn",
 	"east_lane": "res://scenes/overworld/greymere.tscn",
@@ -53,6 +63,9 @@ const SCENE_PATHS := {
 	"party_formation": "res://scenes/ui/party_setup.tscn",
 	"victory": "res://scenes/battle/party_battle.tscn",
 	"defeat": "res://scenes/battle/party_battle.tscn",
+	"battle_1v1": "res://scenes/battle/party_battle.tscn",
+	"battle_2v2": "res://scenes/battle/party_battle.tscn",
+	"battle_3v1": "res://scenes/battle/party_battle.tscn",
 }
 const LOGICAL := Vector2i(320, 180)
 
@@ -77,7 +90,7 @@ func _ready() -> void:
 	var scene: Node = load(scene_path).instantiate()
 	get_tree().root.add_child(scene)
 	await _frames(SETTLE_FRAMES)
-	if target == "battle" or target == "battle_target":
+	if target in ["battle", "battle_target", "battle_1v1", "battle_2v2", "battle_3v1", "battle_route"]:
 		# battle_intro is 3 entries totalling 6 lines; one press per line
 		# leaves the round-1 command menu open.
 		for _page in 100:
@@ -95,6 +108,19 @@ func _ready() -> void:
 		var dialogue: DialogueBox = scene.get("_dialogue") as DialogueBox
 		dialogue.play({"dialogue_portrait": "elara_intro", "dialogue_notice": "notice_board",
 			"dialogue_long": "toby_flavor"}[target])
+	elif target in ["shop_open", "shop_purchased", "shop_insufficient"]:
+		if target == "shop_insufficient": GameState.crowns = 0
+		scene._trade.open(true)
+		if target != "shop_open":
+			_press_trade(scene._trade)
+	elif target in ["inventory_open", "inventory_used"]:
+		GameState.purchase_item("potion")
+		if target == "inventory_used": GameState.party[0]["current_hp"] = 30
+		scene._trade.open(false)
+		if target == "inventory_used": _press_trade(scene._trade)
+	elif target == "pause_menu":
+		scene._menu_open = true
+		scene._hud.show_menu(2, "")
 	await _frames(SETTLE_FRAMES)
 	await _capture("baseline_%s" % target)
 	get_tree().quit(0)
@@ -136,14 +162,37 @@ func _parse_args() -> void:
 			out_dir = arg.trim_prefix("--out=")
 
 
+func _press_trade(panel: TradePanel) -> void:
+	var event := InputEventAction.new()
+	event.action = "interact"
+	event.pressed = true
+	panel._unhandled_input(event)
+
+
 func _seed_state() -> void:
 	GameState.start_new_game(target.trim_prefix("class_") if target.begins_with("class_") else "warrior")
-	if target in ["lena_house","inn","silas_study","gell_shop","joey_home","kai_house"]:
-		GameState.location_id = target
+	if target.begins_with("battle_") and target in ["battle_1v1", "battle_2v2", "battle_3v1"]:
+		var sides := target.trim_prefix("battle_").split("v")
+		var fixture: Dictionary = GameData.datasets.encounters.hollow_court_battle.duplicate(true)
+		fixture["player_slots"] = int(sides[0])
+		fixture["enemy_party"] = fixture.enemy_party.slice(0, int(sides[1]))
+		fixture["intro_dialogue"] = ""
+		GameData.datasets.encounters[target] = fixture
+		GameState.pending_encounter = target
+	if target in ["lena_house","inn","silas_study","gell_shop","shop_open","shop_purchased","shop_insufficient","joey_home","kai_house"]:
+		GameState.location_id = "gell_shop" if target.begins_with("shop_") else target
 		GameState.location_spawn = "entrance"
 	elif target in ["town_square","court_gate","west_lane","east_lane","dialogue_portrait","dialogue_notice","dialogue_long"] or target.begins_with("class_"):
 		GameState.location_spawn = ""
 		GameState.player_tile = {"town_square":Vector2i(17,20),"court_gate":Vector2i(17,7),"west_lane":Vector2i(10,23),"east_lane":Vector2i(36,17)}.get(target, Vector2i(17,20))
+	if target.begins_with("route_"):
+		GameState.location_id = "route_01"
+		GameState.location_spawn = ""
+		GameState.player_tile = {"route_01":Vector2i(6,18),"route_grass":Vector2i(19,12),"route_clearing":Vector2i(25,25)}.get(target,Vector2i(6,18))
+	if target == "battle_route":
+		GameState.location_id = "route_01"
+		GameState.current_scene = "res://scenes/overworld/route_01.tscn"
+		GameState.begin_world_battle("route01_rowan", "route01_rowan_defeated")
 	if target == "party_formation":
 		# Alternative formation: reversed order, everyone in the front row.
 		GameState.party.reverse()

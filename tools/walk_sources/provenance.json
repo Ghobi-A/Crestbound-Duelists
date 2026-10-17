@@ -1,0 +1,142 @@
+[
+  {
+    "character": "ferris",
+    "direction": "east",
+    "status": "completed",
+    "job_id": "cc1758a1-e5be-4629-8f9b-bd287438517a",
+    "generated_frames": 4,
+    "frame_size": [
+      192,
+      192
+    ],
+    "spritesheet": "ferris-east/spritesheet.png",
+    "cost_generations": 3.0,
+    "reference_sha256": "a63d14dbbc5f98d886f451304945b96fad187d484fa871325580c45e5fc5f1a5",
+    "settings": {
+      "action": "Seamless walk-in-place cycle. Face RIGHT / EAST in strict profile throughout ALL frames. Fixed camera and fixed position. Alternate left and right foot contact with visible opposing leg strides. Preserve exactly the reference character face, hairstyle, clothing, equipment, colors, proportions and rendering style. Preserve the same hand and side for carried equipment throughout. No turning, rotation, camera motion, or change of outfit.",
+      "frame_count": 4,
+      "seed": 42,
+      "no_background": true
+    }
+  },
+  {
+    "character": "ferris",
+    "direction": "west",
+    "status": "completed",
+    "job_id": "e6d4a188-8f3a-47c2-b477-664f2463f2c6",
+    "generated_frames": 4,
+    "frame_size": [
+      192,
+      192
+    ],
+    "spritesheet": "ferris-west/spritesheet.png",
+    "cost_generations": 3.0,
+    "reference_sha256": "5c6b12508a1bc34a12d7ddcf4e2c96591bcbc230d520ec9d15293f414ab54a80",
+    "settings": {
+      "action": "Seamless walk-in-place cycle. Face LEFT / WEST in strict profile throughout ALL frames. Fixed camera and fixed position. Alternate left and right foot contact with visible opposing leg strides. Preserve exactly the reference character face, hairstyle, clothing, equipment, colors, proportions and rendering style. Preserve the same hand and side for carried equipment throughout. No turning, rotation, camera motion, or change of outfit.",
+      "frame_count": 4,
+      "seed": 42,
+      "no_background": true
+    }
+  },
+  {
+    "character": "gell",
+    "direction": "west",
+    "status": "completed",
+    "job_id": "560f110d-17a8-443a-a1bc-1ac25bd3eeb7",
+    "generated_frames": 4,
+    "frame_size": [
+      192,
+      192
+    ],
+    "spritesheet": "gell-west/spritesheet.png",
+    "cost_generations": 3.0,
+    "reference_sha256": "b1a3fb247d66b573ad8c41451b7273a1fc88d0abc114e74e9135d8c6599abf0b",
+    "settings": {
+      "action": "Seamless walk-in-place cycle. Face LEFT / WEST in strict profile throughout ALL frames. Fixed camera and fixed position. Alternate left and right foot contact with visible opposing leg strides. Preserve exactly the reference character face, hairstyle, clothing, equipment, colors, proportions and rendering style. Preserve the same hand and side for carried equipment throughout. No turning, rotation, camera motion, or change of outfit.",
+      "frame_count": 4,
+      "seed": 42,
+      "no_background": true
+    }
+  },
+  {
+    "character": "kai_assassin",
+    "direction": "west",
+    "status": "completed",
+    "job_id": "3adf0b03-9d68-4dc8-a823-844d6d4ba369",
+    "generated_frames": 4,
+    "frame_size": [
+      192,
+      192
+    ],
+    "spritesheet": "kai_assassin-west/spritesheet.png",
+    "cost_generations": 3.0,
+    "reference_sha256": "adf4fccb6cb643bbc4f4c4d8cdef93ae188527506bfd4b8a45d6a459c27eafcb",
+    "settings": {
+      "action": "Seamless walk-in-place cycle. Face LEFT / WEST in strict profile throughout ALL frames. Fixed camera and fixed position. Alternate left and right foot contact with visible opposing leg strides. Preserve exactly the reference character face, hairstyle, clothing, equipment, colors, proportions and rendering style. Preserve the same hand and side for carried equipment throughout. No turning, rotation, camera motion, or change of outfit.",
+      "frame_count": 4,
+      "seed": 42,
+      "no_background": true
+    }
+  },
+  {
+    "character": "kai_warrior",
+    "direction": "west",
+    "status": "completed",
+    "job_id": "32ee45a9-d1ed-4398-af8a-fccd54a7af34",
+    "generated_frames": 4,
+    "frame_size": [
+      192,
+      192
+    ],
+    "spritesheet": "kai_warrior-west/spritesheet.png",
+    "cost_generations": 3.0,
+    "reference_sha256": "7c1b804e6c41b7be631da309fe5c99cb74e853b26aa3aabf91127fd8ea435c25",
+    "settings": {
+      "action": "Seamless walk-in-place cycle. Face LEFT / WEST in strict profile throughout ALL frames. Fixed camera and fixed position. Alternate left and right foot contact with visible opposing leg strides. Preserve exactly the reference character face, hairstyle, clothing, equipment, colors, proportions and rendering style. Preserve the same hand and side for carried equipment throughout. No turning, rotation, camera motion, or change of outfit.",
+      "frame_count": 4,
+      "seed": 42,
+      "no_background": true
+    }
+  },
+  {
+    "character": "liora",
+    "direction": "east",
+    "status": "completed",
+    "job_id": "4b6facca-2d6d-4cea-b8bf-30067ae4bce4",
+    "generated_frames": 4,
+    "frame_size": [
+      192,
+      192
+    ],
+    "spritesheet": "liora-east/spritesheet.png",
+    "cost_generations": 3.0,
+    "reference_sha256": "7511d512d67ed5195455a6cf1a74318c88be5aaa5ea5a6170a0201343600e6a8",
+    "settings": {
+      "action": "Seamless walk-in-place cycle. Face RIGHT / EAST in strict profile throughout ALL frames. Fixed camera and fixed position. Alternate left and right foot contact with visible opposing leg strides. Preserve exactly the reference character face, hairstyle, clothing, equipment, colors, proportions and rendering style. Preserve the same hand and side for carried equipment throughout. No turning, rotation, camera motion, or change of outfit.",
+      "frame_count": 4,
+      "seed": 42,
+      "no_background": true
+    }
+  },
+  {
+    "character": "stranger",
+    "direction": "west",
+    "status": "completed",
+    "job_id": "e36c0147-818d-4972-8f95-059f077e2118",
+    "generated_frames": 4,
+    "frame_size": [
+      192,
+      192
+    ],
+    "spritesheet": "stranger-west/spritesheet.png",
+    "cost_generations": 3.0,
+    "reference_sha256": "3bc56813ba304ae8e109750f75ec4f9aa5022676d838d39948e8b4e6e54318c3",
+    "settings": {
+      "action": "Seamless walk-in-place cycle. Face LEFT / WEST in strict profile throughout ALL frames. Fixed camera and fixed position. Alternate left and right foot contact with visible opposing leg strides. Preserve exactly the reference character face, hairstyle, clothing, equipment, colors, proportions and rendering style. Preserve the same hand and side for carried equipment throughout. No turning, rotation, camera motion, or change of outfit.",
+      "frame_count": 4,
+      "seed": 42,
+      "no_background": true
+    }
+  }
+]

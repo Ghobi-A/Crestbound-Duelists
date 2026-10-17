@@ -20,6 +20,7 @@ var _message_plate: ColorRect
 var _info_label: Label
 var _info_panel: UiPanel
 var _rows: Dictionary = {}   # BattleUnit -> UnitStatusPanel
+var _enemy_plates: Dictionary = {} # BattleUnit -> EnemyStatusPlate
 var _rows_container: HBoxContainer
 var _flash_rect: ColorRect
 var _banner_label: Label
@@ -86,9 +87,10 @@ func _ready() -> void:
 
 func build_rows(player_units: Array) -> void:
 	var count := maxi(1, player_units.size())
-	# Cards share the card area but never stretch past a comfortable width
-	# for 1v1 and 2v2 encounters.
-	var card_width := minf(92.0, (CARD_AREA.size.x - 3.0 * (count - 1)) / count)
+	# A duel gets one substantial centered card; full parties divide the
+	# same bounded area without reserving blank slots for absent members.
+	var card_width := minf(130.0, (CARD_AREA.size.x - 3.0 * (count - 1)) / count)
+	_rows_container.position.x = CARD_AREA.position.x + (CARD_AREA.size.x - card_width * count - 3.0 * (count - 1)) / 2.0
 	for unit in player_units:
 		var row := UnitStatusPanel.new()
 		row.custom_minimum_size = Vector2(card_width, CARD_AREA.size.y)
@@ -98,9 +100,30 @@ func build_rows(player_units: Array) -> void:
 		_rows[unit] = row
 
 
+func build_enemy_plates(enemy_units: Array, player_count: int = 3) -> void:
+	var count := maxi(1, enemy_units.size())
+	# The stage spaces two/three slots 42px apart. Cap each plate below
+	# that stride rather than allocating half the whole enemy side for 2v2.
+	var width := 76.0 if count == 1 else minf(40.0, 122.0 / count - 2.0)
+	for unit in enemy_units:
+		var plate := EnemyStatusPlate.new()
+		add_child(plate)
+		var home := PresentationLayout.stage_position("enemy", unit.slot_index, count, unit.position, player_count)
+		plate.bind(unit, width, home.x)
+		_enemy_plates[unit] = plate
+
+
+func highlight_enemy(unit: BattleUnit) -> void:
+	for enemy in _enemy_plates:
+		_enemy_plates[enemy].selected = enemy == unit
+		_enemy_plates[enemy].refresh()
+
+
 func refresh_rows() -> void:
 	for row in _rows.values():
 		row.refresh()
+	for plate in _enemy_plates.values():
+		plate.refresh()
 
 
 func highlight_unit(unit: BattleUnit) -> void:
@@ -154,9 +177,9 @@ func set_message(text: String) -> void:
 		_message_plate.position.x = (320.0 - width) / 2.0
 
 
-func show_menu(unit: BattleUnit) -> void:
+func show_menu(unit: BattleUnit, allow_flee := false) -> void:
 	_info_panel.visible = false
-	action_menu.build_for(unit)
+	action_menu.build_for(unit, allow_flee)
 	action_menu.visible = true
 	action_menu.modulate.a = 0.0
 	action_menu.position.y = 5

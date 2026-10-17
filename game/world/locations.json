@@ -179,6 +179,20 @@
           ]
         },
         {
+          "asset": "crates",
+          "tile": [
+            30,
+            14
+          ]
+        },
+        {
+          "asset": "crates",
+          "tile": [
+            43,
+            18
+          ]
+        },
+        {
           "asset": "hedge",
           "tile": [
             12,
@@ -623,6 +637,16 @@
             0,
             1
           ]
+        },
+        "route_return": {
+          "tile": [
+            17,
+            29
+          ],
+          "facing": [
+            0,
+            -1
+          ]
         }
       },
       "doors": [
@@ -730,6 +754,21 @@
           "locked_dialogue_id": "locked_door",
           "transition_type": "fade",
           "verb": "Enter"
+        },
+        {
+          "building_id": "outskirts",
+          "tile": [
+            17,
+            31
+          ],
+          "destination_location": "route_01",
+          "destination_scene": "res://scenes/overworld/route_01.tscn",
+          "destination_spawn": "greymere",
+          "return_spawn": "route_return",
+          "locked": false,
+          "locked_dialogue_id": "",
+          "transition_type": "fade",
+          "verb": "Travel"
         }
       ],
       "interactions": [
@@ -924,18 +963,18 @@
       "scene": "res://scenes/overworld/lena_house.tscn",
       "rows": [
         "______________________",
-        "_####################_",
-        "_####################_",
-        "_#wwwwwwwwwwwwwwwwww#_",
-        "_#wwwwwwwwwwwwwwwwww#_",
-        "_#wwwwwwwwwwwwwwwwww#_",
-        "_#wwwwwwwwwwwwwwwwww#_",
-        "_#wwwwwwwwwwwwwwwwww#_",
-        "_#wwwwwwwwwwwwwwwwww#_",
-        "_#wwwwwwwwwwwwwwwwww#_",
-        "_#wwwwwwwwwwwwwwwwww#_",
-        "_#wwwwwwww::wwwwwwww#_",
-        "_####################_",
+        "___################___",
+        "___################___",
+        "___#wwwwwwwwwwwwww#___",
+        "___#wwwwwwwwwwwwww#___",
+        "___#wwwwwwwwwwwwww#___",
+        "___#wwwwwwwwwwwwww#___",
+        "___#wwwwwwwwwwwwww#___",
+        "___#wwwwwwwwwwwwww#___",
+        "___#wwwwwwwwwwwwww#___",
+        "___#wwwwwwwwwwwwww#___",
+        "___#wwwwww::wwwwww#___",
+        "___################___",
         "______________________"
       ],
       "interior": true,
@@ -1096,8 +1135,8 @@
         {
           "asset": "jars",
           "tile": [
-            15,
-            3
+            16,
+            4
           ]
         },
         {
@@ -1122,10 +1161,10 @@
           ]
         },
         {
-          "asset": "bed",
+          "asset": "table",
           "tile": [
-            17,
-            4
+            8,
+            5
           ]
         }
       ],
@@ -1154,6 +1193,19 @@
           "facing": [
             0,
             1
+          ]
+        },
+        {
+          "name": "Old Ferris",
+          "sprite_key": "townsfolk/torch_bearer",
+          "dialogue": "ferris_flavor",
+          "tile": [
+            18,
+            8
+          ],
+          "facing": [
+            -1,
+            0
           ]
         }
       ],
@@ -1482,8 +1534,9 @@
             9,
             6
           ],
-          "verb": "Inspect",
-          "text": "Gell's ledger lies open beside a stack of Civara broadsheets he insists are recent."
+          "verb": "Browse",
+          "text": "Gell's ledger lies open beside a stack of Civara broadsheets he insists are recent.",
+          "kind": "shop"
         },
         {
           "tile": [
@@ -1813,6 +1866,769 @@
           "color": "warm"
         }
       ]
+    },
+    "route_01": {
+      "id": "route_01",
+      "name": "Greymere Outskirts \u2014 Route 01",
+      "subtitle": "The road beyond home",
+      "scene": "res://scenes/overworld/route_01.tscn",
+      "rows": [
+        "############################################################",
+        "############################################################",
+        "#########################...............####################",
+        "#########################..~~~~~~~~~~...####################",
+        "#########################..~~~~~~~~~~...####################",
+        "#########################..~~~~~~~~~~...##########.......###",
+        "#####################ff##..~~~~~~~~~~...##########ff.###.###",
+        "#####################ff#ff.~~~~~~~~~~...##########ff.,,,.###",
+        "#################.......ff.................#######...,,,.###",
+        "######.....................................#######...,,,.###",
+        "######............,,,,,,,,,,,,,,,,,,,,,,,..#######...,,,.###",
+        "######..ggggggggg.,,,,,,,,,,,,,,,,,,,,,,,..##ff###...,,,.###",
+        "######..ggggggggg.,,,,,,,,,,,,,,,,,,,,,,,..##ff###...,,,.###",
+        "######..ggggggggg.,,,....gggggggggg...,,,..#######...,,,.###",
+        "###.....ggggggggg.,,,....gggggggggg...,,,#########...,,,.###",
+        "###.....ggggggggg.,,,r...gggggggggg...,,,#########...,,,.###",
+        "###.........,,,...,,,....gggggggggg...,,,#########...,,,.###",
+        "###,,,,,,,,,,,,,,,,,,##..gggggggggg...,,,#...........,,,.###",
+        "###,,,,,,,,,,,,,,,,,,##..ggggggggggr..,,,............,,,.###",
+        "###,,,,,,,,,,,,,,,,,,##...............,,,............,,,.###",
+        "###..................##...............,,,...ggggggg..,,,.###",
+        "###..................##.,,,...........,,,...ggggggg..,,,.###",
+        "###...f|||...........##.,,,.......ff..,,,...ggggggg..,,,.###",
+        "######ff###############.,,,.......ff..,,,...ggggggg..,,,.###",
+        "#######################.,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,.###",
+        "#########ff############.,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,.###",
+        "#########ff############.,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,.###",
+        "#######################..................................###",
+        "#######################.........................r........###",
+        "################################################ff##########",
+        "################################################ff##########",
+        "############################################################",
+        "############################################################",
+        "############################################################",
+        "############################################################"
+      ],
+      "music_id": "greymere",
+      "interior": false,
+      "props": [
+        {
+          "asset": "route_sign",
+          "tile": [
+            6,
+            16
+          ]
+        },
+        {
+          "asset": "route_sign",
+          "tile": [
+            54,
+            6
+          ]
+        },
+        {
+          "asset": "route_chest",
+          "tile": [
+            25,
+            23
+          ],
+          "collected_asset": "route_chest_open",
+          "collected_flag": "route01_supplies_collected"
+        },
+        {
+          "asset": "crates",
+          "tile": [
+            46,
+            27
+          ]
+        },
+        {
+          "asset": "route_rock",
+          "tile": [
+            21,
+            15
+          ]
+        },
+        {
+          "asset": "route_fence",
+          "tile": [
+            8,
+            22
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            4,
+            7
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            10,
+            7
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            16,
+            7
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            23,
+            7
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            41,
+            7
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            48,
+            7
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            57,
+            6
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            4,
+            28
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            10,
+            30
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            17,
+            30
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            22,
+            30
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            30,
+            31
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            37,
+            32
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            45,
+            32
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            53,
+            32
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            57,
+            17
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            3,
+            13
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            32,
+            23
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            45,
+            17
+          ]
+        },
+        {
+          "asset": "hedge",
+          "tile": [
+            22,
+            17
+          ]
+        },
+        {
+          "asset": "hedge",
+          "tile": [
+            22,
+            19
+          ]
+        },
+        {
+          "asset": "hedge",
+          "tile": [
+            36,
+            16
+          ]
+        },
+        {
+          "asset": "hedge",
+          "tile": [
+            36,
+            18
+          ]
+        },
+        {
+          "asset": "hedge",
+          "tile": [
+            42,
+            21
+          ]
+        },
+        {
+          "asset": "hedge",
+          "tile": [
+            48,
+            15
+          ]
+        },
+        {
+          "asset": "hedge",
+          "tile": [
+            51,
+            15
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            3,
+            3
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            7,
+            3
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            11,
+            3
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            15,
+            3
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            19,
+            3
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            23,
+            3
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            43,
+            3
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            47,
+            3
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            51,
+            3
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            55,
+            3
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            3,
+            7
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            7,
+            7
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            11,
+            7
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            15,
+            7
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            19,
+            7
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            43,
+            7
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            47,
+            7
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            3,
+            11
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            43,
+            15
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            47,
+            15
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            3,
+            27
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            7,
+            27
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            15,
+            27
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            19,
+            27
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            3,
+            31
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            7,
+            31
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            11,
+            31
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            15,
+            31
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            19,
+            31
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            23,
+            31
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            27,
+            31
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            31,
+            31
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            35,
+            31
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            39,
+            31
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            43,
+            31
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            47,
+            31
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            51,
+            31
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            55,
+            31
+          ]
+        }
+      ],
+      "lights": [],
+      "spawn_points": {
+        "greymere": {
+          "tile": [
+            5,
+            18
+          ],
+          "facing": [
+            1,
+            0
+          ]
+        },
+        "entrance": {
+          "tile": [
+            5,
+            18
+          ],
+          "facing": [
+            1,
+            0
+          ]
+        },
+        "far_end": {
+          "tile": [
+            54,
+            9
+          ],
+          "facing": [
+            0,
+            1
+          ]
+        }
+      },
+      "doors": [
+        {
+          "building_id": "greymere_road",
+          "tile": [
+            3,
+            18
+          ],
+          "destination_location": "greymere",
+          "destination_scene": "res://scenes/overworld/greymere.tscn",
+          "destination_spawn": "route_return",
+          "return_spawn": "greymere",
+          "locked": false,
+          "locked_dialogue_id": "",
+          "transition_type": "fade",
+          "verb": "Travel"
+        }
+      ],
+      "npcs": [
+        {
+          "name": "Apprentice Rowan",
+          "sprite_key": "route01_rowan",
+          "dialogue": "",
+          "tile": [
+            11,
+            16
+          ],
+          "facing": [
+            0,
+            1
+          ],
+          "id": "route01_rowan",
+          "encounter": "route01_rowan",
+          "sight": 4,
+          "intro": "Heading into Greymere? Let's see if you've got what it takes!",
+          "after": "That was a good lesson. Keep an eye on the grass off the road."
+        },
+        {
+          "name": "Travelling Squire",
+          "sprite_key": "route01_squire",
+          "dialogue": "",
+          "tile": [
+            22,
+            10
+          ],
+          "facing": [
+            -1,
+            0
+          ],
+          "id": "route01_squire",
+          "encounter": "route01_squire",
+          "sight": 4,
+          "intro": "A good duelist should always be prepared. Show me your technique!",
+          "after": "Well fought. Supplies from Gell will help on a longer journey."
+        },
+        {
+          "name": "Wandering Challenger",
+          "sprite_key": "route01_challenger",
+          "dialogue": "",
+          "tile": [
+            41,
+            24
+          ],
+          "facing": [
+            -1,
+            0
+          ],
+          "id": "route01_challenger",
+          "encounter": "route01_challenger",
+          "sight": 4,
+          "intro": "I've been waiting for someone worth challenging!",
+          "after": "A fine match. The road beyond the north gate is closed for now."
+        },
+        {
+          "name": "Roadside Traveller",
+          "sprite_key": "townsfolk/elder_woman",
+          "dialogue": "",
+          "tile": [
+            29,
+            25
+          ],
+          "facing": [
+            0,
+            -1
+          ],
+          "text": "The main road is safe to follow. Training parties gather in the tall grass. There are supplies along the western clearing."
+        }
+      ],
+      "interactions": [
+        {
+          "tile": [
+            6,
+            16
+          ],
+          "verb": "Read",
+          "text": "Greymere Outskirts \u2014 Travellers beware. Duelists often train along these roads."
+        },
+        {
+          "tile": [
+            25,
+            23
+          ],
+          "verb": "Open",
+          "kind": "chest",
+          "flag": "route01_supplies_collected",
+          "item": "potion",
+          "quantity": 2
+        },
+        {
+          "tile": [
+            54,
+            6
+          ],
+          "verb": "Read",
+          "text": "North road closed. The next region will open in a future chapter."
+        }
+      ],
+      "encounter_zones": [
+        {
+          "symbol": "g",
+          "probability": 0.12,
+          "cooldown_steps": 8,
+          "encounters": [
+            "route01_roadside"
+          ]
+        }
+      ],
+      "blocked_symbols": [
+        "#",
+        "~",
+        "_",
+        "|",
+        "r"
+      ],
+      "hud_name": "GREYMERE OUTSKIRTS",
+      "arrival_grace_steps": 6,
+      "encounter_message": "A roadside raider emerges from the tall grass. Prepare your party!",
+      "recovery": {
+        "location": "greymere",
+        "spawn": "route_return"
+      },
+      "return_grace_steps": 8,
+      "battle_background": {
+        "rows": [
+          "....................",
+          "....................",
+          "....................",
+          "....................",
+          ",,,,,,,,,,,,,,,,,,,,",
+          ",,,,,,,,,,,,,,,,,,,,",
+          ",,,,,,,,,,,,,,,,,,,,",
+          ",,,,,,,,,,,,,,,,,,,,",
+          ",,,,,,,,,,,,,,,,,,,,"
+        ],
+        "props": [
+          {
+            "asset": "route_oak",
+            "tile": [
+              1,
+              2
+            ]
+          },
+          {
+            "asset": "route_oak",
+            "tile": [
+              5,
+              2
+            ]
+          },
+          {
+            "asset": "route_oak",
+            "tile": [
+              10,
+              2
+            ]
+          },
+          {
+            "asset": "route_oak",
+            "tile": [
+              15,
+              2
+            ]
+          },
+          {
+            "asset": "route_oak",
+            "tile": [
+              19,
+              2
+            ]
+          }
+        ]
+      }
     }
   }
 }

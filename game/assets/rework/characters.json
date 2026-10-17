@@ -463,6 +463,138 @@
           205
         ]
       }
+    },
+    "route01_rowan": {
+      "display_name": "Apprentice Rowan",
+      "aliases": [],
+      "class_id": "neutral",
+      "atlas": "res://assets/route01/trainers.png",
+      "native_size": [
+        1536,
+        1024
+      ],
+      "colour_key": "alpha",
+      "battle_side": "enemy",
+      "battle_rect": [
+        0,
+        0,
+        512,
+        620
+      ],
+      "foot_anchor": [
+        256,
+        595
+      ],
+      "visual_centre": [
+        256,
+        300
+      ],
+      "portrait_rect": [
+        175,
+        40,
+        190,
+        200
+      ],
+      "overworld": {
+        "atlas": "res://assets/route01/rowan_overworld.png",
+        "frame_size": [
+          128,
+          300
+        ],
+        "row": 0,
+        "foot_anchor": [
+          64,
+          280
+        ]
+      }
+    },
+    "route01_squire": {
+      "display_name": "Travelling Squire",
+      "aliases": [],
+      "class_id": "guardian",
+      "atlas": "res://assets/route01/trainers.png",
+      "native_size": [
+        1536,
+        1024
+      ],
+      "colour_key": "alpha",
+      "battle_side": "enemy",
+      "battle_rect": [
+        512,
+        0,
+        512,
+        620
+      ],
+      "foot_anchor": [
+        256,
+        595
+      ],
+      "visual_centre": [
+        256,
+        300
+      ],
+      "portrait_rect": [
+        687,
+        40,
+        190,
+        200
+      ],
+      "overworld": {
+        "atlas": "res://assets/route01/squire_overworld.png",
+        "frame_size": [
+          128,
+          300
+        ],
+        "row": 0,
+        "foot_anchor": [
+          64,
+          280
+        ]
+      }
+    },
+    "route01_challenger": {
+      "display_name": "Wandering Challenger",
+      "aliases": [],
+      "class_id": "warrior",
+      "atlas": "res://assets/route01/trainers.png",
+      "native_size": [
+        1536,
+        1024
+      ],
+      "colour_key": "alpha",
+      "battle_side": "enemy",
+      "battle_rect": [
+        1024,
+        0,
+        512,
+        620
+      ],
+      "foot_anchor": [
+        256,
+        595
+      ],
+      "visual_centre": [
+        256,
+        300
+      ],
+      "portrait_rect": [
+        1199,
+        40,
+        190,
+        200
+      ],
+      "overworld": {
+        "atlas": "res://assets/route01/challenger_overworld.png",
+        "frame_size": [
+          128,
+          300
+        ],
+        "row": 0,
+        "foot_anchor": [
+          64,
+          280
+        ]
+      }
     }
   }
 }

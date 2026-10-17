@@ -104,18 +104,21 @@ func _stage_background() -> void:
 func _stage_units() -> void:
 	for unit in runtime.all_units():
 		var count := runtime.player_units.size() if unit.team == "player" else runtime.enemy_units.size()
-		sprites[unit] = (stage as BattleStage).add_combatant(unit, count)
+		var opposing := runtime.enemy_units.size() if unit.team == "player" else runtime.player_units.size()
+		sprites[unit] = (stage as BattleStage).add_combatant(unit, count, opposing)
 
 
 func stage_position(unit: BattleUnit) -> Vector2:
 	var count := runtime.player_units.size() if unit.team == "player" else runtime.enemy_units.size()
-	return PresentationLayout.stage_position(unit.team, unit.slot_index, count, unit.position)
+	var opposing := runtime.enemy_units.size() if unit.team == "player" else runtime.player_units.size()
+	return PresentationLayout.stage_position(unit.team, unit.slot_index, count, unit.position, opposing)
 
 
 func _build_hud() -> void:
 	hud = BattleHud.new()
 	add_child(hud)
 	hud.build_rows(runtime.player_units)
+	hud.build_enemy_plates(runtime.enemy_units, runtime.player_units.size())
 
 
 func _build_dialogue() -> void:
@@ -161,7 +164,7 @@ func _open_menu_for_current() -> void:
 	_clear_all_highlights()
 	var unit := _current_unit()
 	hud.highlight_unit(unit)
-	hud.show_menu(unit)
+	hud.show_menu(unit, runtime.can_flee())
 	if sprites.has(unit):
 		sprites[unit].set_highlighted("selected")
 	queue_redraw()
@@ -174,6 +177,7 @@ func _open_menu_for_current() -> void:
 func _clear_all_highlights() -> void:
 	for u in sprites:
 		sprites[u].clear_highlight()
+	hud.highlight_enemy(null)
 	_clear_target_dim()
 
 
@@ -187,10 +191,12 @@ func _clear_target_side() -> void:
 		if sprites.has(u):
 			sprites[u].clear_highlight()
 	_clear_target_dim()
+	hud.highlight_enemy(null)
 
 
 func _refresh_target_highlights() -> void:
 	var current := target_selector.current()
+	hud.highlight_enemy(current)
 	for u in target_selector.targets:
 		if sprites.has(u):
 			sprites[u].set_highlighted("target" if u == current else "")
@@ -267,6 +273,9 @@ func _menu_input(event: InputEvent) -> void:
 		AudioRouter.play_sfx("ui", "confirm")
 		var entry := hud.action_menu.current_entry()
 		if not entry.enabled:
+			return
+		if entry.kind == "flee":
+			_try_flee()
 			return
 		var unit := _current_unit()
 		if entry.kind == "brace":
@@ -428,6 +437,12 @@ func _finish(player_won: bool) -> void:
 
 
 func _after_result(player_won: bool) -> void:
+	if not GameState.world_battle.is_empty():
+		if player_won:
+			_leave_after_victory()
+		else:
+			SceneTransition.change_scene(GameState.finish_world_battle("defeat"), "defeat")
+		return
 	var key: String = runtime.encounter.get("victory_dialogue" if player_won else "defeat_dialogue", "")
 	if key != "" and dialogue.has_key(key):
 		dialogue.play(key)
@@ -437,7 +452,31 @@ func _after_result(player_won: bool) -> void:
 		SceneTransition.change_scene(BOOT_SCENE, "defeat")
 
 
+func _try_flee() -> void:
+	if state != State.SELECT_MENU or GameState.world_battle.is_empty(): return
+	if not runtime.flee(): return
+	state = State.RESULT
+	hud.hide_menu()
+	hud.hide_info()
+	_store_field_health()
+	SceneTransition.change_scene(GameState.finish_world_battle("fled"), "travel")
+
+
+func _store_field_health() -> void:
+	# Carry damage into the field so purchased supplies have a meaningful use.
+	# The roster keeps its original order even when party setup selects a subset.
+	for unit in runtime.player_units:
+		for member in GameState.party:
+			if str(member.get("name", "")) == unit.display_name:
+				member["current_hp"] = maxi(1, unit.hp)
+				break
+
+
 func _leave_after_victory() -> void:
+	_store_field_health()
+	if not GameState.world_battle.is_empty():
+		SceneTransition.change_scene(GameState.finish_world_battle("victory"), "gold")
+		return
 	var encounter_id: String = runtime.encounter.get("id", GameState.pending_encounter)
 	GameState.set_flag("%s_won" % encounter_id)
 	if GameState.pending_encounter == "hollow_court_battle":

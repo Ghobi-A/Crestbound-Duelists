@@ -18,7 +18,7 @@ func _init() -> void:
 	size = MENU_SIZE
 
 
-func build_for(unit: BattleUnit) -> void:
+func build_for(unit: BattleUnit, allow_flee := false) -> void:
 	entries = []
 	for move in unit.moves:
 		var entry := {
@@ -42,6 +42,8 @@ func build_for(unit: BattleUnit) -> void:
 		"label": "Brace", "kind": "brace", "move": {}, "enabled": true, "note": "",
 		"description": "Defensive stance\nGuards this round and feeds some Crests.",
 	})
+	if allow_flee:
+		entries.append({"label": "Flee", "kind": "flee", "move": {}, "enabled": true, "note": "", "description": "Withdraw safely.\nKeep damage. No victory or rewards."})
 	cursor = 0
 	_ensure_valid_cursor(1)
 	queue_redraw()
@@ -90,9 +92,10 @@ func _draw() -> void:
 	# Command list: framed rows, the focused one lit gold with a pointer.
 	var list := Rect2(0, 0, LIST_WIDTH, MENU_SIZE.y)
 	UiStyle.draw_panel(self, list, UiStyle.COMMAND, false)
+	var pitch := minf(ROW_PITCH, (MENU_SIZE.y - 2.0) / entries.size())
 	for i in entries.size():
 		var entry: Dictionary = entries[i]
-		var row := Rect2(5, 1.6 + i * ROW_PITCH, LIST_WIDTH - 8, ROW_PITCH - 0.6)
+		var row := Rect2(5, 1.0 + i * pitch, LIST_WIDTH - 8, pitch - 0.4)
 		if i == cursor:
 			UiStyle.draw_selection_band(self, row, UiStyle.COMMAND)
 		var colour := UiStyle.TEXT if entry.enabled else UiStyle.TEXT_FAINT

@@ -54,6 +54,7 @@ static func key_material(record: Dictionary = {}) -> ShaderMaterial:
 		var material := ShaderMaterial.new()
 		material.shader = load("res://scripts/art/colour_key.gdshader")
 		material.set_shader_parameter("magenta_key", colour_key == "magenta")
+		material.set_shader_parameter("use_colour_key", colour_key != "alpha")
 		_materials[colour_key] = material
 	return _materials[colour_key] as ShaderMaterial
 

@@ -13,6 +13,8 @@ on:
       - "tests/test_overworld_v2.py"
       - "tools/overworld_v2_art.py"
       - "tools/materialize_overworld_v2.py"
+      - "tools/apply_pixellab_walks.py"
+      - "tools/walk_sources/**"
       - "tools/validate_godot_project.py"
       - ".github/workflows/presentation-validation.yml"
   workflow_dispatch: {}
@@ -34,11 +36,11 @@ jobs:
           python-version: "3.11"
           cache: pip
 
-      - name: Materialize authored overworld v2 atlases
-        run: python tools/materialize_overworld_v2.py
-
       - name: Install test dependencies
         run: pip install -r requirements-dev.txt
+
+      - name: Materialize authored overworld v2 atlases
+        run: python tools/materialize_overworld_v2.py
 
       - name: Run regression suite
         run: python -m pytest -q

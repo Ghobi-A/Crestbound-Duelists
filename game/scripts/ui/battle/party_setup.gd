@@ -117,6 +117,8 @@ func _refresh() -> void:
 		var details: Array[String] = []
 		_identity_label.text = "%s\n%s" % [str(class_record.get("name", "?")).to_upper(), str(crest.get("name", "No Crest"))]
 		details.append("BOND: %s" % str(entity.get("name", "None")))
+		var full_hp := int(class_record.get("base_stats", {}).get("hp", 1))
+		details.append("HP: %d/%d" % [int(build.get("current_hp", full_hp)), full_hp])
 		details.append("")
 		# Two lines is the whole budget left in this box at native font
 		# size: 70px holds six 9px lines at the theme's 3px spacing, and
@@ -221,6 +223,7 @@ func _unhandled_input(event: InputEvent) -> void:
 			_cursor -= 1
 	elif event.is_action_pressed("cancel"):
 		AudioRouter.play_sfx("ui", "cancel")
-		SceneTransition.change_scene(OVERWORLD_SCENE)
+		var destination := GameState.finish_world_battle("cancel") if not GameState.world_battle.is_empty() else OVERWORLD_SCENE
+		SceneTransition.change_scene(destination)
 		return
 	_refresh()
