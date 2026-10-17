@@ -66,13 +66,19 @@ def add_route(locations):
     ]:
         rect(grid, x, y, 2, 2, "f")
     props = [
-        prop("notice", 6, 16),
-        prop("notice", 54, 6),
-        prop("chest", 25, 23),
+        prop("route_sign", 6, 16),
+        prop("route_sign", 54, 6),
+        dict(
+            prop("route_chest", 25, 23),
+            collected_asset="route_chest_open",
+            collected_flag="route01_supplies_collected",
+        ),
         prop("crates", 46, 27),
+        prop("route_rock", 21, 15),
+        prop("route_fence", 8, 22),
     ]
     props += [
-        prop("tree", x, y)
+        prop("route_oak", x, y)
         for x, y in [
             (4, 7),
             (10, 7),
@@ -109,7 +115,7 @@ def add_route(locations):
     ]
     # Reuse the same authored tree kit to fill impassable forest interiors.
     props += [
-        prop("tree", x, y)
+        prop("route_oak", x, y)
         for y in range(3, 33, 4)
         for x in range(3, 58, 4)
         if all(
@@ -118,7 +124,7 @@ def add_route(locations):
     ]
     trainers = [
         dict(
-            npc("Apprentice Rowan", "townsfolk/farmboy", "", 11, 16, (0, 1)),
+            npc("Apprentice Rowan", "route01_rowan", "", 11, 16, (0, 1)),
             id="route01_rowan",
             encounter="route01_rowan",
             sight=4,
@@ -126,7 +132,7 @@ def add_route(locations):
             after="That was a good lesson. Keep an eye on the grass off the road.",
         ),
         dict(
-            npc("Travelling Squire", "townsfolk/guard_sword", "", 22, 10, (-1, 0)),
+            npc("Travelling Squire", "route01_squire", "", 22, 10, (-1, 0)),
             id="route01_squire",
             encounter="route01_squire",
             sight=4,
@@ -134,9 +140,7 @@ def add_route(locations):
             after="Well fought. Supplies from Gell will help on a longer journey.",
         ),
         dict(
-            npc(
-                "Wandering Challenger", "townsfolk/hooded_stranger", "", 41, 24, (-1, 0)
-            ),
+            npc("Wandering Challenger", "route01_challenger", "", 41, 24, (-1, 0)),
             id="route01_challenger",
             encounter="route01_challenger",
             sight=4,
@@ -228,6 +232,6 @@ def add_route(locations):
     route["return_grace_steps"] = 8
     route["battle_background"] = {
         "rows": ["." * 20] * 4 + ["," * 20] * 5,
-        "props": [prop("tree", x, 2) for x in [1, 5, 10, 15, 19]],
+        "props": [prop("route_oak", x, 2) for x in [1, 5, 10, 15, 19]],
     }
     locations["route_01"] = route

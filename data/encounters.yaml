@@ -94,7 +94,7 @@ encounters:
     objective: defeat_all
     battlefield_effect: {}
     enemy_party:
-      - {name: Apprentice Rowan, class_id: neutral, crest_id: "", entity_id: "", position: front, sprite_key: aren/neutral}
+      - {name: Apprentice Rowan, class_id: neutral, crest_id: "", entity_id: "", position: front, sprite_key: route01_rowan}
     intro_dialogue: ""
     victory_dialogue: ""
     defeat_dialogue: ""
@@ -108,7 +108,7 @@ encounters:
     objective: defeat_all
     battlefield_effect: {}
     enemy_party:
-      - {name: Travelling Squire, class_id: guardian, crest_id: "", entity_id: "", position: front, sprite_key: aren/guardian}
+      - {name: Travelling Squire, class_id: guardian, crest_id: "", entity_id: "", position: front, sprite_key: route01_squire}
     intro_dialogue: ""
     victory_dialogue: ""
     defeat_dialogue: ""
@@ -122,7 +122,7 @@ encounters:
     objective: defeat_all
     battlefield_effect: {}
     enemy_party:
-      - {name: Wandering Challenger, class_id: warrior, crest_id: "", entity_id: "", position: front, sprite_key: aren/warrior}
+      - {name: Wandering Challenger, class_id: warrior, crest_id: "", entity_id: "", position: front, sprite_key: route01_challenger}
     intro_dialogue: ""
     victory_dialogue: ""
     defeat_dialogue: ""

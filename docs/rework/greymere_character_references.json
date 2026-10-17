@@ -268,6 +268,45 @@
       "replacement_status": "in_review",
       "candidate": "docs/visual_refs/character_candidates/kai_neutral.png",
       "runtime_sheet": "game/assets/overworld/kai_neutral.png"
+    },
+    {
+      "id": "route01_rowan",
+      "display_name": "Apprentice Rowan",
+      "classification": "C",
+      "aliases": [
+        "route01_rowan"
+      ],
+      "references": [
+        "game/assets/route01/trainers.png"
+      ],
+      "replacement_status": "in_review",
+      "runtime_sheet": "game/assets/route01/rowan_overworld.png"
+    },
+    {
+      "id": "route01_squire",
+      "display_name": "Travelling Squire",
+      "classification": "C",
+      "aliases": [
+        "route01_squire"
+      ],
+      "references": [
+        "game/assets/route01/trainers.png"
+      ],
+      "replacement_status": "in_review",
+      "runtime_sheet": "game/assets/route01/squire_overworld.png"
+    },
+    {
+      "id": "route01_challenger",
+      "display_name": "Wandering Challenger",
+      "classification": "C",
+      "aliases": [
+        "route01_challenger"
+      ],
+      "references": [
+        "game/assets/route01/trainers.png"
+      ],
+      "replacement_status": "in_review",
+      "runtime_sheet": "game/assets/route01/challenger_overworld.png"
     }
   ]
 }

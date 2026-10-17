@@ -10,7 +10,10 @@ def test_all_greymere_and_kai_classes_have_authored_sheets():
     def walk(value):
         if isinstance(value, dict):
             if "sprite_key" in value:
-                assert value["sprite_key"] in MANIFEST["aliases"]
+                key = value["sprite_key"]
+                if key not in MANIFEST["aliases"]:
+                    record = json.loads((ROOT / "game/assets/rework/characters.json").read_text())["characters"][key]
+                    assert record["overworld"] and record["colour_key"] == "alpha"
             for item in value.values():
                 walk(item)
         elif isinstance(value, list):

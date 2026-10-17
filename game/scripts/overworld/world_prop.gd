@@ -3,9 +3,13 @@ class_name WorldProp
 ## Every object uses a source-region anchor and a metadata-defined tile footprint.
 const ROOF_SHADER := preload("res://scripts/overworld/roof_variant.gdshader")
 static func create(item: Dictionary) -> WorldProp:
-	var data := WorldCatalog.asset(str(item.asset))
+	var asset := str(item.asset)
+	if item.has("collected_flag") and GameState.has_flag(str(item.collected_flag)):
+		asset = str(item.get("collected_asset", asset))
+	var data := WorldCatalog.asset(asset)
 	var sprite := WorldProp.new()
-	sprite.name = str(item.asset)
+	sprite.name = asset
+	sprite.set_meta("definition", item.duplicate(true))
 	sprite.texture = load(str(data.sheet))
 	sprite.region_enabled = true
 	sprite.region_rect = CharacterPresentation.rect(data.region)
@@ -16,7 +20,7 @@ static func create(item: Dictionary) -> WorldProp:
 	sprite.scale = Vector2.ONE * factor
 	sprite.position = Vector2(WorldCatalog.tile(item.tile) * 16) + Vector2(8,8)
 	# Painted 1254px source: filtered minification keeps it clean at 2x-6x output.
-	sprite.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
+	sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST if data.get("nearest", false) else CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
 	# Variants reuse another building's art until authored art exists: they
 	# may be mirrored and re-roofed (see environment.json "placeholder").
 	sprite.flip_h = bool(data.get("flip_h", false))

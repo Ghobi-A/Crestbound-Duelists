@@ -189,7 +189,10 @@ func _seed_state() -> void:
 		GameState.location_id = "route_01"
 		GameState.location_spawn = ""
 		GameState.player_tile = {"route_01":Vector2i(6,18),"route_grass":Vector2i(19,12),"route_clearing":Vector2i(25,25)}.get(target,Vector2i(6,18))
-	if target == "battle_route": GameState.pending_encounter = "route01_rowan"
+	if target == "battle_route":
+		GameState.location_id = "route_01"
+		GameState.current_scene = "res://scenes/overworld/route_01.tscn"
+		GameState.begin_world_battle("route01_rowan", "route01_rowan_defeated")
 	if target == "party_formation":
 		# Alternative formation: reversed order, everyone in the front row.
 		GameState.party.reverse()

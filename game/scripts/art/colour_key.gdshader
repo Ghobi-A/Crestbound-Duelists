@@ -1,6 +1,7 @@
 shader_type canvas_item;
 render_mode unshaded;
 uniform bool magenta_key = false;
+uniform bool use_colour_key = true;
 // Vertex colour already carries modulate/self_modulate (fades, hit flashes,
 // dimming); the fragment replaces only the texture sample.
 varying vec4 tint;
@@ -23,7 +24,28 @@ float key_background(vec3 texel) {
 // so the key is applied before any averaging and never leaves a fringe.
 vec4 keyed_texel(sampler2D source, ivec2 point, ivec2 size) {
 	vec4 texel = texelFetch(source, clamp(point, ivec2(0), size - ivec2(1)), 0);
-	texel.a *= 1.0 - key_background(texel.rgb);
+	if (use_colour_key) {
+		float key = key_background(texel.rgb);
+		float edge = 0.0;
+		// Despill only beside keyed background: legitimate violet cloth inside
+		// the silhouette keeps its colour. Do this before premultiplied filtering.
+		for (int axis = 0; axis < 4; axis++) {
+			ivec2 delta = ivec2(1, 0);
+			if (axis == 1) { delta = ivec2(-1, 0); }
+			if (axis == 2) { delta = ivec2(0, 1); }
+			if (axis == 3) { delta = ivec2(0, -1); }
+			vec4 neighbour = texelFetch(source, clamp(point + delta, ivec2(0), size - ivec2(1)), 0);
+			edge = max(edge, max(key_background(neighbour.rgb), 1.0 - neighbour.a));
+		}
+		texel.a *= 1.0 - key;
+		if (magenta_key) {
+			float spill = max(0.0, min(texel.r, texel.b) - texel.g);
+			texel.rgb -= vec3(spill, 0.0, spill) * edge;
+		} else {
+			float spill = max(0.0, texel.g - max(texel.r, texel.b));
+			texel.g -= spill * edge;
+		}
+	}
 	return vec4(texel.rgb * texel.a, texel.a);
 }
 

@@ -72,3 +72,25 @@ def test_authored_fences_and_rocks_block_movement():
     cells = walkable(ROUTE)
     assert ROUTE["rows"][22][8] == "|" and (8, 22) not in cells
     assert ROUTE["rows"][15][21] == "r" and (21, 15) not in cells
+
+
+def test_route_trainers_have_distinct_alpha_art_with_four_facings():
+    from PIL import Image
+
+    art = json.loads((ROOT / "game/assets/rework/characters.json").read_text())[
+        "characters"
+    ]
+    crops = set()
+    for key in ("route01_rowan", "route01_squire", "route01_challenger"):
+        record = art[key]
+        assert record["colour_key"] == "alpha"
+        crops.add(tuple(record["battle_rect"]))
+        image = Image.open(
+            ROOT / "game" / record["overworld"]["atlas"].removeprefix("res://")
+        )
+        assert image.mode == "RGBA" and image.getextrema()[3][0] == 0
+        w, h = record["overworld"]["frame_size"]
+        assert image.size == (w * 4, h)
+        for facing in range(4):
+            assert image.crop((facing * w, 0, (facing + 1) * w, h)).getbbox()
+    assert len(crops) == 3

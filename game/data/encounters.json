@@ -102,7 +102,7 @@
         "entity_id": "",
         "name": "Wandering Challenger",
         "position": "front",
-        "sprite_key": "aren/warrior"
+        "sprite_key": "route01_challenger"
       }
     ],
     "enemy_slots": 1,
@@ -148,7 +148,7 @@
         "entity_id": "",
         "name": "Apprentice Rowan",
         "position": "front",
-        "sprite_key": "aren/neutral"
+        "sprite_key": "route01_rowan"
       }
     ],
     "enemy_slots": 1,
@@ -171,7 +171,7 @@
         "entity_id": "",
         "name": "Travelling Squire",
         "position": "front",
-        "sprite_key": "aren/guardian"
+        "sprite_key": "route01_squire"
       }
     ],
     "enemy_slots": 1,

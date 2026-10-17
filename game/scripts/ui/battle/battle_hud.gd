@@ -177,9 +177,9 @@ func set_message(text: String) -> void:
 		_message_plate.position.x = (320.0 - width) / 2.0
 
 
-func show_menu(unit: BattleUnit) -> void:
+func show_menu(unit: BattleUnit, allow_flee := false) -> void:
 	_info_panel.visible = false
-	action_menu.build_for(unit)
+	action_menu.build_for(unit, allow_flee)
 	action_menu.visible = true
 	action_menu.modulate.a = 0.0
 	action_menu.position.y = 5

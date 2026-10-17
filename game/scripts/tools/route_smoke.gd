@@ -73,6 +73,9 @@ func _ready() -> void:
 	world._player.facing = Vector2i.UP
 	world._try_interact()
 	check(GameState.inventory.get("potion",0) == 2, "chest awards existing potion")
+	var opened := WorldProp.create({"asset":"route_chest", "tile":[25,23], "collected_asset":"route_chest_open", "collected_flag":"route01_supplies_collected"})
+	check(opened.name == "route_chest_open", "collected prop uses persistent open artwork")
+	opened.free()
 	close_dialogue()
 	world._try_interact()
 	close_dialogue()
@@ -178,6 +181,34 @@ func _ready() -> void:
 	check(GameState.begin_world_battle("route01_roadside"), "ambient battle starts")
 	var return_scene := GameState.finish_world_battle("defeat")
 	check(return_scene.ends_with("greymere.tscn") and GameState.world_battle.is_empty(), "defeat recovers home without lock")
+	# Flee uses the live command menu and authoritative runtime, retaining damage.
+	GameState.location_id = "route_01"
+	GameState.current_scene = "res://scenes/overworld/route_01.tscn"
+	GameState.player_tile = Vector2i(11,18)
+	check(GameState.begin_world_battle("route01_squire", "route01_squire_defeated"), "begin flee test")
+	SceneTransition.change_scene("res://scenes/ui/party_setup.tscn")
+	await settled()
+	get_tree().current_scene._cursor = GameState.party.size()
+	get_tree().current_scene._unhandled_input(confirm)
+	await settled()
+	var retreat = get_tree().current_scene
+	retreat._start_selection()
+	var standalone := EncounterRuntime.new()
+	check(not standalone.can_flee(), "non-field battles cannot flee")
+	check(retreat.hud.action_menu.entries[-1].kind == "flee", "Flee appears in field command menu")
+	retreat.state = retreat.State.RESOLVING
+	retreat._try_flee()
+	check(not GameState.world_battle.is_empty() and not retreat.runtime.fled, "cannot flee during resolution")
+	retreat.state = retreat.State.SELECT_MENU
+	retreat.runtime.player_units[0].hp = 7
+	retreat.hud.action_menu.cursor = retreat.hud.action_menu.entries.size() - 1
+	retreat._unhandled_input(confirm)
+	check(retreat.runtime.fled and not retreat.runtime.flee(), "withdrawal resolves only once")
+	await settled()
+	check(world.location_id == "route_01" and GameState.world_battle.is_empty(), "flee returns to field")
+	check(not GameState.has_flag("route01_squire_defeated"), "flee never awards victory")
+	check(GameState.party[0].current_hp == 7, "flee retains damage")
+	check(int(world._encounter_state.cooldown) > 0, "flee grants rematch grace")
 	# Unexpected scene return also clears transient encounter state.
 	check(GameState.begin_world_battle("route01_roadside"), "begin interrupted setup")
 	SceneTransition.change_scene(GameState.current_scene)

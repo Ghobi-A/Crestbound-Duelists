@@ -205,6 +205,12 @@ func _try_interact() -> void:
 		var interaction: Dictionary = _interactions[target]
 		if interaction.get("kind", "") == "chest":
 			_show_text(GameState.collect_world_item(interaction))
+			for child in get_children():
+				if child is WorldProp:
+					var item: Dictionary = child.get_meta("definition", {})
+					if item.get("collected_flag", "") == interaction.get("flag", "") and item.has("collected_asset"):
+						add_child(WorldProp.create(item))
+						child.queue_free()
 		elif interaction.get("kind", "") == "shop":
 			_trade.open(true)
 		elif interaction.get("kind", "") == "court":

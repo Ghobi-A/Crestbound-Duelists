@@ -164,7 +164,7 @@ func _open_menu_for_current() -> void:
 	_clear_all_highlights()
 	var unit := _current_unit()
 	hud.highlight_unit(unit)
-	hud.show_menu(unit)
+	hud.show_menu(unit, runtime.can_flee())
 	if sprites.has(unit):
 		sprites[unit].set_highlighted("selected")
 	queue_redraw()
@@ -273,6 +273,9 @@ func _menu_input(event: InputEvent) -> void:
 		AudioRouter.play_sfx("ui", "confirm")
 		var entry := hud.action_menu.current_entry()
 		if not entry.enabled:
+			return
+		if entry.kind == "flee":
+			_try_flee()
 			return
 		var unit := _current_unit()
 		if entry.kind == "brace":
@@ -449,7 +452,17 @@ func _after_result(player_won: bool) -> void:
 		SceneTransition.change_scene(BOOT_SCENE, "defeat")
 
 
-func _leave_after_victory() -> void:
+func _try_flee() -> void:
+	if state != State.SELECT_MENU or GameState.world_battle.is_empty(): return
+	if not runtime.flee(): return
+	state = State.RESULT
+	hud.hide_menu()
+	hud.hide_info()
+	_store_field_health()
+	SceneTransition.change_scene(GameState.finish_world_battle("fled"), "travel")
+
+
+func _store_field_health() -> void:
 	# Carry damage into the field so purchased supplies have a meaningful use.
 	# The roster keeps its original order even when party setup selects a subset.
 	for unit in runtime.player_units:
@@ -457,6 +470,10 @@ func _leave_after_victory() -> void:
 			if str(member.get("name", "")) == unit.display_name:
 				member["current_hp"] = maxi(1, unit.hp)
 				break
+
+
+func _leave_after_victory() -> void:
+	_store_field_health()
 	if not GameState.world_battle.is_empty():
 		SceneTransition.change_scene(GameState.finish_world_battle("victory"), "gold")
 		return

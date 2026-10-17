@@ -66,11 +66,13 @@ is not itself a claim that every check has completed.
 
 - Trainers stay at their fixed tile. The current NPC class has no walking/pathing
   system, so no separate movement implementation was introduced for approach.
-- New trainers reuse existing villager/class art. Dedicated portraits and battle
-  designs remain future art work; no established character designs are replaced.
-- The existing source art can retain dark purple edge contamination. This change
-  does not globally strip purple, which would damage legitimate cloth/effects.
-- No in-battle flee mechanic was added. Existing party-setup cancellation works.
+- Trainers now have distinct generated battle art, portrait crops and four static
+  overworld facings; see `ROUTE_01_ASSETS.md`. They do not approach or walk.
+- Legacy chroma-key edges receive spatial despill. Legitimate purple interiors
+  remain intact; this is not a claim that every source asset has been repainted.
+- Field battles now offer guaranteed Flee during command selection. It retains
+  damage, grants return grace and awards no victory/rewards. Story battles do not
+  expose withdrawal. This adventure-only action does not change Python duel balance.
 - The northern gate is intentionally closed, with explanatory text, rather than
   linking to a missing scene. No unrelated world-map or engine rewrite is included.
 
@@ -110,3 +112,18 @@ existing dependency setup already installs Pillow.
 The headless dummy renderer can emit a custom-sampler diagnostic and existing
 missing move-VFX warnings. These did not cause gameplay failures; the actual
 OpenGL/native and browser renders were inspected separately.
+
+
+## Route art and withdrawal follow-up
+
+Added dedicated trainer and scenery atlases with genuine alpha, shared
+presentation records and declarative collected-chest appearances. The runtime
+owns flee eligibility and its one-shot outcome; the command menu emits intent.
+Field damage uses the same persistence path as victory. New route records do not
+replace the canonical village residents or the existing player walk strips.
+
+Validation after this follow-up: 267 Python tests passed, Ruff/static Godot checks
+passed, route and interior harnesses reported zero failures, and Web release
+export succeeded. Four native 720p renders were inspected, including the five-row
+command menu with Flee. The route smoke test selects Flee through real menu input
+and checks return location, health, no trainer victory and rematch grace.

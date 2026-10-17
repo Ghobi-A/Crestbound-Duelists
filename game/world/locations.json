@@ -1913,25 +1913,27 @@
       "interior": false,
       "props": [
         {
-          "asset": "notice",
+          "asset": "route_sign",
           "tile": [
             6,
             16
           ]
         },
         {
-          "asset": "notice",
+          "asset": "route_sign",
           "tile": [
             54,
             6
           ]
         },
         {
-          "asset": "chest",
+          "asset": "route_chest",
           "tile": [
             25,
             23
-          ]
+          ],
+          "collected_asset": "route_chest_open",
+          "collected_flag": "route01_supplies_collected"
         },
         {
           "asset": "crates",
@@ -1941,133 +1943,147 @@
           ]
         },
         {
-          "asset": "tree",
+          "asset": "route_rock",
+          "tile": [
+            21,
+            15
+          ]
+        },
+        {
+          "asset": "route_fence",
+          "tile": [
+            8,
+            22
+          ]
+        },
+        {
+          "asset": "route_oak",
           "tile": [
             4,
             7
           ]
         },
         {
-          "asset": "tree",
+          "asset": "route_oak",
           "tile": [
             10,
             7
           ]
         },
         {
-          "asset": "tree",
+          "asset": "route_oak",
           "tile": [
             16,
             7
           ]
         },
         {
-          "asset": "tree",
+          "asset": "route_oak",
           "tile": [
             23,
             7
           ]
         },
         {
-          "asset": "tree",
+          "asset": "route_oak",
           "tile": [
             41,
             7
           ]
         },
         {
-          "asset": "tree",
+          "asset": "route_oak",
           "tile": [
             48,
             7
           ]
         },
         {
-          "asset": "tree",
+          "asset": "route_oak",
           "tile": [
             57,
             6
           ]
         },
         {
-          "asset": "tree",
+          "asset": "route_oak",
           "tile": [
             4,
             28
           ]
         },
         {
-          "asset": "tree",
+          "asset": "route_oak",
           "tile": [
             10,
             30
           ]
         },
         {
-          "asset": "tree",
+          "asset": "route_oak",
           "tile": [
             17,
             30
           ]
         },
         {
-          "asset": "tree",
+          "asset": "route_oak",
           "tile": [
             22,
             30
           ]
         },
         {
-          "asset": "tree",
+          "asset": "route_oak",
           "tile": [
             30,
             31
           ]
         },
         {
-          "asset": "tree",
+          "asset": "route_oak",
           "tile": [
             37,
             32
           ]
         },
         {
-          "asset": "tree",
+          "asset": "route_oak",
           "tile": [
             45,
             32
           ]
         },
         {
-          "asset": "tree",
+          "asset": "route_oak",
           "tile": [
             53,
             32
           ]
         },
         {
-          "asset": "tree",
+          "asset": "route_oak",
           "tile": [
             57,
             17
           ]
         },
         {
-          "asset": "tree",
+          "asset": "route_oak",
           "tile": [
             3,
             13
           ]
         },
         {
-          "asset": "tree",
+          "asset": "route_oak",
           "tile": [
             32,
             23
           ]
         },
         {
-          "asset": "tree",
+          "asset": "route_oak",
           "tile": [
             45,
             17
@@ -2123,266 +2139,266 @@
           ]
         },
         {
-          "asset": "tree",
+          "asset": "route_oak",
           "tile": [
             3,
             3
           ]
         },
         {
-          "asset": "tree",
+          "asset": "route_oak",
           "tile": [
             7,
             3
           ]
         },
         {
-          "asset": "tree",
+          "asset": "route_oak",
           "tile": [
             11,
             3
           ]
         },
         {
-          "asset": "tree",
+          "asset": "route_oak",
           "tile": [
             15,
             3
           ]
         },
         {
-          "asset": "tree",
+          "asset": "route_oak",
           "tile": [
             19,
             3
           ]
         },
         {
-          "asset": "tree",
+          "asset": "route_oak",
           "tile": [
             23,
             3
           ]
         },
         {
-          "asset": "tree",
+          "asset": "route_oak",
           "tile": [
             43,
             3
           ]
         },
         {
-          "asset": "tree",
+          "asset": "route_oak",
           "tile": [
             47,
             3
           ]
         },
         {
-          "asset": "tree",
+          "asset": "route_oak",
           "tile": [
             51,
             3
           ]
         },
         {
-          "asset": "tree",
+          "asset": "route_oak",
           "tile": [
             55,
             3
           ]
         },
         {
-          "asset": "tree",
+          "asset": "route_oak",
           "tile": [
             3,
             7
           ]
         },
         {
-          "asset": "tree",
+          "asset": "route_oak",
           "tile": [
             7,
             7
           ]
         },
         {
-          "asset": "tree",
+          "asset": "route_oak",
           "tile": [
             11,
             7
           ]
         },
         {
-          "asset": "tree",
+          "asset": "route_oak",
           "tile": [
             15,
             7
           ]
         },
         {
-          "asset": "tree",
+          "asset": "route_oak",
           "tile": [
             19,
             7
           ]
         },
         {
-          "asset": "tree",
+          "asset": "route_oak",
           "tile": [
             43,
             7
           ]
         },
         {
-          "asset": "tree",
+          "asset": "route_oak",
           "tile": [
             47,
             7
           ]
         },
         {
-          "asset": "tree",
+          "asset": "route_oak",
           "tile": [
             3,
             11
           ]
         },
         {
-          "asset": "tree",
+          "asset": "route_oak",
           "tile": [
             43,
             15
           ]
         },
         {
-          "asset": "tree",
+          "asset": "route_oak",
           "tile": [
             47,
             15
           ]
         },
         {
-          "asset": "tree",
+          "asset": "route_oak",
           "tile": [
             3,
             27
           ]
         },
         {
-          "asset": "tree",
+          "asset": "route_oak",
           "tile": [
             7,
             27
           ]
         },
         {
-          "asset": "tree",
+          "asset": "route_oak",
           "tile": [
             15,
             27
           ]
         },
         {
-          "asset": "tree",
+          "asset": "route_oak",
           "tile": [
             19,
             27
           ]
         },
         {
-          "asset": "tree",
+          "asset": "route_oak",
           "tile": [
             3,
             31
           ]
         },
         {
-          "asset": "tree",
+          "asset": "route_oak",
           "tile": [
             7,
             31
           ]
         },
         {
-          "asset": "tree",
+          "asset": "route_oak",
           "tile": [
             11,
             31
           ]
         },
         {
-          "asset": "tree",
+          "asset": "route_oak",
           "tile": [
             15,
             31
           ]
         },
         {
-          "asset": "tree",
+          "asset": "route_oak",
           "tile": [
             19,
             31
           ]
         },
         {
-          "asset": "tree",
+          "asset": "route_oak",
           "tile": [
             23,
             31
           ]
         },
         {
-          "asset": "tree",
+          "asset": "route_oak",
           "tile": [
             27,
             31
           ]
         },
         {
-          "asset": "tree",
+          "asset": "route_oak",
           "tile": [
             31,
             31
           ]
         },
         {
-          "asset": "tree",
+          "asset": "route_oak",
           "tile": [
             35,
             31
           ]
         },
         {
-          "asset": "tree",
+          "asset": "route_oak",
           "tile": [
             39,
             31
           ]
         },
         {
-          "asset": "tree",
+          "asset": "route_oak",
           "tile": [
             43,
             31
           ]
         },
         {
-          "asset": "tree",
+          "asset": "route_oak",
           "tile": [
             47,
             31
           ]
         },
         {
-          "asset": "tree",
+          "asset": "route_oak",
           "tile": [
             51,
             31
           ]
         },
         {
-          "asset": "tree",
+          "asset": "route_oak",
           "tile": [
             55,
             31
@@ -2442,7 +2458,7 @@
       "npcs": [
         {
           "name": "Apprentice Rowan",
-          "sprite_key": "townsfolk/farmboy",
+          "sprite_key": "route01_rowan",
           "dialogue": "",
           "tile": [
             11,
@@ -2460,7 +2476,7 @@
         },
         {
           "name": "Travelling Squire",
-          "sprite_key": "townsfolk/guard_sword",
+          "sprite_key": "route01_squire",
           "dialogue": "",
           "tile": [
             22,
@@ -2478,7 +2494,7 @@
         },
         {
           "name": "Wandering Challenger",
-          "sprite_key": "townsfolk/hooded_stranger",
+          "sprite_key": "route01_challenger",
           "dialogue": "",
           "tile": [
             41,
@@ -2577,35 +2593,35 @@
         ],
         "props": [
           {
-            "asset": "tree",
+            "asset": "route_oak",
             "tile": [
               1,
               2
             ]
           },
           {
-            "asset": "tree",
+            "asset": "route_oak",
             "tile": [
               5,
               2
             ]
           },
           {
-            "asset": "tree",
+            "asset": "route_oak",
             "tile": [
               10,
               2
             ]
           },
           {
-            "asset": "tree",
+            "asset": "route_oak",
             "tile": [
               15,
               2
             ]
           },
           {
-            "asset": "tree",
+            "asset": "route_oak",
             "tile": [
               19,
               2
