@@ -20,7 +20,7 @@ func _ready() -> void:
 	# Every unlocked building in town, including ones added later.
 	var buildings: Array[Dictionary] = []
 	for candidate in world.definition.doors:
-		if not bool(candidate.get("locked", false)): buildings.append(candidate)
+		if not bool(candidate.get("locked", false)) and bool(WorldCatalog.location(str(candidate.destination_location)).get("interior", false)): buildings.append(candidate)
 	check(buildings.size() >= 6, "explorable buildings")
 	for door in buildings:
 		var building: String = str(door.building_id)

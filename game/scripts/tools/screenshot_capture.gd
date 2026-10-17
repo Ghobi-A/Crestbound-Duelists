@@ -31,6 +31,10 @@ extends Node
 ## resolution. Exits with code 0 on success.
 
 const SCENE_PATHS := {
+	"route_01": "res://scenes/overworld/route_01.tscn",
+	"route_grass": "res://scenes/overworld/route_01.tscn",
+	"route_clearing": "res://scenes/overworld/route_01.tscn",
+	"battle_route": "res://scenes/battle/party_battle.tscn",
 	"boot": "res://scenes/boot/boot.tscn",
 	"party_setup": "res://scenes/ui/party_setup.tscn",
 	"overworld": "res://scenes/overworld/greymere.tscn",
@@ -86,7 +90,7 @@ func _ready() -> void:
 	var scene: Node = load(scene_path).instantiate()
 	get_tree().root.add_child(scene)
 	await _frames(SETTLE_FRAMES)
-	if target in ["battle", "battle_target", "battle_1v1", "battle_2v2", "battle_3v1"]:
+	if target in ["battle", "battle_target", "battle_1v1", "battle_2v2", "battle_3v1", "battle_route"]:
 		# battle_intro is 3 entries totalling 6 lines; one press per line
 		# leaves the round-1 command menu open.
 		for _page in 100:
@@ -181,6 +185,11 @@ func _seed_state() -> void:
 	elif target in ["town_square","court_gate","west_lane","east_lane","dialogue_portrait","dialogue_notice","dialogue_long"] or target.begins_with("class_"):
 		GameState.location_spawn = ""
 		GameState.player_tile = {"town_square":Vector2i(17,20),"court_gate":Vector2i(17,7),"west_lane":Vector2i(10,23),"east_lane":Vector2i(36,17)}.get(target, Vector2i(17,20))
+	if target.begins_with("route_"):
+		GameState.location_id = "route_01"
+		GameState.location_spawn = ""
+		GameState.player_tile = {"route_01":Vector2i(6,18),"route_grass":Vector2i(19,12),"route_clearing":Vector2i(25,25)}.get(target,Vector2i(6,18))
+	if target == "battle_route": GameState.pending_encounter = "route01_rowan"
 	if target == "party_formation":
 		# Alternative formation: reversed order, everyone in the front row.
 		GameState.party.reverse()

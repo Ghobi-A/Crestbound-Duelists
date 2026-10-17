@@ -120,6 +120,11 @@ controls and the objective the first time you enter Greymere, and
 battle basics the first time you enter a battle. Battle rules:
 `docs/BATTLE_SYSTEM.md`; setup details: `docs/GODOT_SETUP.md`.
 
+**Greymere Outskirts — Route 01:** Travel through the village’s southern road
+exit with Z. Explore the forest road, challenge three duelists, investigate tall
+grass and find supplies in the optional clearing. See
+[Route 01 implementation notes](docs/rework/ROUTE_01_IMPLEMENTATION.md).
+
 **Locally (Godot editor):**
 
 Run `python tools/materialize_overworld_v2.py` before opening Godot. This also
