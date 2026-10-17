@@ -434,6 +434,12 @@ func _finish(player_won: bool) -> void:
 
 
 func _after_result(player_won: bool) -> void:
+	if not GameState.world_battle.is_empty():
+		if player_won:
+			_leave_after_victory()
+		else:
+			SceneTransition.change_scene(GameState.finish_world_battle("defeat"), "defeat")
+		return
 	var key: String = runtime.encounter.get("victory_dialogue" if player_won else "defeat_dialogue", "")
 	if key != "" and dialogue.has_key(key):
 		dialogue.play(key)
@@ -451,6 +457,9 @@ func _leave_after_victory() -> void:
 			if str(member.get("name", "")) == unit.display_name:
 				member["current_hp"] = maxi(1, unit.hp)
 				break
+	if not GameState.world_battle.is_empty():
+		SceneTransition.change_scene(GameState.finish_world_battle("victory"), "gold")
+		return
 	var encounter_id: String = runtime.encounter.get("id", GameState.pending_encounter)
 	GameState.set_flag("%s_won" % encounter_id)
 	if GameState.pending_encounter == "hollow_court_battle":

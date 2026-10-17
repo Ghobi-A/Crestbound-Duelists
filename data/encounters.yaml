@@ -84,3 +84,59 @@ encounters:
     intro_dialogue: ""
     victory_dialogue: ""
     defeat_dialogue: ""
+
+  - id: route01_rowan
+    name: Apprentice Rowan
+    location: route_01
+    player_slots: 2
+    enemy_slots: 1
+    pre_battle_positioning: true
+    objective: defeat_all
+    battlefield_effect: {}
+    enemy_party:
+      - {name: Apprentice Rowan, class_id: neutral, crest_id: "", entity_id: "", position: front, sprite_key: aren/neutral}
+    intro_dialogue: ""
+    victory_dialogue: ""
+    defeat_dialogue: ""
+
+  - id: route01_squire
+    name: Travelling Squire
+    location: route_01
+    player_slots: 2
+    enemy_slots: 1
+    pre_battle_positioning: true
+    objective: defeat_all
+    battlefield_effect: {}
+    enemy_party:
+      - {name: Travelling Squire, class_id: guardian, crest_id: "", entity_id: "", position: front, sprite_key: aren/guardian}
+    intro_dialogue: ""
+    victory_dialogue: ""
+    defeat_dialogue: ""
+
+  - id: route01_challenger
+    name: Wandering Challenger
+    location: route_01
+    player_slots: 2
+    enemy_slots: 1
+    pre_battle_positioning: true
+    objective: defeat_all
+    battlefield_effect: {}
+    enemy_party:
+      - {name: Wandering Challenger, class_id: warrior, crest_id: "", entity_id: "", position: front, sprite_key: aren/warrior}
+    intro_dialogue: ""
+    victory_dialogue: ""
+    defeat_dialogue: ""
+
+  - id: route01_roadside
+    name: Roadside Raider
+    location: route_01
+    player_slots: 2
+    enemy_slots: 1
+    pre_battle_positioning: true
+    objective: defeat_all
+    battlefield_effect: {}
+    enemy_party:
+      - {name: Roadside Raider, class_id: warrior, crest_id: "", entity_id: "", position: front, sprite_key: riven_raider}
+    intro_dialogue: ""
+    victory_dialogue: ""
+    defeat_dialogue: ""

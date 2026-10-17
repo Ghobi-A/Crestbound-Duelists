@@ -92,6 +92,98 @@
     "pre_battle_positioning": true,
     "victory_dialogue": "battle_victory"
   },
+  "route01_challenger": {
+    "battlefield_effect": {},
+    "defeat_dialogue": "",
+    "enemy_party": [
+      {
+        "class_id": "warrior",
+        "crest_id": "",
+        "entity_id": "",
+        "name": "Wandering Challenger",
+        "position": "front",
+        "sprite_key": "aren/warrior"
+      }
+    ],
+    "enemy_slots": 1,
+    "id": "route01_challenger",
+    "intro_dialogue": "",
+    "location": "route_01",
+    "name": "Wandering Challenger",
+    "objective": "defeat_all",
+    "player_slots": 2,
+    "pre_battle_positioning": true,
+    "victory_dialogue": ""
+  },
+  "route01_roadside": {
+    "battlefield_effect": {},
+    "defeat_dialogue": "",
+    "enemy_party": [
+      {
+        "class_id": "warrior",
+        "crest_id": "",
+        "entity_id": "",
+        "name": "Roadside Raider",
+        "position": "front",
+        "sprite_key": "riven_raider"
+      }
+    ],
+    "enemy_slots": 1,
+    "id": "route01_roadside",
+    "intro_dialogue": "",
+    "location": "route_01",
+    "name": "Roadside Raider",
+    "objective": "defeat_all",
+    "player_slots": 2,
+    "pre_battle_positioning": true,
+    "victory_dialogue": ""
+  },
+  "route01_rowan": {
+    "battlefield_effect": {},
+    "defeat_dialogue": "",
+    "enemy_party": [
+      {
+        "class_id": "neutral",
+        "crest_id": "",
+        "entity_id": "",
+        "name": "Apprentice Rowan",
+        "position": "front",
+        "sprite_key": "aren/neutral"
+      }
+    ],
+    "enemy_slots": 1,
+    "id": "route01_rowan",
+    "intro_dialogue": "",
+    "location": "route_01",
+    "name": "Apprentice Rowan",
+    "objective": "defeat_all",
+    "player_slots": 2,
+    "pre_battle_positioning": true,
+    "victory_dialogue": ""
+  },
+  "route01_squire": {
+    "battlefield_effect": {},
+    "defeat_dialogue": "",
+    "enemy_party": [
+      {
+        "class_id": "guardian",
+        "crest_id": "",
+        "entity_id": "",
+        "name": "Travelling Squire",
+        "position": "front",
+        "sprite_key": "aren/guardian"
+      }
+    ],
+    "enemy_slots": 1,
+    "id": "route01_squire",
+    "intro_dialogue": "",
+    "location": "route_01",
+    "name": "Travelling Squire",
+    "objective": "defeat_all",
+    "player_slots": 2,
+    "pre_battle_positioning": true,
+    "victory_dialogue": ""
+  },
   "serin_first_duel": {
     "battlefield_effect": {},
     "defeat_dialogue": "",

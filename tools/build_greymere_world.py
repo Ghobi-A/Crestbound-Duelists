@@ -115,7 +115,10 @@ def compile_world():
           interactions=[dict(tile=list(tile),verb="Browse" if id == "gell_shop" and tile == (9,6) else "Inspect",text=text,
                              **({"kind":"shop"} if id == "gell_shop" and tile == (9,6) else {})) for tile,text in room["inspect"].items()],
           lights=[dict(tile=list(tile),color="warm") for tile in room["lights"]])
+    from route_01_world import add_route
+    locations = {"greymere":town, **rooms}
+    add_route(locations)
     OUT.mkdir(exist_ok=True)
-    (OUT/"locations.json").write_text(json.dumps({"revision":1,"locations":{"greymere":town,**rooms}},indent=2)+"\n")
+    (OUT/"locations.json").write_text(json.dumps({"revision":1,"locations":locations},indent=2)+"\n")
 
 if __name__ == "__main__": compile_world()

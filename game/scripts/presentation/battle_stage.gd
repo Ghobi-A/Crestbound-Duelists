@@ -3,6 +3,17 @@ extends Node2D
 ## Scene staging owns backgrounds and combatant geometry, never battle resolution.
 
 func build_background(location: String) -> void:
+	var outdoor: Dictionary = WorldCatalog.location(location).get("battle_background", {})
+	if not outdoor.is_empty():
+		var terrain := WorldTerrain.new()
+		terrain.rows = outdoor.rows
+		terrain.z_index = -20
+		add_child(terrain)
+		for item in outdoor.get("props", []):
+			var prop := WorldProp.create(item)
+			prop.z_index = -19
+			add_child(prop)
+		return
 	var path := "res://assets/rework/hollow_court.png" if location == "hollow_court" else "res://assets/battle/backgrounds/%s.png" % location
 	if not ResourceLoader.exists(path):
 		push_error("BattleStage: required background missing: " + path)
