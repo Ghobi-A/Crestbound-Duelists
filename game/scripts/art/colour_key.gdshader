@@ -4,10 +4,15 @@ uniform bool magenta_key = false;
 uniform bool use_colour_key = true;
 // Vertex colour already carries modulate/self_modulate (fades, hit flashes,
 // dimming); the fragment replaces only the texture sample.
+// When set (portrait tokens on the turn-order rail), only the diamond
+// inscribed in a mask_size box at the node origin is drawn.
+uniform vec2 mask_size = vec2(0.0);
 varying vec4 tint;
+varying vec2 local;
 
 void vertex() {
 	tint = COLOR;
+	local = VERTEX;
 }
 
 // The source atlas declares green-screen material explicitly. This is not a
@@ -72,5 +77,10 @@ void fragment() {
 	}
 	sum /= float(taps * taps);
 	vec3 rgb = sum.a > 0.0 ? sum.rgb / sum.a : vec3(0.0);
-	COLOR = vec4(rgb, sum.a) * tint;
+	float mask = 1.0;
+	if (mask_size.x > 0.0) {
+		vec2 d = abs(local / mask_size - 0.5);
+		mask = step(d.x + d.y, 0.5);
+	}
+	COLOR = vec4(rgb, sum.a * mask) * tint;
 }
