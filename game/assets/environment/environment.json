@@ -654,6 +654,27 @@
         1
       ],
       "nearest": true
+    },
+    "route_stone": {
+      "sheet": "res://assets/route01/scenery.png",
+      "region": [
+        1024,
+        260,
+        512,
+        320
+      ],
+      "anchor": [
+        256,
+        280
+      ],
+      "width": 16,
+      "collision": [
+        0,
+        0,
+        1,
+        1
+      ],
+      "nearest": true
     }
   }
 }
