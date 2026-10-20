@@ -2141,7 +2141,7 @@
         {
           "asset": "route_oak",
           "tile": [
-            3,
+            2,
             3
           ]
         },
@@ -2155,14 +2155,14 @@
         {
           "asset": "route_oak",
           "tile": [
-            11,
+            12,
             3
           ]
         },
         {
           "asset": "route_oak",
           "tile": [
-            15,
+            14,
             3
           ]
         },
@@ -2176,7 +2176,7 @@
         {
           "asset": "route_oak",
           "tile": [
-            23,
+            24,
             3
           ]
         },
@@ -2190,14 +2190,14 @@
         {
           "asset": "route_oak",
           "tile": [
-            47,
+            48,
             3
           ]
         },
         {
           "asset": "route_oak",
           "tile": [
-            51,
+            50,
             3
           ]
         },
@@ -2211,57 +2211,92 @@
         {
           "asset": "route_oak",
           "tile": [
-            3,
-            7
+            6,
+            6
           ]
         },
         {
           "asset": "route_oak",
           "tile": [
-            7,
-            7
+            8,
+            6
           ]
         },
         {
           "asset": "route_oak",
           "tile": [
-            11,
-            7
+            13,
+            6
           ]
         },
         {
           "asset": "route_oak",
           "tile": [
-            15,
-            7
+            18,
+            6
           ]
         },
         {
           "asset": "route_oak",
           "tile": [
-            19,
-            7
+            20,
+            6
           ]
         },
         {
           "asset": "route_oak",
           "tile": [
-            43,
-            7
+            42,
+            6
           ]
         },
         {
           "asset": "route_oak",
           "tile": [
-            47,
-            7
+            44,
+            6
           ]
         },
         {
           "asset": "route_oak",
           "tile": [
-            3,
-            11
+            49,
+            6
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            2,
+            9
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            48,
+            9
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            44,
+            12
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            49,
+            12
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            2,
+            15
           ]
         },
         {
@@ -2274,14 +2309,42 @@
         {
           "asset": "route_oak",
           "tile": [
-            47,
+            48,
             15
           ]
         },
         {
           "asset": "route_oak",
           "tile": [
-            3,
+            2,
+            21
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            13,
+            24
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            18,
+            24
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            20,
+            24
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            2,
             27
           ]
         },
@@ -2295,7 +2358,14 @@
         {
           "asset": "route_oak",
           "tile": [
-            15,
+            12,
+            27
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            14,
             27
           ]
         },
@@ -2309,99 +2379,106 @@
         {
           "asset": "route_oak",
           "tile": [
-            3,
-            31
+            6,
+            30
           ]
         },
         {
           "asset": "route_oak",
           "tile": [
-            7,
-            31
+            8,
+            30
           ]
         },
         {
           "asset": "route_oak",
           "tile": [
-            11,
-            31
+            13,
+            30
           ]
         },
         {
           "asset": "route_oak",
           "tile": [
-            15,
-            31
+            18,
+            30
           ]
         },
         {
           "asset": "route_oak",
           "tile": [
-            19,
-            31
+            20,
+            30
           ]
         },
         {
           "asset": "route_oak",
           "tile": [
-            23,
-            31
+            25,
+            30
           ]
         },
         {
           "asset": "route_oak",
           "tile": [
-            27,
-            31
+            30,
+            30
           ]
         },
         {
           "asset": "route_oak",
           "tile": [
-            31,
-            31
+            32,
+            30
           ]
         },
         {
           "asset": "route_oak",
+          "tile": [
+            37,
+            30
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            42,
+            30
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            44,
+            30
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            54,
+            30
+          ]
+        },
+        {
+          "asset": "route_oak",
+          "tile": [
+            56,
+            30
+          ]
+        },
+        {
+          "asset": "route_stone",
           "tile": [
             35,
-            31
+            18
           ]
         },
         {
-          "asset": "route_oak",
+          "asset": "route_stone",
           "tile": [
-            39,
-            31
-          ]
-        },
-        {
-          "asset": "route_oak",
-          "tile": [
-            43,
-            31
-          ]
-        },
-        {
-          "asset": "route_oak",
-          "tile": [
-            47,
-            31
-          ]
-        },
-        {
-          "asset": "route_oak",
-          "tile": [
-            51,
-            31
-          ]
-        },
-        {
-          "asset": "route_oak",
-          "tile": [
-            55,
-            31
+            48,
+            28
           ]
         }
       ],

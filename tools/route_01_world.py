@@ -114,14 +114,9 @@ def add_route(locations):
         ]
     ]
     # Reuse the same authored tree kit to fill impassable forest interiors.
-    props += [
-        prop("route_oak", x, y)
-        for y in range(3, 33, 4)
-        for x in range(3, 58, 4)
-        if all(
-            grid[j][i] == "#" for j in range(y - 1, y + 1) for i in range(x - 1, x + 1)
-        )
-    ]
+    # Staggered rows with a fixed, hash-derived jitter read as woodland rather
+    # than an orchard grid; every footprint stays on solid forest tiles.
+    props += _forest_fill(grid)
     trainers = [
         dict(
             npc("Apprentice Rowan", "route01_rowan", "", 11, 16, (0, 1)),
@@ -221,6 +216,9 @@ def add_route(locations):
         rect(grid, x, y, 1, 1, "|")
     for x, y in [(21, 15), (35, 18), (48, 28)]:
         rect(grid, x, y, 1, 1, "r")
+    # Every blocking stone gets the authored rock art (the terrain no longer
+    # paints a procedural block beneath it).
+    props += [prop("route_stone", x, y) for x, y in [(35, 18), (48, 28)]]
     route["rows"] = ["".join(row) for row in grid]
     route["blocked_symbols"] = ["#", "~", "_", "|", "r"]
     route["hud_name"] = "GREYMERE OUTSKIRTS"
@@ -235,3 +233,19 @@ def add_route(locations):
         "props": [prop("route_oak", x, 2) for x in [1, 5, 10, 15, 19]],
     }
     locations["route_01"] = route
+
+
+def _forest_fill(grid):
+    """Deterministic, staggered oak placement over solid forest."""
+    oaks = []
+    for row, y in enumerate(range(3, 33, 3)):
+        for x in range(3 + (row % 2) * 2, 58, 4):
+            jitter = (x * 7 + y * 13) % 3 - 1
+            tx = x + jitter
+            if all(
+                0 <= j < len(grid) and 0 <= i < len(grid[0]) and grid[j][i] == "#"
+                for j in range(y - 1, y + 1)
+                for i in range(tx - 1, tx + 1)
+            ):
+                oaks.append(prop("route_oak", tx, y))
+    return oaks

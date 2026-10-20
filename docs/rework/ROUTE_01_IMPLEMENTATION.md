@@ -127,3 +127,23 @@ passed, route and interior harnesses reported zero failures, and Web release
 export succeeded. Four native 720p renders were inspected, including the five-row
 command menu with Flee. The route smoke test selects Flee through real menu input
 and checks return location, health, no trainer victory and rematch grace.
+
+## Visual cohesion pass
+
+Audit: the high-resolution PixelLab scenery and character art was consistent;
+the inconsistency came from the procedural terrain drawn around it — flat
+rectangular road fills with a dashed pattern, the same tall-grass tuft repeated
+per tile, a flat black overlay that made the forest look like a cut-out
+rectangle, a grass texture that repeated every 2×2 tiles, procedural rock/fence
+blocks drawn underneath their own authored props, and forest oaks on a strict
+4-tile grid.
+
+`WorldTerrain` now dresses outdoor tiles deterministically (coordinate
+hashes and low-frequency value noise, no runtime RNG): mirrored grass blocks,
+subtle 8px tonal drift and sparse ground detail; mottled dirt roads with
+irregular grass verges and rounded corners; varied tall-grass tufts that thin
+out at patch edges; small flowers; and forest shade that deepens with distance
+from open ground and spills softly onto the adjacent tiles. Interiors are
+unchanged, and so is collision: everything here reads `rows` only for
+presentation. Route data staggers the forest-fill oaks and gives the two
+remaining blocking stones a one-tile `route_stone` prop, so no footprint changes.
