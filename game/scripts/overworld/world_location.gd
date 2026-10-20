@@ -55,17 +55,32 @@ func _ready() -> void:
 	SaveManager.save_game()
 
 func _build_world() -> void:
-	var terrain := WorldTerrain.new()
-	terrain.rows = definition.rows
-	terrain.interior = bool(definition.interior)
-	terrain.z_index = -20
-	add_child(terrain)
+	if definition.has("painted"):
+		var painted := PaintedTerrain.new()
+		painted.location_id = location_id
+		painted.rows = definition.rows
+		painted.path_material = str(definition.painted.path_material)
+		painted.z_index = -20
+		add_child(painted)
+		var lighting := PaintedAtmosphere.new()
+		lighting.location_id = location_id
+		lighting.map_tiles = painted.map_tiles()
+		lighting.props = definition.props
+		add_child(lighting)
+	else:
+		var terrain := WorldTerrain.new()
+		terrain.rows = definition.rows
+		terrain.interior = bool(definition.interior)
+		terrain.z_index = -20
+		add_child(terrain)
 	for item in definition.props:
 		add_child(WorldProp.create(item))
 		var footprint := WorldCatalog.footprint(item)
 		for y in range(footprint.position.y, footprint.end.y):
 			for x in range(footprint.position.x, footprint.end.x):
 				_blocked[Vector2i(x,y)] = true
+	if definition.has("painted"):
+		PaintedDressing.build(self, definition.rows, _blocked)
 	for door in definition.doors:
 		var tile := WorldCatalog.tile(door.tile)
 		_doors[tile] = door
@@ -178,7 +193,9 @@ func _unhandled_input(event: InputEvent) -> void:
 					_menu_open = false
 					_hud.hide_menu()
 					_trade.open(false)
-				3: SceneTransition.change_scene("res://scenes/boot/boot.tscn")
+				WorldHud.GRAPHICS_ROW:
+					_menu_status = "%s preset — applies on entering an area." % GraphicsSettings.cycle().capitalize()
+				4: SceneTransition.change_scene("res://scenes/boot/boot.tscn")
 	elif event.is_action_pressed("interact"):
 		_try_interact()
 	if _menu_open: _hud.show_menu(_menu_cursor,_menu_status)

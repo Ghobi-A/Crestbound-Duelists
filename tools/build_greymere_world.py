@@ -55,6 +55,7 @@ def compile_world():
     props += [prop("tree",x,y) for x,y in [(3,6),(3,12),(3,18),(3,24),(3,31),(30,6),(30,14),(30,20),(30,29),(7,32),(12,33),(23,33),(28,33),(8,3),(13,3),(22,3),(28,3),(11,27),(25,28),(12,16),(25,16),(34,3),(40,3),(44,7),(44,13),(44,20),(44,26),(33,33),(39,33),(44,31),(31,24)]]
     town=dict(id="greymere",name="GREYMERE TOWN",subtitle="Above the Hollow Court",scene="res://scenes/overworld/greymere.tscn",
               rows=["".join(r) for r in grid], music_id="greymere", interior=False, props=props,
+              painted=dict(path_symbols=":^", path_material="cobble"),
               spawn_points=dict(approach=spawn(17,29,(0,-1)),court_return=spawn(17,7),lena_return=spawn(10,22),inn_return=spawn(23,21),silas_return=spawn(10,11),
                             gell_return=spawn(33,16),joey_return=spawn(40,16),kai_return=spawn(36,28)),
               doors=[entrance("lena",10,21,"lena_house","lena_return"),entrance("inn",23,20,"inn","inn_return"),entrance("silas",10,10,"silas_study","silas_return"),

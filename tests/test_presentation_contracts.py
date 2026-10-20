@@ -116,6 +116,11 @@ def test_ui_uses_the_licensed_vector_face_at_a_readable_size() -> None:
     for weight in ("Regular", "Medium", "SemiBold"):
         imported = (GAME / f"assets/ui/fonts/IBMPlexMono-{weight}.ttf.import").read_text(encoding="utf-8")
         assert "multichannel_signed_distance_field=true" in imported
+    # Serif display faces (titles, commands) are OFL and also MSDF.
+    for face in ("Cinzel", "EBGaramond"):
+        assert (GAME / f"assets/ui/fonts/display/OFL-{face}.txt").read_text(encoding="utf-8").startswith("Copyright")
+        imported = (GAME / f"assets/ui/fonts/display/{face}.ttf.import").read_text(encoding="utf-8")
+        assert "multichannel_signed_distance_field=true" in imported
     style = source("scripts/ui/ui_style.gd")
     floor = int(re.search(r"const MIN_FONT_SIZE := (\d+)", style).group(1))
     assert floor >= 5
