@@ -69,6 +69,12 @@ def inspect(path):
 
 def main():
     entries = {path.stem: inspect(path) for path in sorted(DIRECTORY.glob("*.png"))}
+    # body_height is owned by tools/audit_character_scale.py; keep its measurements.
+    manifest_path = DIRECTORY / "authored.json"
+    previous = json.loads(manifest_path.read_text())["entries"] if manifest_path.exists() else {}
+    for key, entry in entries.items():
+        if "body_height" in previous.get(key, {}):
+            entry["body_height"] = previous[key]["body_height"]
     aliases = {alias: key for key in entries for alias in ALIASES.get(key, [key])}
     manifest = {"schema_version": 1, "display_height": 24, "entries": entries, "aliases": aliases}
     (DIRECTORY / "authored.json").write_text(json.dumps(manifest, indent=2) + "\n")
