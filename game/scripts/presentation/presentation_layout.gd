@@ -3,16 +3,17 @@ extends RefCounted
 ## Presentation geometry only; no battle rules or character statistics.
 
 const CANVAS := Vector2(320, 180)
-# Battle screen: a title bar over a tall battlefield, a 36px command deck
-# and an 8px footer (see BattleHud). The background covers the field only.
-const BATTLE_HEIGHT := 136
+# Battle screen: the background covers the whole canvas; a turn-order rail,
+# title box and command list float over the sky, and the party cards float
+# over the floor from BATTLE_HEIGHT down (see BattleHud).
+const BATTLE_HEIGHT := 140
 const TOP_BAR_HEIGHT := 11
-const DECK_HEIGHT := 36
-const FOOTER_TOP := 172
+const DECK_HEIGHT := 33
+const FOOTER_TOP := 173
 const PLAYER_CENTER_X := 78.0
 const ENEMY_CENTER_X := 242.0
-const FRONT_Y := 118.0
-const BACK_Y := 101.0
+const FRONT_Y := 128.0
+const BACK_Y := 114.0
 const DIALOGUE_RECT := Rect2(10, 130, 300, 44)
 const PORTRAIT_RECT := Rect2(4, 4, 30, 36)
 const TEXT_TOP := 14.0

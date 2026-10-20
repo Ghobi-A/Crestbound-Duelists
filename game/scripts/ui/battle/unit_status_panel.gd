@@ -13,7 +13,7 @@ var _portrait: TextureRect
 func _init() -> void:
 	custom_minimum_size = ROW_SIZE
 	size = ROW_SIZE
-	clip_contents = true
+	clip_contents = false  # the active card glows past its frame
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 
 
@@ -45,7 +45,11 @@ func status_tag() -> String:
 func _draw() -> void:
 	if unit == null:
 		return
-	UiStyle.draw_panel(self, Rect2(Vector2.ZERO, size), UiStyle.COMMAND if highlighted else UiStyle.NEUTRAL, highlighted)
+	var card := Rect2(Vector2.ZERO, size)
+	UiStyle.draw_panel(self, card, UiStyle.COMMAND if highlighted else UiStyle.NEUTRAL, highlighted)
+	if highlighted:
+		UiStyle.draw_glow_frame(self, card.grow(-0.5), UiStyle.GOLD_BRIGHT, 2.0, 0.5)
+		UiStyle.draw_frame(self, card, UiStyle.GOLD_BRIGHT)
 	UiStyle.draw_portrait_frame(self, PORTRAIT, highlighted)
 	var alive := unit.is_alive()
 	var ink := UiStyle.TEXT if alive else UiStyle.TEXT_FAINT

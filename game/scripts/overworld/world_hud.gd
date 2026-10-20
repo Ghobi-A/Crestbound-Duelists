@@ -10,12 +10,13 @@ var _scrim: ColorRect
 var menu_status: Label
 var _menu_rows: Array[Label] = []
 var _menu_band: UiDecor
-const MENU_SIZE := Vector2(150, 102)
+const MENU_SIZE := Vector2(150, 110)
 const MENU_PADDING := 10.0
 const HUD_HEIGHT := 12.0
 const ROW_TOP := 22.0
 const ROW_HEIGHT := 11.0
-const CHOICES := ["Resume", "Save game", "Inventory", "Title screen"]
+const CHOICES := ["Resume", "Save game", "Inventory", "Graphics", "Title screen"]
+const GRAPHICS_ROW := 3
 
 func _ready() -> void:
 	layer = 5
@@ -26,7 +27,7 @@ func _ready() -> void:
 	add_child(plate)
 	var mark := UiDecor.create("rule", Rect2(3, HUD_HEIGHT / 2.0 - 2, 6, 4))
 	plate.add_child(mark)
-	location_label = UiStyle.make_label(plate, Rect2(12, 2.5, 130, 8), "", 6, UiStyle.GOLD_BRIGHT, UiStyle.MEDIUM, 1)
+	location_label = UiStyle.make_label(plate, Rect2(12, 1.8, 136, 9), "", 6, UiStyle.GOLD_BRIGHT, UiStyle.DISPLAY, 1)
 	add_child(UiDecor.create("fade_right", Rect2(canvas.x - 150, canvas.y - HUD_HEIGHT, 150, HUD_HEIGHT)))
 	prompt = UiStyle.make_label(self, Rect2(canvas.x - 146, canvas.y - HUD_HEIGHT + 3, 140, 7), "", 5, UiStyle.TEXT_DIM, UiStyle.REGULAR, 1)
 	prompt.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
@@ -46,9 +47,9 @@ func _ready() -> void:
 		var row := UiStyle.make_label(menu, Rect2(MENU_PADDING + 11, ROW_TOP + i * ROW_HEIGHT, 110, ROW_HEIGHT - 2), CHOICES[i], 6, UiStyle.TEXT, UiStyle.MEDIUM)
 		row.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 		_menu_rows.append(row)
-	menu_status = UiStyle.make_label(menu, Rect2(MENU_PADDING, 72, MENU_SIZE.x - 2 * MENU_PADDING, 8), "", 5, UiStyle.TEXT_DIM)
+	menu_status = UiStyle.make_label(menu, Rect2(MENU_PADDING, 80, MENU_SIZE.x - 2 * MENU_PADDING, 8), "", 5, UiStyle.TEXT_DIM)
 	menu_status.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	var hints := UiStyle.make_label(menu, Rect2(MENU_PADDING, 88, MENU_SIZE.x - 2 * MENU_PADDING, 8), "Z SELECT   ·   ESC RETURN", 5, UiStyle.TEXT_FAINT, UiStyle.REGULAR, 1)
+	var hints := UiStyle.make_label(menu, Rect2(MENU_PADDING, 96, MENU_SIZE.x - 2 * MENU_PADDING, 8), "Z SELECT   ·   ESC RETURN", 5, UiStyle.TEXT_FAINT, UiStyle.REGULAR, 1)
 	hints.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	menu.visible = false
 
@@ -62,6 +63,7 @@ func show_menu(cursor: int, status: String) -> void:
 	_menu_band.position.y = ROW_TOP + selected * ROW_HEIGHT
 	for i in _menu_rows.size():
 		_menu_rows[i].add_theme_color_override("font_color", UiStyle.GOLD_BRIGHT if i == selected else UiStyle.TEXT_DIM)
+	_menu_rows[GRAPHICS_ROW].text = "Graphics: " + GraphicsSettings.preset().capitalize()
 	menu_status.text = status
 
 

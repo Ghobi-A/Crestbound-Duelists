@@ -557,6 +557,10 @@
           ]
         }
       ],
+      "painted": {
+        "path_symbols": ":^",
+        "path_material": "cobble"
+      },
       "spawn_points": {
         "approach": {
           "tile": [
@@ -1910,6 +1914,10 @@
         "############################################################"
       ],
       "music_id": "greymere",
+      "painted": {
+        "path_symbols": ",",
+        "path_material": "dirt"
+      },
       "interior": false,
       "props": [
         {

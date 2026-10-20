@@ -142,18 +142,22 @@ func check_enemy_hud() -> void:
 			enemy.slot_index = i
 			enemies.append(enemy)
 		hud.build_rows(players)
-		hud.build_enemy_plates(enemies, players.size())
-		check(hud._enemy_plates.size() == enemies.size(), "Enemy HUD count %s" % str(sizes))
+		hud.build_turn_rail(players + enemies)
+		check(hud._tokens.size() == players.size() + enemies.size(), "Turn rail count %s" % str(sizes))
+		hud.highlight_unit(players[0])
+		var placed: Array = hud._tokens.values()
+		placed.sort_custom(func(a, b): return a.position.x < b.position.x)
 		var prior_end := 0.0
+		for token in placed:
+			check(token.position.x >= prior_end and token.position.x + token.size.x <= 236, "Turn tokens overlap or reach the title box")
+			prior_end = token.position.x + token.size.x
+		check(hud._tokens[players[0]].lead, "Commanded Duelist leads the rail")
 		for enemy in enemies:
-			var plate: EnemyStatusPlate = hud._enemy_plates[enemy]
-			check(plate.unit == enemy, "Enemy plate must read authoritative unit")
-			check(plate.position.x >= prior_end and plate.position.x + plate.size.x <= 320, "Enemy plates overlap or leave screen")
-			prior_end = plate.position.x + plate.size.x
+			check(hud._tokens[enemy].unit == enemy, "Turn token must read authoritative unit")
 		enemies[0].take_damage(5)
 		hud.refresh_rows()
 		hud.highlight_enemy(enemies[0])
-		check(hud._enemy_plates[enemies[0]].selected, "Selected enemy plate")
+		check(hud._tokens[enemies[0]].selected, "Selected enemy token")
 		hud.queue_free()
 		await get_tree().process_frame
 

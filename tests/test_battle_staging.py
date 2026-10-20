@@ -45,7 +45,7 @@ def png_size(path: Path) -> tuple[int, int]:
     return struct.unpack(">II", header[16:24])
 
 
-def test_background_height_matches_hud_bottom_panel() -> None:
+def test_party_cards_start_where_the_battlefield_ends() -> None:
     controller_source = LAYOUT_GD.read_text(encoding="utf-8")
     hud_source = HUD_GD.read_text(encoding="utf-8")
 
@@ -58,13 +58,13 @@ def test_background_height_matches_hud_bottom_panel() -> None:
     panel_y = int(match.group(1))
 
     assert background_height == panel_y, (
-        "The generated background height must equal the HUD bottom panel's Y "
-        "position, or a seam shows between the floor and the panel."
+        "Combatants stand above BATTLE_HEIGHT; the floating party cards must "
+        "start there so they never cover a combatant's feet."
     )
 
 
 def test_background_covers_the_declared_battlefield() -> None:
-    """The background fills the whole field (0..BATTLE_HEIGHT) at any aspect.
+    """The background fills the whole canvas, under the floating HUD, at any aspect.
 
     It is drawn with KEEP_ASPECT_COVERED, so it must be at least as wide,
     relative to its height, as the field box — otherwise side bars appear.
@@ -73,7 +73,7 @@ def test_background_covers_the_declared_battlefield() -> None:
     stage_source = (REPO_ROOT / "game" / "scripts" / "presentation" / "battle_stage.gd").read_text(encoding="utf-8")
     background_height = _int_const(layout_source, "BATTLE_HEIGHT")
     assert "STRETCH_KEEP_ASPECT_COVERED" in stage_source
-    assert "Rect2(0, 0, 320, PresentationLayout.BATTLE_HEIGHT)" in stage_source
+    assert "Rect2(Vector2.ZERO, PresentationLayout.CANVAS)" in stage_source
     for png in (BACKGROUND_PNG, REPO_ROOT / "game" / "assets" / "rework" / "hollow_court.png"):
         width, height = png_size(png)
         assert width >= 320 and height > 0

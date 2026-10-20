@@ -12,9 +12,8 @@ extends Node2D
 const OVERWORLD_SCENE := "res://scenes/overworld/greymere.tscn"
 const BOOT_SCENE := "res://scenes/boot/boot.tscn"
 
-## Background height must match where the HUD's opaque bottom panel
-## starts (battle_hud.gd) or a seam shows between the floor and the
-## panel. tools/generate_sprites.py generates backgrounds at this size.
+## Where the floating party cards begin (battle_hud.gd); combatants stand
+## above it. The background itself covers the whole canvas.
 const BACKGROUND_HEIGHT := PresentationLayout.BATTLE_HEIGHT
 
 ## Formation staging. Two clear halves rather than a shared diagonal, so
@@ -118,7 +117,7 @@ func _build_hud() -> void:
 	hud = BattleHud.new()
 	add_child(hud)
 	hud.build_rows(runtime.player_units)
-	hud.build_enemy_plates(runtime.enemy_units, runtime.player_units.size())
+	hud.build_turn_rail(runtime.all_units())
 
 
 func _build_dialogue() -> void:
@@ -151,6 +150,7 @@ func _start_selection() -> void:
 		hud.mark_planned(unit, false)
 	hud.set_phase("ROUND %d — choose actions" % runtime.round_number)
 	hud.set_message("")
+	hud.set_turn_order(resolver.projected_order(runtime.all_units()))
 	hud.refresh_rows()
 	_open_menu_for_current()
 

@@ -46,6 +46,21 @@ func order_actions(actions: Array) -> Array:
 	return scored.map(func(entry): return entry.action)
 
 
+func projected_order(units: Array) -> Array:
+	## Expected initiative for the turn-order rail: living units by SPD,
+	## the mean of order_actions' score before its random band and before
+	## Brace commitments are known. Ties keep the player side first.
+	var living := units.filter(func(unit): return unit.is_alive())
+	var indexed: Array = []
+	for i in living.size():
+		indexed.append({"unit": living[i], "index": i})
+	indexed.sort_custom(func(a, b):
+		var speed_a := float(a.unit.stat("spd"))
+		var speed_b := float(b.unit.stat("spd"))
+		return speed_a > speed_b if speed_a != speed_b else a.index < b.index)
+	return indexed.map(func(entry): return entry.unit)
+
+
 # ── Damage estimation (UI preview + AI) ──────────────────────────────
 
 func resolve_move_type(move: Dictionary, attacker: BattleUnit, defender: BattleUnit) -> String:
