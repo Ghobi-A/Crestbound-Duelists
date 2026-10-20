@@ -67,6 +67,15 @@ func _build_world() -> void:
 		lighting.map_tiles = painted.map_tiles()
 		lighting.props = definition.props
 		add_child(lighting)
+	elif definition.has("painted_interior"):
+		var room := PaintedInterior.new()
+		room.setup(definition)
+		room.z_index = -20
+		add_child(room)
+		var finish := PaintedAtmosphere.new()
+		finish.interior = true
+		finish.map_tiles = Vector2(map_width(), map_height())
+		add_child(finish)
 	else:
 		var terrain := WorldTerrain.new()
 		terrain.rows = definition.rows
@@ -87,6 +96,8 @@ func _build_world() -> void:
 		_blocked[tile] = true
 	for item in definition.interactions:
 		_interactions[WorldCatalog.tile(item.tile)] = item
+	if definition.has("painted_interior"):
+		return
 	var atmosphere := WorldAtmosphere.new()
 	atmosphere.lights = definition.lights
 	atmosphere.interior = bool(definition.interior)
@@ -139,12 +150,20 @@ func _build_camera() -> void:
 	_camera.limit_top = 0
 	_camera.limit_right = map_width()*TILE
 	_camera.limit_bottom = map_height()*TILE
+	if definition.has("painted_interior"):
+		# Frame the back wall rather than the empty rows below the room.
+		_camera.limit_bottom = (_room_bottom()+1)*TILE
 	# Smooth the target, then round once; Camera2D subpixel smoothing is disabled.
 	_camera.position_smoothing_enabled = false
 	_camera_follow = _player.position + CAMERA_LOOK_AHEAD
 	_camera.position = _camera_follow.round()
 	add_child(_camera)
 	_camera.make_current()
+
+func _room_bottom() -> int:
+	for y in range(map_height()-1, -1, -1):
+		if str(definition.rows[y]).contains("#"): return y
+	return map_height()-1
 
 func map_width() -> int: return definition.rows[0].length()
 func map_height() -> int: return definition.rows.size()

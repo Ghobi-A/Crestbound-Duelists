@@ -10,8 +10,9 @@ regenerated and diffed:
 * noise.png              tileable fBm (R broad, G medium, B fine).
 * <material>.png         seamless material textures made from the reviewed
   PixelLab sources in tools/painted_sources/.
-* <prop>.png             transparent dressing props (shore rocks, shrubs)
-  and pre-blurred foreground foliage from the same sources.
+* <prop>.png             transparent dressing props (shore rocks, shrubs,
+  rugs, plants, wall decor), pre-blurred foreground foliage, and procedural
+  candle bokeh; interior floor and horizontally wrapping wall faces.
 
     python tools/build_painted_terrain.py
 """
@@ -41,6 +42,7 @@ MATERIALS = {
     "grass": ("grass.png", (24, 40, 232, 248), 256),
     "dirt": ("dirt.png", (0, 0, 190, 190), 256),
     "cobble": ("cobble.png", None, 256),
+    "wood_floor": ("wood_floor.png", (0, 0, 200, 200), 256),
     "water": ("water.png", (0, 0, 200, 200), 256),
     "tall_grass": ("tall_grass.png", (20, 40, 236, 256), 256),
 }
@@ -127,7 +129,14 @@ PROPS = {
     "rocks": ("rocks.png", (0, 0, 138, 112), 10, 0.0, False),
     "bush": ("bush.png", None, 6, 0.0, True),
     "leaves_blur": ("leaves.png", None, 0, 3.2, False),
+    "rug": ("rug.png", (26, 12, 232, 148), 2, 0.0, False),
+    "plant": ("plant.png", None, 0, 0.0, False),
+    "sconce": ("sconce.png", None, 0, 0.0, False),
+    "banner": ("banner.png", None, 0, 0.0, False),
+    "window": ("window.png", None, 0, 0.0, False),
 }
+# Back-wall faces wrap horizontally only; their height maps to the wall.
+WALLS = {"stone_wall": ("stone_wall.png", (0, 0, 220, 128), (256, 128))}
 
 
 def build_prop(image: Image.Image, box, feather: int, sigma: float, rounded: bool = False) -> Image.Image:
@@ -163,6 +172,30 @@ def build_prop(image: Image.Image, box, feather: int, sigma: float, rounded: boo
     return Image.fromarray(np.clip(np.round(rgba * 255), 0, 255).astype(np.uint8), "RGBA")
 
 
+def make_seamless_x(image: Image.Image, size: tuple[int, int]) -> Image.Image:
+    """Horizontal-only version of make_seamless, for wall faces."""
+    src = np.asarray(image.convert("RGB").resize(size, Image.LANCZOS)).astype(np.float64)
+    phase = np.pi * (np.arange(size[0]) + 0.5) / size[0]
+    edge = (np.sin(phase) ** 2)[None, :, None]
+    rolled = np.roll(src, size[0] // 2, axis=1)
+    return Image.fromarray(np.clip(np.round(src * edge + rolled * (1 - edge)), 0, 255).astype(np.uint8), "RGB")
+
+
+def build_bokeh(size: int = 160) -> Image.Image:
+    """Out-of-focus candle glints for the interior foreground layer."""
+    rng = np.random.RandomState(23)
+    ys, xs = np.mgrid[0:size, 0:size]
+    rgba = np.zeros((size, size, 4))
+    for _ in range(9):
+        cx, cy, r = rng.uniform(20, size - 20), rng.uniform(20, size - 20), rng.uniform(7, 18)
+        disc = np.clip((r - np.hypot(xs - cx, ys - cy)) / 4.0, 0.0, 1.0) * rng.uniform(0.35, 0.8)
+        colour = np.array([1.0, rng.uniform(0.62, 0.8), rng.uniform(0.3, 0.45)])
+        rgba[:, :, :3] = rgba[:, :, :3] * (1 - disc[:, :, None]) + colour * disc[:, :, None]
+        rgba[:, :, 3] = np.maximum(rgba[:, :, 3], disc)
+    rgba[:, :, 3] = _gaussian(rgba[:, :, 3], 2.0)
+    return Image.fromarray(np.clip(np.round(rgba * 255), 0, 255).astype(np.uint8), "RGBA")
+
+
 def _blur_stack(values: np.ndarray, sigma: float) -> np.ndarray:
     return np.dstack([_gaussian(values[:, :, c], sigma) for c in range(values.shape[2])])
 
@@ -179,6 +212,9 @@ def main() -> None:
         if box is not None:
             source = source.crop(box)
         make_seamless(source, size).save(OUT / f"{name}.png", optimize=True)
+    for name, (file, box, size) in sorted(WALLS.items()):
+        make_seamless_x(Image.open(SOURCES / file).crop(box), size).save(OUT / f"{name}.png", optimize=True)
+    build_bokeh().save(OUT / "bokeh_warm.png", optimize=True)
     for name, (file, box, feather, sigma, rounded) in sorted(PROPS.items()):
         build_prop(Image.open(SOURCES / file), box, feather, sigma, rounded).save(OUT / f"{name}.png", optimize=True)
 

@@ -75,3 +75,15 @@ def test_graphics_presets_default_to_medium_on_web():
     settings = (GAME / "scripts/core/graphics_settings.gd").read_text()
     assert 'MEDIUM if OS.has_feature("web") else HIGH' in settings
     assert "user://settings.cfg" in settings
+
+
+def test_every_interior_is_painted_with_its_assets():
+    interiors = {key: value for key, value in LOCATIONS.items() if value["interior"]}
+    assert interiors and all("painted_interior" in room for room in interiors.values())
+    for asset in ("wood_floor", "stone_wall", "cobble", "rug", "plant", "sconce", "banner", "window", "bokeh_warm"):
+        assert (PAINTED / f"{asset}.png").exists(), asset
+    for room in interiors.values():
+        # The room shader derives everything from one floor rectangle.
+        floor = [(x, y) for y, row in enumerate(room["rows"]) for x, c in enumerate(row) if c in "w:"]
+        xs, ys = {x for x, _ in floor}, {y for _, y in floor}
+        assert len(floor) == len(xs) * len(ys), room["id"]

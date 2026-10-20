@@ -42,8 +42,31 @@ cheap 2D techniques enough:
    Characters sit under the light passes, so they share the scene's light.
    Existing contact shadows, y-sort and anchors are untouched.
 
-Interiors and other maps keep `WorldTerrain`. A location opts in with a
-`painted` block (`path_symbols`, `path_material`) in the world builder.
+A location opts in with a `painted` block (`path_symbols`,
+`path_material`) in the world builder.
+
+### Interiors
+
+Every room (inn, study, shop and the three homes) has a
+`painted_interior` block and renders through **PaintedInterior**
+(`painted_interior.gd/.gdshader`):
+
+- **Room shader:** one draw for the whole room. Long warm planks with contact
+  shadow along the walls, a stone-and-timber back-wall face, timber wall caps
+  and a stone threshold at the door. Rooms are rectangles, so all of this
+  derives from the floor and door rects; no fields texture is needed.
+- **Back-wall decor:** arched windows, crest banners and candle sconces fill
+  the stretches of wall that furniture leaves free.
+- **Floor decor:** a rug under the room's centre, and potted plants on the
+  side-wall tiles.
+- **Light:** a multiply pass for ambient darkness, and an additive pass for
+  flickering candle pools (room lights plus sconces) and diagonal window
+  shafts with drifting dust. Characters sit under both passes.
+- **Finish:** a warmer screen grade with a deeper vignette, candle bloom and
+  out-of-focus candle bokeh in the foreground on High.
+
+The camera stops at the room's bottom wall, so the back wall stays in frame.
+Furniture props and their collision are unchanged.
 
 ## Graphics presets
 
@@ -97,6 +120,11 @@ rounds the props and pre-blurs the foreground foliage. Rebuild with:
     python tools/build_painted_terrain.py
 
 ## Remaining differences from the references
+
+- Interiors: the concept study's back wall is about three tiles tall, with
+  shelves standing against it. Our rooms keep their two-row walls and
+  furniture positions (collision), so shelves stand a little forward of the
+  wall, and the wall is mostly visible when the player walks up the room.
 
 - The references are painterly renders with real perspective, depth of
   field and baked global light. In-game we approximate them with
