@@ -220,7 +220,8 @@
         "foot_anchor": [
           156,
           205
-        ]
+        ],
+        "body_height": 186
       }
     },
     "kai_guardian": {
@@ -268,7 +269,8 @@
         "foot_anchor": [
           156,
           205
-        ]
+        ],
+        "body_height": 193
       }
     },
     "kai_mage": {
@@ -316,7 +318,8 @@
         "foot_anchor": [
           156,
           205
-        ]
+        ],
+        "body_height": 193
       }
     },
     "kai_sorcerer": {
@@ -364,7 +367,8 @@
         "foot_anchor": [
           156,
           205
-        ]
+        ],
+        "body_height": 193
       }
     },
     "kai_assassin": {
@@ -412,7 +416,8 @@
         "foot_anchor": [
           156,
           205
-        ]
+        ],
+        "body_height": 194
       }
     },
     "kai_neutral": {
@@ -461,7 +466,8 @@
         "foot_anchor": [
           156,
           205
-        ]
+        ],
+        "body_height": 194
       }
     },
     "route01_rowan": {
@@ -505,7 +511,8 @@
         "foot_anchor": [
           64,
           280
-        ]
+        ],
+        "body_height": 254
       }
     },
     "route01_squire": {
@@ -549,7 +556,8 @@
         "foot_anchor": [
           64,
           280
-        ]
+        ],
+        "body_height": 256
       }
     },
     "route01_challenger": {
@@ -593,8 +601,14 @@
         "foot_anchor": [
           64,
           280
-        ]
+        ],
+        "body_height": 259
       }
     }
+  },
+  "overworld_body_heights": {
+    "almyra": 314,
+    "kai": 304,
+    "liora": 315
   }
 }
