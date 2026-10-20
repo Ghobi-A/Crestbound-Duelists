@@ -58,6 +58,8 @@ func rim_colour() -> Color:
 		return UiStyle.accent_color(UiStyle.TARGET)
 	if acting:
 		return UiStyle.GOLD_BRIGHT
+	if lead and unit.team == "player":
+		return Color("bfe0ff")
 	return Color("5f8fd0") if unit.team == "player" else Color("c24a4a")
 
 
@@ -71,7 +73,13 @@ func _draw() -> void:
 		return PackedVector2Array([c + Vector2(0, -radius), c + Vector2(radius, 0), c + Vector2(0, radius), c + Vector2(-radius, 0)])
 	var rim := rim_colour()
 	if lead or selected or acting:
-		draw_colored_polygon(diamond.call(r + 1.6), Color(rim, 0.22))
+		# Light bleeding off the rim: stacked outlines fading outward.
+		var glow := Color("8fc2ff") if lead and unit.team == "player" and not selected else rim
+		for i in 6:
+			var grow := 0.6 + i * 0.55
+			var outline: PackedVector2Array = diamond.call(r + grow)
+			outline.append(outline[0])
+			draw_polyline(outline, Color(glow, 0.5 * pow(1.0 - i / 6.0, 2.0)), 0.6)
 	draw_colored_polygon(diamond.call(r), rim.darkened(0.25))
 	draw_colored_polygon(diamond.call(r - 0.9), Color(0.03, 0.04, 0.07))
 	if unit.team == "enemy" and unit.is_alive():

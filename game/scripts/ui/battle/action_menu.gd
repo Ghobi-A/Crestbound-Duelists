@@ -8,8 +8,8 @@ class_name ActionMenu
 signal cursor_moved
 
 const WIDTH := 76.0
-const BANNER_HEIGHT := 8.0
-const ROW_PITCH := 8.0
+const BANNER_HEIGHT := 9.0
+const ROW_PITCH := 8.5
 
 var entries: Array = []   # {label, kind, move, enabled, note, description}
 var cursor := 0
@@ -116,14 +116,15 @@ func _draw() -> void:
 	# Framed column: a portrait banner, then rows; the focused row is lit
 	# gold with a pointer.
 	var frame := Rect2(Vector2.ZERO, size)
-	UiStyle.draw_panel(self, frame, UiStyle.COMMAND, true)
+	UiStyle.draw_glow_frame(self, frame, Color("c8d4ff"), 2.0, 0.12)
+	UiStyle.draw_panel(self, frame, UiStyle.NEUTRAL, false)
 	draw_rect(Rect2(1, 1, WIDTH - 2, BANNER_HEIGHT - 1), Color(0.05, 0.06, 0.1, 0.95))
 	draw_rect(Rect2(1, BANNER_HEIGHT, WIDTH - 2, UiStyle.HAIR), Color(UiStyle.GOLD, 0.5))
 	for i in entries.size():
 		var entry: Dictionary = entries[i]
 		var row := Rect2(4, BANNER_HEIGHT + 1.5 + i * ROW_PITCH, WIDTH - 7, ROW_PITCH - 1)
 		if i == cursor:
-			UiStyle.draw_selection_band(self, row, UiStyle.COMMAND)
+			UiStyle.draw_gilded_band(self, row)
 		else:
 			draw_rect(Rect2(row.position.x, row.end.y + 0.4, row.size.x, UiStyle.HAIR), Color(1, 1, 1, 0.05))
 		var colour := UiStyle.TEXT if entry.enabled else UiStyle.TEXT_FAINT
@@ -138,7 +139,7 @@ func _draw() -> void:
 		var note_width := 0.0
 		if entry.note != "":
 			note_width = UiStyle.text_width(entry.note, 5) + 2.0
-			UiStyle.draw_text(self, Vector2(text_x, row.position.y + 5.2), entry.note, 5, UiStyle.TEXT_DIM,
+			UiStyle.draw_text(self, Vector2(text_x, row.position.y + 5.4), entry.note, 5, UiStyle.TEXT_DIM,
 				row.end.x - text_x - 1.5, HORIZONTAL_ALIGNMENT_RIGHT)
-		UiStyle.draw_text(self, Vector2(text_x, row.position.y + 5.2), str(entry.label), 5, colour,
-			row.end.x - text_x - 1.5 - note_width)
+		UiStyle.draw_text(self, Vector2(text_x, row.position.y + 5.9), str(entry.label), 6, colour,
+			row.end.x - text_x - 1.5 - note_width, HORIZONTAL_ALIGNMENT_LEFT, UiStyle.SERIF)

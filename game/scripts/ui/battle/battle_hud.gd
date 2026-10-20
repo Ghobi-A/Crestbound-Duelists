@@ -8,8 +8,8 @@ class_name BattleHud
 const CARD_AREA := Rect2(6, 0, 186, 31)
 const MENU_POS := Vector2(240, 25)
 const INFO_RECT := Rect2(198, 0, 116, 31)
-const RAIL := Rect2(6, 3, 224, 26)
-const CONTROLS := "Up/Down choose  Z confirm  X back"
+const RAIL := Rect2(6, 3, 222, 26)
+const CONTROLS := ""
 
 var action_menu: ActionMenu
 var round_preview: RoundPreview
@@ -122,18 +122,27 @@ func set_turn_order(order: Array) -> void:
 
 
 func _layout_rail() -> void:
+	## Allies run left from the lead diamond, enemies sit right-aligned on
+	## the far side of the round marker; each side keeps projected order.
 	var lead: BattleUnit = _acting if _acting != null and _tokens.has(_acting) else null
-	var x := RAIL.position.x + TurnToken.LEAD + 6.0
-	var rest := _turn_order.filter(func(unit): return unit != lead)
-	var stride := minf(TurnToken.SMALL + 5.0, (RAIL.end.x - x - TurnToken.SMALL) / maxf(1.0, rest.size() - 1.0))
 	for unit in _tokens:
 		_tokens[unit].set_lead(unit == lead)
 	if lead != null:
 		_tokens[lead].position = RAIL.position + Vector2(0, 1)
-	for i in rest.size():
-		_tokens[rest[i]].position = Vector2(roundf(x + i * stride), RAIL.position.y + 6.5)
+	var allies := _turn_order.filter(func(unit): return unit != lead and unit.team == "player")
+	var enemies := _turn_order.filter(func(unit): return unit.team != "player")
+	var stride := TurnToken.SMALL + 5.0
+	var start := RAIL.position.x + TurnToken.LEAD + 6.0
+	var y := RAIL.position.y + 6.5
+	for i in allies.size():
+		_tokens[allies[i]].position = Vector2(roundf(start + i * stride), y)
+	var enemy_start := RAIL.end.x - TurnToken.SMALL - maxf(0.0, enemies.size() - 1.0) * stride
+	for i in enemies.size():
+		_tokens[enemies[i]].position = Vector2(roundf(enemy_start + i * stride), y)
+	var ally_end := start + maxf(0.0, allies.size() - 1.0) * stride + TurnToken.SMALL
 	_chrome.rail_from = RAIL.position.x + (TurnToken.LEAD if lead != null else 0.0)
-	_chrome.rail_to = x + maxf(0.0, rest.size() - 1.0) * stride + TurnToken.SMALL + 6.0
+	_chrome.rail_mid = roundf((ally_end + enemy_start) / 2.0)
+	_chrome.rail_to = RAIL.end.x + 3.0
 	_chrome.queue_redraw()
 
 
@@ -194,7 +203,7 @@ func set_footer_note(text: String) -> void:
 
 
 func _refresh_footer() -> void:
-	_chrome.footer_left = (_subphase + "  ·  " + CONTROLS) if _subphase != "" else CONTROLS
+	_chrome.footer_left = _subphase
 	_chrome.queue_redraw()
 
 

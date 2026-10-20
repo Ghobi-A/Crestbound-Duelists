@@ -5,9 +5,10 @@ extends RefCounted
 ## Every player-facing screen draws its chrome through here so the title,
 ## exploration HUD, dialogue, party setup, battle HUD and results read as
 ## one designed system. The look is "moonlit ledger": deep navy glass
-## panels, gold hairline frames with small star-cross ornaments, and a
-## letter-spaced monospace face (IBM Plex Mono, OFL) that stays crisp at
-## every integer output scale because the layout is drawn at 2x-6x.
+## panels, gold hairline frames with small star-cross ornaments, a
+## letter-spaced monospace face (IBM Plex Mono, OFL) for values and body
+## copy, and serif display faces (Cinzel, EB Garamond; OFL) for titles and
+## commands. All are vector faces, crisp at every integer output scale.
 ##
 ## Accent roles carry meaning rather than being decoration:
 ##   command — gold, the player's own agency (menus, the acting unit)
@@ -36,6 +37,17 @@ const REGULAR := "Regular"
 const MEDIUM := "Medium"
 const SEMIBOLD := "SemiBold"
 const FONT_PATH := "res://assets/ui/fonts/IBMPlexMono-%s.ttf"
+# Display faces (OFL, variable weight): Cinzel's inscriptional capitals for
+# titles and place names, EB Garamond for command lists. They pass through
+# the same `weight` argument as Plex so every draw helper can use them.
+const DISPLAY := "Display"
+const SERIF := "Serif"
+const SERIF_BOLD := "SerifBold"
+const DISPLAY_FACES := {
+	DISPLAY: ["res://assets/ui/fonts/display/Cinzel.ttf", 600],
+	SERIF: ["res://assets/ui/fonts/display/EBGaramond.ttf", 500],
+	SERIF_BOLD: ["res://assets/ui/fonts/display/EBGaramond.ttf", 650],
+}
 
 # Surfaces: layered navy glass, lighter as it rises toward the player.
 const SURFACE_OUTER := Color(0.027, 0.039, 0.067, 0.94)
@@ -73,10 +85,17 @@ static func font(weight := REGULAR, spacing := 0) -> Font:
 	var key := "%s/%d" % [weight, spacing]
 	if _fonts.has(key):
 		return _fonts[key]
-	var base: Font = load(FONT_PATH % weight)
+	var face: Array = DISPLAY_FACES.get(weight, [])
+	var base: Font = load(face[0] if not face.is_empty() else FONT_PATH % weight)
 	if base == null:
 		base = ThemeDB.fallback_font
 	var result: Font = base
+	if not face.is_empty():
+		var weighted := FontVariation.new()
+		weighted.base_font = base
+		weighted.variation_opentype = {TextServerManager.get_primary_interface().name_to_tag("wght"): face[1]}
+		base = weighted
+		result = weighted
 	if spacing != 0:
 		var variation := FontVariation.new()
 		variation.base_font = base
@@ -195,6 +214,40 @@ static func draw_divider(canvas: CanvasItem, from: Vector2, width: float, colour
 static func draw_header_underline(canvas: CanvasItem, rect: Rect2, role := COMMAND) -> void:
 	## The accent rule beneath a screen or panel title.
 	canvas.draw_rect(Rect2(Vector2(rect.position.x, rect.end.y - HAIR), Vector2(rect.size.x, HAIR)), accent_color(role))
+
+
+static func draw_glow_frame(canvas: CanvasItem, rect: Rect2, colour: Color, reach := 3.0, strength := 0.35) -> void:
+	## Soft light around a frame: concentric hairline frames fading outward,
+	## so lit HUD elements read as gilded glass rather than flat boxes.
+	var steps := maxi(2, int(reach / HAIR))
+	for i in steps:
+		var t := float(i + 1) / float(steps)
+		draw_frame(canvas, rect.grow(i * HAIR + HAIR), Color(colour, strength * (1.0 - t) * (1.0 - t)), HAIR)
+
+
+static func draw_gilded_band(canvas: CanvasItem, rect: Rect2, colour := GOLD_BRIGHT) -> void:
+	## The focused command row: a warm vertical gradient, a bright double
+	## frame, a light sweep along the top edge and an outer glow.
+	var steps := 8
+	for i in steps:
+		var t := float(i) / float(steps - 1)
+		canvas.draw_rect(Rect2(rect.position + Vector2(0, rect.size.y * i / steps), Vector2(rect.size.x, rect.size.y / steps + 0.05)),
+			Color(colour.darkened(0.55), lerpf(0.42, 0.16, t)))
+	canvas.draw_rect(Rect2(rect.position + Vector2(1, 0.6), Vector2(rect.size.x - 2, 0.6)), Color(1, 0.95, 0.8, 0.22))
+	draw_glow_frame(canvas, rect, colour, 2.5, 0.45)
+	draw_frame(canvas, rect, colour)
+	draw_frame(canvas, rect.grow(-1.0), Color(colour, 0.25))
+	draw_pointer(canvas, Vector2(rect.position.x - 1.2, rect.position.y + rect.size.y / 2.0), colour)
+
+
+static func draw_key_cap(canvas: CanvasItem, at: Vector2, key: String, label: String, colour := TEXT_DIM) -> float:
+	## A button prompt: a rounded key cap with its letter, then the action in
+	## serif. `at` is the cap's left/vertical centre; returns the width used.
+	var cap := Rect2(at + Vector2(0, -3.2), Vector2(6.4, 6.4))
+	canvas.draw_circle(cap.get_center(), 3.2, Color(0.92, 0.9, 0.84, 0.92))
+	draw_text(canvas, Vector2(cap.position.x + 1.7, at.y + 1.8), key, 5, Color(0.05, 0.06, 0.09), -1, HORIZONTAL_ALIGNMENT_LEFT, SEMIBOLD)
+	draw_text(canvas, Vector2(cap.end.x + 2.5, at.y + 2.0), label, 6, colour, -1, HORIZONTAL_ALIGNMENT_LEFT, SERIF)
+	return cap.size.x + 2.5 + text_width(label, 6, SERIF) + 7.0
 
 
 static func draw_selection_band(canvas: CanvasItem, rect: Rect2, role := COMMAND) -> void:

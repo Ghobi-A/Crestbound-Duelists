@@ -26,7 +26,7 @@ func _ready() -> void:
 	add_child(plate)
 	var mark := UiDecor.create("rule", Rect2(3, HUD_HEIGHT / 2.0 - 2, 6, 4))
 	plate.add_child(mark)
-	location_label = UiStyle.make_label(plate, Rect2(12, 2.5, 130, 8), "", 6, UiStyle.GOLD_BRIGHT, UiStyle.MEDIUM, 1)
+	location_label = UiStyle.make_label(plate, Rect2(12, 1.8, 136, 9), "", 6, UiStyle.GOLD_BRIGHT, UiStyle.DISPLAY, 1)
 	add_child(UiDecor.create("fade_right", Rect2(canvas.x - 150, canvas.y - HUD_HEIGHT, 150, HUD_HEIGHT)))
 	prompt = UiStyle.make_label(self, Rect2(canvas.x - 146, canvas.y - HUD_HEIGHT + 3, 140, 7), "", 5, UiStyle.TEXT_DIM, UiStyle.REGULAR, 1)
 	prompt.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
