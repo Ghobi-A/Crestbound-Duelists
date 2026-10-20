@@ -207,7 +207,8 @@
           }
         ]
       },
-      "animation_review": "pending"
+      "animation_review": "pending",
+      "body_height": 259
     },
     "danfor": {
       "atlas": "res://assets/overworld/danfor.png",
@@ -414,7 +415,8 @@
           }
         ]
       },
-      "animation_review": "pending"
+      "animation_review": "pending",
+      "body_height": 255
     },
     "ferris": {
       "atlas": "res://assets/overworld/ferris.png",
@@ -621,7 +623,8 @@
           }
         ]
       },
-      "animation_review": "pending"
+      "animation_review": "pending",
+      "body_height": 236
     },
     "gell": {
       "atlas": "res://assets/overworld/gell.png",
@@ -828,7 +831,8 @@
           }
         ]
       },
-      "animation_review": "pending"
+      "animation_review": "pending",
+      "body_height": 241
     },
     "joey": {
       "atlas": "res://assets/overworld/joey.png",
@@ -1035,7 +1039,8 @@
           }
         ]
       },
-      "animation_review": "pending"
+      "animation_review": "pending",
+      "body_height": 247
     },
     "kai_assassin": {
       "atlas": "res://assets/overworld/kai_assassin.png",
@@ -1242,7 +1247,8 @@
           }
         ]
       },
-      "animation_review": "pending"
+      "animation_review": "pending",
+      "body_height": 260
     },
     "kai_guardian": {
       "atlas": "res://assets/overworld/kai_guardian.png",
@@ -1449,7 +1455,8 @@
           }
         ]
       },
-      "animation_review": "pending"
+      "animation_review": "pending",
+      "body_height": 261
     },
     "kai_mage": {
       "atlas": "res://assets/overworld/kai_mage.png",
@@ -1656,7 +1663,8 @@
           }
         ]
       },
-      "animation_review": "pending"
+      "animation_review": "pending",
+      "body_height": 260
     },
     "kai_neutral": {
       "atlas": "res://assets/overworld/kai_neutral.png",
@@ -1863,7 +1871,8 @@
           }
         ]
       },
-      "animation_review": "pending"
+      "animation_review": "pending",
+      "body_height": 260
     },
     "kai_sorcerer": {
       "atlas": "res://assets/overworld/kai_sorcerer.png",
@@ -2070,7 +2079,8 @@
           }
         ]
       },
-      "animation_review": "pending"
+      "animation_review": "pending",
+      "body_height": 260
     },
     "kai_warrior": {
       "atlas": "res://assets/overworld/kai_warrior.png",
@@ -2277,7 +2287,8 @@
           }
         ]
       },
-      "animation_review": "pending"
+      "animation_review": "pending",
+      "body_height": 260
     },
     "lena": {
       "atlas": "res://assets/overworld/lena.png",
@@ -2484,7 +2495,8 @@
           }
         ]
       },
-      "animation_review": "pending"
+      "animation_review": "pending",
+      "body_height": 239
     },
     "liora": {
       "atlas": "res://assets/overworld/liora.png",
@@ -2691,7 +2703,8 @@
           }
         ]
       },
-      "animation_review": "pending"
+      "animation_review": "pending",
+      "body_height": 260
     },
     "orrin": {
       "atlas": "res://assets/overworld/orrin.png",
@@ -2898,7 +2911,8 @@
           }
         ]
       },
-      "animation_review": "pending"
+      "animation_review": "pending",
+      "body_height": 226
     },
     "senna": {
       "atlas": "res://assets/overworld/senna.png",
@@ -3105,7 +3119,8 @@
           }
         ]
       },
-      "animation_review": "pending"
+      "animation_review": "pending",
+      "body_height": 242
     },
     "silas": {
       "atlas": "res://assets/overworld/silas.png",
@@ -3312,7 +3327,8 @@
           }
         ]
       },
-      "animation_review": "pending"
+      "animation_review": "pending",
+      "body_height": 238
     },
     "stranger": {
       "atlas": "res://assets/overworld/stranger.png",
@@ -3519,7 +3535,8 @@
           }
         ]
       },
-      "animation_review": "pending"
+      "animation_review": "pending",
+      "body_height": 247
     }
   },
   "aliases": {

@@ -1,0 +1,220 @@
+"""Audit overworld character scale against Kai and record body heights.
+
+For every overworld entry in the three runtime manifests this takes the
+down-facing standing frame, applies the entry's colour key (or alpha),
+measures the opaque body from the top of the head to the foot anchor, and
+reports the on-screen height at the manifest's display height next to Kai's.
+It also reports width-to-height and head-to-body ratios, since re-scaling
+cannot fix a sprite drawn with different proportions.
+
+    python tools/audit_character_scale.py          # report only
+    python tools/audit_character_scale.py --write  # store body_height fields
+
+The output is deterministic: the v2 sheets are rebuilt in memory from
+overworld_v2_art, and entries are visited in sorted order.
+"""
+from __future__ import annotations
+
+import argparse
+import json
+import re
+import sys
+import tempfile
+from pathlib import Path
+
+import numpy as np
+from PIL import Image
+
+ROOT = Path(__file__).resolve().parents[1]
+GAME = ROOT / "game"
+V2_PATH = GAME / "assets/rework/overworld_v2.json"
+CHARACTERS_PATH = GAME / "assets/rework/characters.json"
+AUTHORED_PATH = GAME / "assets/overworld/authored.json"
+REFERENCE = ("authored", "kai_warrior")  # what the player's "aren/warrior" resolves to
+STRIP = 0.12      # half-width of the central column, as a fraction of frame width
+MAX_ROW_GAP = 2   # detached sparks/props above the head are not the head
+RATIO_TOLERANCE = 0.25  # relative deviation from Kai that counts as an outlier
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+
+
+def _res(path: str) -> Path:
+    return GAME / path.removeprefix("res://")
+
+
+def opaque_mask(image: Image.Image, colour_key: str) -> np.ndarray:
+    """Mirror colour_key.gdshader: a texel is opaque when its key is below 0.5."""
+    rgba = np.asarray(image.convert("RGBA")).astype(np.int16)
+    r, g, b, a = rgba[..., 0], rgba[..., 1], rgba[..., 2], rgba[..., 3]
+    if colour_key == "magenta":
+        keyed = (np.minimum(r, b) - g) >= 0.625 * 255
+    elif colour_key == "green":
+        keyed = (g - np.maximum(r, b)) >= 0.315 * 255
+    else:
+        keyed = np.zeros_like(a, dtype=bool)
+    return (a >= 128) & ~keyed
+
+
+def measure(mask: np.ndarray, foot: tuple[float, float]) -> dict:
+    """Body from the head (top of the central column) to the foot anchor."""
+    height, width = mask.shape
+    foot_x, foot_y = foot
+    half = max(2.0, width * STRIP)
+    x0, x1 = max(0, int(foot_x - half)), min(width, int(np.ceil(foot_x + half)))
+    rows = [y for y in range(min(height, round(foot_y))) if mask[y, x0:x1].any()]
+    if not rows:
+        raise ValueError("empty standing frame")
+    # Walk up from the feet through the contiguous body; raised spears or
+    # sparks separated by a gap do not count as the top of the head.
+    top = rows[-1]
+    for y in reversed(rows):
+        if top - y > MAX_ROW_GAP:
+            break
+        top = y
+    body_height = round(foot_y) - top
+    widths = np.array([int(mask[y].sum()) for y in range(top, top + body_height)])
+    columns = np.flatnonzero(mask[top : top + body_height].any(axis=0))
+    body_width = int(columns[-1] - columns[0] + 1)
+    # The neck is the narrowest row between the widest head row (top 30%)
+    # and 45% of the body; hats and hair above the head's widest row are ignored.
+    head = int(np.argmax(widths[: max(1, int(body_height * 0.30))]))
+    hi = max(int(body_height * 0.45), head + 1)
+    neck = head + int(np.argmin(widths[head:hi]))
+    return {"body_height": body_height, "width": body_width,
+            "width_ratio": body_width / body_height, "head_ratio": neck / body_height}
+
+
+def _v2_sheets(registry: dict, workdir: Path) -> dict[str, Image.Image]:
+    from overworld_v2_art import CAST, KAI, build_sheet
+
+    sheets = {}
+    for key, specs in (("kai", KAI), ("cast", CAST)):
+        target = workdir / f"{key}.png"
+        build_sheet(specs, target)
+        sheets[key] = Image.open(target).copy()
+    return sheets
+
+
+def v2_frames(registry: dict, workdir: Path):
+    sheets = _v2_sheets(registry, workdir)
+    width, height = registry["frame_size"]
+    down = int(registry["directions"]["down"])
+    for key in sorted(registry["entries"]):
+        entry = registry["entries"][key]
+        row = int(entry["row"]) * height
+        frame = sheets[entry["atlas"]].crop((down * width, row, (down + 1) * width, row + height))
+        yield key, entry, frame, "alpha", tuple(entry["anchor"]), registry["display_height"]
+
+
+def character_frames(registry: dict):
+    width, height = registry["overworld_frame_size"]
+    down = int(registry["overworld_directions"]["down"])
+    atlas = Image.open(_res(registry["overworld_atlas"]))
+    for key in sorted(registry["overworld_rows"]):
+        row = int(registry["overworld_rows"][key])
+        frame = atlas.crop((down * width, row, (down + 1) * width, row + height))
+        anchor = tuple(registry["overworld_anchors"][key])
+        yield ("row", key), None, frame, registry["colour_key"], anchor, registry["overworld_display_height"]
+    for key in sorted(registry["characters"]):
+        record = registry["characters"][key]
+        world = record.get("overworld")
+        if world is None:
+            continue
+        fw, fh = world["frame_size"]
+        sheet = Image.open(_res(world["atlas"]))
+        frame = sheet.crop((down * fw, world["row"], (down + 1) * fw, world["row"] + fh))
+        colour_key = record.get("colour_key", registry["colour_key"])
+        yield ("record", key), world, frame, colour_key, tuple(world["foot_anchor"]), registry["overworld_display_height"]
+
+
+def authored_frames(registry: dict):
+    for key in sorted(registry["entries"]):
+        entry = registry["entries"][key]
+        pose = entry["frames"]["down"][0]
+        x, y, w, h = pose["rect"]
+        frame = Image.open(_res(entry["atlas"])).crop((x, y, x + w, y + h))
+        yield key, entry, frame, "magenta", tuple(pose["foot"]), registry["display_height"]
+
+
+def audit() -> list[dict]:
+    rows = []
+    v2 = json.loads(V2_PATH.read_text())
+    characters = json.loads(CHARACTERS_PATH.read_text())
+    authored = json.loads(AUTHORED_PATH.read_text())
+    with tempfile.TemporaryDirectory() as tmp:
+        sources = (("v2", v2_frames(v2, Path(tmp))), ("characters", character_frames(characters)),
+                   ("authored", authored_frames(authored)))
+        for manifest, frames in sources:
+            for key, entry, frame, colour_key, anchor, display in frames:
+                name = key if isinstance(key, str) else f"{key[0]}:{key[1]}"
+                row = measure(opaque_mask(frame, colour_key), anchor)
+                # The pre-normalisation runtime divided by the anchor height
+                # (or the authored median body height) instead of the body.
+                legacy = entry["native_body_height"] if manifest == "authored" else anchor[1]
+                rows.append({"manifest": manifest, "key": key, "name": name,
+                             "display_height": display, "frame": frame.size,
+                             "legacy_height": row["body_height"] * display / legacy, **row})
+    reference = next(r for r in rows if (r["manifest"], r["key"]) == REFERENCE)
+    for row in rows:
+        row["scaled_height"] = row["body_height"] * row["display_height"] / row["body_height"]
+        for ratio in ("width_ratio", "head_ratio"):
+            row[ratio + "_outlier"] = abs(row[ratio] / reference[ratio] - 1.0) > RATIO_TOLERANCE
+    rows.append({"reference": reference})
+    return rows
+
+
+def write(rows: list[dict]) -> None:
+    measured = [r for r in rows if "manifest" in r]
+    # v2 keeps its compact one-line entries, so patch those lines in place.
+    text = V2_PATH.read_text()
+    for row in (r for r in measured if r["manifest"] == "v2"):
+        key = re.escape(row["key"])
+        pattern = re.compile(rf'^(    "{key}": \{{.*?)(, "body_height": \d+)?\}}', re.MULTILINE)
+        text, count = pattern.subn(lambda m, h=row["body_height"]: f'{m.group(1)}, "body_height": {h}}}', text)
+        if count != 1:
+            raise RuntimeError(f"v2 entry not found: {row['key']}")
+    V2_PATH.write_text(text)
+
+    characters = json.loads(CHARACTERS_PATH.read_text())
+    heights = {}
+    for row in (r for r in measured if r["manifest"] == "characters"):
+        kind, key = row["key"]
+        if kind == "row":
+            heights[key] = row["body_height"]
+        else:
+            characters["characters"][key]["overworld"]["body_height"] = row["body_height"]
+    characters["overworld_body_heights"] = dict(sorted(heights.items()))
+    CHARACTERS_PATH.write_text(json.dumps(characters, indent=2) + "\n")
+
+    authored = json.loads(AUTHORED_PATH.read_text())
+    for row in (r for r in measured if r["manifest"] == "authored"):
+        authored["entries"][row["key"]]["body_height"] = row["body_height"]
+    AUTHORED_PATH.write_text(json.dumps(authored, indent=2) + "\n")
+
+
+def report(rows: list[dict]) -> None:
+    reference = rows[-1]["reference"]
+    print(f"Reference {reference['manifest']}:{reference['name']}: body {reference['body_height']} px "
+          f"-> {reference['display_height']} px on screen, w/h {reference['width_ratio']:.2f}, "
+          f"head/body {reference['head_ratio']:.2f}")
+    print(f"{'manifest':<11}{'entry':<28}{'frame':>10}{'body':>6}{'before':>8}{'after':>7}{'w/h':>7}{'head':>7}  flags")
+    for row in rows[:-1]:
+        flags = [n for n in ("width_ratio", "head_ratio") if row[n + "_outlier"]]
+        frame = "x".join(map(str, row["frame"]))
+        print(f"{row['manifest']:<11}{row['name']:<28}{frame:>10}{row['body_height']:>6}"
+              f"{row['legacy_height']:>8.1f}{row['scaled_height']:>7.1f}{row['width_ratio']:>7.2f}{row['head_ratio']:>7.2f}  "
+              f"{' '.join(flags)}")
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    parser.add_argument("--write", action="store_true", help="store body_height in each manifest")
+    args = parser.parse_args()
+    rows = audit()
+    report(rows)
+    if args.write:
+        write(rows)
+
+
+if __name__ == "__main__":
+    main()

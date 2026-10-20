@@ -87,6 +87,14 @@ static func head_clearance() -> float:
 	return float(point[1]) - 8.0 + 5.0
 
 
+static func body_scale(display_height, body_height, fallback_height) -> Vector2:
+	## Every character's visible body (head to foot anchor, measured by
+	## tools/audit_character_scale.py) is drawn at the display height, so the
+	## cast matches Kai. Entries without a measurement keep the old divisor.
+	var source := float(body_height) if body_height != null else float(fallback_height)
+	return Vector2.ONE * float(display_height) / maxf(1.0, source)
+
+
 func attach(parent: Node2D, sprite_key: String) -> bool:
 	## Build the sprite under `parent`. Returns false when art is missing,
 	## leaving debug builds free to draw their explicit placeholder chip.
@@ -126,7 +134,8 @@ func attach(parent: Node2D, sprite_key: String) -> bool:
 		_sprite.region_filter_clip_enabled = true
 		_sprite.centered = false
 		_sprite.offset = -anchor
-		_sprite.scale = Vector2.ONE * float(registry.overworld_display_height) / anchor.y
+		var body = world.get("body_height", registry.get("overworld_body_heights", {}).get(record.canonical_id))
+		_sprite.scale = body_scale(registry.overworld_display_height, body, anchor.y)
 		parent.add_child(_sprite)
 		_apply()
 		return true
@@ -202,7 +211,7 @@ func _attach_v2(parent: Node2D, sprite_key: String) -> bool:
 	_sprite.region_filter_clip_enabled = true
 	_sprite.centered = false
 	_sprite.offset = -anchor
-	_sprite.scale = Vector2.ONE * float(registry.get("display_height", 24)) / maxf(1.0, anchor.y)
+	_sprite.scale = body_scale(registry.get("display_height", 24), entry.get("body_height"), anchor.y)
 	parent.add_child(_sprite)
 	_apply()
 	return true
@@ -236,7 +245,7 @@ func _attach_authored(parent: Node2D, entry: Dictionary, registry: Dictionary) -
 	_sprite.region_enabled = true
 	_sprite.region_filter_clip_enabled = true
 	_sprite.centered = false
-	_sprite.scale = Vector2.ONE * float(registry.display_height) / float(entry.native_body_height)
+	_sprite.scale = body_scale(registry.display_height, entry.get("body_height"), entry.native_body_height)
 	parent.add_child(contact_shadow())
 	parent.add_child(_sprite)
 	_apply()
