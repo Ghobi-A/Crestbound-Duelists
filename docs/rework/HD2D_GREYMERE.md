@@ -150,3 +150,38 @@ rounds the props and pre-blurs the foreground foliage. Rebuild with:
 The Godot smoke scenes (`world_smoke`, `route_smoke`, `presentation_smoke`,
 `shop_smoke`) cover movement, collision, interactions, transitions,
 encounters and battles.
+
+## Characters re-rendered on Kai's proportions
+
+The townsfolk are Joey, Lena, Senna, Silas, Gell, Danfor, Orrin, Ferris and
+the Hooded Stranger, and the route trainers are Rowan, the Squire and the
+Challenger. All of them were drawn stockier and bigger-headed (or, for the
+trainers, adult-proportioned) than Kai, so each was redrawn on Kai's frame
+with PixelLab:
+
+1. **Kai-proportioned base:** `edit_image` text edit of the closest Kai
+   class's standing frame (neutral, guardian, mage or warrior) into the
+   character.
+2. **Identity:** `edit_image` reference edit with the original sprite, which
+   restores their face, hair and outfit details.
+3. **Facings:** a `create_character` v3 rotation into four facings.
+4. **Side walks:** four-frame walk-in-place `animate_character` cycles for
+   the authored sheets, so the walk-cycle audit keeps passing. NPCs only
+   ever stand.
+
+The reviewed outputs live in `tools/overworld_sources/<name>/`.
+`tools/rerender_overworld_sheets.py` composes them deterministically into
+the authored 4x4 sheets (magenta key) and the trainers' 1x4 strips,
+aligning frames by torso and feet and picking the two most different walk
+frames as the contacts. Then run the metadata and scale audit:
+
+    python tools/rerender_overworld_sheets.py
+    python tools/materialize_overworld_v2.py
+    python tools/build_overworld_metadata.py
+    python tools/audit_character_scale.py --write
+
+The superseded walk sources for Ferris, Gell and the Stranger were removed
+so `apply_pixellab_walks.py` cannot paste old art over the new sheets. Kai,
+Almyra and Liora, the main cast, are untouched. `tests/test_rerendered_characters.py`
+checks that the sheets rebuild identically and that every body fills its
+frame like Kai's.

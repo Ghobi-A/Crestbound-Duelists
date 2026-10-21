@@ -62,9 +62,37 @@ def _frames(name: str) -> dict:
     folder = SOURCES / name
     rot = {facing: _load(folder / f"rot_{facing}.png") for facing in ("south", "north", "east", "west")}
     walks = {side: [_load(folder / f"walk_{side}_{i}.png") for i in range(4)] for side in ("east", "west")}
+    picked = {side: _contacts(rot[side], walks[side]) for side in ("east", "west")}
     return {"down": [rot["south"]] * 4, "up": [rot["north"]] * 4,
-            "east": [rot["east"], walks["east"][0], rot["east"], walks["east"][2]],
-            "west": [rot["west"], walks["west"][0], rot["west"], walks["west"][2]]}
+            "east": [rot["east"], picked["east"][0], rot["east"], picked["east"][1]],
+            "west": [rot["west"], picked["west"][0], rot["west"], picked["west"][1]]}
+
+
+def _small(rgba: np.ndarray, size: int = 24) -> np.ndarray:
+    # The walk audit compares frames at display size; so does this choice.
+    placed = _place(max(rgba.shape[:2]), rgba).astype(float)
+    placed[placed[:, :, 3] < 128] = 0
+    return np.asarray(Image.fromarray(placed[:, :, :3].astype(np.uint8)).resize((size, size), Image.BOX), float)
+
+
+def _height(rgba: np.ndarray) -> int:
+    ys = np.nonzero(rgba[:, :, 3] >= 128)[0]
+    return int(ys.max() - ys.min() + 1)
+
+
+def _contacts(idle: np.ndarray, frames: list) -> tuple:
+    """The two walk frames whose legs differ most (left and right contact),
+    among pairs that keep the idle pose's height within a display pixel."""
+    limit = _height(idle) / 24.0 * 1.2
+    best, best_score = (frames[0], frames[2]), -1.0
+    for i in range(len(frames)):
+        for j in range(i + 1, len(frames)):
+            if max(abs(_height(f) - _height(idle)) for f in (frames[i], frames[j])) > limit:
+                continue
+            score = float((np.abs(_small(frames[i]) - _small(frames[j])).max(-1) > 40).mean())
+            if score > best_score:
+                best, best_score = (frames[i], frames[j]), score
+    return best
 
 
 def _cell(frames) -> int:
