@@ -504,15 +504,15 @@
       "overworld": {
         "atlas": "res://assets/route01/rowan_overworld.png",
         "frame_size": [
-          128,
-          300
+          272,
+          272
         ],
         "row": 0,
         "foot_anchor": [
-          64,
-          280
+          136,
+          260
         ],
-        "body_height": 254
+        "body_height": 216
       }
     },
     "route01_squire": {
@@ -549,15 +549,15 @@
       "overworld": {
         "atlas": "res://assets/route01/squire_overworld.png",
         "frame_size": [
-          128,
-          300
+          264,
+          264
         ],
         "row": 0,
         "foot_anchor": [
-          64,
-          280
+          132,
+          252
         ],
-        "body_height": 256
+        "body_height": 209
       }
     },
     "route01_challenger": {
@@ -594,15 +594,15 @@
       "overworld": {
         "atlas": "res://assets/route01/challenger_overworld.png",
         "frame_size": [
-          128,
-          300
+          272,
+          272
         ],
         "row": 0,
         "foot_anchor": [
-          64,
-          280
+          136,
+          260
         ],
-        "body_height": 259
+        "body_height": 232
       }
     }
   },

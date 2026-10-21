@@ -1096,7 +1096,10 @@
           ],
           "color": "warm"
         }
-      ]
+      ],
+      "painted_interior": {
+        "style": "candlelit"
+      }
     },
     "inn": {
       "id": "inn",
@@ -1267,7 +1270,10 @@
           ],
           "color": "warm"
         }
-      ]
+      ],
+      "painted_interior": {
+        "style": "candlelit"
+      }
     },
     "silas_study": {
       "id": "silas_study",
@@ -1412,7 +1418,10 @@
           ],
           "color": "warm"
         }
-      ]
+      ],
+      "painted_interior": {
+        "style": "candlelit"
+      }
     },
     "gell_shop": {
       "id": "gell_shop",
@@ -1574,7 +1583,10 @@
           ],
           "color": "warm"
         }
-      ]
+      ],
+      "painted_interior": {
+        "style": "candlelit"
+      }
     },
     "joey_home": {
       "id": "joey_home",
@@ -1721,7 +1733,10 @@
           ],
           "color": "warm"
         }
-      ]
+      ],
+      "painted_interior": {
+        "style": "candlelit"
+      }
     },
     "kai_house": {
       "id": "kai_house",
@@ -1869,7 +1884,10 @@
           ],
           "color": "warm"
         }
-      ]
+      ],
+      "painted_interior": {
+        "style": "candlelit"
+      }
     },
     "route_01": {
       "id": "route_01",

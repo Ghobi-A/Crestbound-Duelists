@@ -115,7 +115,8 @@ def compile_world():
           doors=[dict(building_id=id,tile=[10,12],destination_location="greymere",destination_scene="res://scenes/overworld/greymere.tscn",destination_spawn=room["return_spawn"],return_spawn="entrance",locked=False,locked_dialogue_id="locked_door",transition_type="fade",verb="Leave")],
           interactions=[dict(tile=list(tile),verb="Browse" if id == "gell_shop" and tile == (9,6) else "Inspect",text=text,
                              **({"kind":"shop"} if id == "gell_shop" and tile == (9,6) else {})) for tile,text in room["inspect"].items()],
-          lights=[dict(tile=list(tile),color="warm") for tile in room["lights"]])
+          lights=[dict(tile=list(tile),color="warm") for tile in room["lights"]],
+          painted_interior=dict(style="candlelit"))
     from route_01_world import add_route
     locations = {"greymere":town, **rooms}
     add_route(locations)

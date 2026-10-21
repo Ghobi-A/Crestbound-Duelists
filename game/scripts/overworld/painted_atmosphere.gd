@@ -25,7 +25,13 @@ const FOREGROUND := [
 	["leaves_blur", Vector2(-30, -26), 0.42, false],
 ]
 
+const INTERIOR_FOREGROUND := [
+	["bokeh_warm", Vector2(-24, 128), 0.5, false],
+	["leaves_blur", Vector2(268, 132), 0.46, true],
+]
+
 var location_id := ""
+var interior := false   # rooms bring their own light; only grade and depth here
 var map_tiles := Vector2.ONE
 var props: Array = []
 var _halos: Array[Sprite2D] = []
@@ -35,6 +41,11 @@ var _clock := 0.0
 
 func _ready() -> void:
 	if not GraphicsSettings.lighting():
+		return
+	if interior:
+		_build_grade()
+		if GraphicsSettings.post_blur():
+			_build_foreground()
 		return
 	var fields: Texture2D = load(DIRECTORY + "fields_%s.png" % location_id)
 	for i in PASSES.size():
@@ -104,6 +115,13 @@ func _build_grade() -> void:
 	var shader := ShaderMaterial.new()
 	shader.shader = GRADE
 	shader.set_shader_parameter("blur_enabled", GraphicsSettings.post_blur())
+	if interior:
+		# Candle-lit rooms: warmer highlights, deeper corners, candles bloom.
+		shader.set_shader_parameter("warm", Color(1.14, 1.0, 0.8))
+		shader.set_shader_parameter("cool", Color(0.84, 0.86, 1.0))
+		shader.set_shader_parameter("vignette", 0.4)
+		shader.set_shader_parameter("bloom_threshold", 0.6)
+		shader.set_shader_parameter("tilt_start", 0.72)
 	rect.material = shader
 	layer.add_child(rect)
 
@@ -112,7 +130,7 @@ func _build_foreground() -> void:
 	var layer := CanvasLayer.new()
 	layer.layer = 3
 	add_child(layer)
-	for item in FOREGROUND:
+	for item in (INTERIOR_FOREGROUND if interior else FOREGROUND):
 		var path: String = DIRECTORY + str(item[0]) + ".png"
 		if not ResourceLoader.exists(path):
 			continue
