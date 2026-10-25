@@ -205,15 +205,24 @@ func _setup_entity() -> void:
 		raw_offset = [default_offset.x, default_offset.y]
 	_entity_sprite.position = Vector2(float(raw_offset[0]), float(raw_offset[1]))
 	_entity_sprite.z_index = -1
-	# Bonded Entities are spirits beside the Duelist, not a second body. Their
-	# small source sheets read as an additive, softly filtered apparition at
-	# HD output rather than as enlarged blocks.
-	_entity_sprite.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
-	_entity_sprite.region_filter_clip_enabled = true
-	var spirit := CanvasItemMaterial.new()
-	spirit.blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
-	_entity_sprite.material = spirit
-	_entity_sprite.modulate = Color(1, 1, 1, 0.62)
+	if sidecar.has("display_height"):
+		# Painted HD art: scale to its display height, face the opponent and
+		# draw as a solid companion rather than an additive apparition.
+		_entity_sprite.scale = Vector2.ONE * float(sidecar.display_height) / float(frame_size.y)
+		_entity_sprite.flip_h = str(sidecar.get("native_facing", "right")) != ("right" if unit.team == "player" else "left")
+		if _entity_sprite.flip_h:
+			_entity_sprite.offset.x = entity_anchor.x - frame_size.x
+		_entity_sprite.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
+		_entity_sprite.region_filter_clip_enabled = true
+		_entity_sprite.modulate = Color(1, 1, 1, 0.92)
+	else:
+		# Legacy small sheets read as an additive, softly filtered spirit.
+		_entity_sprite.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
+		_entity_sprite.region_filter_clip_enabled = true
+		var spirit := CanvasItemMaterial.new()
+		spirit.blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
+		_entity_sprite.material = spirit
+		_entity_sprite.modulate = Color(1, 1, 1, 0.62)
 	add_child(_entity_sprite)
 
 

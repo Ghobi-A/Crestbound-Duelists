@@ -1,0 +1,12 @@
+{
+  "frame_width": 167,
+  "frame_height": 168,
+  "frame_count": 2,
+  "fps": 1.6,
+  "anchor": [
+    83,
+    165
+  ],
+  "display_height": 30,
+  "native_facing": "right"
+}

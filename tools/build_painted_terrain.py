@@ -33,7 +33,7 @@ PX_PER_TILE = 8
 # and shorelines, narrow enough that walkable tiles never read as water.
 CHANNELS = (
     ("path", None, 8.0),
-    ("water", "~", 4.0),
+    ("water", "~=", 2.5),
     ("forest", "#", 5.0),
     ("tall_grass", "g", 4.0),
 )
@@ -206,6 +206,11 @@ def main() -> None:
     for key in sorted(locations):
         if "painted" in locations[key]:
             build_fields(locations[key]).save(OUT / f"fields_{key}.png", optimize=True)
+            battle = locations[key].get("battle_background")
+            if battle:
+                # The battle stage reuses the location's painted look.
+                staged = {"rows": battle["rows"], "painted": locations[key]["painted"]}
+                build_fields(staged).save(OUT / f"fields_{key}_battle.png", optimize=True)
     build_noise().save(OUT / "noise.png", optimize=True)
     for name, (file, box, size) in sorted(MATERIALS.items()):
         source = Image.open(SOURCES / file)

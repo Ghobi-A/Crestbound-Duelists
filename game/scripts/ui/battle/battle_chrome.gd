@@ -60,8 +60,15 @@ func _draw() -> void:
 	UiStyle.draw_panel(self, TITLE_BOX, UiStyle.NEUTRAL, false)
 	UiStyle.draw_glow_frame(self, TITLE_BOX, Color("c8d4ff"), 2.0, 0.12)
 	var heading := title.to_upper()
-	var tracking := 1.6 if UiStyle.text_width(heading, 6, UiStyle.DISPLAY, 1.6) <= TITLE_BOX.size.x - 8 else 0.5
-	UiStyle.draw_text(self, TITLE_BOX.position + Vector2(5, 8.2), heading, 6, UiStyle.TEXT, TITLE_BOX.size.x - 8, HORIZONTAL_ALIGNMENT_LEFT, UiStyle.DISPLAY, tracking)
+	# Long encounter names step down in tracking, then size, instead of being cut.
+	var size := 6
+	var tracking := 1.6
+	for option in [[6, 1.6], [6, 0.6], [5, 0.6], [5, 0.0]]:
+		size = option[0]
+		tracking = option[1]
+		if UiStyle.text_width(heading, size, UiStyle.DISPLAY, tracking) <= TITLE_BOX.size.x - 8:
+			break
+	UiStyle.draw_text(self, TITLE_BOX.position + Vector2(5, 8.2), heading, size, UiStyle.TEXT, TITLE_BOX.size.x - 8, HORIZONTAL_ALIGNMENT_LEFT, UiStyle.DISPLAY, tracking)
 	UiStyle.draw_text(self, TITLE_BOX.position + Vector2(5, 15.8), round_text.to_upper(), 5, UiStyle.TEXT_DIM, TITLE_BOX.size.x - 8, HORIZONTAL_ALIGNMENT_LEFT, UiStyle.DISPLAY, 0.9)
 
 	# The floor darkens under the party cards instead of meeting a hard deck.
@@ -72,7 +79,7 @@ func _draw() -> void:
 		x += UiStyle.draw_key_cap(self, Vector2(x, footer + 3.4), prompt[0], prompt[1], UiStyle.TEXT_DIM)
 	if footer_left != "":
 		UiStyle.draw_text(self, Vector2(x + 2.0, footer + 5.4), footer_left.to_upper(), 5, UiStyle.GOLD_DIM, 90, HORIZONTAL_ALIGNMENT_LEFT, UiStyle.DISPLAY, 0.7)
-	UiStyle.draw_text(self, Vector2(width - 128, footer + 5.4), footer_right.to_upper(), 5, UiStyle.TEXT_FAINT, 122, HORIZONTAL_ALIGNMENT_RIGHT, UiStyle.DISPLAY, 0.4)
+	UiStyle.draw_text(self, Vector2(width - 156, footer + 5.4), footer_right.to_upper(), 5, UiStyle.TEXT_FAINT, 148, HORIZONTAL_ALIGNMENT_RIGHT, UiStyle.DISPLAY)
 
 
 func _draw_pip(at: Vector2, tint: Color) -> void:
