@@ -48,3 +48,15 @@ def test_rerendered_bodies_fill_the_frame_like_kai():
 def test_rerendered_npcs_keep_no_superseded_walk_sources():
     walks = {path.stem.rsplit("-", 1)[0] for path in (ROOT / "tools/walk_sources").glob("*.png")}
     assert not walks & set(NAMES)
+
+
+def test_every_facing_matches_the_front_view_height():
+    # PixelLab rotations arrive at slightly different scales; the composer
+    # scales each facing uniformly so the body does not grow when turning.
+    for name in NAMES:
+        folder = SOURCES / name
+        rot = {f: rerender._load(folder / f"rot_{f}.png") for f in ("south", "north", "east", "west")}
+        matched, _ = rerender.match_facings(rot)
+        target = rerender.body_extent(matched["south"])
+        for facing in ("north", "east", "west"):
+            assert abs(rerender.body_extent(matched[facing]) - target) <= max(2, target * 0.015), (name, facing)

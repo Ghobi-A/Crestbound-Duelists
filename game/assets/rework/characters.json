@@ -504,13 +504,13 @@
       "overworld": {
         "atlas": "res://assets/route01/rowan_overworld.png",
         "frame_size": [
-          272,
-          272
+          256,
+          256
         ],
         "row": 0,
         "foot_anchor": [
-          136,
-          260
+          128,
+          244
         ],
         "body_height": 216
       }
@@ -549,13 +549,13 @@
       "overworld": {
         "atlas": "res://assets/route01/squire_overworld.png",
         "frame_size": [
-          264,
-          264
+          256,
+          256
         ],
         "row": 0,
         "foot_anchor": [
-          132,
-          252
+          128,
+          244
         ],
         "body_height": 209
       }
