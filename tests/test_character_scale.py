@@ -93,3 +93,15 @@ def test_invalid_manifest_data_fails_clearly(mutate, message):
     mutate(v2, characters, authored)
     with pytest.raises(audit.ManifestError, match=re.escape(message)):
         audit.validate(v2, characters, authored)
+
+
+def test_battle_bodies_are_measured_and_drawn_at_one_height():
+    characters = json.loads(audit.CHARACTERS_PATH.read_text())
+    measured = audit.battle_heights(characters)
+    assert characters["battle_body_display"] == audit.BATTLE_BODY_DISPLAY
+    for key, record in characters["characters"].items():
+        assert record["battle_body_height"] == measured[key], key
+    # DuelistSprite.battle_scale divides the display height by the body, so
+    # every combatant's visible body is the same size whatever its headroom.
+    source = (ROOT / "game/scripts/battle/duelist_sprite.gd").read_text()
+    assert "float(manifest.battle_body_display) / maxf(1.0, float(record.battle_body_height))" in source

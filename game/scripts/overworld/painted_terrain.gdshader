@@ -45,6 +45,10 @@ void fragment() {
 	// up to ~0.6 tile, so long straight edges bow and corners sweep.
 	vec2 meander = (texture(noise_tex, tile_pos / 41.0).gb - 0.5) * 1.2;
 	f.r = texture(fields, (tile_pos + meander) / map_tiles).r;
+	// Shorelines wander too: a finer domain warp (up to ~0.35 tile) so pond
+	// and creek edges never follow the tile grid in straight lines.
+	vec2 shore = (texture(noise_tex, tile_pos / 9.0 + vec2(0.31, 0.77)).rg - 0.5) * 0.7;
+	f.g = texture(fields, (tile_pos + shore) / map_tiles).g;
 	vec3 n_fine = texture(noise_tex, tile_pos / 3.1).rgb;
 	float warp = (n_fine.g - 0.5) * edge_warp * 2.0 + (n_broad.b - 0.5) * edge_warp;
 

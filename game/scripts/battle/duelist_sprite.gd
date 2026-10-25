@@ -139,6 +139,16 @@ func _setup_sheet() -> void:
 	_apply_frame()
 
 
+static func battle_scale(manifest: Dictionary, record: Dictionary, anchor_y: float) -> float:
+	## The visible body (head to foot anchor, measured by
+	## tools/audit_character_scale.py) is drawn at battle_body_display, so a
+	## sheet with extra headroom is not drawn smaller than the cast. Records
+	## without a measurement keep the old foot-anchor divisor.
+	if record.has("battle_body_height") and manifest.has("battle_body_display"):
+		return float(manifest.battle_body_display) / maxf(1.0, float(record.battle_body_height))
+	return float(manifest.get("display_height", 44)) / maxf(1.0, anchor_y)
+
+
 func _setup_registered_sprite(record: Dictionary) -> void:
 	var texture := CharacterPresentation.atlas(record)
 	if texture == null:
@@ -147,7 +157,7 @@ func _setup_registered_sprite(record: Dictionary) -> void:
 	_frame_w = int(_atlas_rect.size.x)
 	_frame_h = int(_atlas_rect.size.y)
 	_anchor = Vector2(record.foot_anchor[0], record.foot_anchor[1])
-	_display_scale = float(CharacterPresentation.manifest().get("display_height", 44)) / _anchor.y
+	_display_scale = battle_scale(CharacterPresentation.manifest(), record, _anchor.y)
 	_states = {"idle": {"start": 0, "count": 1, "fps": 2, "loop": true}}
 	_sprite = Sprite2D.new()
 	_sprite.texture = texture
@@ -199,7 +209,9 @@ func _setup_entity() -> void:
 	_entity_sprite.region_rect = Rect2(Vector2.ZERO, frame_size)
 	_entity_sprite.centered = false
 	_entity_sprite.offset = -entity_anchor
-	var default_offset := Vector2(-24, -12) if unit.team == "player" else Vector2(24, -8)
+	# Tucked just behind its own bearer (formation slots are ~42 px apart, so
+	# the old 24 px offset put a companion beside the neighbouring ally).
+	var default_offset := Vector2(-13, -7) if unit.team == "player" else Vector2(13, -6)
 	var raw_offset = sidecar.get("stage_offset", [default_offset.x, default_offset.y])
 	if not raw_offset is Array or raw_offset.size() != 2:
 		raw_offset = [default_offset.x, default_offset.y]

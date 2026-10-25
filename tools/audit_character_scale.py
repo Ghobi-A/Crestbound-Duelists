@@ -276,6 +276,26 @@ def audit() -> list[dict]:
     return rows
 
 
+def battle_heights(characters: dict) -> dict:
+    """Combat sprites: body height (head to foot anchor) in each record's
+    battle rect. The battle stage scales by this, like the overworld, so
+    sheets with extra headroom (the route trainers) are not drawn small."""
+    heights = {}
+    for key in sorted(characters["characters"]):
+        record = characters["characters"][key]
+        x, y, w, h = record["battle_rect"]
+        atlas = Image.open(_res(record.get("atlas", characters["atlas"])))
+        mask = opaque_mask(atlas.crop((x, y, x + w, y + h)), record.get("colour_key", characters["colour_key"]))
+        foot_y = record["foot_anchor"][1]
+        heights[key] = foot_y - body_top(mask, foot_y)
+    return heights
+
+
+# Combat target height (logical px) for the visible body: what Kai, the
+# reference, already rendered at (40 px foot anchor, ~38.7 px body).
+BATTLE_BODY_DISPLAY = 39
+
+
 def write(rows: list[dict]) -> None:
     measured = [r for r in rows if "manifest" in r]
     # v2 keeps its compact one-line entries, so patch those lines in place.
@@ -297,6 +317,9 @@ def write(rows: list[dict]) -> None:
         else:
             characters["characters"][key]["overworld"]["body_height"] = row["body_height"]
     characters["overworld_body_heights"] = dict(sorted(heights.items()))
+    characters["battle_body_display"] = BATTLE_BODY_DISPLAY
+    for key, height in battle_heights(characters).items():
+        characters["characters"][key]["battle_body_height"] = height
     CHARACTERS_PATH.write_text(json.dumps(characters, indent=2) + "\n")
 
     authored = json.loads(AUTHORED_PATH.read_text())
