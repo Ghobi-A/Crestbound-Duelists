@@ -45,7 +45,11 @@ func play_events(action: Dictionary, events: Array) -> void:
 				hud.set_message("%s  ·  %s" % [actor.display_name, event.label])
 				if sprites.has(actor): sprites[actor].play("attack")
 				AudioRouter.play_sfx("battle", "heavy_physical" if weight == "gambit" else impact_kind)
-				await get_tree().create_timer(ANTICIPATION if weight == "basic" else ANTICIPATION_HEAVY).timeout
+				# Authored attacks land on their contact frame, never mid wind-up.
+				var windup := ANTICIPATION if weight == "basic" else ANTICIPATION_HEAVY
+				if sprites.has(actor):
+					windup = maxf(windup, sprites[actor].contact_time())
+				await get_tree().create_timer(windup).timeout
 				if target != null and sprites.has(target):
 					await vfx.play_effect(str(move.get("vfx_key", "")), sprites[target].effect_origin(), impact_kind, weight)
 			"brace":

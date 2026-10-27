@@ -189,6 +189,15 @@ func has_frames(state: String) -> bool:
 	return _states.has(state) and int(_states[state].get("count", 1)) > 1
 
 
+func contact_time() -> float:
+	## Seconds from the start of "attack" to the frame where the blow lands
+	## (0 for art without authored attack frames).
+	if not has_frames("attack"):
+		return 0.0
+	var attack: Dictionary = _states["attack"]
+	return float(attack.get("contact", 0)) / maxf(1.0, float(attack.get("fps", 12)))
+
+
 func _setup_registered_sprite(record: Dictionary) -> void:
 	if _setup_animated_sprite(record):
 		return
@@ -482,6 +491,11 @@ func play(state: String) -> void:
 				# Step toward the opposing side (teams face each other left/right).
 				var toward := Vector2(6, 0) if unit.team == "player" else Vector2(-6, 0)
 				_tween = create_tween()
+				# Authored strikes wind up in place and arrive on their
+				# contact frame; single-frame art lunges straight away.
+				var lead := maxf(0.0, contact_time() - 0.1)
+				if lead > 0.0:
+					_tween.tween_interval(lead)
 				_tween.tween_property(self, "position", home_position + toward, 0.1)
 				_tween.tween_property(self, "position", home_position, 0.15)
 				if _sprite_pivot != null and not has_frames("attack"):
@@ -549,7 +563,7 @@ func play(state: String) -> void:
 	# Placeholder path (no sheet available for this build).
 	match state:
 		"attack":
-			var toward := Vector2(0, -6) if unit.team == "player" else Vector2(0, 6)
+			var toward := Vector2(6, 0) if unit.team == "player" else Vector2(-6, 0)
 			_tween = create_tween()
 			_tween.tween_property(self, "position", home_position + toward, 0.08)
 			_tween.tween_property(self, "position", home_position, 0.12)
