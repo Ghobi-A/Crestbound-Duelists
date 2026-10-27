@@ -42,7 +42,8 @@ func _ready() -> void:
 				sprite.rest()
 			else:
 				sprite.set_facing(FACINGS[mode.trim_prefix("walk_")])
-				sprite.set_walk_phase((row + 0.5) / 4.0)
+				# Rows 0-3: both halves of the two-tile cycle.
+				sprite.set_walk_phase(0.75 if row % 2 else 0.25, row / 2)
 	for _frame in 8:
 		await get_tree().process_frame
 	await RenderingServer.frame_post_draw

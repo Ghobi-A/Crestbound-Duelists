@@ -3,7 +3,11 @@ extends Node
 ## Explicit visual sequencer consuming already-resolved authoritative events.
 
 const ANTICIPATION := 0.10
-const CONTACT_HOLD := 0.045
+# Heavier moves wind up longer, so the strike reads as committed.
+const ANTICIPATION_HEAVY := 0.16
+# Hit-stop: attacker and victim freeze on contact before the reaction plays.
+const CONTACT_HOLD := 0.09
+const CONTACT_HOLD_HEAVY := 0.12
 const RECOVERY := 0.14
 
 var stage: Node2D
@@ -41,7 +45,7 @@ func play_events(action: Dictionary, events: Array) -> void:
 				hud.set_message("%s  ·  %s" % [actor.display_name, event.label])
 				if sprites.has(actor): sprites[actor].play("attack")
 				AudioRouter.play_sfx("battle", "heavy_physical" if weight == "gambit" else impact_kind)
-				await get_tree().create_timer(ANTICIPATION).timeout
+				await get_tree().create_timer(ANTICIPATION if weight == "basic" else ANTICIPATION_HEAVY).timeout
 				if target != null and sprites.has(target):
 					await vfx.play_effect(str(move.get("vfx_key", "")), sprites[target].effect_origin(), impact_kind, weight)
 			"brace":
@@ -64,8 +68,16 @@ func play_events(action: Dictionary, events: Array) -> void:
 						floats.show_float(victim, sprites[victim].effect_origin(), "blocked")
 						await vfx.play_effect("brace", sprites[victim].effect_origin(), "physical", "basic", "hit")
 					floats.show_float(victim, sprites[victim].effect_origin(), "damage", str(event.amount))
+				# Hit-stop: the attacker freezes mid-strike and the victim
+				# flashes white on the contact frame; the reaction plays after.
+				var hold := CONTACT_HOLD_HEAVY if weight == "gambit" else CONTACT_HOLD
+				if sprites.has(actor) and actor != victim:
+					sprites[actor].hit_stop(hold)
+				if sprites.has(victim):
+					sprites[victim].contact_flash(hold)
+				await get_tree().create_timer(hold).timeout
+				if sprites.has(victim):
 					sprites[victim].play("defeat" if event.ko else "hit")
-				await get_tree().create_timer(CONTACT_HOLD).timeout
 				if event.ko and sprites.has(victim):
 					floats.show_float(victim, sprites[victim].effect_origin(), "defeat")
 				shake(3.0 if weight == "gambit" else 1.25)
