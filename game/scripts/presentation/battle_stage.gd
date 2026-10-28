@@ -5,10 +5,19 @@ extends Node2D
 func build_background(location: String) -> void:
 	var outdoor: Dictionary = WorldCatalog.location(location).get("battle_background", {})
 	if not outdoor.is_empty():
-		var terrain := WorldTerrain.new()
-		terrain.rows = outdoor.rows
-		terrain.z_index = -20
-		add_child(terrain)
+		var place: Dictionary = WorldCatalog.location(location)
+		if place.has("painted"):
+			var painted := PaintedTerrain.new()
+			painted.location_id = location + "_battle"
+			painted.rows = outdoor.rows
+			painted.path_material = str(place.painted.path_material)
+			painted.z_index = -20
+			add_child(painted)
+		else:
+			var terrain := WorldTerrain.new()
+			terrain.rows = outdoor.rows
+			terrain.z_index = -20
+			add_child(terrain)
 		for item in outdoor.get("props", []):
 			var prop := WorldProp.create(item)
 			prop.z_index = -19

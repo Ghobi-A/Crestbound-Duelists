@@ -58,10 +58,44 @@ def _place(cell: int, rgba: np.ndarray) -> np.ndarray:
     return out
 
 
+def body_extent(rgba: np.ndarray) -> int:
+    """Head-to-foot height of the body, ignoring thin shafts (a raised spear,
+    a torch handle, sparks): the top is the first row at least ~4% of the
+    image wide."""
+    opaque = rgba[:, :, 3] >= 128
+    counts = opaque.sum(axis=1)
+    body_rows = np.flatnonzero(counts >= max(6, rgba.shape[1] * 0.04))
+    return int(np.flatnonzero(counts)[-1] - body_rows[0] + 1)
+
+
+def _rescale(rgba: np.ndarray, factor: float) -> np.ndarray:
+    if abs(factor - 1.0) < 0.01:
+        return rgba
+    h, w = rgba.shape[:2]
+    size = (max(1, round(w * factor)), max(1, round(h * factor)))
+    return np.asarray(Image.fromarray(rgba, "RGBA").resize(size, Image.LANCZOS))
+
+
+def match_facings(rot: dict, walks: dict | None = None) -> tuple[dict, dict]:
+    """PixelLab's rotations come back at slightly different scales per facing,
+    so a character grew up to ~2 display px when turning. Scale every facing
+    (with its walk frames) uniformly to the front view's body height."""
+    target = body_extent(rot["south"])
+    rot = dict(rot)
+    walks = {side: list(frames) for side, frames in (walks or {}).items()}
+    for facing in ("north", "east", "west"):
+        factor = target / body_extent(rot[facing])
+        rot[facing] = _rescale(rot[facing], factor)
+        if facing in walks:
+            walks[facing] = [_rescale(frame, factor) for frame in walks[facing]]
+    return rot, walks
+
+
 def _frames(name: str) -> dict:
     folder = SOURCES / name
     rot = {facing: _load(folder / f"rot_{facing}.png") for facing in ("south", "north", "east", "west")}
     walks = {side: [_load(folder / f"walk_{side}_{i}.png") for i in range(4)] for side in ("east", "west")}
+    rot, walks = match_facings(rot, walks)
     picked = {side: _contacts(rot[side], walks[side]) for side in ("east", "west")}
     return {"down": [rot["south"]] * 4, "up": [rot["north"]] * 4,
             "east": [rot["east"], picked["east"][0], rot["east"], picked["east"][1]],
@@ -117,7 +151,8 @@ def build_authored(name: str) -> None:
 
 def build_trainer(name: str, record: dict) -> None:
     folder = SOURCES / name
-    frames = [_load(folder / f"rot_{facing}.png") for facing in ("south", "north", "east", "west")]
+    rot, _ = match_facings({facing: _load(folder / f"rot_{facing}.png") for facing in ("south", "north", "east", "west")})
+    frames = [rot[facing] for facing in ("south", "north", "east", "west")]
     cell = _cell(frames)
     strip = np.concatenate([_place(cell, image) for image in frames], axis=1)
     Image.fromarray(strip, "RGBA").save(ROOT / "game" / record["atlas"].removeprefix("res://"), optimize=True)

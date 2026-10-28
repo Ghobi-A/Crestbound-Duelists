@@ -53,16 +53,27 @@ func _draw() -> void:
 		draw_circle(Vector2(rail_mid, rail_y), 5.0 - i, Color(UiStyle.GOLD_BRIGHT, 0.05 + i * 0.03))
 	UiStyle.draw_ornament(self, Vector2(rail_mid, rail_y), 4.0, UiStyle.GOLD_BRIGHT)
 	if objective != "":
+		# A soft plate keeps the objective legible over busy battle art.
+		var label := objective.to_upper()
+		var label_width := UiStyle.text_width(label, 5, UiStyle.DISPLAY, 0.6)
+		UiStyle.draw_vignette_band(self, Rect2(4, 30.5, label_width + 16, 9), 0.55, 0.55, 1)
 		UiStyle.draw_glyph(self, "objective", Vector2(10, 35.0), 1.8, UiStyle.GOLD)
-		UiStyle.draw_text(self, Vector2(14.5, 37.2), objective.to_upper(), 5, UiStyle.TEXT_DIM, 120, HORIZONTAL_ALIGNMENT_LEFT, UiStyle.DISPLAY, 0.6)
+		UiStyle.draw_text(self, Vector2(14.5, 37.2), label, 5, UiStyle.TEXT, 120, HORIZONTAL_ALIGNMENT_LEFT, UiStyle.DISPLAY, 0.6)
 
-	# Encounter title box.
+	# Encounter title box. Long names step down in tracking, then size,
+	# measured exactly as drawn, so a name is never cut.
 	UiStyle.draw_panel(self, TITLE_BOX, UiStyle.NEUTRAL, false)
 	UiStyle.draw_glow_frame(self, TITLE_BOX, Color("c8d4ff"), 2.0, 0.12)
 	var heading := title.to_upper()
-	var tracking := 1.6 if UiStyle.text_width(heading, 6, UiStyle.DISPLAY, 1.6) <= TITLE_BOX.size.x - 8 else 0.5
-	UiStyle.draw_text(self, TITLE_BOX.position + Vector2(5, 8.2), heading, 6, UiStyle.TEXT, TITLE_BOX.size.x - 8, HORIZONTAL_ALIGNMENT_LEFT, UiStyle.DISPLAY, tracking)
-	UiStyle.draw_text(self, TITLE_BOX.position + Vector2(5, 15.8), round_text.to_upper(), 5, UiStyle.TEXT_DIM, TITLE_BOX.size.x - 8, HORIZONTAL_ALIGNMENT_LEFT, UiStyle.DISPLAY, 0.9)
+	var size := 6
+	var tracking := 1.6
+	for option in [[6, 1.6], [6, 0.8], [6, 0.3], [5, 0.6], [5, 0.0]]:
+		size = option[0]
+		tracking = option[1]
+		if UiStyle.text_width(heading, size, UiStyle.DISPLAY, tracking) <= TITLE_BOX.size.x - 9:
+			break
+	UiStyle.draw_text(self, TITLE_BOX.position + Vector2(5, 8.2), heading, size, UiStyle.TEXT, TITLE_BOX.size.x - 7, HORIZONTAL_ALIGNMENT_LEFT, UiStyle.DISPLAY, tracking)
+	UiStyle.draw_text(self, TITLE_BOX.position + Vector2(5, 15.8), round_text.to_upper(), 5, UiStyle.TEXT_DIM, TITLE_BOX.size.x - 7, HORIZONTAL_ALIGNMENT_LEFT, UiStyle.DISPLAY, 0.9)
 
 	# The floor darkens under the party cards instead of meeting a hard deck.
 	UiStyle.draw_vignette_band(self, Rect2(0, deck - 14, width, 180 - deck + 14), 0.0, 0.8, 14)
@@ -72,7 +83,7 @@ func _draw() -> void:
 		x += UiStyle.draw_key_cap(self, Vector2(x, footer + 3.4), prompt[0], prompt[1], UiStyle.TEXT_DIM)
 	if footer_left != "":
 		UiStyle.draw_text(self, Vector2(x + 2.0, footer + 5.4), footer_left.to_upper(), 5, UiStyle.GOLD_DIM, 90, HORIZONTAL_ALIGNMENT_LEFT, UiStyle.DISPLAY, 0.7)
-	UiStyle.draw_text(self, Vector2(width - 128, footer + 5.4), footer_right.to_upper(), 5, UiStyle.TEXT_FAINT, 122, HORIZONTAL_ALIGNMENT_RIGHT, UiStyle.DISPLAY, 0.4)
+	UiStyle.draw_text(self, Vector2(width - 156, footer + 5.4), footer_right.to_upper(), 5, UiStyle.TEXT_FAINT, 148, HORIZONTAL_ALIGNMENT_RIGHT, UiStyle.DISPLAY)
 
 
 func _draw_pip(at: Vector2, tint: Color) -> void:

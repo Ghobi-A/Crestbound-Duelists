@@ -88,4 +88,7 @@ def test_runtime_drives_frames_from_step_progress() -> None:
     assert "V2_MANIFEST_PATH" in sprite
     assert "func set_walk_phase" in sprite
     assert "_registered_animated = true" in sprite
-    assert "_sprite.set_walk_phase(_step_progress)" in player
+    assert "_sprite.set_walk_phase(_step_progress, _stride)" in player
+    # One footfall per tile, alternating feet.
+    assert "_stride = 1 - _stride" in player
+    assert "var start := (stride % 2) * per_tile" in sprite
