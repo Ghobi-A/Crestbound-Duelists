@@ -17,6 +17,21 @@ func _ready() -> void:
 	await settled()
 	check(world.location_id == "greymere", "new game location")
 	check(world._player.tile == Vector2i(17,29), "approach spawn")
+	# Townsfolk turn to face you from whichever side you talk to them.
+	var faced := 0
+	for tile in world._npc_tiles:
+		for side in [Vector2i.LEFT, Vector2i.RIGHT, Vector2i.DOWN, Vector2i.UP]:
+			if not world.is_walkable(tile + side):
+				continue
+			await walk_to(tile + side)
+			world._player.facing = -side
+			interact()
+			var expected: String = {Vector2i.LEFT: "west", Vector2i.RIGHT: "east", Vector2i.DOWN: "down", Vector2i.UP: "up"}[side]
+			check(world._npc_tiles[tile]._sprite._facing == expected, "%s faces the player from %s" % [world._npc_tiles[tile].npc_name, expected])
+			faced += 1
+			while world._dialogue.active: world._dialogue._advance()
+	check(faced >= 2 * world._npc_tiles.size(), "townsfolk faced from several sides")
+	await walk_to(Vector2i(17,29))
 	# Every unlocked building in town, including ones added later.
 	var buildings: Array[Dictionary] = []
 	for candidate in world.definition.doors:

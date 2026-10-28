@@ -11,6 +11,7 @@ var dialogue_key := ""
 var body_color := PlaceholderPalette.NPC_COLOR
 var tile := Vector2i.ZERO
 var _has_sheet := false
+var _sprite: OverworldSprite
 
 
 func setup(
@@ -29,7 +30,14 @@ func setup(
 	var sprite := OverworldSprite.new()
 	if sprite.attach(self, sprite_key):
 		sprite.set_facing(facing)
+		_sprite = sprite
 		_has_sheet = true
+
+
+func face(direction: Vector2i) -> void:
+	## Turn to look along `direction` (toward whoever is talking to them).
+	if _sprite != null and direction != Vector2i.ZERO:
+		_sprite.set_facing(direction)
 
 
 func _draw() -> void:

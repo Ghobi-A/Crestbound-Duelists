@@ -32,11 +32,17 @@ def compile_world():
     # Irregular central square, southern approach and upper gate staircase.
     for x,y,w,h in [(16,6,3,26),(14,13,7,10),(12,16,11,5),(8,10,18,2),(9,20,16,3),(9,10,2,14),(23,10,2,13)]:
         rect(grid,x,y,w,h,":")
+    # The square is one paved space: no stray grass islands inside it, and
+    # the west lane runs flush against it.
+    rect(grid,11,12,12,4,":")
+    rect(grid,11,16,1,4,":")
     rect(grid,15,6,5,3,"^")
-    # Creek beyond the west lane. The walkable bridge is explicit terrain.
+    # Creek along the west edge of town. The west lane drops to a landing on
+    # its bank and joins the main road; nothing crosses it (the far bank is
+    # the town wall).
     rect(grid,3,21,3,10,"~")
-    rect(grid,3,25,3,2,"=")
-    rect(grid,6,25,9,2,":")
+    rect(grid,9,24,2,1,":")
+    rect(grid,6,25,10,2,":")
     # East lane: Gell's shop and Joey's family home face it from the north;
     # a quieter path turns south to Kai's house at the edge of town.
     rect(grid,25,16,18,3,":")
@@ -44,15 +50,15 @@ def compile_world():
     rect(grid,33,28,10,2,":")
     buildings = [prop("study",10,10),prop("guardhouse",24,10),prop("herbalist",10,21),prop("inn",23,20),
                  prop("gell_shop",33,15),prop("joey_home",40,15),prop("kai_house",36,27)]
-    props = buildings + [prop("gate",17,5),prop("spring",22,24),prop("notice",20,12),prop("bridge",4,26)]
+    props = buildings + [prop("gate",17,5),prop("spring",22,24),prop("notice",20,12)]
     props += [prop("wall",x,8) for x in [12,22]]
     props += [prop("wall",x,29) for x in [10,24]]
-    props += [prop("crates",x,y) for x,y in [(5,22),(28,21),(28,11),(5,11),(30,14),(43,18)]]
-    props += [prop("hedge",x,y) for x,y in [(12,22),(28,24),(12,11),(21,10),(28,15),(6,15),(23,28),(11,28)]]
+    props += [prop("crates",x,y) for x,y in [(7,22),(28,21),(28,11),(5,11),(27,14),(43,18)]]
+    props += [prop("hedge",x,y) for x,y in [(13,23),(28,24),(13,9),(21,9),(28,15),(6,15),(23,28),(11,28)]]
     props += [prop("lamp",x,y) for x,y in [(13,21),(26,20),(13,10),(27,10),(15,7),(19,7),(15,28),(19,28),(32,19),(37,19),(39,27)]]
     props += [prop("hedge",x,y) for x,y in [(32,22),(32,26)]]
     # Overlapping edge canopies frame every approach without blocking lanes.
-    props += [prop("tree",x,y) for x,y in [(3,6),(3,12),(3,18),(3,24),(3,31),(30,6),(30,14),(30,20),(30,29),(7,32),(12,33),(23,33),(28,33),(8,3),(13,3),(22,3),(28,3),(11,27),(25,28),(12,16),(25,16),(34,3),(40,3),(44,7),(44,13),(44,20),(44,26),(33,33),(39,33),(44,31),(31,24)]]
+    props += [prop("tree",x,y) for x,y in [(3,6),(3,12),(3,18),(3,31),(30,6),(30,14),(30,20),(30,29),(7,32),(12,33),(23,33),(28,33),(8,3),(13,3),(22,3),(28,3),(25,28),(34,3),(40,3),(44,7),(44,13),(44,20),(44,26),(33,33),(39,33),(44,31),(31,24)]]
     town=dict(id="greymere",name="GREYMERE TOWN",subtitle="Above the Hollow Court",scene="res://scenes/overworld/greymere.tscn",
               rows=["".join(r) for r in grid], music_id="greymere", interior=False, props=props,
               painted=dict(path_symbols=":^", path_material="cobble"),
