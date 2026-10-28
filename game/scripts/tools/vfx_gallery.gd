@@ -3,7 +3,9 @@ extends Node2D
 ## a grid of targets and saves a frame every tick. Even rows are enemy-side
 ## targets (struck from the left), odd rows player-side (mirrored).
 ##
-##   godot --path game --resolution 1920x1080 res://scenes/tools/vfx_gallery.tscn -- <out_prefix> [frames] [fps]
+##   godot --path game --resolution 1920x1080 res://scenes/tools/vfx_gallery.tscn -- <out_prefix> [frames] [fps] [moves|extras]
+##
+## "extras" plays Brace and every Crest awakening instead of the moves.
 ##
 ## Writes <out_prefix>_NN.png. Wall-clock timing: review evidence, not a
 ## pixel baseline.
@@ -20,9 +22,15 @@ func _ready() -> void:
 	var prefix: String = args[0] if args.size() > 0 else "user://vfx_gallery"
 	var frames: int = int(args[1]) if args.size() > 1 else 16
 	var fps: float = float(args[2]) if args.size() > 2 else 16.0
+	var extras: bool = args.size() > 3 and args[3] == "extras"
 	var keys: Array[String] = []
-	for move in GameData.datasets.get("moves", {}).values():
-		keys.append(str(move.get("vfx_key", "")))
+	if extras:
+		keys.append("brace")
+		for crest_id in GameData.datasets.get("crests", {}).keys():
+			keys.append(str(crest_id))
+	else:
+		for move in GameData.datasets.get("moves", {}).values():
+			keys.append(str(move.get("vfx_key", "")))
 	keys.sort()
 	var vfx := BattleVfx.new()
 	add_child(vfx)
@@ -41,7 +49,7 @@ func _ready() -> void:
 		await get_tree().process_frame
 	for i in keys.size():
 		var struck := targets[i]
-		vfx.play_effect(keys[i], struck.effect_origin(), "magic", "basic", "default",
+		vfx.play_effect(keys[i], struck.effect_origin(), "magic", "signature" if extras else "basic", "default",
 			struck.position, struck.unit.team == "player", struck.z_index)
 	for index in frames:
 		await RenderingServer.frame_post_draw

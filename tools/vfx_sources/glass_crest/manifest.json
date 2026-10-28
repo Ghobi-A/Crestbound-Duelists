@@ -1,0 +1,197 @@
+{
+ "app": "PixelLab VFX Creator",
+ "name": "Crestbound glass_crest",
+ "fps": 14,
+ "frame_ms": 71,
+ "frames": 14,
+ "loop": false,
+ "canvas": {
+  "w": 96,
+  "h": 99
+ },
+ "anchor": {
+  "kind": "feet",
+  "x": 48,
+  "y": 86
+ },
+ "clips": [
+  {
+   "name": "whole",
+   "title": "the whole effect, no sprite",
+   "depth": "both",
+   "loop": false,
+   "start_frame": 0,
+   "frames": 14,
+   "frame": {
+    "w": 54,
+    "h": 93
+   },
+   "sheets": [
+    {
+     "file": "whole.png",
+     "first_frame": 0,
+     "frames": 14,
+     "columns": 4,
+     "rows": 4
+    }
+   ],
+   "offset": {
+    "x": -28,
+    "y": -83
+   }
+  },
+  {
+   "name": "whole-with-sprite",
+   "title": "the whole effect with the sprite in it",
+   "depth": "both",
+   "loop": false,
+   "start_frame": 0,
+   "frames": 14,
+   "frame": {
+    "w": 90,
+    "h": 93
+   },
+   "sheets": [
+    {
+     "file": "whole-with-sprite.png",
+     "first_frame": 0,
+     "frames": 14,
+     "columns": 4,
+     "rows": 4
+    }
+   ],
+   "offset": {
+    "x": -45,
+    "y": -83
+   }
+  },
+  {
+   "name": "behind",
+   "title": "everything behind the sprite",
+   "depth": "behind",
+   "loop": false,
+   "start_frame": 0,
+   "frames": 9,
+   "frame": {
+    "w": 52,
+    "h": 93
+   },
+   "sheets": [
+    {
+     "file": "behind.png",
+     "first_frame": 0,
+     "frames": 9,
+     "columns": 3,
+     "rows": 3
+    }
+   ],
+   "offset": {
+    "x": -26,
+    "y": -83
+   }
+  },
+  {
+   "name": "front",
+   "title": "everything in front of the sprite",
+   "depth": "front",
+   "loop": false,
+   "start_frame": 1,
+   "frames": 13,
+   "frame": {
+    "w": 52,
+    "h": 74
+   },
+   "sheets": [
+    {
+     "file": "front.png",
+     "first_frame": 0,
+     "frames": 13,
+     "columns": 4,
+     "rows": 4
+    }
+   ],
+   "offset": {
+    "x": -28,
+    "y": -67
+   }
+  },
+  {
+   "name": "part-level_up",
+   "title": "the level up part",
+   "part": "level_up",
+   "depth": "both",
+   "loop": false,
+   "start_frame": 0,
+   "frames": 12,
+   "frame": {
+    "w": 52,
+    "h": 93
+   },
+   "sheets": [
+    {
+     "file": "part-level_up.png",
+     "first_frame": 0,
+     "frames": 12,
+     "columns": 4,
+     "rows": 3
+    }
+   ],
+   "offset": {
+    "x": -26,
+    "y": -83
+   }
+  },
+  {
+   "name": "part-twinkles",
+   "title": "the twinkles part",
+   "part": "twinkles",
+   "depth": "front",
+   "loop": false,
+   "start_frame": 3,
+   "frames": 11,
+   "frame": {
+    "w": 34,
+    "h": 55
+   },
+   "sheets": [
+    {
+     "file": "part-twinkles.png",
+     "first_frame": 0,
+     "frames": 11,
+     "columns": 4,
+     "rows": 3
+    }
+   ],
+   "offset": {
+    "x": -10,
+    "y": -67
+   }
+  },
+  {
+   "name": "part-ice_shatter",
+   "title": "the ice shatter part",
+   "part": "ice_shatter",
+   "depth": "both",
+   "loop": false,
+   "start_frame": 4,
+   "frames": 10,
+   "frame": {
+    "w": 54,
+    "h": 72
+   },
+   "sheets": [
+    {
+     "file": "part-ice_shatter.png",
+     "first_frame": 0,
+     "frames": 10,
+     "columns": 4,
+     "rows": 3
+    }
+   ],
+   "offset": {
+    "x": -28,
+    "y": -65
+   }
+  }
+ ]
+}

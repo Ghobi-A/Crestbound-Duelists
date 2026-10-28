@@ -1,0 +1,39 @@
+{
+  "frame_width": 256,
+  "frame_height": 224,
+  "columns": 8,
+  "frame_count": 29,
+  "anchor": [
+    133.7,
+    217
+  ],
+  "body_height": 191,
+  "native_facing": "right",
+  "states": {
+    "idle": {
+      "start": 0,
+      "count": 8,
+      "fps": 5,
+      "loop": true
+    },
+    "attack": {
+      "start": 8,
+      "count": 8,
+      "fps": 14,
+      "loop": false,
+      "contact": 3
+    },
+    "hit": {
+      "start": 16,
+      "count": 7,
+      "fps": 12,
+      "loop": false
+    },
+    "defeat": {
+      "start": 23,
+      "count": 6,
+      "fps": 9,
+      "loop": false
+    }
+  }
+}
