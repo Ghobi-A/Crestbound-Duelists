@@ -1,14 +1,16 @@
-"""Compose move effects from PixelLab VFX Creator game packs.
+"""Compose battle effects from PixelLab VFX Creator game packs.
 
-Sources live in tools/vfx_sources/<vfx_key>/: the pack's manifest.json and
+Sources live in tools/vfx_sources/<key>/: the pack's manifest.json and
 its front.png / behind.png clip sheets (frames left to right, top to
 bottom), plus pixellab.json naming the editable effect on pixellab.ai. For
-every key this writes, deterministically:
+every key this writes, deterministically, under game/assets/vfx/<category>/
+(BattleVfx's lookup roots: a Crest id goes to awakening/, an action such
+as brace to actions/, every move vfx_key to moves/):
 
-* game/assets/vfx/moves/<key>.png  the front layer, one row of frames;
-* game/assets/vfx/moves/<key>_behind.png  the layer under the target,
-  when the effect has one, on the same frames;
-* game/assets/vfx/moves/<key>.json  the BattleVfx sidecar: frame size,
+* <key>.png  the front layer, one row of frames;
+* <key>_behind.png  the layer under the target, when the effect has one,
+  on the same frames;
+* <key>.json  the BattleVfx sidecar: frame size,
   fps, the target's feet in the frame, display scale, the impact time
   (when the effect lands) and the effect's dominant colour for the
   ground light under magic.
@@ -25,11 +27,14 @@ import json
 from pathlib import Path
 
 import numpy as np
+import yaml
 from PIL import Image
 
 ROOT = Path(__file__).resolve().parents[1]
 SOURCES = ROOT / "tools/vfx_sources"
-OUT = ROOT / "game/assets/vfx/moves"
+VFX = ROOT / "game/assets/vfx"
+OUT = VFX / "moves"
+ACTIONS = {"brace"}
 # Effects are authored at twice the logical density: a 39 px battle body was
 # 78 px in the VFX Creator, so one effect pixel is half a logical pixel.
 SCALE = 0.5
@@ -59,7 +64,17 @@ def _glow(frame: np.ndarray) -> str:
     return f"#{round(r * 255):02x}{round(g * 255):02x}{round(b * 255):02x}"
 
 
-def build(key: str) -> dict:
+def crest_ids() -> set[str]:
+    return {crest["id"] for crest in yaml.safe_load((ROOT / "data/crests.yaml").read_text())["crests"]}
+
+
+def out_dir(key: str, crests: set[str] | None = None) -> Path:
+    if key in (crest_ids() if crests is None else crests):
+        return VFX / "awakening"
+    return VFX / "actions" if key in ACTIONS else OUT
+
+
+def build(key: str, crests: set[str] | None = None) -> dict:
     folder = SOURCES / key
     manifest = json.loads((folder / "manifest.json").read_text())
     clips = {c["name"]: c for c in manifest["clips"] if c["name"] in LAYERS and (folder / c["sheets"][0]["file"]).exists()}
@@ -83,8 +98,9 @@ def build(key: str) -> dict:
     # a bolt's burst rather than its flight.
     impact = next(i for i, c in enumerate(frames) if c >= max(frames) * 0.5)
     fps = manifest["fps"]
-    OUT.mkdir(parents=True, exist_ok=True)
-    Image.fromarray(strips["front"], "RGBA").save(OUT / f"{key}.png", optimize=True)
+    out = out_dir(key, crests)
+    out.mkdir(parents=True, exist_ok=True)
+    Image.fromarray(strips["front"], "RGBA").save(out / f"{key}.png", optimize=True)
     sidecar = {
         "frame_width": w, "frame_height": h, "frame_count": count, "fps": fps, "loop": False,
         "anchor": [-left, -top], "anchor_to": "feet", "scale": SCALE,
@@ -92,15 +108,16 @@ def build(key: str) -> dict:
         "glow": _glow(np.concatenate([s[:, impact * w:(impact + 1) * w] for s in strips.values()], axis=1)),
     }
     if "behind" in strips:
-        Image.fromarray(strips["behind"], "RGBA").save(OUT / f"{key}_behind.png", optimize=True)
+        Image.fromarray(strips["behind"], "RGBA").save(out / f"{key}_behind.png", optimize=True)
         sidecar["behind"] = f"{key}_behind.png"
-    (OUT / f"{key}.json").write_text(json.dumps(sidecar, indent=2) + "\n")
+    (out / f"{key}.json").write_text(json.dumps(sidecar, indent=2) + "\n")
     return sidecar
 
 
 def main() -> None:
+    crests = crest_ids()
     for folder in sorted(p for p in SOURCES.iterdir() if p.is_dir()):
-        build(folder.name)
+        build(folder.name, crests)
 
 
 if __name__ == "__main__":

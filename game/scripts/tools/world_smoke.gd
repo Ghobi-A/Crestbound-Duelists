@@ -31,6 +31,17 @@ func _ready() -> void:
 			faced += 1
 			while world._dialogue.active: world._dialogue._advance()
 	check(faced >= 2 * world._npc_tiles.size(), "townsfolk faced from several sides")
+	# They breathe while idle, each on its own phase.
+	var breaths: Array[Vector2] = []
+	for npc in world._npc_tiles.values():
+		breaths.append(npc._sprite._sprite.scale)
+	await get_tree().create_timer(0.6).timeout
+	var moved := 0
+	var index := 0
+	for npc in world._npc_tiles.values():
+		if not npc._sprite._sprite.scale.is_equal_approx(breaths[index]): moved += 1
+		index += 1
+	check(moved == world._npc_tiles.size(), "townsfolk breathe while idle")
 	await walk_to(Vector2i(17,29))
 	# Every unlocked building in town, including ones added later.
 	var buildings: Array[Dictionary] = []

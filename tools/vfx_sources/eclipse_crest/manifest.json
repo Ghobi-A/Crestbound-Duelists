@@ -1,0 +1,171 @@
+{
+ "app": "PixelLab VFX Creator",
+ "name": "Crestbound eclipse_crest",
+ "fps": 16,
+ "frame_ms": 63,
+ "frames": 16,
+ "loop": false,
+ "canvas": {
+  "w": 96,
+  "h": 100
+ },
+ "anchor": {
+  "kind": "feet",
+  "x": 48,
+  "y": 86
+ },
+ "clips": [
+  {
+   "name": "whole",
+   "title": "the whole effect, no sprite",
+   "depth": "both",
+   "loop": false,
+   "start_frame": 0,
+   "frames": 13,
+   "frame": {
+    "w": 52,
+    "h": 94
+   },
+   "sheets": [
+    {
+     "file": "whole.png",
+     "first_frame": 0,
+     "frames": 13,
+     "columns": 4,
+     "rows": 4
+    }
+   ],
+   "offset": {
+    "x": -26,
+    "y": -83
+   }
+  },
+  {
+   "name": "whole-with-sprite",
+   "title": "the whole effect with the sprite in it",
+   "depth": "both",
+   "loop": false,
+   "start_frame": 0,
+   "frames": 16,
+   "frame": {
+    "w": 90,
+    "h": 94
+   },
+   "sheets": [
+    {
+     "file": "whole-with-sprite.png",
+     "first_frame": 0,
+     "frames": 16,
+     "columns": 4,
+     "rows": 4
+    }
+   ],
+   "offset": {
+    "x": -45,
+    "y": -83
+   }
+  },
+  {
+   "name": "behind",
+   "title": "everything behind the sprite",
+   "depth": "behind",
+   "loop": false,
+   "start_frame": 0,
+   "frames": 13,
+   "frame": {
+    "w": 52,
+    "h": 94
+   },
+   "sheets": [
+    {
+     "file": "behind.png",
+     "first_frame": 0,
+     "frames": 13,
+     "columns": 4,
+     "rows": 4
+    }
+   ],
+   "offset": {
+    "x": -26,
+    "y": -83
+   }
+  },
+  {
+   "name": "front",
+   "title": "everything in front of the sprite",
+   "depth": "front",
+   "loop": false,
+   "start_frame": 1,
+   "frames": 12,
+   "frame": {
+    "w": 39,
+    "h": 64
+   },
+   "sheets": [
+    {
+     "file": "front.png",
+     "first_frame": 0,
+     "frames": 12,
+     "columns": 4,
+     "rows": 3
+    }
+   ],
+   "offset": {
+    "x": -20,
+    "y": -60
+   }
+  },
+  {
+   "name": "part-level_up",
+   "title": "the level up part",
+   "part": "level_up",
+   "depth": "both",
+   "loop": false,
+   "start_frame": 0,
+   "frames": 13,
+   "frame": {
+    "w": 52,
+    "h": 93
+   },
+   "sheets": [
+    {
+     "file": "part-level_up.png",
+     "first_frame": 0,
+     "frames": 13,
+     "columns": 4,
+     "rows": 4
+    }
+   ],
+   "offset": {
+    "x": -26,
+    "y": -83
+   }
+  },
+  {
+   "name": "part-shadow_aura",
+   "title": "the shadow aura part",
+   "part": "shadow_aura",
+   "depth": "both",
+   "loop": false,
+   "start_frame": 2,
+   "frames": 11,
+   "frame": {
+    "w": 42,
+    "h": 70
+   },
+   "sheets": [
+    {
+     "file": "part-shadow_aura.png",
+     "first_frame": 0,
+     "frames": 11,
+     "columns": 4,
+     "rows": 3
+    }
+   ],
+   "offset": {
+    "x": -21,
+    "y": -59
+   }
+  }
+ ]
+}
