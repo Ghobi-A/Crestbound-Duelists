@@ -1,0 +1,197 @@
+{
+ "app": "PixelLab VFX Creator",
+ "name": "Crestbound dust_trail",
+ "fps": 16,
+ "frame_ms": 63,
+ "frames": 10,
+ "loop": false,
+ "canvas": {
+  "w": 105,
+  "h": 102
+ },
+ "anchor": {
+  "kind": "feet",
+  "x": 57,
+  "y": 82
+ },
+ "clips": [
+  {
+   "name": "whole",
+   "title": "the whole effect, no sprite",
+   "depth": "both",
+   "loop": false,
+   "start_frame": 0,
+   "frames": 9,
+   "frame": {
+    "w": 86,
+    "h": 81
+   },
+   "sheets": [
+    {
+     "file": "whole.png",
+     "first_frame": 0,
+     "frames": 9,
+     "columns": 3,
+     "rows": 3
+    }
+   ],
+   "offset": {
+    "x": -54,
+    "y": -64
+   }
+  },
+  {
+   "name": "whole-with-sprite",
+   "title": "the whole effect with the sprite in it",
+   "depth": "both",
+   "loop": false,
+   "start_frame": 0,
+   "frames": 10,
+   "frame": {
+    "w": 99,
+    "h": 96
+   },
+   "sheets": [
+    {
+     "file": "whole-with-sprite.png",
+     "first_frame": 0,
+     "frames": 10,
+     "columns": 4,
+     "rows": 3
+    }
+   ],
+   "offset": {
+    "x": -54,
+    "y": -79
+   }
+  },
+  {
+   "name": "behind",
+   "title": "everything behind the sprite",
+   "depth": "behind",
+   "loop": false,
+   "start_frame": 0,
+   "frames": 9,
+   "frame": {
+    "w": 86,
+    "h": 66
+   },
+   "sheets": [
+    {
+     "file": "behind.png",
+     "first_frame": 0,
+     "frames": 9,
+     "columns": 3,
+     "rows": 3
+    }
+   ],
+   "offset": {
+    "x": -54,
+    "y": -55
+   }
+  },
+  {
+   "name": "front",
+   "title": "everything in front of the sprite",
+   "depth": "front",
+   "loop": false,
+   "start_frame": 0,
+   "frames": 9,
+   "frame": {
+    "w": 75,
+    "h": 81
+   },
+   "sheets": [
+    {
+     "file": "front.png",
+     "first_frame": 0,
+     "frames": 9,
+     "columns": 3,
+     "rows": 3
+    }
+   ],
+   "offset": {
+    "x": -52,
+    "y": -64
+   }
+  },
+  {
+   "name": "part-flash_burst",
+   "title": "the flash burst part",
+   "part": "flash_burst",
+   "depth": "front",
+   "loop": false,
+   "start_frame": 0,
+   "frames": 8,
+   "frame": {
+    "w": 47,
+    "h": 47
+   },
+   "sheets": [
+    {
+     "file": "part-flash_burst.png",
+     "first_frame": 0,
+     "frames": 8,
+     "columns": 3,
+     "rows": 3
+    }
+   ],
+   "offset": {
+    "x": -24,
+    "y": -64
+   }
+  },
+  {
+   "name": "part-speed_lines",
+   "title": "the speed lines part",
+   "part": "speed_lines",
+   "depth": "both",
+   "loop": false,
+   "start_frame": 0,
+   "frames": 4,
+   "frame": {
+    "w": 76,
+    "h": 33
+   },
+   "sheets": [
+    {
+     "file": "part-speed_lines.png",
+     "first_frame": 0,
+     "frames": 4,
+     "columns": 2,
+     "rows": 2
+    }
+   ],
+   "offset": {
+    "x": -54,
+    "y": -56
+   }
+  },
+  {
+   "name": "part-slam_dust",
+   "title": "the slam dust part",
+   "part": "slam_dust",
+   "depth": "both",
+   "loop": false,
+   "start_frame": 1,
+   "frames": 8,
+   "frame": {
+    "w": 67,
+    "h": 46
+   },
+   "sheets": [
+    {
+     "file": "part-slam_dust.png",
+     "first_frame": 0,
+     "frames": 8,
+     "columns": 3,
+     "rows": 3
+    }
+   ],
+   "offset": {
+    "x": -35,
+    "y": -29
+   }
+  }
+ ]
+}

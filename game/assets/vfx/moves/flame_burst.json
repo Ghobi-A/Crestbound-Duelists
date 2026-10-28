@@ -1,0 +1,16 @@
+{
+  "frame_width": 75,
+  "frame_height": 88,
+  "frame_count": 12,
+  "fps": 12,
+  "loop": false,
+  "anchor": [
+    40,
+    90
+  ],
+  "anchor_to": "feet",
+  "scale": 0.5,
+  "impact": 0.333,
+  "glow": "#ffa72f",
+  "behind": "flame_burst_behind.png"
+}

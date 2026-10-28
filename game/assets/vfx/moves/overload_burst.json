@@ -1,0 +1,16 @@
+{
+  "frame_width": 110,
+  "frame_height": 97,
+  "frame_count": 11,
+  "fps": 14,
+  "loop": false,
+  "anchor": [
+    55,
+    75
+  ],
+  "anchor_to": "feet",
+  "scale": 0.5,
+  "impact": 0.214,
+  "glow": "#ffb953",
+  "behind": "overload_burst_behind.png"
+}

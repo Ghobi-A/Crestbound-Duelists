@@ -1,0 +1,16 @@
+{
+  "frame_width": 78,
+  "frame_height": 78,
+  "frame_count": 6,
+  "fps": 16,
+  "loop": false,
+  "anchor": [
+    39,
+    63
+  ],
+  "anchor_to": "feet",
+  "scale": 0.5,
+  "impact": 0.125,
+  "glow": "#ffc56f",
+  "behind": "shield_impact_behind.png"
+}

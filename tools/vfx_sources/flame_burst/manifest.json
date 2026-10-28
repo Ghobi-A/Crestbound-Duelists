@@ -1,0 +1,171 @@
+{
+ "app": "PixelLab VFX Creator",
+ "name": "Crestbound flame_burst",
+ "fps": 12,
+ "frame_ms": 83,
+ "frames": 12,
+ "loop": false,
+ "canvas": {
+  "w": 96,
+  "h": 96
+ },
+ "anchor": {
+  "kind": "feet",
+  "x": 48,
+  "y": 93
+ },
+ "clips": [
+  {
+   "name": "whole",
+   "title": "the whole effect, no sprite",
+   "depth": "both",
+   "loop": false,
+   "start_frame": 0,
+   "frames": 12,
+   "frame": {
+    "w": 75,
+    "h": 88
+   },
+   "sheets": [
+    {
+     "file": "whole.png",
+     "first_frame": 0,
+     "frames": 12,
+     "columns": 4,
+     "rows": 3
+    }
+   ],
+   "offset": {
+    "x": -40,
+    "y": -90
+   }
+  },
+  {
+   "name": "whole-with-sprite",
+   "title": "the whole effect with the sprite in it",
+   "depth": "both",
+   "loop": false,
+   "start_frame": 0,
+   "frames": 12,
+   "frame": {
+    "w": 90,
+    "h": 90
+   },
+   "sheets": [
+    {
+     "file": "whole-with-sprite.png",
+     "first_frame": 0,
+     "frames": 12,
+     "columns": 4,
+     "rows": 3
+    }
+   ],
+   "offset": {
+    "x": -45,
+    "y": -90
+   }
+  },
+  {
+   "name": "behind",
+   "title": "everything behind the sprite",
+   "depth": "behind",
+   "loop": false,
+   "start_frame": 0,
+   "frames": 11,
+   "frame": {
+    "w": 74,
+    "h": 81
+   },
+   "sheets": [
+    {
+     "file": "behind.png",
+     "first_frame": 0,
+     "frames": 11,
+     "columns": 4,
+     "rows": 3
+    }
+   ],
+   "offset": {
+    "x": -40,
+    "y": -90
+   }
+  },
+  {
+   "name": "front",
+   "title": "everything in front of the sprite",
+   "depth": "front",
+   "loop": false,
+   "start_frame": 3,
+   "frames": 9,
+   "frame": {
+    "w": 73,
+    "h": 62
+   },
+   "sheets": [
+    {
+     "file": "front.png",
+     "first_frame": 0,
+     "frames": 9,
+     "columns": 3,
+     "rows": 3
+    }
+   ],
+   "offset": {
+    "x": -38,
+    "y": -64
+   }
+  },
+  {
+   "name": "part-cartoon_boom",
+   "title": "the cartoon boom part",
+   "part": "cartoon_boom",
+   "depth": "behind",
+   "loop": false,
+   "start_frame": 0,
+   "frames": 11,
+   "frame": {
+    "w": 74,
+    "h": 81
+   },
+   "sheets": [
+    {
+     "file": "part-cartoon_boom.png",
+     "first_frame": 0,
+     "frames": 11,
+     "columns": 4,
+     "rows": 3
+    }
+   ],
+   "offset": {
+    "x": -40,
+    "y": -90
+   }
+  },
+  {
+   "name": "part-cooling_sparks",
+   "title": "the cooling sparks part",
+   "part": "cooling_sparks",
+   "depth": "front",
+   "loop": false,
+   "start_frame": 3,
+   "frames": 9,
+   "frame": {
+    "w": 73,
+    "h": 62
+   },
+   "sheets": [
+    {
+     "file": "part-cooling_sparks.png",
+     "first_frame": 0,
+     "frames": 9,
+     "columns": 3,
+     "rows": 3
+    }
+   ],
+   "offset": {
+    "x": -38,
+    "y": -64
+   }
+  }
+ ]
+}

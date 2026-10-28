@@ -1,0 +1,147 @@
+{
+ "app": "PixelLab VFX Creator",
+ "name": "Crestbound slash_arc",
+ "fps": 16,
+ "frame_ms": 63,
+ "frames": 9,
+ "loop": false,
+ "canvas": {
+  "w": 96,
+  "h": 85
+ },
+ "anchor": {
+  "kind": "feet",
+  "x": 48,
+  "y": 82
+ },
+ "clips": [
+  {
+   "name": "whole",
+   "title": "the whole effect, no sprite",
+   "depth": "both",
+   "loop": false,
+   "start_frame": 0,
+   "frames": 8,
+   "frame": {
+    "w": 57,
+    "h": 52
+   },
+   "sheets": [
+    {
+     "file": "whole.png",
+     "first_frame": 0,
+     "frames": 8,
+     "columns": 3,
+     "rows": 3
+    }
+   ],
+   "offset": {
+    "x": -32,
+    "y": -71
+   }
+  },
+  {
+   "name": "whole-with-sprite",
+   "title": "the whole effect with the sprite in it",
+   "depth": "both",
+   "loop": false,
+   "start_frame": 0,
+   "frames": 9,
+   "frame": {
+    "w": 90,
+    "h": 79
+   },
+   "sheets": [
+    {
+     "file": "whole-with-sprite.png",
+     "first_frame": 0,
+     "frames": 9,
+     "columns": 3,
+     "rows": 3
+    }
+   ],
+   "offset": {
+    "x": -45,
+    "y": -79
+   }
+  },
+  {
+   "name": "front",
+   "title": "everything in front of the sprite",
+   "depth": "front",
+   "loop": false,
+   "start_frame": 0,
+   "frames": 8,
+   "frame": {
+    "w": 57,
+    "h": 52
+   },
+   "sheets": [
+    {
+     "file": "front.png",
+     "first_frame": 0,
+     "frames": 8,
+     "columns": 3,
+     "rows": 3
+    }
+   ],
+   "offset": {
+    "x": -32,
+    "y": -71
+   }
+  },
+  {
+   "name": "part-swing_slash",
+   "title": "the swing slash part",
+   "role": "impact",
+   "part": "swing_slash",
+   "depth": "front",
+   "loop": false,
+   "start_frame": 0,
+   "frames": 8,
+   "frame": {
+    "w": 57,
+    "h": 52
+   },
+   "sheets": [
+    {
+     "file": "part-swing_slash.png",
+     "first_frame": 0,
+     "frames": 8,
+     "columns": 3,
+     "rows": 3
+    }
+   ],
+   "offset": {
+    "x": -32,
+    "y": -71
+   }
+  },
+  {
+   "name": "part-hit_star",
+   "title": "the hit star part",
+   "part": "hit_star",
+   "depth": "front",
+   "loop": false,
+   "start_frame": 2,
+   "frames": 3,
+   "frame": {
+    "w": 26,
+    "h": 24
+   },
+   "sheets": [
+    {
+     "file": "part-hit_star.png",
+     "first_frame": 0,
+     "frames": 3,
+     "columns": 2,
+     "rows": 2
+    }
+   ],
+   "offset": {
+    "x": -14,
+    "y": -52
+   }
+  }
+ ]
+}

@@ -1,0 +1,146 @@
+{
+ "app": "PixelLab VFX Creator",
+ "name": "Crestbound quick_flash",
+ "fps": 16,
+ "frame_ms": 63,
+ "frames": 7,
+ "loop": false,
+ "canvas": {
+  "w": 96,
+  "h": 85
+ },
+ "anchor": {
+  "kind": "feet",
+  "x": 48,
+  "y": 82
+ },
+ "clips": [
+  {
+   "name": "whole",
+   "title": "the whole effect, no sprite",
+   "depth": "both",
+   "loop": false,
+   "start_frame": 0,
+   "frames": 7,
+   "frame": {
+    "w": 45,
+    "h": 18
+   },
+   "sheets": [
+    {
+     "file": "whole.png",
+     "first_frame": 0,
+     "frames": 7,
+     "columns": 3,
+     "rows": 3
+    }
+   ],
+   "offset": {
+    "x": -9,
+    "y": -49
+   }
+  },
+  {
+   "name": "whole-with-sprite",
+   "title": "the whole effect with the sprite in it",
+   "depth": "both",
+   "loop": false,
+   "start_frame": 0,
+   "frames": 7,
+   "frame": {
+    "w": 90,
+    "h": 79
+   },
+   "sheets": [
+    {
+     "file": "whole-with-sprite.png",
+     "first_frame": 0,
+     "frames": 7,
+     "columns": 3,
+     "rows": 3
+    }
+   ],
+   "offset": {
+    "x": -45,
+    "y": -79
+   }
+  },
+  {
+   "name": "front",
+   "title": "everything in front of the sprite",
+   "depth": "front",
+   "loop": false,
+   "start_frame": 0,
+   "frames": 7,
+   "frame": {
+    "w": 45,
+    "h": 18
+   },
+   "sheets": [
+    {
+     "file": "front.png",
+     "first_frame": 0,
+     "frames": 7,
+     "columns": 3,
+     "rows": 3
+    }
+   ],
+   "offset": {
+    "x": -9,
+    "y": -49
+   }
+  },
+  {
+   "name": "part-thrust_streak",
+   "title": "the thrust streak part",
+   "part": "thrust_streak",
+   "depth": "front",
+   "loop": false,
+   "start_frame": 0,
+   "frames": 7,
+   "frame": {
+    "w": 38,
+    "h": 7
+   },
+   "sheets": [
+    {
+     "file": "part-thrust_streak.png",
+     "first_frame": 0,
+     "frames": 7,
+     "columns": 3,
+     "rows": 3
+    }
+   ],
+   "offset": {
+    "x": -2,
+    "y": -43
+   }
+  },
+  {
+   "name": "part-hit_star",
+   "title": "the hit star part",
+   "part": "hit_star",
+   "depth": "front",
+   "loop": false,
+   "start_frame": 2,
+   "frames": 2,
+   "frame": {
+    "w": 20,
+    "h": 18
+   },
+   "sheets": [
+    {
+     "file": "part-hit_star.png",
+     "first_frame": 0,
+     "frames": 2,
+     "columns": 2,
+     "rows": 1
+    }
+   ],
+   "offset": {
+    "x": -9,
+    "y": -49
+   }
+  }
+ ]
+}
