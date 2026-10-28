@@ -1,0 +1,16 @@
+{
+  "frame_width": 54,
+  "frame_height": 72,
+  "frame_count": 12,
+  "fps": 16,
+  "loop": false,
+  "anchor": [
+    28,
+    63
+  ],
+  "anchor_to": "feet",
+  "scale": 0.5,
+  "impact": 0.25,
+  "glow": "#e7f4ff",
+  "behind": "armor_shatter_behind.png"
+}

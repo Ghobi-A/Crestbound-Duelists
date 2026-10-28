@@ -1,0 +1,197 @@
+{
+ "app": "PixelLab VFX Creator",
+ "name": "Crestbound hex_sigil",
+ "fps": 20,
+ "frame_ms": 50,
+ "frames": 16,
+ "loop": false,
+ "canvas": {
+  "w": 96,
+  "h": 98
+ },
+ "anchor": {
+  "kind": "feet",
+  "x": 48,
+  "y": 82
+ },
+ "clips": [
+  {
+   "name": "whole",
+   "title": "the whole effect, no sprite",
+   "depth": "both",
+   "loop": false,
+   "start_frame": 0,
+   "frames": 16,
+   "frame": {
+    "w": 68,
+    "h": 86
+   },
+   "sheets": [
+    {
+     "file": "whole.png",
+     "first_frame": 0,
+     "frames": 16,
+     "columns": 4,
+     "rows": 4
+    }
+   ],
+   "offset": {
+    "x": -34,
+    "y": -73
+   }
+  },
+  {
+   "name": "whole-with-sprite",
+   "title": "the whole effect with the sprite in it",
+   "depth": "both",
+   "loop": false,
+   "start_frame": 0,
+   "frames": 16,
+   "frame": {
+    "w": 90,
+    "h": 92
+   },
+   "sheets": [
+    {
+     "file": "whole-with-sprite.png",
+     "first_frame": 0,
+     "frames": 16,
+     "columns": 4,
+     "rows": 4
+    }
+   ],
+   "offset": {
+    "x": -45,
+    "y": -79
+   }
+  },
+  {
+   "name": "behind",
+   "title": "everything behind the sprite",
+   "depth": "behind",
+   "loop": false,
+   "start_frame": 0,
+   "frames": 16,
+   "frame": {
+    "w": 68,
+    "h": 86
+   },
+   "sheets": [
+    {
+     "file": "behind.png",
+     "first_frame": 0,
+     "frames": 16,
+     "columns": 4,
+     "rows": 4
+    }
+   ],
+   "offset": {
+    "x": -34,
+    "y": -73
+   }
+  },
+  {
+   "name": "front",
+   "title": "everything in front of the sprite",
+   "depth": "front",
+   "loop": false,
+   "start_frame": 0,
+   "frames": 16,
+   "frame": {
+    "w": 39,
+    "h": 68
+   },
+   "sheets": [
+    {
+     "file": "front.png",
+     "first_frame": 0,
+     "frames": 16,
+     "columns": 4,
+     "rows": 4
+    }
+   ],
+   "offset": {
+    "x": -22,
+    "y": -63
+   }
+  },
+  {
+   "name": "part-square_sigil",
+   "title": "the square sigil part",
+   "part": "square_sigil",
+   "depth": "both",
+   "loop": false,
+   "start_frame": 0,
+   "frames": 16,
+   "frame": {
+    "w": 68,
+    "h": 30
+   },
+   "sheets": [
+    {
+     "file": "part-square_sigil.png",
+     "first_frame": 0,
+     "frames": 16,
+     "columns": 4,
+     "rows": 4
+    }
+   ],
+   "offset": {
+    "x": -34,
+    "y": -17
+   }
+  },
+  {
+   "name": "part-flash_burst",
+   "title": "the flash burst part",
+   "part": "flash_burst",
+   "depth": "front",
+   "loop": false,
+   "start_frame": 2,
+   "frames": 4,
+   "frame": {
+    "w": 25,
+    "h": 27
+   },
+   "sheets": [
+    {
+     "file": "part-flash_burst.png",
+     "first_frame": 0,
+     "frames": 4,
+     "columns": 2,
+     "rows": 2
+    }
+   ],
+   "offset": {
+    "x": -12,
+    "y": -55
+   }
+  },
+  {
+   "name": "part-curse_skulls",
+   "title": "the curse skulls part",
+   "part": "curse_skulls",
+   "depth": "both",
+   "loop": false,
+   "start_frame": 4,
+   "frames": 12,
+   "frame": {
+    "w": 40,
+    "h": 45
+   },
+   "sheets": [
+    {
+     "file": "part-curse_skulls.png",
+     "first_frame": 0,
+     "frames": 12,
+     "columns": 4,
+     "rows": 3
+    }
+   ],
+   "offset": {
+    "x": -21,
+    "y": -73
+   }
+  }
+ ]
+}

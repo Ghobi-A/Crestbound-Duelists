@@ -1,0 +1,16 @@
+{
+  "frame_width": 68,
+  "frame_height": 86,
+  "frame_count": 16,
+  "fps": 20,
+  "loop": false,
+  "anchor": [
+    34,
+    73
+  ],
+  "anchor_to": "feet",
+  "scale": 0.5,
+  "impact": 0.0,
+  "glow": "#9c44ff",
+  "behind": "hex_sigil_behind.png"
+}

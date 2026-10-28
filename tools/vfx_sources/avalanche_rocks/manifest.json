@@ -1,0 +1,197 @@
+{
+ "app": "PixelLab VFX Creator",
+ "name": "Crestbound avalanche_rocks",
+ "fps": 14,
+ "frame_ms": 71,
+ "frames": 12,
+ "loop": false,
+ "canvas": {
+  "w": 97,
+  "h": 101
+ },
+ "anchor": {
+  "kind": "feet",
+  "x": 48,
+  "y": 82
+ },
+ "clips": [
+  {
+   "name": "whole",
+   "title": "the whole effect, no sprite",
+   "depth": "both",
+   "loop": false,
+   "start_frame": 1,
+   "frames": 10,
+   "frame": {
+    "w": 88,
+    "h": 74
+   },
+   "sheets": [
+    {
+     "file": "whole.png",
+     "first_frame": 0,
+     "frames": 10,
+     "columns": 4,
+     "rows": 3
+    }
+   ],
+   "offset": {
+    "x": -42,
+    "y": -58
+   }
+  },
+  {
+   "name": "whole-with-sprite",
+   "title": "the whole effect with the sprite in it",
+   "depth": "both",
+   "loop": false,
+   "start_frame": 0,
+   "frames": 12,
+   "frame": {
+    "w": 91,
+    "h": 95
+   },
+   "sheets": [
+    {
+     "file": "whole-with-sprite.png",
+     "first_frame": 0,
+     "frames": 12,
+     "columns": 4,
+     "rows": 3
+    }
+   ],
+   "offset": {
+    "x": -45,
+    "y": -79
+   }
+  },
+  {
+   "name": "behind",
+   "title": "everything behind the sprite",
+   "depth": "behind",
+   "loop": false,
+   "start_frame": 1,
+   "frames": 10,
+   "frame": {
+    "w": 85,
+    "h": 40
+   },
+   "sheets": [
+    {
+     "file": "behind.png",
+     "first_frame": 0,
+     "frames": 10,
+     "columns": 4,
+     "rows": 3
+    }
+   ],
+   "offset": {
+    "x": -42,
+    "y": -24
+   }
+  },
+  {
+   "name": "front",
+   "title": "everything in front of the sprite",
+   "depth": "front",
+   "loop": false,
+   "start_frame": 1,
+   "frames": 10,
+   "frame": {
+    "w": 75,
+    "h": 71
+   },
+   "sheets": [
+    {
+     "file": "front.png",
+     "first_frame": 0,
+     "frames": 10,
+     "columns": 4,
+     "rows": 3
+    }
+   ],
+   "offset": {
+    "x": -29,
+    "y": -58
+   }
+  },
+  {
+   "name": "part-debris_burst",
+   "title": "the debris burst part",
+   "part": "debris_burst",
+   "depth": "front",
+   "loop": false,
+   "start_frame": 1,
+   "frames": 9,
+   "frame": {
+    "w": 75,
+    "h": 69
+   },
+   "sheets": [
+    {
+     "file": "part-debris_burst.png",
+     "first_frame": 0,
+     "frames": 9,
+     "columns": 3,
+     "rows": 3
+    }
+   ],
+   "offset": {
+    "x": -29,
+    "y": -58
+   }
+  },
+  {
+   "name": "part-ground_cracks",
+   "title": "the ground cracks part",
+   "part": "ground_cracks",
+   "depth": "behind",
+   "loop": false,
+   "start_frame": 1,
+   "frames": 8,
+   "frame": {
+    "w": 85,
+    "h": 31
+   },
+   "sheets": [
+    {
+     "file": "part-ground_cracks.png",
+     "first_frame": 0,
+     "frames": 8,
+     "columns": 3,
+     "rows": 3
+    }
+   ],
+   "offset": {
+    "x": -42,
+    "y": -15
+   }
+  },
+  {
+   "name": "part-crater_dust",
+   "title": "the crater dust part",
+   "part": "crater_dust",
+   "depth": "both",
+   "loop": false,
+   "start_frame": 2,
+   "frames": 9,
+   "frame": {
+    "w": 75,
+    "h": 37
+   },
+   "sheets": [
+    {
+     "file": "part-crater_dust.png",
+     "first_frame": 0,
+     "frames": 9,
+     "columns": 3,
+     "rows": 3
+    }
+   ],
+   "offset": {
+    "x": -38,
+    "y": -24
+   }
+  }
+ ]
+}

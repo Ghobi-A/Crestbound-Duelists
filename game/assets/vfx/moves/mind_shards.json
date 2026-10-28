@@ -1,0 +1,16 @@
+{
+  "frame_width": 54,
+  "frame_height": 74,
+  "frame_count": 12,
+  "fps": 12,
+  "loop": false,
+  "anchor": [
+    28,
+    67
+  ],
+  "anchor_to": "feet",
+  "scale": 0.5,
+  "impact": 0.0,
+  "glow": "#ffb851",
+  "behind": "mind_shards_behind.png"
+}

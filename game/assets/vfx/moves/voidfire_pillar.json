@@ -1,0 +1,16 @@
+{
+  "frame_width": 66,
+  "frame_height": 116,
+  "frame_count": 14,
+  "fps": 14,
+  "loop": false,
+  "anchor": [
+    33,
+    103
+  ],
+  "anchor_to": "feet",
+  "scale": 0.5,
+  "impact": 0.143,
+  "glow": "#a94aff",
+  "behind": "voidfire_pillar_behind.png"
+}
