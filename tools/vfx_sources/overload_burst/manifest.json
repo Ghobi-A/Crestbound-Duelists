@@ -1,0 +1,197 @@
+{
+ "app": "PixelLab VFX Creator",
+ "name": "Crestbound overload_burst",
+ "fps": 14,
+ "frame_ms": 71,
+ "frames": 12,
+ "loop": false,
+ "canvas": {
+  "w": 116,
+  "h": 107
+ },
+ "anchor": {
+  "kind": "feet",
+  "x": 58,
+  "y": 82
+ },
+ "clips": [
+  {
+   "name": "whole",
+   "title": "the whole effect, no sprite",
+   "depth": "both",
+   "loop": false,
+   "start_frame": 0,
+   "frames": 11,
+   "frame": {
+    "w": 110,
+    "h": 97
+   },
+   "sheets": [
+    {
+     "file": "whole.png",
+     "first_frame": 0,
+     "frames": 11,
+     "columns": 4,
+     "rows": 3
+    }
+   ],
+   "offset": {
+    "x": -55,
+    "y": -75
+   }
+  },
+  {
+   "name": "whole-with-sprite",
+   "title": "the whole effect with the sprite in it",
+   "depth": "both",
+   "loop": false,
+   "start_frame": 0,
+   "frames": 12,
+   "frame": {
+    "w": 110,
+    "h": 101
+   },
+   "sheets": [
+    {
+     "file": "whole-with-sprite.png",
+     "first_frame": 0,
+     "frames": 12,
+     "columns": 4,
+     "rows": 3
+    }
+   ],
+   "offset": {
+    "x": -55,
+    "y": -79
+   }
+  },
+  {
+   "name": "behind",
+   "title": "everything behind the sprite",
+   "depth": "behind",
+   "loop": false,
+   "start_frame": 0,
+   "frames": 11,
+   "frame": {
+    "w": 110,
+    "h": 97
+   },
+   "sheets": [
+    {
+     "file": "behind.png",
+     "first_frame": 0,
+     "frames": 11,
+     "columns": 4,
+     "rows": 3
+    }
+   ],
+   "offset": {
+    "x": -55,
+    "y": -75
+   }
+  },
+  {
+   "name": "front",
+   "title": "everything in front of the sprite",
+   "depth": "front",
+   "loop": false,
+   "start_frame": 2,
+   "frames": 6,
+   "frame": {
+    "w": 80,
+    "h": 26
+   },
+   "sheets": [
+    {
+     "file": "front.png",
+     "first_frame": 0,
+     "frames": 6,
+     "columns": 3,
+     "rows": 2
+    }
+   ],
+   "offset": {
+    "x": -40,
+    "y": -13
+   }
+  },
+  {
+   "name": "part-fire_blast",
+   "title": "the fire blast part",
+   "part": "fire_blast",
+   "depth": "behind",
+   "loop": false,
+   "start_frame": 0,
+   "frames": 11,
+   "frame": {
+    "w": 74,
+    "h": 71
+   },
+   "sheets": [
+    {
+     "file": "part-fire_blast.png",
+     "first_frame": 0,
+     "frames": 11,
+     "columns": 4,
+     "rows": 3
+    }
+   ],
+   "offset": {
+    "x": -36,
+    "y": -75
+   }
+  },
+  {
+   "name": "part-shockwave_ring",
+   "title": "the shockwave ring part",
+   "part": "shockwave_ring",
+   "depth": "both",
+   "loop": false,
+   "start_frame": 2,
+   "frames": 8,
+   "frame": {
+    "w": 110,
+    "h": 44
+   },
+   "sheets": [
+    {
+     "file": "part-shockwave_ring.png",
+     "first_frame": 0,
+     "frames": 8,
+     "columns": 3,
+     "rows": 3
+    }
+   ],
+   "offset": {
+    "x": -55,
+    "y": -22
+   }
+  },
+  {
+   "name": "part-ground_cracks",
+   "title": "the ground cracks part",
+   "part": "ground_cracks",
+   "depth": "behind",
+   "loop": false,
+   "start_frame": 2,
+   "frames": 8,
+   "frame": {
+    "w": 85,
+    "h": 31
+   },
+   "sheets": [
+    {
+     "file": "part-ground_cracks.png",
+     "first_frame": 0,
+     "frames": 8,
+     "columns": 3,
+     "rows": 3
+    }
+   ],
+   "offset": {
+    "x": -42,
+    "y": -15
+   }
+  }
+ ]
+}

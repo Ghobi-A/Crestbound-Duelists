@@ -1,0 +1,146 @@
+{
+ "app": "PixelLab VFX Creator",
+ "name": "Crestbound cripple_slash",
+ "fps": 16,
+ "frame_ms": 63,
+ "frames": 9,
+ "loop": false,
+ "canvas": {
+  "w": 96,
+  "h": 85
+ },
+ "anchor": {
+  "kind": "feet",
+  "x": 48,
+  "y": 82
+ },
+ "clips": [
+  {
+   "name": "whole",
+   "title": "the whole effect, no sprite",
+   "depth": "both",
+   "loop": false,
+   "start_frame": 0,
+   "frames": 8,
+   "frame": {
+    "w": 64,
+    "h": 42
+   },
+   "sheets": [
+    {
+     "file": "whole.png",
+     "first_frame": 0,
+     "frames": 8,
+     "columns": 3,
+     "rows": 3
+    }
+   ],
+   "offset": {
+    "x": -31,
+    "y": -45
+   }
+  },
+  {
+   "name": "whole-with-sprite",
+   "title": "the whole effect with the sprite in it",
+   "depth": "both",
+   "loop": false,
+   "start_frame": 0,
+   "frames": 9,
+   "frame": {
+    "w": 90,
+    "h": 79
+   },
+   "sheets": [
+    {
+     "file": "whole-with-sprite.png",
+     "first_frame": 0,
+     "frames": 9,
+     "columns": 3,
+     "rows": 3
+    }
+   ],
+   "offset": {
+    "x": -45,
+    "y": -79
+   }
+  },
+  {
+   "name": "front",
+   "title": "everything in front of the sprite",
+   "depth": "front",
+   "loop": false,
+   "start_frame": 0,
+   "frames": 8,
+   "frame": {
+    "w": 64,
+    "h": 42
+   },
+   "sheets": [
+    {
+     "file": "front.png",
+     "first_frame": 0,
+     "frames": 8,
+     "columns": 3,
+     "rows": 3
+    }
+   ],
+   "offset": {
+    "x": -31,
+    "y": -45
+   }
+  },
+  {
+   "name": "part-zigzag_slash",
+   "title": "the zigzag slash part",
+   "part": "zigzag_slash",
+   "depth": "front",
+   "loop": false,
+   "start_frame": 0,
+   "frames": 8,
+   "frame": {
+    "w": 64,
+    "h": 33
+   },
+   "sheets": [
+    {
+     "file": "part-zigzag_slash.png",
+     "first_frame": 0,
+     "frames": 8,
+     "columns": 3,
+     "rows": 3
+    }
+   ],
+   "offset": {
+    "x": -31,
+    "y": -44
+   }
+  },
+  {
+   "name": "part-spark_burst",
+   "title": "the spark burst part",
+   "part": "spark_burst",
+   "depth": "front",
+   "loop": false,
+   "start_frame": 3,
+   "frames": 5,
+   "frame": {
+    "w": 62,
+    "h": 42
+   },
+   "sheets": [
+    {
+     "file": "part-spark_burst.png",
+     "first_frame": 0,
+     "frames": 5,
+     "columns": 3,
+     "rows": 2
+    }
+   ],
+   "offset": {
+    "x": -31,
+    "y": -45
+   }
+  }
+ ]
+}

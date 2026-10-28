@@ -1,0 +1,15 @@
+{
+  "frame_width": 93,
+  "frame_height": 40,
+  "frame_count": 6,
+  "fps": 16,
+  "loop": false,
+  "anchor": [
+    74,
+    62
+  ],
+  "anchor_to": "feet",
+  "scale": 0.5,
+  "impact": 0.25,
+  "glow": "#ffb24b"
+}

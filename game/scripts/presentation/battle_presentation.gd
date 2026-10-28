@@ -51,7 +51,13 @@ func play_events(action: Dictionary, events: Array) -> void:
 					windup = maxf(windup, sprites[actor].contact_time())
 				await get_tree().create_timer(windup).timeout
 				if target != null and sprites.has(target):
-					await vfx.play_effect(str(move.get("vfx_key", "")), sprites[target].effect_origin(), impact_kind, weight)
+					# The effect plays on through the hit; damage, hit-stop
+					# and the reaction land on its impact frame.
+					var key := str(move.get("vfx_key", ""))
+					var struck: DuelistSprite = sprites[target]
+					vfx.play_effect(key, struck.effect_origin(), impact_kind, weight, "default",
+						struck.position, target.team == "player", struck.z_index)
+					await get_tree().create_timer(BattleVfx.impact_delay(key)).timeout
 			"brace":
 				hud.set_message("%s braces" % actor.display_name)
 				if sprites.has(actor): sprites[actor].play("brace")

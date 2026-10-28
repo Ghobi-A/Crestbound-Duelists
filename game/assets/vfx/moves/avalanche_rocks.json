@@ -1,0 +1,16 @@
+{
+  "frame_width": 88,
+  "frame_height": 74,
+  "frame_count": 11,
+  "fps": 14,
+  "loop": false,
+  "anchor": [
+    42,
+    58
+  ],
+  "anchor_to": "feet",
+  "scale": 0.5,
+  "impact": 0.143,
+  "glow": "#ffc671",
+  "behind": "avalanche_rocks_behind.png"
+}
