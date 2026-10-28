@@ -1,0 +1,171 @@
+{
+ "app": "PixelLab VFX Creator",
+ "name": "Crestbound armor_shatter",
+ "fps": 16,
+ "frame_ms": 63,
+ "frames": 12,
+ "loop": false,
+ "canvas": {
+  "w": 96,
+  "h": 94
+ },
+ "anchor": {
+  "kind": "feet",
+  "x": 48,
+  "y": 82
+ },
+ "clips": [
+  {
+   "name": "whole",
+   "title": "the whole effect, no sprite",
+   "depth": "both",
+   "loop": false,
+   "start_frame": 0,
+   "frames": 12,
+   "frame": {
+    "w": 54,
+    "h": 72
+   },
+   "sheets": [
+    {
+     "file": "whole.png",
+     "first_frame": 0,
+     "frames": 12,
+     "columns": 4,
+     "rows": 3
+    }
+   ],
+   "offset": {
+    "x": -28,
+    "y": -63
+   }
+  },
+  {
+   "name": "whole-with-sprite",
+   "title": "the whole effect with the sprite in it",
+   "depth": "both",
+   "loop": false,
+   "start_frame": 0,
+   "frames": 12,
+   "frame": {
+    "w": 90,
+    "h": 88
+   },
+   "sheets": [
+    {
+     "file": "whole-with-sprite.png",
+     "first_frame": 0,
+     "frames": 12,
+     "columns": 4,
+     "rows": 3
+    }
+   ],
+   "offset": {
+    "x": -45,
+    "y": -79
+   }
+  },
+  {
+   "name": "behind",
+   "title": "everything behind the sprite",
+   "depth": "behind",
+   "loop": false,
+   "start_frame": 4,
+   "frames": 4,
+   "frame": {
+    "w": 46,
+    "h": 45
+   },
+   "sheets": [
+    {
+     "file": "behind.png",
+     "first_frame": 0,
+     "frames": 4,
+     "columns": 2,
+     "rows": 2
+    }
+   ],
+   "offset": {
+    "x": -23,
+    "y": -62
+   }
+  },
+  {
+   "name": "front",
+   "title": "everything in front of the sprite",
+   "depth": "front",
+   "loop": false,
+   "start_frame": 0,
+   "frames": 12,
+   "frame": {
+    "w": 54,
+    "h": 72
+   },
+   "sheets": [
+    {
+     "file": "front.png",
+     "first_frame": 0,
+     "frames": 12,
+     "columns": 4,
+     "rows": 3
+    }
+   ],
+   "offset": {
+    "x": -28,
+    "y": -63
+   }
+  },
+  {
+   "name": "part-cross_slash",
+   "title": "the cross slash part",
+   "part": "cross_slash",
+   "depth": "front",
+   "loop": false,
+   "start_frame": 0,
+   "frames": 12,
+   "frame": {
+    "w": 52,
+    "h": 61
+   },
+   "sheets": [
+    {
+     "file": "part-cross_slash.png",
+     "first_frame": 0,
+     "frames": 12,
+     "columns": 4,
+     "rows": 3
+    }
+   ],
+   "offset": {
+    "x": -26,
+    "y": -63
+   }
+  },
+  {
+   "name": "part-shield_break",
+   "title": "the shield break part",
+   "part": "shield_break",
+   "depth": "both",
+   "loop": false,
+   "start_frame": 4,
+   "frames": 8,
+   "frame": {
+    "w": 51,
+    "h": 71
+   },
+   "sheets": [
+    {
+     "file": "part-shield_break.png",
+     "first_frame": 0,
+     "frames": 8,
+     "columns": 3,
+     "rows": 3
+    }
+   ],
+   "offset": {
+    "x": -28,
+    "y": -62
+   }
+  }
+ ]
+}

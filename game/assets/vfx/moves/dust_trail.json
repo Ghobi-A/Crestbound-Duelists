@@ -1,0 +1,16 @@
+{
+  "frame_width": 86,
+  "frame_height": 81,
+  "frame_count": 9,
+  "fps": 16,
+  "loop": false,
+  "anchor": [
+    54,
+    64
+  ],
+  "anchor_to": "feet",
+  "scale": 0.5,
+  "impact": 0.125,
+  "glow": "#ffc876",
+  "behind": "dust_trail_behind.png"
+}

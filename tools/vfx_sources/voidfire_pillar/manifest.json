@@ -1,0 +1,197 @@
+{
+ "app": "PixelLab VFX Creator",
+ "name": "Crestbound voidfire_pillar",
+ "fps": 14,
+ "frame_ms": 71,
+ "frames": 14,
+ "loop": false,
+ "canvas": {
+  "w": 96,
+  "h": 122
+ },
+ "anchor": {
+  "kind": "feet",
+  "x": 48,
+  "y": 106
+ },
+ "clips": [
+  {
+   "name": "whole",
+   "title": "the whole effect, no sprite",
+   "depth": "both",
+   "loop": false,
+   "start_frame": 0,
+   "frames": 14,
+   "frame": {
+    "w": 66,
+    "h": 116
+   },
+   "sheets": [
+    {
+     "file": "whole.png",
+     "first_frame": 0,
+     "frames": 14,
+     "columns": 4,
+     "rows": 4
+    }
+   ],
+   "offset": {
+    "x": -33,
+    "y": -103
+   }
+  },
+  {
+   "name": "whole-with-sprite",
+   "title": "the whole effect with the sprite in it",
+   "depth": "both",
+   "loop": false,
+   "start_frame": 0,
+   "frames": 14,
+   "frame": {
+    "w": 90,
+    "h": 116
+   },
+   "sheets": [
+    {
+     "file": "whole-with-sprite.png",
+     "first_frame": 0,
+     "frames": 14,
+     "columns": 4,
+     "rows": 4
+    }
+   ],
+   "offset": {
+    "x": -45,
+    "y": -103
+   }
+  },
+  {
+   "name": "behind",
+   "title": "everything behind the sprite",
+   "depth": "behind",
+   "loop": false,
+   "start_frame": 0,
+   "frames": 14,
+   "frame": {
+    "w": 66,
+    "h": 116
+   },
+   "sheets": [
+    {
+     "file": "behind.png",
+     "first_frame": 0,
+     "frames": 14,
+     "columns": 4,
+     "rows": 4
+    }
+   ],
+   "offset": {
+    "x": -33,
+    "y": -103
+   }
+  },
+  {
+   "name": "front",
+   "title": "everything in front of the sprite",
+   "depth": "front",
+   "loop": false,
+   "start_frame": 2,
+   "frames": 12,
+   "frame": {
+    "w": 63,
+    "h": 55
+   },
+   "sheets": [
+    {
+     "file": "front.png",
+     "first_frame": 0,
+     "frames": 12,
+     "columns": 4,
+     "rows": 3
+    }
+   ],
+   "offset": {
+    "x": -31,
+    "y": -42
+   }
+  },
+  {
+   "name": "part-sky_beam",
+   "title": "the sky beam part",
+   "part": "sky_beam",
+   "depth": "both",
+   "loop": false,
+   "start_frame": 0,
+   "frames": 11,
+   "frame": {
+    "w": 66,
+    "h": 116
+   },
+   "sheets": [
+    {
+     "file": "part-sky_beam.png",
+     "first_frame": 0,
+     "frames": 11,
+     "columns": 4,
+     "rows": 3
+    }
+   ],
+   "offset": {
+    "x": -33,
+    "y": -103
+   }
+  },
+  {
+   "name": "part-fire_ring",
+   "title": "the fire ring part",
+   "part": "fire_ring",
+   "depth": "both",
+   "loop": false,
+   "start_frame": 3,
+   "frames": 11,
+   "frame": {
+    "w": 64,
+    "h": 42
+   },
+   "sheets": [
+    {
+     "file": "part-fire_ring.png",
+     "first_frame": 0,
+     "frames": 11,
+     "columns": 4,
+     "rows": 3
+    }
+   ],
+   "offset": {
+    "x": -32,
+    "y": -29
+   }
+  },
+  {
+   "name": "part-ember_rise",
+   "title": "the ember rise part",
+   "part": "ember_rise",
+   "depth": "front",
+   "loop": false,
+   "start_frame": 4,
+   "frames": 10,
+   "frame": {
+    "w": 31,
+    "h": 41
+   },
+   "sheets": [
+    {
+     "file": "part-ember_rise.png",
+     "first_frame": 0,
+     "frames": 10,
+     "columns": 4,
+     "rows": 3
+    }
+   ],
+   "offset": {
+    "x": -13,
+    "y": -39
+   }
+  }
+ ]
+}

@@ -1,0 +1,146 @@
+{
+ "app": "PixelLab VFX Creator",
+ "name": "Crestbound wild_shimmer",
+ "fps": 18,
+ "frame_ms": 56,
+ "frames": 16,
+ "loop": false,
+ "canvas": {
+  "w": 96,
+  "h": 106
+ },
+ "anchor": {
+  "kind": "feet",
+  "x": 48,
+  "y": 82
+ },
+ "clips": [
+  {
+   "name": "whole",
+   "title": "the whole effect, no sprite",
+   "depth": "both",
+   "loop": false,
+   "start_frame": 0,
+   "frames": 15,
+   "frame": {
+    "w": 77,
+    "h": 87
+   },
+   "sheets": [
+    {
+     "file": "whole.png",
+     "first_frame": 0,
+     "frames": 15,
+     "columns": 4,
+     "rows": 4
+    }
+   ],
+   "offset": {
+    "x": -38,
+    "y": -66
+   }
+  },
+  {
+   "name": "whole-with-sprite",
+   "title": "the whole effect with the sprite in it",
+   "depth": "both",
+   "loop": false,
+   "start_frame": 0,
+   "frames": 16,
+   "frame": {
+    "w": 90,
+    "h": 100
+   },
+   "sheets": [
+    {
+     "file": "whole-with-sprite.png",
+     "first_frame": 0,
+     "frames": 16,
+     "columns": 4,
+     "rows": 4
+    }
+   ],
+   "offset": {
+    "x": -45,
+    "y": -79
+   }
+  },
+  {
+   "name": "front",
+   "title": "everything in front of the sprite",
+   "depth": "front",
+   "loop": false,
+   "start_frame": 0,
+   "frames": 15,
+   "frame": {
+    "w": 77,
+    "h": 87
+   },
+   "sheets": [
+    {
+     "file": "front.png",
+     "first_frame": 0,
+     "frames": 15,
+     "columns": 4,
+     "rows": 4
+    }
+   ],
+   "offset": {
+    "x": -38,
+    "y": -66
+   }
+  },
+  {
+   "name": "part-crackle_burst",
+   "title": "the crackle burst part",
+   "part": "crackle_burst",
+   "depth": "front",
+   "loop": false,
+   "start_frame": 0,
+   "frames": 15,
+   "frame": {
+    "w": 77,
+    "h": 87
+   },
+   "sheets": [
+    {
+     "file": "part-crackle_burst.png",
+     "first_frame": 0,
+     "frames": 15,
+     "columns": 4,
+     "rows": 4
+    }
+   ],
+   "offset": {
+    "x": -38,
+    "y": -66
+   }
+  },
+  {
+   "name": "part-star_burst",
+   "title": "the star burst part",
+   "part": "star_burst",
+   "depth": "front",
+   "loop": false,
+   "start_frame": 3,
+   "frames": 12,
+   "frame": {
+    "w": 41,
+    "h": 52
+   },
+   "sheets": [
+    {
+     "file": "part-star_burst.png",
+     "first_frame": 0,
+     "frames": 12,
+     "columns": 4,
+     "rows": 3
+    }
+   ],
+   "offset": {
+    "x": -20,
+    "y": -59
+   }
+  }
+ ]
+}
