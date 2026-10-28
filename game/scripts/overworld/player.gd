@@ -19,6 +19,7 @@ var _step_to := Vector2.ZERO
 var _step_progress := 1.0
 var _sprite: OverworldSprite
 var _has_sheet := false
+var _stride := 0  # alternates per tile so the feet take turns
 
 
 func setup(map: Node, start_tile: Vector2i) -> void:
@@ -44,10 +45,11 @@ func _process(delta: float) -> void:
 	if is_moving():
 		_step_progress = minf(_step_progress + delta / STEP_TIME, 1.0)
 		if _has_sheet:
-			_sprite.set_walk_phase(_step_progress)
+			_sprite.set_walk_phase(_step_progress, _stride)
 		position = _step_from.lerp(_step_to, _step_progress)
 		if not is_moving():
 			position = _step_to
+			_stride = 1 - _stride
 			AudioRouter.play_sfx("world", "step", -5.0)
 			stepped_onto.emit(tile)
 		return
@@ -89,7 +91,7 @@ func _process(delta: float) -> void:
 	_step_to = Vector2(tile * TILE) + Vector2(TILE / 2.0, TILE / 2.0)
 	_step_progress = 0.0
 	if _has_sheet:
-		_sprite.set_walk_phase(0.0)
+		_sprite.set_walk_phase(0.0, _stride)
 
 
 func _draw() -> void:

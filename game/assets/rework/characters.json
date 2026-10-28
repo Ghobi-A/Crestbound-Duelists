@@ -67,7 +67,9 @@
         132,
         160
       ],
-      "overworld_key": "elara"
+      "overworld_key": "elara",
+      "battle_body_height": 428,
+      "battle_sheet": "res://assets/battle/cast/almyra.png"
     },
     "liora": {
       "display_name": "Liora Sen",
@@ -95,7 +97,9 @@
         138,
         160
       ],
-      "overworld_key": "mira"
+      "overworld_key": "mira",
+      "battle_body_height": 417,
+      "battle_sheet": "res://assets/battle/cast/liora.png"
     },
     "riven_raider": {
       "display_name": "Riven Raider",
@@ -121,7 +125,8 @@
         138,
         160
       ],
-      "overworld_key": ""
+      "overworld_key": "",
+      "battle_body_height": 425
     },
     "unbound_mercenary": {
       "display_name": "Unbound Mercenary",
@@ -147,7 +152,8 @@
         138,
         160
       ],
-      "overworld_key": ""
+      "overworld_key": "",
+      "battle_body_height": 446
     },
     "hexbound_adept": {
       "display_name": "Hexbound Adept",
@@ -173,7 +179,8 @@
         138,
         160
       ],
-      "overworld_key": ""
+      "overworld_key": "",
+      "battle_body_height": 426
     },
     "kai_warrior": {
       "display_name": "Kai",
@@ -222,7 +229,9 @@
           205
         ],
         "body_height": 186
-      }
+      },
+      "battle_body_height": 460,
+      "battle_sheet": "res://assets/battle/cast/kai_warrior.png"
     },
     "kai_guardian": {
       "display_name": "Kai",
@@ -271,7 +280,9 @@
           205
         ],
         "body_height": 193
-      }
+      },
+      "battle_body_height": 461,
+      "battle_sheet": "res://assets/battle/cast/kai_guardian.png"
     },
     "kai_mage": {
       "display_name": "Kai",
@@ -320,7 +331,9 @@
           205
         ],
         "body_height": 193
-      }
+      },
+      "battle_body_height": 461,
+      "battle_sheet": "res://assets/battle/cast/kai_mage.png"
     },
     "kai_sorcerer": {
       "display_name": "Kai",
@@ -369,7 +382,9 @@
           205
         ],
         "body_height": 193
-      }
+      },
+      "battle_body_height": 452,
+      "battle_sheet": "res://assets/battle/cast/kai_sorcerer.png"
     },
     "kai_assassin": {
       "display_name": "Kai",
@@ -418,7 +433,9 @@
           205
         ],
         "body_height": 194
-      }
+      },
+      "battle_body_height": 446,
+      "battle_sheet": "res://assets/battle/cast/kai_assassin.png"
     },
     "kai_neutral": {
       "display_name": "Kai",
@@ -468,7 +485,9 @@
           205
         ],
         "body_height": 194
-      }
+      },
+      "battle_body_height": 455,
+      "battle_sheet": "res://assets/battle/cast/kai_neutral.png"
     },
     "route01_rowan": {
       "display_name": "Apprentice Rowan",
@@ -504,16 +523,17 @@
       "overworld": {
         "atlas": "res://assets/route01/rowan_overworld.png",
         "frame_size": [
-          272,
-          272
+          256,
+          256
         ],
         "row": 0,
         "foot_anchor": [
-          136,
-          260
+          128,
+          244
         ],
         "body_height": 216
-      }
+      },
+      "battle_body_height": 536
     },
     "route01_squire": {
       "display_name": "Travelling Squire",
@@ -549,16 +569,17 @@
       "overworld": {
         "atlas": "res://assets/route01/squire_overworld.png",
         "frame_size": [
-          264,
-          264
+          256,
+          256
         ],
         "row": 0,
         "foot_anchor": [
-          132,
-          252
+          128,
+          244
         ],
         "body_height": 209
-      }
+      },
+      "battle_body_height": 545
     },
     "route01_challenger": {
       "display_name": "Wandering Challenger",
@@ -603,12 +624,14 @@
           260
         ],
         "body_height": 232
-      }
+      },
+      "battle_body_height": 549
     }
   },
   "overworld_body_heights": {
     "almyra": 314,
     "kai": 304,
     "liora": 315
-  }
+  },
+  "battle_body_display": 39
 }

@@ -66,7 +66,7 @@ func build_for(unit: BattleUnit, allow_flee := false) -> void:
 		band.atlas = source.atlas
 		var region := source.region
 		var band_height := region.size.x * _banner.size.y / _banner.size.x
-		band.region = Rect2(region.position.x, region.position.y + region.size.y * 0.24, region.size.x, band_height)
+		band.region = Rect2(region.position.x, region.position.y + region.size.y * 0.36, region.size.x, band_height)
 		band.filter_clip = true
 		_banner.texture = band
 	queue_redraw()

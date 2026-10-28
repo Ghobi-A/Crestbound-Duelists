@@ -1,0 +1,110 @@
+{
+  "almyra": {
+    "head_ratio": 0.293,
+    "width_ratio": 0.664
+  },
+  "cassian": {
+    "head_ratio": 0.378,
+    "width_ratio": 0.689
+  },
+  "cassian_clave": {
+    "head_ratio": 0.378,
+    "width_ratio": 0.689
+  },
+  "danfor": {
+    "head_ratio": 0.325,
+    "width_ratio": 0.745
+  },
+  "ferris": {
+    "head_ratio": 0.294,
+    "width_ratio": 0.777
+  },
+  "gell": {
+    "head_ratio": 0.318,
+    "width_ratio": 0.559
+  },
+  "hexbound_adept": {
+    "head_ratio": 0.273,
+    "width_ratio": 0.636
+  },
+  "joey": {
+    "head_ratio": 0.31,
+    "width_ratio": 0.581
+  },
+  "kai_assassin": {
+    "head_ratio": 0.304,
+    "width_ratio": 0.581
+  },
+  "kai_guardian": {
+    "head_ratio": 0.241,
+    "width_ratio": 0.751
+  },
+  "kai_mage": {
+    "head_ratio": 0.273,
+    "width_ratio": 0.712
+  },
+  "kai_neutral": {
+    "head_ratio": 0.281,
+    "width_ratio": 0.665
+  },
+  "kai_sorcerer": {
+    "head_ratio": 0.281,
+    "width_ratio": 0.704
+  },
+  "kai_warrior": {
+    "head_ratio": 0.281,
+    "width_ratio": 0.627
+  },
+  "lena": {
+    "head_ratio": 0.411,
+    "width_ratio": 0.555
+  },
+  "liora": {
+    "head_ratio": 0.346,
+    "width_ratio": 0.704
+  },
+  "orrin": {
+    "head_ratio": 0.197,
+    "width_ratio": 0.714
+  },
+  "record:route01_challenger": {
+    "head_ratio": 0.293,
+    "width_ratio": 0.629
+  },
+  "record:route01_rowan": {
+    "head_ratio": 0.273,
+    "width_ratio": 0.565
+  },
+  "record:route01_squire": {
+    "head_ratio": 0.268,
+    "width_ratio": 0.77
+  },
+  "rin": {
+    "head_ratio": 0.119,
+    "width_ratio": 0.69
+  },
+  "riven_raider": {
+    "head_ratio": 0.409,
+    "width_ratio": 0.705
+  },
+  "row:kai": {
+    "head_ratio": 0.289,
+    "width_ratio": 0.579
+  },
+  "senna": {
+    "head_ratio": 0.352,
+    "width_ratio": 0.668
+  },
+  "silas": {
+    "head_ratio": 0.348,
+    "width_ratio": 0.622
+  },
+  "stranger": {
+    "head_ratio": 0.29,
+    "width_ratio": 0.6
+  },
+  "unbound_mercenary": {
+    "head_ratio": 0.222,
+    "width_ratio": 0.733
+  }
+}

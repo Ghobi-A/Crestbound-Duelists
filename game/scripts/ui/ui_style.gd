@@ -152,8 +152,16 @@ static func draw_text(canvas: CanvasItem, at: Vector2, text: String, size := FON
 
 
 static func text_width(text: String, size := FONT_SIZE, weight := REGULAR, tracking := 0.0) -> float:
-	var base := font(weight).get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1, maxi(size, MIN_FONT_SIZE)).x
-	return base + tracking * maxf(0.0, text.length() - 1)
+	var px := maxi(size, MIN_FONT_SIZE)
+	var face := font(weight)
+	if tracking <= 0.0:
+		return face.get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1, px).x
+	# Tracked text is drawn glyph by glyph (no kerning), so measure it the
+	# same way or wide serif capitals overrun the space they were fitted to.
+	var total := 0.0
+	for character in text:
+		total += face.get_string_size(character, HORIZONTAL_ALIGNMENT_LEFT, -1, px).x
+	return total + tracking * maxf(0.0, text.length() - 1)
 
 
 static func draw_frame(canvas: CanvasItem, rect: Rect2, colour: Color, width := HAIR) -> void:
