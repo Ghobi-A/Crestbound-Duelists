@@ -276,14 +276,18 @@ func set_facing(direction: Vector2i) -> void:
 	_apply()
 
 
-func set_walk_phase(progress: float) -> void:
-	## `progress` is the owning actor's 0..1 interpolation through one tile.
-	## Keeping frame selection tied to movement progress makes animation
-	## deterministic at any frame rate and gives each tile step all four poses.
+func set_walk_phase(progress: float, stride := 0) -> void:
+	## `progress` is the owning actor's 0..1 interpolation through one tile and
+	## `stride` alternates 0/1 per completed tile. One footfall per tile, feet
+	## alternating: even tiles play frames 0-1 (idle, left contact), odd tiles
+	## frames 2-3 (idle, right contact). Tied to movement progress, so the
+	## animation is deterministic at any frame rate.
 	if walk_frames <= 1:
 		return
+	var per_tile := maxi(1, walk_frames / 2)
 	var clamped := clampf(progress, 0.0, 0.999999)
-	_frame = mini(walk_frames - 1, int(floor(clamped * walk_frames)))
+	var start := (stride % 2) * per_tile
+	_frame = mini(walk_frames - 1, start + int(floor(clamped * per_tile)))
 	_apply()
 
 

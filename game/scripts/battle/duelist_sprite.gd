@@ -39,6 +39,8 @@ var _state := "idle"
 var _frame := 0
 var _frame_clock := 0.0
 var _holding := false   # a non-looping animation finished; hold last frame
+var _play_serial := 0   # bumped by play(); a hit-stop never overrides a newer state
+var _columns := 0       # frame grid width; 0 = a single row
 var _entity_clock := 0.0
 var _entity_frame := 0
 var _entity_frame_count := 2
@@ -149,7 +151,56 @@ static func battle_scale(manifest: Dictionary, record: Dictionary, anchor_y: flo
 	return float(manifest.get("display_height", 44)) / maxf(1.0, anchor_y)
 
 
+func _setup_animated_sprite(record: Dictionary) -> bool:
+	## Authored battle animation (tools/build_battle_sheets.py): a frame grid
+	## with idle/attack/hit/defeat states, scaled by its measured body height.
+	var path := str(record.get("battle_sheet", ""))
+	var sidecar := VisualAsset.sidecar_for(path) if path != "" else {}
+	if sidecar.is_empty() or not ResourceLoader.exists(path):
+		return false
+	_frame_w = int(sidecar.frame_width)
+	_frame_h = int(sidecar.frame_height)
+	_columns = int(sidecar.get("columns", 0))
+	_states = sidecar.states
+	_anchor = Vector2(sidecar.anchor[0], sidecar.anchor[1])
+	var manifest := CharacterPresentation.manifest()
+	_display_scale = float(manifest.get("battle_body_display", 39)) / maxf(1.0, float(sidecar.body_height))
+	_sprite = Sprite2D.new()
+	_sprite.texture = load(path)
+	_sprite.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
+	_sprite.region_enabled = true
+	_sprite.region_filter_clip_enabled = true
+	_sprite.centered = false
+	_sprite.flip_h = PresentationLayout.needs_flip(str(sidecar.get("native_facing", "right")), unit.team)
+	_sprite.scale = Vector2.ONE * _display_scale
+	_sprite.position = -PresentationLayout.mirrored_anchor(_anchor, _frame_w, _sprite.flip_h) * _display_scale
+	_sprite_pivot = Node2D.new()
+	add_child(_sprite_pivot)
+	_sprite_pivot.add_child(_sprite)
+	_feet_y = 0.0
+	_has_sheet = true
+	_apply_frame()
+	return true
+
+
+func has_frames(state: String) -> bool:
+	## True when the art itself animates this state; tweens then only add
+	## secondary motion (lunge, knockback, flash), never squash or topple.
+	return _states.has(state) and int(_states[state].get("count", 1)) > 1
+
+
+func contact_time() -> float:
+	## Seconds from the start of "attack" to the frame where the blow lands
+	## (0 for art without authored attack frames).
+	if not has_frames("attack"):
+		return 0.0
+	var attack: Dictionary = _states["attack"]
+	return float(attack.get("contact", 0)) / maxf(1.0, float(attack.get("fps", 12)))
+
+
 func _setup_registered_sprite(record: Dictionary) -> void:
+	if _setup_animated_sprite(record):
+		return
 	var texture := CharacterPresentation.atlas(record)
 	if texture == null:
 		return
@@ -284,8 +335,11 @@ func _apply_frame() -> void:
 		_sprite.region_rect = _atlas_rect
 		return
 	var state: Dictionary = _effective_state(_state)
-	var start := int(state.get("start", 0))
-	_sprite.region_rect = Rect2((start + _frame) * _frame_w, 0, _frame_w, _frame_h)
+	var index := int(state.get("start", 0)) + _frame
+	if _columns > 0:
+		_sprite.region_rect = Rect2((index % _columns) * _frame_w, (index / _columns) * _frame_h, _frame_w, _frame_h)
+	else:
+		_sprite.region_rect = Rect2(index * _frame_w, 0, _frame_w, _frame_h)
 
 
 func _effective_state(name: String) -> Dictionary:
@@ -372,7 +426,37 @@ func _set_confirm_flash(value: float) -> void:
 	queue_redraw()
 
 
+func hit_stop(duration: float) -> void:
+	## Freeze this combatant's current motion (mid-strike) for `duration`.
+	var running: Array = []
+	for tween in [_tween, _pivot_tween]:
+		if tween != null and tween.is_running():
+			tween.pause()
+			running.append(tween)
+	var frozen := _holding
+	var serial := _play_serial
+	_holding = true
+	await get_tree().create_timer(duration).timeout
+	if serial != _play_serial:
+		return  # a new state started during the freeze; it owns the motion now
+	_holding = frozen
+	for tween in running:
+		if is_instance_valid(tween) and tween.is_valid():
+			tween.play()
+
+
+func contact_flash(duration: float) -> void:
+	## The contact frame: a hard white pop on the art alone, before the hit.
+	if _sprite == null:
+		return
+	_sprite.self_modulate = Color(2.2, 2.2, 2.2)
+	await get_tree().create_timer(duration).timeout
+	if is_instance_valid(_sprite):
+		_sprite.self_modulate = Color.WHITE
+
+
 func play(state: String) -> void:
+	_play_serial += 1
 	_state = state
 	_frame = 0
 	_frame_clock = 0.0
@@ -404,11 +488,17 @@ func play(state: String) -> void:
 		var lean := 1.0 if unit.team == "player" else -1.0   # attacks lean toward the enemy side
 		match state:
 			"attack":
-				var toward := Vector2(0, -3) if unit.team == "player" else Vector2(0, 3)
+				# Step toward the opposing side (teams face each other left/right).
+				var toward := Vector2(6, 0) if unit.team == "player" else Vector2(-6, 0)
 				_tween = create_tween()
+				# Authored strikes wind up in place and arrive on their
+				# contact frame; single-frame art lunges straight away.
+				var lead := maxf(0.0, contact_time() - 0.1)
+				if lead > 0.0:
+					_tween.tween_interval(lead)
 				_tween.tween_property(self, "position", home_position + toward, 0.1)
 				_tween.tween_property(self, "position", home_position, 0.15)
-				if _sprite_pivot != null:
+				if _sprite_pivot != null and not has_frames("attack"):
 					_pivot_tween = create_tween()
 					# Anticipation crouch, then a forward stretch on the
 					# strike, then settle — a squash/stretch beat standing
@@ -434,7 +524,7 @@ func play(state: String) -> void:
 				_tween.parallel().tween_property(self, "position", home_position + knockback, 0.06)
 				_tween.tween_property(self, "modulate", Color.WHITE, 0.15)
 				_tween.parallel().tween_property(self, "position", home_position, 0.16)
-				if _sprite_pivot != null:
+				if _sprite_pivot != null and not has_frames("hit"):
 					_pivot_tween = create_tween()
 					_pivot_tween.tween_property(_sprite_pivot, "scale", Vector2(1.12, 0.85), 0.05)
 					_pivot_tween.parallel().tween_property(_sprite_pivot, "rotation", deg_to_rad(-10.0 * lean), 0.05)
@@ -446,8 +536,9 @@ func play(state: String) -> void:
 				# A collapse, not just a colour fade: the unit topples and
 				# sinks, and — unlike the other states — this pose is left
 				# in place (defeat never springs back to idle).
-				_tween.parallel().tween_property(self, "position", home_position + Vector2(0, 4), 0.4)
-				if _sprite_pivot != null:
+				if not has_frames("defeat"):
+					_tween.parallel().tween_property(self, "position", home_position + Vector2(0, 4), 0.4)
+				if _sprite_pivot != null and not has_frames("defeat"):
 					_pivot_tween = create_tween()
 					_pivot_tween.tween_property(_sprite_pivot, "rotation", deg_to_rad(78.0 * lean), 0.4)
 					_pivot_tween.parallel().tween_property(_sprite_pivot, "scale", Vector2(0.88, 0.82), 0.4)
@@ -472,7 +563,7 @@ func play(state: String) -> void:
 	# Placeholder path (no sheet available for this build).
 	match state:
 		"attack":
-			var toward := Vector2(0, -6) if unit.team == "player" else Vector2(0, 6)
+			var toward := Vector2(6, 0) if unit.team == "player" else Vector2(-6, 0)
 			_tween = create_tween()
 			_tween.tween_property(self, "position", home_position + toward, 0.08)
 			_tween.tween_property(self, "position", home_position, 0.12)

@@ -68,7 +68,8 @@
         160
       ],
       "overworld_key": "elara",
-      "battle_body_height": 428
+      "battle_body_height": 428,
+      "battle_sheet": "res://assets/battle/cast/almyra.png"
     },
     "liora": {
       "display_name": "Liora Sen",
@@ -97,7 +98,8 @@
         160
       ],
       "overworld_key": "mira",
-      "battle_body_height": 417
+      "battle_body_height": 417,
+      "battle_sheet": "res://assets/battle/cast/liora.png"
     },
     "riven_raider": {
       "display_name": "Riven Raider",
@@ -228,7 +230,8 @@
         ],
         "body_height": 186
       },
-      "battle_body_height": 460
+      "battle_body_height": 460,
+      "battle_sheet": "res://assets/battle/cast/kai_warrior.png"
     },
     "kai_guardian": {
       "display_name": "Kai",
@@ -278,7 +281,8 @@
         ],
         "body_height": 193
       },
-      "battle_body_height": 461
+      "battle_body_height": 461,
+      "battle_sheet": "res://assets/battle/cast/kai_guardian.png"
     },
     "kai_mage": {
       "display_name": "Kai",
@@ -328,7 +332,8 @@
         ],
         "body_height": 193
       },
-      "battle_body_height": 461
+      "battle_body_height": 461,
+      "battle_sheet": "res://assets/battle/cast/kai_mage.png"
     },
     "kai_sorcerer": {
       "display_name": "Kai",
@@ -378,7 +383,8 @@
         ],
         "body_height": 193
       },
-      "battle_body_height": 452
+      "battle_body_height": 452,
+      "battle_sheet": "res://assets/battle/cast/kai_sorcerer.png"
     },
     "kai_assassin": {
       "display_name": "Kai",
@@ -428,7 +434,8 @@
         ],
         "body_height": 194
       },
-      "battle_body_height": 446
+      "battle_body_height": 446,
+      "battle_sheet": "res://assets/battle/cast/kai_assassin.png"
     },
     "kai_neutral": {
       "display_name": "Kai",
@@ -479,7 +486,8 @@
         ],
         "body_height": 194
       },
-      "battle_body_height": 455
+      "battle_body_height": 455,
+      "battle_sheet": "res://assets/battle/cast/kai_neutral.png"
     },
     "route01_rowan": {
       "display_name": "Apprentice Rowan",
