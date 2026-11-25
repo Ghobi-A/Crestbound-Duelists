@@ -149,7 +149,7 @@ def add_route(locations):
         "subtitle": "The road beyond home",
         "scene": "res://scenes/overworld/route_01.tscn",
         "rows": ["".join(r) for r in grid],
-        "music_id": "greymere",
+        "music_id": "greymere_route",
         # Organic shader terrain, sun lighting and grading (WorldLocation).
         "painted": {"path_symbols": ",", "path_material": "dirt"},
         "interior": False,

@@ -42,7 +42,7 @@ const MENU_BAND := Rect2(24, 0, 98, 9)
 
 func _ready() -> void:
 	_build_ui()
-	AudioRouter.play_music("greymere")
+	AudioRouter.play_music("main_theme")
 	if not GameData.load_ok:
 		_show_data_error()
 		return

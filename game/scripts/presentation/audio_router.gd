@@ -12,6 +12,8 @@ const ROOTS := {
 
 var _missing: Dictionary = {}
 var _music: AudioStreamPlayer
+var _music_fade: Tween
+var _music_stopping := false
 var _voices: Array[AudioStreamPlayer] = []
 
 
@@ -52,13 +54,19 @@ func play_music(cue: String, fade_seconds := 0.2) -> void:
 	if not has_cue("music", cue):
 		return
 	var next_stream: AudioStream = load(asset_path("music", cue))
+	if _music.stream == next_stream and _music.playing and not _music_stopping:
+		return
+	_cancel_music_fade()
 	if _music.stream == next_stream and _music.playing:
+		_music_fade = create_tween()
+		_music_fade.tween_property(_music, "volume_db", 0.0, fade_seconds)
 		return
 	_music.stream = next_stream
 	_music.volume_db = -18.0 if fade_seconds > 0.0 else 0.0
 	_music.play()
 	if fade_seconds > 0.0:
-		create_tween().tween_property(_music, "volume_db", 0.0, fade_seconds)
+		_music_fade = create_tween()
+		_music_fade.tween_property(_music, "volume_db", 0.0, fade_seconds)
 
 
 func play_voice(cue: String, volume_db := 0.0) -> void:
@@ -85,11 +93,19 @@ func stop_voices() -> void:
 
 
 func stop_music(fade_seconds := 0.4) -> void:
+	_cancel_music_fade()
 	if not _music.playing:
 		return
 	if fade_seconds <= 0.0:
 		_music.stop()
 		return
-	var fade := create_tween()
-	fade.tween_property(_music, "volume_db", -40.0, fade_seconds)
-	fade.tween_callback(_music.stop)
+	_music_stopping = true
+	_music_fade = create_tween()
+	_music_fade.tween_property(_music, "volume_db", -40.0, fade_seconds)
+	_music_fade.tween_callback(_music.stop)
+
+
+func _cancel_music_fade() -> void:
+	if _music_fade != null:
+		_music_fade.kill()
+	_music_stopping = false
