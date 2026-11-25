@@ -4,6 +4,8 @@ extends Control
 
 const OVERWORLD_SCENE := "res://scenes/overworld/greymere.tscn"
 const PARTY_SETUP_SCENE := "res://scenes/ui/party_setup.tscn"
+const OPENING_SCENE := "res://scenes/cinematics/opening.tscn"
+const BOOT_SCENE := "res://scenes/boot/boot.tscn"
 
 # Quick Battle skips class selection with a sensible, balanced default
 # so a recruiter reaches gameplay in one press.
@@ -34,6 +36,7 @@ var _menu_band: UiDecor
 # behind them, so the two can never disagree about where a row sits.
 const MENU_TOP := 80.0
 const MENU_PITCH := 11.0
+const MENU_ROWS := 5   # Play, Quick Battle, Continue (with a save), Watch Opening, Controls
 const MENU_BAND := Rect2(24, 0, 98, 9)
 
 
@@ -47,6 +50,7 @@ func _ready() -> void:
 	_menu_options = ["Play Story Demo", "Quick Battle"]
 	if SaveManager.has_compatible_save():
 		_menu_options.append("Continue")
+	_menu_options.append("Watch Opening")
 	_menu_options.append("Controls")
 	_refresh()
 
@@ -83,7 +87,7 @@ func _build_ui() -> void:
 	# One label per menu row (rather than a single joined-text label) so a
 	# selection band can sit behind exactly the highlighted row, matching
 	# the battle action menu's treatment.
-	for i in 4:
+	for i in MENU_ROWS:
 		var row := _make_label(Vector2(0, MENU_TOP + i * MENU_PITCH), 6, UiStyle.TEXT, UiStyle.MEDIUM)
 		row.position.x = MENU_BAND.position.x + 5
 		row.size = Vector2(MENU_BAND.size.x - 6, MENU_BAND.size.y)
@@ -237,6 +241,10 @@ func _menu_input() -> void:
 				if SaveManager.load_game():
 					SceneTransition.change_scene(GameState.current_scene)
 					return
+			"Watch Opening":
+				CinematicPlayer.return_scene = BOOT_SCENE
+				SceneTransition.change_scene(OPENING_SCENE)
+				return
 			"Controls":
 				_screen = Screen.CONTROLS
 	_refresh()
@@ -266,6 +274,8 @@ func _class_select_input() -> void:
 		_screen = Screen.MENU
 	elif Input.is_action_just_pressed("interact"):
 		GameState.start_new_game(_class_list[_class_index])
-		SceneTransition.change_scene(OVERWORLD_SCENE)
+		# A new story opens on "The Last Accord", then fades into Greymere.
+		CinematicPlayer.return_scene = OVERWORLD_SCENE
+		SceneTransition.change_scene(OPENING_SCENE)
 		return
 	_refresh()

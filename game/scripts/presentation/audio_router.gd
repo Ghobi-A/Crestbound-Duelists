@@ -7,10 +7,12 @@ const ROOTS := {
 	"world": "res://assets/audio/sfx/world/",
 	"battle": "res://assets/audio/sfx/battle/",
 	"music": "res://assets/audio/music/",
+	"voice": "res://assets/audio/voice/",
 }
 
 var _missing: Dictionary = {}
 var _music: AudioStreamPlayer
+var _voices: Array[AudioStreamPlayer] = []
 
 
 func _ready() -> void:
@@ -55,3 +57,37 @@ func play_music(cue: String, fade_seconds := 0.2) -> void:
 	_music.play()
 	if fade_seconds > 0.0:
 		create_tween().tween_property(_music, "volume_db", 0.0, fade_seconds)
+
+
+func play_voice(cue: String, volume_db := 0.0) -> void:
+	## Narration and dialogue lines (e.g. "opening/vo_01"). Silent when the
+	## recording has not been added yet; stop_voices() cuts every line.
+	if not has_cue("voice", cue):
+		return
+	var player := AudioStreamPlayer.new()
+	player.stream = load(asset_path("voice", cue))
+	player.volume_db = volume_db
+	add_child(player)
+	_voices.append(player)
+	player.finished.connect(func() -> void:
+		_voices.erase(player)
+		player.queue_free())
+	player.play()
+
+
+func stop_voices() -> void:
+	for player in _voices:
+		if is_instance_valid(player):
+			player.queue_free()
+	_voices.clear()
+
+
+func stop_music(fade_seconds := 0.4) -> void:
+	if not _music.playing:
+		return
+	if fade_seconds <= 0.0:
+		_music.stop()
+		return
+	var fade := create_tween()
+	fade.tween_property(_music, "volume_db", -40.0, fade_seconds)
+	fade.tween_callback(_music.stop)
