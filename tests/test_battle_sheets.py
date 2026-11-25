@@ -13,7 +13,6 @@ spec.loader.exec_module(builder)
 
 CHARACTERS = json.loads((ROOT / "game/assets/rework/characters.json").read_text())["characters"]
 ANIMATED = sorted(p.name for p in builder.SOURCES.iterdir() if p.is_dir())
-WAVE_A = {"kai_warrior", "kai_guardian", "kai_mage", "kai_sorcerer", "kai_assassin", "kai_neutral", "almyra", "liora"}
 
 
 def _sheet(name):
@@ -28,8 +27,9 @@ def _frame(sidecar, image, index):
     return image[row * h:(row + 1) * h, column * w:(column + 1) * w]
 
 
-def test_wave_a_cast_is_animated_and_referenced():
-    assert WAVE_A <= set(ANIMATED)
+def test_every_battle_record_is_animated_and_referenced():
+    # The party, the Hollow Court enemies and the route trainers.
+    assert set(ANIMATED) == set(CHARACTERS)
     for name in ANIMATED:
         assert CHARACTERS[name]["battle_sheet"] == f"res://assets/battle/cast/{name}.png"
 

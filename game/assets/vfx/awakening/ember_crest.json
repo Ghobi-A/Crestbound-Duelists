@@ -1,0 +1,16 @@
+{
+  "frame_width": 65,
+  "frame_height": 98,
+  "frame_count": 12,
+  "fps": 14,
+  "loop": false,
+  "anchor": [
+    32,
+    86
+  ],
+  "anchor_to": "feet",
+  "scale": 0.5,
+  "impact": 0.143,
+  "glow": "#ff8b1f",
+  "behind": "ember_crest_behind.png"
+}

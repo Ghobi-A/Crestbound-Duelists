@@ -263,10 +263,14 @@ func _setup_entity() -> void:
 	# Tucked just behind its own bearer (formation slots are ~42 px apart, so
 	# the old 24 px offset put a companion beside the neighbouring ally).
 	var default_offset := Vector2(-13, -7) if unit.team == "player" else Vector2(13, -6)
-	var raw_offset = sidecar.get("stage_offset", [default_offset.x, default_offset.y])
-	if not raw_offset is Array or raw_offset.size() != 2:
-		raw_offset = [default_offset.x, default_offset.y]
-	_entity_sprite.position = Vector2(float(raw_offset[0]), float(raw_offset[1]))
+	# A sidecar's stage_offset is authored for the player side (+x toward the
+	# enemy); enemy bearers mirror it so the companion keeps its place.
+	var raw_offset = sidecar.get("stage_offset", null)
+	if raw_offset is Array and raw_offset.size() == 2:
+		var side := 1.0 if unit.team == "player" else -1.0
+		_entity_sprite.position = Vector2(float(raw_offset[0]) * side, float(raw_offset[1]))
+	else:
+		_entity_sprite.position = default_offset
 	_entity_sprite.z_index = -1
 	if sidecar.has("display_height"):
 		# Painted HD art: scale to its display height, face the opponent and

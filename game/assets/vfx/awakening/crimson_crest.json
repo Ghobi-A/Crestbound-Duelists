@@ -1,0 +1,16 @@
+{
+  "frame_width": 62,
+  "frame_height": 97,
+  "frame_count": 12,
+  "fps": 14,
+  "loop": false,
+  "anchor": [
+    31,
+    85
+  ],
+  "anchor_to": "feet",
+  "scale": 0.5,
+  "impact": 0.143,
+  "glow": "#ff6149",
+  "behind": "crimson_crest_behind.png"
+}

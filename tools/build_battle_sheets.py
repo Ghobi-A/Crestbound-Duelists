@@ -48,6 +48,8 @@ STATES = {
 CONTACT = {
     "kai_warrior": 7, "kai_guardian": 6, "kai_mage": 5, "kai_sorcerer": 4,
     "kai_assassin": 4, "kai_neutral": 3, "almyra": 2, "liora": 5,
+    "riven_raider": 7, "unbound_mercenary": 6, "hexbound_adept": 3,
+    "route01_rowan": 7, "route01_squire": 3, "route01_challenger": 7,
 }
 
 

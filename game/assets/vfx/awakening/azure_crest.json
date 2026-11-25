@@ -1,0 +1,16 @@
+{
+  "frame_width": 110,
+  "frame_height": 105,
+  "frame_count": 12,
+  "fps": 14,
+  "loop": false,
+  "anchor": [
+    55,
+    83
+  ],
+  "anchor_to": "feet",
+  "scale": 0.5,
+  "impact": 0.214,
+  "glow": "#2293ff",
+  "behind": "azure_crest_behind.png"
+}

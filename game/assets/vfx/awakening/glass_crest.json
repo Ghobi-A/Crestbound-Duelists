@@ -1,0 +1,16 @@
+{
+  "frame_width": 54,
+  "frame_height": 93,
+  "frame_count": 14,
+  "fps": 14,
+  "loop": false,
+  "anchor": [
+    28,
+    83
+  ],
+  "anchor_to": "feet",
+  "scale": 0.5,
+  "impact": 0.071,
+  "glow": "#95e4ff",
+  "behind": "glass_crest_behind.png"
+}

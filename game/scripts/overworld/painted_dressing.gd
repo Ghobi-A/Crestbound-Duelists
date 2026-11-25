@@ -30,9 +30,16 @@ static func build(parent: Node, rows: Array, occupied: Dictionary) -> int:
 			if symbol == "#" and _touches(rows, cell, func(s): return s != "#" and s != "~") and _h(x, y, 301) % 2 == 0:
 				parent.add_child(_sprite(shrub, cell, SHRUB_WIDTH, _h(x, y, 302)))
 				placed += 1
-			elif symbol == "~" and _touches(rows, cell, func(s): return s != "~") and _h(x, y, 303) % 2 == 0:
-				parent.add_child(_sprite(rock, cell, ROCK_WIDTH, _h(x, y, 304)))
-				placed += 1
+			elif symbol == "~" and _h(x, y, 303) % 3 == 0:
+				# Rocks sit on the bank, nudged toward the land they touch, and
+				# sparsely: a narrow creek has a shore on both sides of every
+				# tile, so the old 1-in-2 rate filled it with rows of stones.
+				var bank := _land_side(rows, cell)
+				if bank != Vector2i.ZERO:
+					var sprite := _sprite(rock, cell, ROCK_WIDTH, _h(x, y, 304))
+					sprite.position += Vector2(bank) * 5.0
+					parent.add_child(sprite)
+					placed += 1
 	return placed
 
 
@@ -44,6 +51,17 @@ static func _touches(rows: Array, cell: Vector2i, test: Callable) -> bool:
 		if test.call(str(rows[c.y])[c.x]):
 			return true
 	return false
+
+
+static func _land_side(rows: Array, cell: Vector2i) -> Vector2i:
+	## The first neighbouring side that is not water, or ZERO in open water.
+	for side in [Vector2i.LEFT, Vector2i.RIGHT, Vector2i.UP, Vector2i.DOWN]:
+		var c: Vector2i = cell + side
+		if c.y < 0 or c.y >= rows.size() or c.x < 0 or c.x >= str(rows[c.y]).length():
+			continue
+		if str(rows[c.y])[c.x] != "~":
+			return side
+	return Vector2i.ZERO
 
 
 static func _sprite(texture: Texture2D, cell: Vector2i, width: float, roll: int) -> Sprite2D:

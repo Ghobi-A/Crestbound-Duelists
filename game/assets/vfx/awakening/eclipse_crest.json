@@ -1,0 +1,16 @@
+{
+  "frame_width": 52,
+  "frame_height": 94,
+  "frame_count": 13,
+  "fps": 16,
+  "loop": false,
+  "anchor": [
+    26,
+    83
+  ],
+  "anchor_to": "feet",
+  "scale": 0.5,
+  "impact": 0.125,
+  "glow": "#a655ff",
+  "behind": "eclipse_crest_behind.png"
+}

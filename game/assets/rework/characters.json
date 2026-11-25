@@ -126,7 +126,8 @@
         160
       ],
       "overworld_key": "",
-      "battle_body_height": 425
+      "battle_body_height": 425,
+      "battle_sheet": "res://assets/battle/cast/riven_raider.png"
     },
     "unbound_mercenary": {
       "display_name": "Unbound Mercenary",
@@ -153,7 +154,8 @@
         160
       ],
       "overworld_key": "",
-      "battle_body_height": 446
+      "battle_body_height": 446,
+      "battle_sheet": "res://assets/battle/cast/unbound_mercenary.png"
     },
     "hexbound_adept": {
       "display_name": "Hexbound Adept",
@@ -180,7 +182,8 @@
         160
       ],
       "overworld_key": "",
-      "battle_body_height": 426
+      "battle_body_height": 426,
+      "battle_sheet": "res://assets/battle/cast/hexbound_adept.png"
     },
     "kai_warrior": {
       "display_name": "Kai",
@@ -533,7 +536,8 @@
         ],
         "body_height": 216
       },
-      "battle_body_height": 536
+      "battle_body_height": 536,
+      "battle_sheet": "res://assets/battle/cast/route01_rowan.png"
     },
     "route01_squire": {
       "display_name": "Travelling Squire",
@@ -579,7 +583,8 @@
         ],
         "body_height": 209
       },
-      "battle_body_height": 545
+      "battle_body_height": 545,
+      "battle_sheet": "res://assets/battle/cast/route01_squire.png"
     },
     "route01_challenger": {
       "display_name": "Wandering Challenger",
@@ -625,7 +630,8 @@
         ],
         "body_height": 232
       },
-      "battle_body_height": 549
+      "battle_body_height": 549,
+      "battle_sheet": "res://assets/battle/cast/route01_challenger.png"
     }
   },
   "overworld_body_heights": {

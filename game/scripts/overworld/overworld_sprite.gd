@@ -24,6 +24,7 @@ var mirror_side_for_west := true
 
 var _sprite: Sprite2D
 var _facing := "down"
+var _rest_scale := Vector2.ZERO   # captured on the first breathe()
 var _frame := 0
 var _registered_row := -1
 var _registered_animated := false
@@ -289,6 +290,17 @@ func set_walk_phase(progress: float, stride := 0) -> void:
 	var start := (stride % 2) * per_tile
 	_frame = mini(walk_frames - 1, start + int(floor(clamped * per_tile)))
 	_apply()
+
+
+func breathe(amount: float) -> void:
+	## Idle breathing for characters with no idle frames: the body lifts a
+	## little from the feet (the sprite's origin) and narrows to match, so
+	## the feet never slide. `amount` is a fraction of body height.
+	if _sprite == null:
+		return
+	if _rest_scale == Vector2.ZERO:
+		_rest_scale = _sprite.scale
+	_sprite.scale = Vector2(_rest_scale.x * (1.0 - amount * 0.4), _rest_scale.y * (1.0 + amount))
 
 
 func advance() -> void:

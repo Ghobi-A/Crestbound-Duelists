@@ -76,7 +76,9 @@ func play_events(action: Dictionary, events: Array) -> void:
 				if sprites.has(victim):
 					if victim.is_braced():
 						floats.show_float(victim, sprites[victim].effect_origin(), "blocked")
-						await vfx.play_effect("brace", sprites[victim].effect_origin(), "physical", "basic", "hit")
+						var guard: DuelistSprite = sprites[victim]
+						await vfx.play_effect("brace", guard.effect_origin(), "physical", "basic", "hit",
+							guard.position, victim.team == "player", guard.z_index)
 					floats.show_float(victim, sprites[victim].effect_origin(), "damage", str(event.amount))
 				# Hit-stop: the attacker freezes mid-strike and the victim
 				# flashes white on the contact frame; the reaction plays after.
@@ -118,7 +120,12 @@ func play_awakening(unit: BattleUnit, banner: String, accent: Color) -> void:
 	if sprites.has(unit):
 		sprites[unit].play_entity_state("awaken")
 		sprites[unit].play("awaken")
-	await vfx.play_effect(unit.crest_id, sprites[unit].effect_origin() if sprites.has(unit) else Vector2(160, 70), "magic", "signature", "awaken")
+	if sprites.has(unit):
+		var bearer: DuelistSprite = sprites[unit]
+		await vfx.play_effect(unit.crest_id, bearer.effect_origin(), "magic", "signature", "awaken",
+			bearer.position, false, bearer.z_index)
+	else:
+		await vfx.play_effect(unit.crest_id, Vector2(160, 70), "magic", "signature", "awaken")
 	hud.play_awakening_banner(banner, accent)
 	AudioRouter.play_sfx("battle", "awakening")
 	shake(2.0)
