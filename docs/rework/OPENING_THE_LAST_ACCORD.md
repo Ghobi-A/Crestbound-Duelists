@@ -64,7 +64,7 @@ open or export.
 `eleven_multilingual_v2`, speed 0.88, each line given its neighbours for
 continuous delivery). Sources are in `tools/audio_sources/narration/`, and
 `tools/build_opening_audio.py` trims, levels and encodes them. It also ducks
-the music about 5 dB under each line. To re-record a line, replace its mp3
+the music about 5 dB under each line, easing in and out over 0.8 s. To re-record a line, replace its mp3
 and re-run the script.
 
 One file per line. Each starts at its time below, which is also when its
@@ -112,6 +112,9 @@ If the title motif is easier as a separate file, make
 `music/opening_title.ogg`. It starts at 1:31.5 and replaces the theme.
 
 ### Sound effects
+
+**Done.** Generated with ElevenLabs sound effects (sources in
+`tools/audio_sources/sfx/`), levelled and faded by `tools/build_opening_audio.py`.
 
 | File | When | Sound |
 |---|---|---|
