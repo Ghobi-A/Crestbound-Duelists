@@ -60,6 +60,13 @@ open or export.
 
 ### Narration (ElevenLabs)
 
+**Done.** Recorded with the ElevenLabs voice **Dmitri** (model
+`eleven_multilingual_v2`, speed 0.88, each line given its neighbours for
+continuous delivery). Sources are in `tools/audio_sources/narration/`, and
+`tools/build_opening_audio.py` trims, levels and encodes them. It also ducks
+the music about 5 dB under each line. To re-record a line, replace its mp3
+and re-run the script.
+
 One file per line. Each starts at its time below, which is also when its
 subtitle appears. Keep each recording within its window. **Voice:** an
 older, weary narrator, quiet and unhurried, as if remembering. No grandeur,
