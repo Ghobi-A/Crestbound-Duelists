@@ -31,6 +31,8 @@ var _hold := 0.0
 var _hint_left := 0.0
 var _overlay: Node2D
 var _pulse_alpha := 0.0
+var _camera_viewport: Viewport
+var _previous_transform_snap := false
 
 
 func _ready() -> void:
@@ -39,6 +41,10 @@ func _ready() -> void:
 	if timeline.is_empty():
 		_finish()
 		return
+	# The painted shots use fractional camera movement on the logical canvas.
+	_camera_viewport = get_viewport()
+	_previous_transform_snap = _camera_viewport.snap_2d_transforms_to_pixel
+	_camera_viewport.snap_2d_transforms_to_pixel = false
 	_duration = float(timeline.get("duration", 0.0))
 	AudioRouter.stop_music(0.6)
 	for shot in timeline.get("shots", []):
@@ -48,6 +54,11 @@ func _ready() -> void:
 	_overlay.draw.connect(_draw_overlay)
 	add_child(_overlay)
 	_apply(0.0)
+
+
+func _exit_tree() -> void:
+	if is_instance_valid(_camera_viewport):
+		_camera_viewport.snap_2d_transforms_to_pixel = _previous_transform_snap
 
 
 static func load_timeline(path: String) -> Dictionary:
