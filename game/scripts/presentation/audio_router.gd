@@ -17,7 +17,9 @@ var _voices: Array[AudioStreamPlayer] = []
 
 func _ready() -> void:
 	_music = AudioStreamPlayer.new()
-	_music.bus = "Music"
+	# Godot Web sample playback requires the bus to exist.
+	if AudioServer.get_bus_index("Music") >= 0:
+		_music.bus = "Music"
 	add_child(_music)
 
 
