@@ -80,6 +80,13 @@ From 1:10 the movie has no narration.
 
 ### Music (Suno)
 
+**Done.** The full Suno track "The Veiled Accord" (3:34) is in
+`tools/audio_sources/the_veiled_accord.mp3`. `tools/build_opening_audio.py`
+cuts it to `music/opening_theme.ogg` (1:40.5): the opening plays at full
+level to 1:10, fades to a quiet bed under the descent, cuts to silence at
+1:30, and the track's own ending plays under the title. The brief below was
+the original target.
+
 One continuous track, `music/opening_theme.ogg`, about 1:40, starting at
 0:00. It should be orchestral and sparse: strings, low choir, a solo
 instrument, distant percussion.
