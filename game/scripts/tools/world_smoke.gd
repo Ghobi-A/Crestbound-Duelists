@@ -33,6 +33,18 @@ func _ready() -> void:
 	while walker.is_moving(): walker._process(0.13)
 	check(steps >= 3 and walker.footfalls - heard == steps, "footsteps %d for %d steps on long frames" % [walker.footfalls - heard, steps])
 	await walk_to(start_tile)
+	# Interacting leans the drawn body toward the target and settles back,
+	# without moving the tile or the camera.
+	var body: Sprite2D = walker._sprite._sprite
+	var camera_before: Vector2 = world._camera.position
+	walker.reach()
+	var leaned := false
+	for i in 12:
+		await get_tree().process_frame
+		leaned = leaned or body.position.length() > 0.5
+	await get_tree().create_timer(0.3).timeout
+	check(leaned and body.position == Vector2.ZERO and walker.tile == start_tile, "interact anticipation lean")
+	check(world._camera.position == camera_before, "anticipation moved the camera")
 	# The south road leaves town from its left, centre and right lanes, with
 	# a real held key and no button press; the route's west mouth comes back
 	# the same way, and an arrival never bounces straight back.

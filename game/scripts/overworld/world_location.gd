@@ -259,6 +259,8 @@ func _unhandled_input(event: InputEvent) -> void:
 
 func _try_interact() -> void:
 	var target := _player.tile + _player.facing
+	if _npc_tiles.has(target) or _doors.has(target) or _interactions.has(target):
+		_player.reach()
 	if _npc_tiles.has(target):
 		# Whoever you talk to turns to face you, whichever side you came from.
 		_npc_tiles[target].face(-_player.facing)

@@ -25,6 +25,7 @@ var _step_to := Vector2.ZERO
 var _step_progress := 1.0
 var _footfall_due := false  # this step's footstep has not sounded yet
 var footfalls := 0           # steps that have sounded (QA counter)
+var _reach_tween: Tween
 var _sprite: OverworldSprite
 var _has_sheet := false
 var _stride := 0  # alternates per tile so the feet take turns
@@ -137,6 +138,20 @@ func _place_on_step() -> void:
 	position = _step_from.lerp(_step_to, _step_progress).round()
 	if _has_sheet:
 		_sprite.set_walk_phase(_step_progress, _stride)
+
+
+func reach() -> void:
+	## Anticipation: lean a pixel and a half toward what you are talking to,
+	## reading or opening, and settle back, so the press has weight before
+	## the world answers. Visual only; the tile and camera do not move.
+	if not _has_sheet:
+		return
+	if _reach_tween != null and _reach_tween.is_valid():
+		_reach_tween.kill()
+	var toward := Vector2(facing) * 1.5
+	_reach_tween = create_tween()
+	_reach_tween.tween_method(_sprite.lean, Vector2.ZERO, toward, 0.06).set_ease(Tween.EASE_OUT)
+	_reach_tween.tween_method(_sprite.lean, toward, Vector2.ZERO, 0.14).set_trans(Tween.TRANS_SINE)
 
 
 func _settle(delta: float) -> void:
