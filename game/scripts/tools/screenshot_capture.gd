@@ -20,6 +20,7 @@ extends Node
 ##   battle_preview — every action chosen; the round preview is open.
 ##   party_formation — party setup with a reordered, all-front formation.
 ##   dialogue_long — the longest Greymere line with a portrait.
+##   dialogue_scene — a staged story scene with two speakers (post_battle).
 ##   victory / defeat — result screens via test-only health fixtures.
 ##   class_<id>    — Greymere town square as each of Kai's six classes.
 ##   gell_shop / joey_home / kai_house — the explorable homes and shop.
@@ -59,6 +60,7 @@ const SCENE_PATHS := {
 	"dialogue_portrait": "res://scenes/overworld/greymere.tscn",
 	"dialogue_notice": "res://scenes/overworld/greymere.tscn",
 	"dialogue_long": "res://scenes/overworld/greymere.tscn",
+	"dialogue_scene": "res://scenes/overworld/greymere.tscn",
 	"battle_preview": "res://scenes/battle/party_battle.tscn",
 	"party_formation": "res://scenes/ui/party_setup.tscn",
 	"victory": "res://scenes/battle/party_battle.tscn",
@@ -104,10 +106,13 @@ func _ready() -> void:
 			await _press_times(1)
 	elif target in ["battle_preview", "victory", "defeat"]:
 		await _drive_battle(scene)
-	elif target in ["dialogue_portrait", "dialogue_notice", "dialogue_long"]:
+	elif target in ["dialogue_portrait", "dialogue_notice", "dialogue_long", "dialogue_scene"]:
 		var dialogue: DialogueBox = scene.get("_dialogue") as DialogueBox
 		dialogue.play({"dialogue_portrait": "elara_intro", "dialogue_notice": "notice_board",
-			"dialogue_long": "toby_flavor"}[target])
+			"dialogue_long": "toby_flavor", "dialogue_scene": "post_battle"}[target])
+		# Baselines show the whole line, not a frame of the text reveal.
+		await _frames(SETTLE_FRAMES)
+		dialogue.complete_reveal()
 	elif target in ["shop_open", "shop_purchased", "shop_insufficient"]:
 		if target == "shop_insufficient": GameState.crowns = 0
 		scene._trade.open(true)

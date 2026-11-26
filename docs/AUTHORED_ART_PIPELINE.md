@@ -137,5 +137,23 @@ never authored) just renders full-width text as before, so this is
 purely additive. `tests/test_dialogue_assets.py` catches a `portrait`
 value that doesn't resolve to a real file.
 
+**Staged story scenes.** An authored story conversation sets
+`"staging": "scene"` on its first entry (today: `elara_intro`,
+`mira_intro`, `court_entrance`, `post_battle` and `battle_intro`).
+`StoryStage` (`game/scripts/ui/story_stage.gd`) then softens the live
+location into a backdrop and stands the cast up large, from frame 0 of
+each speaker's `battle_sheet` idle loop in
+`assets/rework/characters.json`: Kai in his current class on the left
+facing right, up to two other speakers on the right facing him. The
+speaker is lit and forward; listeners are dimmed and sink a few pixels.
+A speaker with no battle sheet keeps their small portrait inside the
+panel, and narration (no speaker) leaves the cast half-lit with no
+nameplate. Incidental conversations (no `staging`) keep the compact
+box. Both reveal text letter by letter: Confirm (or Back) completes the
+reveal first, and the next press advances. `tests/test_story_dialogue.py`
+checks which keys are staged and that every staged speaker has large
+art; the presentation smoke test drives the progression with keyboard
+and controller input.
+
 All portraits share one crop, eye line and light direction — see
 `docs/UI_STYLE_GUIDE.md` for the framing rules.
