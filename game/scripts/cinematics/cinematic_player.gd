@@ -16,6 +16,7 @@ const VIEW := Vector2(320, 180)
 const BAR := 16.0                 # letterbox bar height, top and bottom
 const SKIP_HOLD := 0.9            # seconds Confirm must be held to skip
 const HINT_TIME := 2.5
+const NARRATION_VOLUME_DB := -2.0
 
 ## Where the movie leads when it ends or is skipped. The boot screen sets
 ## it to itself for "Watch Opening"; a new story game goes to Greymere.
@@ -430,6 +431,6 @@ func _play_cue(cue: Dictionary) -> void:
 		"music_stop":
 			AudioRouter.stop_music(float(cue.get("fade", 1.0)))
 		"voice":
-			AudioRouter.play_voice(str(cue.id))
+			AudioRouter.play_voice(str(cue.id), NARRATION_VOLUME_DB)
 		_:
 			AudioRouter.play_sfx(str(cue.kind), str(cue.id), float(cue.get("volume_db", 0.0)))
