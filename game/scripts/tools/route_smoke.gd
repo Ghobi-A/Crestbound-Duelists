@@ -24,13 +24,13 @@ func _ready() -> void:
 	Engine.time_scale = 15
 	SceneTransition.change_scene("res://scenes/overworld/greymere.tscn")
 	await settled()
-	var exit: Dictionary = world.definition.doors.filter(func(d): return d.destination_location == "route_01")[0]
+	var exit: Dictionary = world.definition.exits.filter(func(d): return d.destination_location == "route_01")[0]
 	check(WorldCatalog.travel(exit), "travel out of town")
 	await settled()
 	check(world.location_id == "route_01" and world._player.tile == Vector2i(5,18), "safe route arrival")
 	check(world.is_walkable(world._player.tile), "route spawn walkable")
 	check(not world.is_walkable(Vector2i(8,22)) and not world.is_walkable(Vector2i(21,15)), "fences and rocks have collision")
-	check(WorldCatalog.travel(world.definition.doors[0]), "return to town")
+	check(WorldCatalog.travel(world.definition.exits[0]), "return to town")
 	await settled()
 	check(world.location_id == "greymere" and world._player.tile == Vector2i(17,29), "safe town return")
 	WorldCatalog.travel(exit)
@@ -157,7 +157,7 @@ func _ready() -> void:
 	await settled()
 	check(world._player.tile == GameState.player_tile and world._player.facing == GameState.player_facing, "saved position/facing restored")
 	check(int(world._encounter_state.cooldown) == saved_cooldown and str(world._encounter_state.get("rng_state", "")) == saved_rng, "cooldown and RNG state persist")
-	WorldCatalog.travel(world.definition.doors[0])
+	WorldCatalog.travel(world.definition.exits[0])
 	await settled()
 	WorldCatalog.travel(exit)
 	await settled()

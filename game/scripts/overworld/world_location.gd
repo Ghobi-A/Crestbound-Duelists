@@ -13,6 +13,7 @@ var _npc_tiles: Dictionary = {}
 var _blocked: Dictionary = {}
 var _doors: Dictionary = {}
 var _interactions: Dictionary = {}
+var _exits: Dictionary = {}   # edge tile -> exit (walk outward to travel)
 var _camera_follow := Vector2.ZERO
 const CAMERA_LOOK_AHEAD := Vector2(0, -24)
 var _engagement_busy := false
@@ -26,6 +27,7 @@ var _menu_cursor := 0
 var _menu_status := ""
 
 func _ready() -> void:
+	process_priority = 10   # after the player has moved this frame
 	definition = WorldCatalog.location(location_id)
 	if definition.is_empty():
 		push_error("Unknown world location: " + location_id)
@@ -96,6 +98,9 @@ func _build_world() -> void:
 		_blocked[tile] = true
 	for item in definition.interactions:
 		_interactions[WorldCatalog.tile(item.tile)] = item
+	for exit in definition.get("exits", []):
+		for edge in exit.tiles:
+			_exits[WorldCatalog.tile(edge)] = exit
 	if definition.has("painted_interior"):
 		return
 	var atmosphere := WorldAtmosphere.new()
@@ -172,19 +177,47 @@ func tile_char(tile: Vector2i) -> String:
 	if tile.x < 0 or tile.y < 0 or tile.x >= map_width() or tile.y >= map_height(): return "#"
 	return definition.rows[tile.y][tile.x]
 
+func surface_at(tile: Vector2i) -> String:
+	## Footstep surface: boards indoors, cobbles on paved paths, dirt outside.
+	if bool(definition.get("interior", false)): return "wood"
+	var path_symbols := str(definition.get("painted", {}).get("path_symbols", ":"))
+	if tile_char(tile) in path_symbols:
+		return "cobble" if str(definition.get("painted", {}).get("path_material", "")) == "cobble" else "dirt"
+	return "grass"
+
 func is_walkable(tile: Vector2i) -> bool:
 	return not tile_char(tile) in definition.get("blocked_symbols", ["#","~","_"]) and not _blocked.has(tile) and not _npc_tiles.has(tile)
 
-func _process(delta: float) -> void:
+func movement_blocked() -> bool:
+	return _dialogue.active or _menu_open or _trade.active or SceneTransition._busy or _engagement_busy
+
+func _process(_delta: float) -> void:
 	if _player == null: return
-	_player.movement_locked = _dialogue.active or _menu_open or _trade.active or SceneTransition._busy or _engagement_busy
-	_camera_follow = _camera_follow.lerp(_player.position + CAMERA_LOOK_AHEAD,1.0-exp(-10.0*delta))
+	_player.movement_locked = movement_blocked()
+	# Locked to the player's whole-pixel position (this node processes after
+	# the player), so the character holds still on screen while the world
+	# scrolls under them; an eased, separately rounded camera made the
+	# player shimmer a pixel back and forth every frame.
+	_camera_follow = _player.position + CAMERA_LOOK_AHEAD
 	_camera.position = _camera_follow.round()
 	_hud.visible = not _dialogue.active
 	_hud.show_context(context_verb())
 
+func try_exit(from: Vector2i, direction: Vector2i) -> bool:
+	## Walking outward off a road mouth travels; anything else is a wall.
+	if not _exits.has(from) or WorldCatalog.tile(_exits[from].direction) != direction: return false
+	if movement_blocked(): return false
+	_remember_position()
+	if WorldCatalog.travel(_exits[from]):
+		_player.movement_locked = true
+		AudioRouter.play_sfx("world", "travel")
+		return true
+	return false
+
 func context_verb() -> String:
 	if _player.is_moving() or _menu_open or _dialogue.active or _trade.active or _engagement_busy: return ""
+	if _exits.has(_player.tile) and WorldCatalog.tile(_exits[_player.tile].direction) == _player.facing:
+		return str(_exits[_player.tile].get("verb", "Travel"))
 	var target := _player.tile + _player.facing
 	if _npc_tiles.has(target): return "Talk"
 	if _doors.has(target): return "Inspect" if _doors[target].locked else str(_doors[target].verb)

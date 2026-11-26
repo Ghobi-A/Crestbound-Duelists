@@ -6,20 +6,27 @@ from build_greymere_world import npc, prop, rect, spawn
 def add_route(locations):
     town = locations["greymere"]
     town["spawn_points"]["route_return"] = spawn(17, 29, (0, -1))
-    town["doors"].append(
+    # Edge exits: walking outward off any tile of a road mouth travels, so
+    # the whole visible width of the road works and no facing or button is
+    # needed. Arrival spawns sit two tiles inside, so nobody bounces back.
+    # A signpost at the town's south mouth marks the way out.
+    town["props"].append(prop("route_sign", 20, 30))
+    town["interactions"].append(
+        {"tile": [20, 30], "verb": "Read", "text": "South road: the Greymere Outskirts, and the training grounds beyond."}
+    )
+    town["exits"] = [
         {
             "building_id": "outskirts",
-            "tile": [17, 31],
+            "tiles": [[16, 31], [17, 31], [18, 31]],
+            "direction": [0, 1],
             "destination_location": "route_01",
             "destination_scene": "res://scenes/overworld/route_01.tscn",
             "destination_spawn": "greymere",
             "return_spawn": "route_return",
-            "locked": False,
-            "locked_dialogue_id": "",
             "transition_type": "fade",
             "verb": "Travel",
         }
-    )
+    ]
     grid = [["#" for _ in range(60)] for _ in range(35)]
     # Connected, authored clearings define the route; forest is solid ground collision.
     for clearing in [
@@ -160,16 +167,16 @@ def add_route(locations):
             "entrance": spawn(5, 18, (1, 0)),
             "far_end": spawn(54, 9, (0, 1)),
         },
-        "doors": [
+        "doors": [],
+        "exits": [
             {
                 "building_id": "greymere_road",
-                "tile": [3, 18],
+                "tiles": [[3, 17], [3, 18], [3, 19]],
+                "direction": [-1, 0],
                 "destination_location": "greymere",
                 "destination_scene": town["scene"],
                 "destination_spawn": "route_return",
                 "return_spawn": "greymere",
-                "locked": False,
-                "locked_dialogue_id": "",
                 "transition_type": "fade",
                 "verb": "Travel",
             }
