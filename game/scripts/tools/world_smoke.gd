@@ -17,6 +17,22 @@ func _ready() -> void:
 	await settled()
 	check(world.location_id == "greymere", "new game location")
 	check(world._player.tile == Vector2i(17,29), "approach spawn")
+	# Every step sounds exactly once, even on frames so long a step begins
+	# past its midpoint (a slow browser tab). Drive the player directly.
+	var walker := world._player
+	var start_tile := walker.tile
+	var heard := walker.footfalls
+	var steps := 0
+	Input.action_press("move_left")
+	for i in 10:
+		var before := walker.tile
+		walker._process(0.13)
+		if walker.tile != before: steps += 1
+		check(not (walker._footfall_due and walker._step_progress >= 0.5), "footstep skipped on a long frame")
+	Input.action_release("move_left")
+	while walker.is_moving(): walker._process(0.13)
+	check(steps >= 3 and walker.footfalls - heard == steps, "footsteps %d for %d steps on long frames" % [walker.footfalls - heard, steps])
+	await walk_to(start_tile)
 	# The south road leaves town from its left, centre and right lanes, with
 	# a real held key and no button press; the route's west mouth comes back
 	# the same way, and an arrival never bounces straight back.

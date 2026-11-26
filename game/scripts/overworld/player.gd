@@ -23,6 +23,8 @@ var _map: Node  # must expose is_walkable(Vector2i) -> bool
 var _step_from := Vector2.ZERO
 var _step_to := Vector2.ZERO
 var _step_progress := 1.0
+var _footfall_due := false  # this step's footstep has not sounded yet
+var footfalls := 0           # steps that have sounded (QA counter)
 var _sprite: OverworldSprite
 var _has_sheet := false
 var _stride := 0  # alternates per tile so the feet take turns
@@ -38,6 +40,7 @@ func setup(map: Node, start_tile: Vector2i) -> void:
 	tile = start_tile
 	position = Vector2(tile * TILE) + Vector2(TILE / 2.0, TILE / 2.0)
 	_step_progress = 1.0
+	_footfall_due = false
 	_setup_sprite()
 
 
@@ -56,11 +59,8 @@ func _process(delta: float) -> void:
 	_track_held_directions()
 	var budget := delta
 	if is_moving():
-		var before := _step_progress
 		_step_progress += budget / STEP_TIME
-		if before < 0.5 and _step_progress >= 0.5:
-			# The foot lands mid-step, on the walk's contact frame.
-			AudioRouter.play_sfx("world", footstep_cue())
+		_land_footfall()
 		if _step_progress < 1.0:
 			_place_on_step()
 			return
@@ -116,7 +116,19 @@ func _process(delta: float) -> void:
 	_step_from = position
 	_step_to = Vector2(tile * TILE) + Vector2(TILE / 2.0, TILE / 2.0)
 	_step_progress = budget / STEP_TIME
+	_footfall_due = true
+	_land_footfall()
 	_place_on_step()
+
+
+func _land_footfall() -> void:
+	## The foot lands mid-step, on the walk's contact frame. Checked against
+	## a per-step flag, not a frame crossing, so every step sounds once even
+	## when a slow frame starts a step already past its midpoint.
+	if _footfall_due and _step_progress >= 0.5:
+		_footfall_due = false
+		footfalls += 1
+		AudioRouter.play_sfx("world", footstep_cue())
 
 
 func _place_on_step() -> void:
