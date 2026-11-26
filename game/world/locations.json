@@ -2667,8 +2667,8 @@
       "encounter_zones": [
         {
           "symbol": "g",
-          "probability": 0.12,
-          "cooldown_steps": 8,
+          "probability": 0.06,
+          "cooldown_steps": 24,
           "encounters": [
             "route01_roadside"
           ]
@@ -2682,13 +2682,13 @@
         "r"
       ],
       "hud_name": "GREYMERE OUTSKIRTS",
-      "arrival_grace_steps": 6,
+      "arrival_grace_steps": 16,
       "encounter_message": "A roadside raider emerges from the tall grass. Prepare your party!",
       "recovery": {
         "location": "greymere",
         "spawn": "route_return"
       },
-      "return_grace_steps": 8,
+      "return_grace_steps": 24,
       "battle_background": {
         "rows": [
           "....................",

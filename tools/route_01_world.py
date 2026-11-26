@@ -211,8 +211,12 @@ def add_route(locations):
         "encounter_zones": [
             {
                 "symbol": "g",
-                "probability": 0.12,
-                "cooldown_steps": 8,
+                # Measured with scenes/tools encounter_probe.gd (50 seeded runs
+                # through tall grass): the old 12% / 8-step cooldown fought
+                # every ~14 grass steps (2 s); this gives a median of 36
+                # steps (5 s) and never fewer than 24.
+                "probability": 0.06,
+                "cooldown_steps": 24,
                 "encounters": ["route01_roadside"],
             }
         ],
@@ -231,12 +235,14 @@ def add_route(locations):
     route["rows"] = ["".join(row) for row in grid]
     route["blocked_symbols"] = ["#", "~", "_", "|", "r"]
     route["hud_name"] = "GREYMERE OUTSKIRTS"
-    route["arrival_grace_steps"] = 6
+    # Breathing room on every arrival and after every fight; the road itself
+    # never crosses tall grass, so it is always the low-risk way through.
+    route["arrival_grace_steps"] = 16
     route["encounter_message"] = (
         "A roadside raider emerges from the tall grass. Prepare your party!"
     )
     route["recovery"] = {"location": "greymere", "spawn": "route_return"}
-    route["return_grace_steps"] = 8
+    route["return_grace_steps"] = 24
     route["battle_background"] = {
         "rows": ["." * 20] * 4 + ["," * 20] * 5,
         "props": [prop("route_oak", x, 2) for x in [1, 5, 10, 15, 19]],

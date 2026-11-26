@@ -35,7 +35,11 @@ func _ready() -> void:
 	# Returning from an interrupted setup/scene never leaves a stale encounter lock.
 	if not GameState.world_battle.is_empty(): GameState.finish_world_battle("cancel")
 	y_sort_enabled = true
-	_encounter_state = GameState.world_encounters.get(location_id, {"cooldown": int(definition.get("arrival_grace_steps", 0))})
+	var arriving := GameState.location_id != location_id
+	_encounter_state = GameState.world_encounters.get(location_id, {"cooldown": 0})
+	if arriving:
+		# Every entry, not only the first visit, starts with breathing room.
+		_encounter_state.cooldown = maxi(int(_encounter_state.get("cooldown", 0)), int(definition.get("arrival_grace_steps", 0)))
 	_encounter_rng.seed = int(definition.get("encounter_seed", 1901))
 	if _encounter_state.has("rng_state"): _encounter_rng.state = int(str(_encounter_state.rng_state))
 	_build_world()
