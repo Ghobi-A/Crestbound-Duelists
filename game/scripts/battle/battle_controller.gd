@@ -269,12 +269,15 @@ func _menu_input(event: InputEvent) -> void:
 		AudioRouter.play_sfx("ui", "move")
 	elif event.is_action_pressed("cancel"):
 		if selection_index > 0:
+			AudioRouter.play_sfx("ui", "cancel")
 			_reopen_last_selection()
 	elif event.is_action_pressed("interact"):
-		AudioRouter.play_sfx("ui", "confirm")
 		var entry := hud.action_menu.current_entry()
 		if not entry.enabled:
+			AudioRouter.play_sfx("ui", "denied")
+			hud.action_menu.refuse()
 			return
+		AudioRouter.play_sfx("ui", "confirm")
 		if entry.kind == "flee":
 			_try_flee()
 			return

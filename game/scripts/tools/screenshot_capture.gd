@@ -12,6 +12,7 @@ extends Node
 ##
 ## Targets:
 ##   boot          — title screen with the main menu.
+##   class_select / controls — the title's class choice and controls screens.
 ##   party_setup   — pre-battle roster and formation screen.
 ##   overworld     — Greymere at the default spawn tile.
 ##   battle        — Hollow Court, round 1, command menu open.
@@ -37,6 +38,8 @@ const SCENE_PATHS := {
 	"route_clearing": "res://scenes/overworld/route_01.tscn",
 	"battle_route": "res://scenes/battle/party_battle.tscn",
 	"boot": "res://scenes/boot/boot.tscn",
+	"class_select": "res://scenes/boot/boot.tscn",
+	"controls": "res://scenes/boot/boot.tscn",
 	"party_setup": "res://scenes/ui/party_setup.tscn",
 	"overworld": "res://scenes/overworld/greymere.tscn",
 	"battle": "res://scenes/battle/party_battle.tscn",
@@ -106,6 +109,9 @@ func _ready() -> void:
 			await _press_times(1)
 	elif target in ["battle_preview", "victory", "defeat"]:
 		await _drive_battle(scene)
+	elif target in ["class_select", "controls"]:
+		scene._screen = scene.Screen.CLASS_SELECT if target == "class_select" else scene.Screen.CONTROLS
+		scene._refresh()
 	elif target in ["dialogue_portrait", "dialogue_notice", "dialogue_long", "dialogue_scene"]:
 		var dialogue: DialogueBox = scene.get("_dialogue") as DialogueBox
 		dialogue.play({"dialogue_portrait": "elara_intro", "dialogue_notice": "notice_board",

@@ -16,6 +16,7 @@ func _ready() -> void:
 	await check_classes()
 	await check_dialogue()
 	await check_story_dialogue()
+	await check_command_feedback()
 	await check_formations()
 	await check_enemy_hud()
 	await check_world_and_setup()
@@ -198,6 +199,41 @@ func check_story_dialogue() -> void:
 	while box.active:
 		box.confirm()
 	box.queue_free()
+	await get_tree().process_frame
+
+
+func check_command_feedback() -> void:
+	## Unavailable battle commands can be focused, say why, and refuse.
+	seed_party()
+	var unit := BattleUnit.create(GameState.party[0], "player", GameData)
+	var resting: Dictionary = unit.moves[1]
+	unit.cooldowns[unit.move_id_of(resting)] = 2
+	var menu := ActionMenu.new()
+	add_child(menu)
+	menu.build_for(unit)
+	check(menu.current_entry().enabled, "Command menu opened on an unavailable move")
+	var guard := 0
+	while menu.current_entry().move != resting and guard < 10:
+		menu.move_cursor(1)
+		guard += 1
+	check(menu.current_entry().move == resting and not menu.current_entry().enabled, "Cursor cannot focus an unavailable move")
+	check("ready in 2 rounds" in str(menu.current_entry().description), "Unavailable move gives no reason")
+	var rest := menu.position.x
+	menu.refuse()
+	menu.refuse()
+	await get_tree().create_timer(0.3).timeout
+	check(is_equal_approx(menu.position.x, rest), "Refusal shake left the menu displaced")
+	menu.queue_free()
+	# Hint caps follow the device the player last used.
+	var pad := InputEventJoypadButton.new()
+	pad.button_index = JOY_BUTTON_B
+	await press(pad)
+	check(InputDevice.cap("interact") == "A" and InputDevice.cap("cancel") == "B", "Hints did not switch to controller")
+	await press(key_event(KEY_X))
+	check(InputDevice.cap("interact") == "Z" and InputDevice.cap("cancel") == "X", "Hints did not switch back to keys")
+	var bar := HintBar.create(self, Rect2(0, 0, 320, 12), [["move_v", "Choose"], ["interact", "Confirm"], ["cancel", "Back"]])
+	check(bar.content_width() > 40.0 and bar.content_width() < 320.0, "Hint bar does not fit the canvas")
+	bar.queue_free()
 	await get_tree().process_frame
 
 

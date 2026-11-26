@@ -12,7 +12,7 @@ var round_text := ""
 var objective := ""
 var footer_left := ""
 var footer_right := ""
-var prompts: Array = [["Z", "Confirm"], ["X", "Back"]]
+var prompts: Array = [["interact", "Confirm"], ["cancel", "Back"]]
 var rail_from := 6.0
 var rail_mid := 120.0
 var rail_to := 230.0
@@ -21,6 +21,10 @@ var rail_to := 230.0
 func _init() -> void:
 	size = PresentationLayout.CANVAS
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
+
+
+func _ready() -> void:
+	InputDevice.changed.connect(queue_redraw)
 
 
 func _draw() -> void:
@@ -80,7 +84,7 @@ func _draw() -> void:
 	# Button prompts as key caps, then the sub-phase and battlefield effect.
 	var x := 8.0
 	for prompt in prompts:
-		x += UiStyle.draw_key_cap(self, Vector2(x, footer + 3.4), prompt[0], prompt[1], UiStyle.TEXT_DIM)
+		x += UiStyle.draw_key_cap(self, Vector2(x, footer + 3.4), InputDevice.cap(str(prompt[0])), prompt[1], UiStyle.TEXT_DIM)
 	if footer_left != "":
 		UiStyle.draw_text(self, Vector2(x + 2.0, footer + 5.4), footer_left.to_upper(), 5, UiStyle.GOLD_DIM, 90, HORIZONTAL_ALIGNMENT_LEFT, UiStyle.DISPLAY, 0.7)
 	UiStyle.draw_text(self, Vector2(width - 156, footer + 5.4), footer_right.to_upper(), 5, UiStyle.TEXT_FAINT, 148, HORIZONTAL_ALIGNMENT_RIGHT, UiStyle.DISPLAY)
