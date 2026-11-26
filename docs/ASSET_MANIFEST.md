@@ -65,8 +65,8 @@ Townsfolk keys: `elder_woman`, `farmboy`, `farmhand_capped`, `guard_spear`,
 | `ui-icons` | Command/objective/status language | `game/assets/ui/icons.png` + manifest | 7×7 cells | current 8 plus Brace, Hex, Resonance, rows, result | support; incomplete | P1 |
 | `ui-font` | Readable pixel typography | `game/assets/ui/crestbound_font.*` | 8 px body face | glyph coverage in `.fnt` | support | P1 |
 | `result-{victory,defeat}-ornament` | Dedicated outcome composition | `game/assets/ui/results/<state>.png` | ≤160×48 transparent | static | missing | P1 |
-| `audio-music-{greymere,court,battle,victory,defeat}` | Scene identity | `game/assets/audio/music/<id>.ogg` | loop points documented | five cues | missing | P0 |
-| `audio-sfx-*` | UI move/confirm/cancel, step, dialogue, hit types, Brace, Hex, Resonance, awaken | `game/assets/audio/sfx/<id>.ogg` | mono, normalized family | one-shot/loop metadata | missing | P0 |
+| `audio-music-{greymere,court,battle,victory,defeat}` | Scene identity | `game/assets/audio/music/<id>.ogg` | loop points documented | five cues | greymere, greymere_route, battle, main_theme and opening_theme present; court, victory and defeat missing (see `docs/AUDIO_SOURCES.md`) | P0 |
+| `audio-sfx-*` | UI move/confirm/cancel, step, dialogue, hit types, Brace, Hex, Resonance, awaken | `game/assets/audio/sfx/<id>.ogg` | mono, normalized family | one-shot/loop metadata | present: generated with ElevenLabs, built by `tools/build_gameplay_audio.py` (see `docs/AUDIO_SOURCES.md`); no Resonance cue yet | P0 |
 
 The move-VFX row expands to these YAML-owned `vfx_key` asset IDs (and therefore
 exact target basenames): `slash_arc`, `armor_shatter`, `dust_trail`, `arcane_bolt`,

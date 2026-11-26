@@ -57,6 +57,7 @@ func _ready() -> void:
 	GameState.location_revision = 1
 	GameState.player_tile = _player.tile
 	AudioRouter.play_music(str(definition.music_id))
+	AudioRouter.play_ambience(str(definition.get("ambience_id", "")))
 	_location_started()
 	SaveManager.save_game()
 
@@ -272,13 +273,18 @@ func _try_interact() -> void:
 			_play_dialogue(_npc_tiles[target].dialogue_key)
 	elif _doors.has(target):
 		var door: Dictionary = _doors[target]
-		if bool(door.locked): _play_dialogue(str(door.locked_dialogue_id))
+		if bool(door.locked):
+			AudioRouter.play_sfx("ui", "denied")
+			_play_dialogue(str(door.locked_dialogue_id))
 		else:
 			_remember_position()
-			if WorldCatalog.travel(door): _player.movement_locked = true
+			if WorldCatalog.travel(door):
+				_player.movement_locked = true
+				AudioRouter.play_sfx("world", "door")
 	elif _interactions.has(target):
 		var interaction: Dictionary = _interactions[target]
 		if interaction.get("kind", "") == "chest":
+			AudioRouter.play_sfx("world", "chest")
 			_show_text(GameState.collect_world_item(interaction))
 			for child in get_children():
 				if child is WorldProp:
@@ -290,7 +296,9 @@ func _try_interact() -> void:
 			_trade.open(true)
 		elif interaction.get("kind", "") == "court":
 			_play_dialogue("court_entrance_cleared" if GameState.has_flag("hollow_court_cleared") else "court_entrance")
-		elif interaction.has("dialogue"): _play_dialogue(str(interaction.dialogue))
+		elif interaction.has("dialogue"):
+			AudioRouter.play_sfx("world", "interact")
+			_play_dialogue(str(interaction.dialogue))
 		else:
 			var inspection_key := "local_inspection"
 			_dialogue._dialogue_data[inspection_key] = [{"speaker":"", "lines":[str(interaction.text)]}]
@@ -339,6 +347,7 @@ func _on_player_stepped(tile: Vector2i) -> void:
 		_pending_world_encounter = encounter
 		_pending_victory_flag = ""
 		_engagement_busy = true
+		AudioRouter.play_sfx("world", "encounter")
 		_show_text(str(definition.get("encounter_message", "A challenger appears. Prepare your party!")))
 
 func encounters_allowed() -> bool:
@@ -355,6 +364,7 @@ func _engage_trainer(trainer: Dictionary, alerted: bool) -> void:
 	_player.movement_locked = true
 	_pending_world_encounter = str(trainer.encounter)
 	_pending_victory_flag = str(trainer.id) + "_defeated"
+	AudioRouter.play_sfx("world", "encounter")
 	if alerted:
 		var marker := Label.new()
 		marker.text = "!"

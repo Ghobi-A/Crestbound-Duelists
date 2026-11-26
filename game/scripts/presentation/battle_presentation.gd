@@ -73,6 +73,10 @@ func play_events(action: Dictionary, events: Array) -> void:
 				if sprites.has(event.protector): floats.show_float(event.protector, sprites[event.protector].effect_origin(), "blocked")
 			"damage", "counter":
 				var victim: BattleUnit = event.target
+				if victim.is_braced():
+					AudioRouter.play_sfx("battle", "block")
+				else:
+					AudioRouter.play_sfx("battle", "hit_heavy" if weight == "gambit" else "hit_" + impact_kind)
 				if sprites.has(victim):
 					if victim.is_braced():
 						floats.show_float(victim, sprites[victim].effect_origin(), "blocked")
@@ -90,6 +94,8 @@ func play_events(action: Dictionary, events: Array) -> void:
 				await get_tree().create_timer(hold).timeout
 				if sprites.has(victim):
 					sprites[victim].play("defeat" if event.ko else "hit")
+				if event.ko:
+					AudioRouter.play_sfx("battle", "ko")
 				if event.ko and sprites.has(victim):
 					floats.show_float(victim, sprites[victim].effect_origin(), "defeat")
 				shake(3.0 if weight == "gambit" else 1.25)

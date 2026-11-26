@@ -60,7 +60,7 @@ func _process(delta: float) -> void:
 		_step_progress += budget / STEP_TIME
 		if before < 0.5 and _step_progress >= 0.5:
 			# The foot lands mid-step, on the walk's contact frame.
-			AudioRouter.play_sfx("world", footstep_cue(), -6.0)
+			AudioRouter.play_sfx("world", footstep_cue())
 		if _step_progress < 1.0:
 			_place_on_step()
 			return

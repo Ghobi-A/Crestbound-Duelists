@@ -43,6 +43,7 @@
         "##############################################"
       ],
       "music_id": "greymere",
+      "ambience_id": "greymere",
       "interior": false,
       "props": [
         {
@@ -977,6 +978,7 @@
       ],
       "interior": true,
       "music_id": "greymere",
+      "ambience_id": "interior",
       "props": [
         {
           "asset": "hearth",
@@ -1118,6 +1120,7 @@
       ],
       "interior": true,
       "music_id": "greymere",
+      "ambience_id": "interior",
       "props": [
         {
           "asset": "hearth",
@@ -1292,6 +1295,7 @@
       ],
       "interior": true,
       "music_id": "greymere",
+      "ambience_id": "interior",
       "props": [
         {
           "asset": "books",
@@ -1440,6 +1444,7 @@
       ],
       "interior": true,
       "music_id": "greymere",
+      "ambience_id": "interior",
       "props": [
         {
           "asset": "counter",
@@ -1605,6 +1610,7 @@
       ],
       "interior": true,
       "music_id": "greymere",
+      "ambience_id": "interior",
       "props": [
         {
           "asset": "hearth",
@@ -1755,6 +1761,7 @@
       ],
       "interior": true,
       "music_id": "greymere",
+      "ambience_id": "interior",
       "props": [
         {
           "asset": "hearth",
@@ -1926,6 +1933,7 @@
         "############################################################"
       ],
       "music_id": "greymere_route",
+      "ambience_id": "route",
       "painted": {
         "path_symbols": ",",
         "path_material": "dirt"

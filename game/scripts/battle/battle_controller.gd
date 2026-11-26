@@ -62,6 +62,7 @@ func _ready() -> void:
 	add_child(presentation)
 	presentation.configure(stage, hud, sprites)
 	AudioRouter.play_music("battle")
+	AudioRouter.stop_ambience()
 	_build_dialogue()
 	_build_onboarding()
 	var objective: Dictionary = GameData.get_objective(runtime.encounter.get("objective", "defeat_all"))

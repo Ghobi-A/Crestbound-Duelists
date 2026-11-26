@@ -319,6 +319,7 @@ func _apply_portrait(portrait_key: String, expression := "neutral") -> void:
 
 
 func _advance() -> void:
+	AudioRouter.play_sfx("ui", "move", -6.0)
 	if _page_index + 1 < _pages.size():
 		_page_index += 1
 		_show_page(_pages[_page_index])
