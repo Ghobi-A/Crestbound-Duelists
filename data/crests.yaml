@@ -6,9 +6,14 @@
 # not just add flat stats.
 #
 # passive_modifier / awakening_condition / awakening_effect are typed
-# records interpreted by the battle layer. The Godot prototype implements
-# crimson_crest and azure_crest awakenings first; the rest are schema-
-# complete and reserved for later battle-layer work.
+# records interpreted by both battle runtimes (party_combat.py and the
+# Godot battle layer). All six recognised awakenings are implemented.
+# Awakening is a deliberate Awaken command once the condition holds and
+# the meter has reached min_resonance; it lasts `duration` rounds,
+# counting the round it is used.
+#
+# affinity_profile lists the attack properties (impact / edge / arcane)
+# a bearer is weak to or resists by default (Combat System 3.0).
 #
 # resonance_gain maps canonical battle events to Resonance gained (0-100
 # meter). Canonical events: hit_landed, gambit_used, gambit_hit,
@@ -20,6 +25,7 @@ crests:
   - id: crimson_crest
     name: Crimson Crest
     affinity: force
+    affinity_profile: {weak: [arcane], resist: [edge]}
     rarity: common
     description: >-
       A fragment of Eidros' conviction. It burns brightest in bearers who
@@ -50,6 +56,7 @@ crests:
   - id: azure_crest
     name: Azure Crest
     affinity: ward
+    affinity_profile: {weak: [arcane], resist: [impact]}
     rarity: common
     description: >-
       A fragment of Eidros' protection. It answers patience and endurance,
@@ -79,6 +86,7 @@ crests:
   - id: eclipse_crest
     name: Eclipse Crest
     affinity: umbral
+    affinity_profile: {weak: [edge], resist: [arcane]}
     rarity: rare
     description: >-
       A fragment of Eidros' control, dimmed by centuries of sealed dark.
@@ -106,6 +114,7 @@ crests:
   - id: ember_crest
     name: Ember Crest
     affinity: flame
+    affinity_profile: {weak: [impact], resist: [arcane]}
     rarity: common
     description: >-
       A fragment of Eidros' curiosity, restless and spreading. Its fire
@@ -122,9 +131,9 @@ crests:
       count: 3
       min_resonance: 60
     awakening_effect:
-      type: scorched_ground   # attacks scorch the target's tile
-      tile_effect: scorched
-      tile_damage: 4
+      type: scorched_ground   # hits leave the target Scorched (no tiles)
+      dot_damage: 4           # per round while Scorched
+      dot_duration: 3
       duration: 3
     visual_theme:
       palette: ember
@@ -134,6 +143,7 @@ crests:
   - id: glass_crest
     name: Glass Crest
     affinity: edge
+    affinity_profile: {weak: [impact], resist: [edge]}
     rarity: rare
     description: >-
       A fragment of Eidros' decisiveness, honed to a sliver. Everything it
@@ -163,6 +173,7 @@ crests:
   - id: verdant_crest
     name: Verdant Crest
     affinity: growth
+    affinity_profile: {weak: [], resist: []}
     rarity: uncommon
     description: >-
       A fragment of Eidros' adaptation. It refuses fixed shapes, feeding on
@@ -179,11 +190,49 @@ crests:
       count: 3
       min_resonance: 60
     awakening_effect:
-      type: overgrowth        # extra movement and a rolling stat bloom
-      movement_bonus: 1
-      stat_bloom: {stat: cycle, amount: 3}
+      type: overgrowth        # quicker, with a stat bloom that rotates each round
+      initiative_bonus: 15
+      stat_bloom: {cycle: [atk, def, mag, res, spd], amount: 3}
       duration: 3
     visual_theme:
       palette: verdant
       glow: moss_green
     tags: [adaptation, movement, variety]
+
+  # Kai's Crest after the Hollow Court bond, before Civara stabilises it.
+  # It answers all six recognised patterns and settles into none, so it
+  # is not one of the six (recognised: false) and never offered to
+  # anyone else. Its name is a description: canon leaves the Crest
+  # itself unnamed (docs/rework/CHAPTER_ONE_PROVISIONAL_CANON.md).
+  - id: unsettled_crest
+    name: Unsettled Crest
+    affinity: unsettled
+    recognised: false
+    affinity_profile: {weak: [], resist: []}
+    rarity: unique
+    description: >-
+      A Crest that answers every resonance pattern and settles into none.
+      Its pull is strong and unsteady.
+    compatible_classes: [warrior, mage, assassin, guardian, neutral, sorcerer]
+    passive_modifier:
+      type: none
+    resonance_gain:
+      hit_landed: 6
+      damage_taken: 5
+      braced: 6
+      varied_move: 6
+      status_applied: 6
+      gambit_used: 6
+    awakening_condition:
+      type: none
+      min_resonance: 70
+    awakening_effect:
+      type: resonance_surge   # raw power, the next hit Exposes, and it hurts
+      power_bonus: 0.2
+      expose_duration: 1
+      recoil: 0.05
+      duration: 3
+    visual_theme:
+      palette: unsettled
+      glow: shifting_gold
+    tags: [unique, unstable]

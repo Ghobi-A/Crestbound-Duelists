@@ -1,4 +1,70 @@
 {
+  "anchor_pulse": {
+    "accuracy": 1.0,
+    "ai_tags": [
+      "damage"
+    ],
+    "animation_key": "bolt",
+    "area_shape": "single",
+    "class_id": "enemy",
+    "cooldown_turns": 0,
+    "id": "anchor_pulse",
+    "is_buff_move": false,
+    "move_type": "magical",
+    "name": "Pulse",
+    "power": 12,
+    "property": "arcane",
+    "range": 3,
+    "resource_cost": 0,
+    "self_stat_mods": [],
+    "slot": "basic",
+    "status_effects": [],
+    "tags": [
+      "riven"
+    ],
+    "target_rule": "enemy",
+    "target_stat_mods": [],
+    "terrain_effects": [],
+    "vfx_key": "overload_burst"
+  },
+  "anchor_seal": {
+    "accuracy": 1.0,
+    "ai_tags": [
+      "buff"
+    ],
+    "animation_key": "buff",
+    "area_shape": "single",
+    "class_id": "enemy",
+    "cooldown_turns": 1,
+    "id": "anchor_seal",
+    "is_buff_move": true,
+    "move_type": "magical",
+    "name": "Seal",
+    "power": 0,
+    "property": "arcane",
+    "range": 1,
+    "resource_cost": 0,
+    "self_stat_mods": [
+      {
+        "amount": 8,
+        "stat": "def"
+      },
+      {
+        "amount": 8,
+        "stat": "res"
+      }
+    ],
+    "slot": "signature",
+    "status_effects": [],
+    "tags": [
+      "riven",
+      "buff"
+    ],
+    "target_rule": "self",
+    "target_stat_mods": [],
+    "terrain_effects": [],
+    "vfx_key": "fortify_glow"
+  },
   "arcane_bolt": {
     "accuracy": 1.0,
     "ai_tags": [
@@ -13,6 +79,7 @@
     "move_type": "magical",
     "name": "Arcane Bolt",
     "power": 16,
+    "property": "arcane",
     "range": 3,
     "resource_cost": 0,
     "self_stat_mods": [],
@@ -42,6 +109,7 @@
     "move_type": "physical",
     "name": "Armor Break",
     "power": 13,
+    "property": "impact",
     "range": 1,
     "resource_cost": 0,
     "self_stat_mods": [],
@@ -76,6 +144,7 @@
     "move_type": "physical",
     "name": "Avalanche",
     "power": 22,
+    "property": "impact",
     "range": 1,
     "resource_cost": 0,
     "self_stat_mods": [],
@@ -89,6 +158,231 @@
     "target_stat_mods": [],
     "terrain_effects": [],
     "vfx_key": "avalanche_rocks"
+  },
+  "binding_glyph": {
+    "accuracy": 1.0,
+    "ai_tags": [
+      "damage",
+      "debuff"
+    ],
+    "animation_key": "bolt",
+    "area_shape": "single",
+    "class_id": "mage",
+    "cooldown_turns": 1,
+    "id": "binding_glyph",
+    "is_buff_move": false,
+    "move_type": "magical",
+    "name": "Binding Glyph",
+    "power": 10,
+    "property": "arcane",
+    "range": 3,
+    "resource_cost": 0,
+    "self_stat_mods": [],
+    "slot": "signature",
+    "status_effects": [],
+    "tags": [
+      "debuff",
+      "control",
+      "ranged"
+    ],
+    "target_rule": "enemy",
+    "target_stat_mods": [
+      {
+        "amount": -12,
+        "stat": "spd"
+      }
+    ],
+    "terrain_effects": [],
+    "vfx_key": "mind_shards"
+  },
+  "bulwark_protocol": {
+    "accuracy": 1.0,
+    "ai_tags": [
+      "buff"
+    ],
+    "animation_key": "buff",
+    "area_shape": "single",
+    "class_id": "entity",
+    "cooldown_turns": 1,
+    "id": "bulwark_protocol",
+    "is_buff_move": true,
+    "move_type": "physical",
+    "name": "Bulwark Protocol",
+    "power": 0,
+    "property": "impact",
+    "range": 1,
+    "resource_cost": 0,
+    "self_stat_mods": [
+      {
+        "amount": 10,
+        "stat": "def"
+      },
+      {
+        "amount": 10,
+        "stat": "res"
+      }
+    ],
+    "slot": "signature",
+    "status_effects": [],
+    "tags": [
+      "buff",
+      "entity"
+    ],
+    "target_rule": "self",
+    "target_stat_mods": [],
+    "terrain_effects": [],
+    "vfx_key": "fortify_glow"
+  },
+  "choir_collapse": {
+    "accuracy": 0.85,
+    "ai_tags": [
+      "damage"
+    ],
+    "animation_key": "heavy_slash",
+    "area_shape": "single",
+    "class_id": "enemy",
+    "cooldown_turns": 1,
+    "id": "choir_collapse",
+    "is_buff_move": false,
+    "move_type": "physical",
+    "name": "Collapse",
+    "power": 24,
+    "property": "impact",
+    "range": 1,
+    "resource_cost": 0,
+    "self_stat_mods": [],
+    "slot": "gambit",
+    "status_effects": [],
+    "tags": [
+      "riven"
+    ],
+    "target_rule": "enemy",
+    "target_stat_mods": [],
+    "terrain_effects": [],
+    "vfx_key": "avalanche_rocks"
+  },
+  "choir_dirge": {
+    "accuracy": 1.0,
+    "ai_tags": [
+      "damage"
+    ],
+    "animation_key": "curse",
+    "area_shape": "single",
+    "class_id": "enemy",
+    "cooldown_turns": 1,
+    "id": "choir_dirge",
+    "is_buff_move": false,
+    "move_type": "magical",
+    "name": "Dirge",
+    "power": 11,
+    "property": "arcane",
+    "range": 3,
+    "resource_cost": 0,
+    "self_stat_mods": [],
+    "slot": "signature",
+    "status_effects": [
+      {
+        "duration": 2,
+        "status": "hexed",
+        "target": "enemy"
+      }
+    ],
+    "tags": [
+      "riven",
+      "curse"
+    ],
+    "target_rule": "enemy",
+    "target_stat_mods": [],
+    "terrain_effects": [],
+    "vfx_key": "hex_sigil"
+  },
+  "choir_requiem": {
+    "accuracy": 1.0,
+    "ai_tags": [
+      "damage"
+    ],
+    "animation_key": "burst",
+    "area_shape": "single",
+    "class_id": "enemy",
+    "cooldown_turns": 1,
+    "id": "choir_requiem",
+    "is_buff_move": false,
+    "move_type": "magical",
+    "name": "Requiem",
+    "power": 19,
+    "property": "arcane",
+    "range": 3,
+    "resource_cost": 0,
+    "self_stat_mods": [],
+    "slot": "gambit",
+    "status_effects": [],
+    "tags": [
+      "riven",
+      "telegraph",
+      "area"
+    ],
+    "target_rule": "all_enemies",
+    "target_stat_mods": [],
+    "telegraph": true,
+    "terrain_effects": [],
+    "vfx_key": "voidfire_pillar"
+  },
+  "choir_toll": {
+    "accuracy": 1.0,
+    "ai_tags": [
+      "damage"
+    ],
+    "animation_key": "bolt",
+    "area_shape": "single",
+    "class_id": "enemy",
+    "cooldown_turns": 0,
+    "id": "choir_toll",
+    "is_buff_move": false,
+    "move_type": "magical",
+    "name": "Toll",
+    "power": 15,
+    "property": "impact",
+    "range": 3,
+    "resource_cost": 0,
+    "self_stat_mods": [],
+    "slot": "basic",
+    "status_effects": [],
+    "tags": [
+      "riven"
+    ],
+    "target_rule": "enemy",
+    "target_stat_mods": [],
+    "terrain_effects": [],
+    "vfx_key": "overload_burst"
+  },
+  "crest_flare": {
+    "accuracy": 1.0,
+    "ai_tags": [
+      "damage"
+    ],
+    "animation_key": "burst",
+    "area_shape": "single",
+    "class_id": "kai",
+    "cooldown_turns": 1,
+    "id": "crest_flare",
+    "is_buff_move": false,
+    "move_type": "adaptive",
+    "name": "Crest Flare",
+    "power": 14,
+    "property": "arcane",
+    "range": 3,
+    "resonance_bonus": 10,
+    "resource_cost": 0,
+    "self_stat_mods": [],
+    "slot": "signature",
+    "status_effects": [],
+    "tags": [
+      "resonance"
+    ],
+    "target_rule": "enemy",
+    "target_stat_mods": [],
+    "terrain_effects": [],
+    "vfx_key": "hybrid_spark"
   },
   "cripple": {
     "accuracy": 1.0,
@@ -105,6 +399,7 @@
     "move_type": "physical",
     "name": "Cripple",
     "power": 13,
+    "property": "edge",
     "range": 1,
     "resource_cost": 0,
     "self_stat_mods": [],
@@ -129,6 +424,96 @@
     "terrain_effects": [],
     "vfx_key": "cripple_slash"
   },
+  "danfor_shield_rush": {
+    "accuracy": 1.0,
+    "ai_tags": [
+      "damage"
+    ],
+    "animation_key": "charge",
+    "area_shape": "single",
+    "class_id": "enemy",
+    "cooldown_turns": 1,
+    "id": "danfor_shield_rush",
+    "is_buff_move": false,
+    "move_type": "physical",
+    "name": "Shield Rush",
+    "power": 18,
+    "property": "impact",
+    "range": 1,
+    "resource_cost": 0,
+    "self_stat_mods": [],
+    "slot": "gambit",
+    "status_effects": [],
+    "tags": [
+      "telegraph",
+      "lesson"
+    ],
+    "target_rule": "enemy",
+    "target_stat_mods": [],
+    "telegraph": true,
+    "terrain_effects": [],
+    "vfx_key": "shield_impact"
+  },
+  "earthbreaker": {
+    "accuracy": 0.8,
+    "ai_tags": [
+      "damage"
+    ],
+    "animation_key": "heavy_slash",
+    "area_shape": "single",
+    "class_id": "guardian",
+    "cooldown_turns": 1,
+    "id": "earthbreaker",
+    "is_buff_move": false,
+    "move_type": "physical",
+    "name": "Earthbreaker",
+    "power": 16,
+    "property": "impact",
+    "range": 1,
+    "resource_cost": 0,
+    "self_stat_mods": [],
+    "slot": "gambit",
+    "status_effects": [],
+    "tags": [
+      "risky",
+      "area"
+    ],
+    "target_rule": "all_enemies",
+    "target_stat_mods": [],
+    "terrain_effects": [],
+    "vfx_key": "avalanche_rocks"
+  },
+  "feint_cut": {
+    "accuracy": 1.0,
+    "ai_tags": [
+      "damage"
+    ],
+    "animation_key": "slash",
+    "area_shape": "single",
+    "class_id": "assassin",
+    "cooldown_turns": 0,
+    "id": "feint_cut",
+    "is_buff_move": false,
+    "move_type": "physical",
+    "name": "Feint Cut",
+    "power": 13,
+    "property": "edge",
+    "range": 1,
+    "resonance_bonus": 4,
+    "resource_cost": 0,
+    "self_stat_mods": [],
+    "slot": "basic",
+    "speed": 15,
+    "status_effects": [],
+    "tags": [
+      "reliable",
+      "quick"
+    ],
+    "target_rule": "enemy",
+    "target_stat_mods": [],
+    "terrain_effects": [],
+    "vfx_key": "quick_flash"
+  },
   "flame": {
     "accuracy": 1.0,
     "ai_tags": [
@@ -143,6 +528,7 @@
     "move_type": "magical",
     "name": "Flame",
     "power": 16,
+    "property": "arcane",
     "range": 3,
     "resource_cost": 0,
     "self_stat_mods": [],
@@ -173,6 +559,7 @@
     "move_type": "adaptive",
     "name": "Focus Shift",
     "power": 13,
+    "property": "arcane",
     "range": 2,
     "resource_cost": 0,
     "self_stat_mods": [
@@ -220,6 +607,7 @@
     "move_type": "adaptive",
     "name": "Fortify",
     "power": 13,
+    "property": "impact",
     "range": 1,
     "resource_cost": 0,
     "self_stat_mods": [
@@ -244,6 +632,240 @@
     "terrain_effects": [],
     "vfx_key": "fortify_glow"
   },
+  "greymaw_feint": {
+    "accuracy": 1.0,
+    "ai_tags": [
+      "damage",
+      "debuff"
+    ],
+    "animation_key": "slash",
+    "area_shape": "single",
+    "class_id": "enemy",
+    "cooldown_turns": 1,
+    "id": "greymaw_feint",
+    "is_buff_move": false,
+    "move_type": "physical",
+    "name": "Feint",
+    "power": 8,
+    "property": "impact",
+    "range": 1,
+    "resource_cost": 0,
+    "self_stat_mods": [
+      {
+        "amount": 10,
+        "stat": "spd"
+      }
+    ],
+    "slot": "signature",
+    "status_effects": [],
+    "tags": [
+      "beast",
+      "debuff"
+    ],
+    "target_rule": "enemy",
+    "target_stat_mods": [
+      {
+        "amount": -8,
+        "stat": "def"
+      }
+    ],
+    "terrain_effects": [],
+    "vfx_key": "quick_flash"
+  },
+  "greymaw_frenzy": {
+    "accuracy": 1.0,
+    "ai_tags": [
+      "damage"
+    ],
+    "animation_key": "slash",
+    "area_shape": "single",
+    "class_id": "enemy",
+    "cooldown_turns": 0,
+    "id": "greymaw_frenzy",
+    "is_buff_move": false,
+    "move_type": "physical",
+    "name": "Frenzied Rend",
+    "power": 16,
+    "property": "edge",
+    "range": 1,
+    "resource_cost": 0,
+    "self_stat_mods": [],
+    "slot": "basic",
+    "speed": 10,
+    "status_effects": [],
+    "tags": [
+      "beast"
+    ],
+    "target_rule": "enemy",
+    "target_stat_mods": [],
+    "terrain_effects": [],
+    "vfx_key": "cripple_slash"
+  },
+  "greymaw_howl": {
+    "accuracy": 1.0,
+    "ai_tags": [
+      "dispel"
+    ],
+    "animation_key": "buff",
+    "area_shape": "single",
+    "class_id": "enemy",
+    "cooldown_turns": 1,
+    "dispel_buffs": true,
+    "id": "greymaw_howl",
+    "is_buff_move": false,
+    "move_type": "physical",
+    "name": "Howl",
+    "power": 0,
+    "property": "impact",
+    "range": 1,
+    "resource_cost": 0,
+    "self_stat_mods": [],
+    "slot": "signature",
+    "status_effects": [],
+    "tags": [
+      "beast",
+      "dispel"
+    ],
+    "target_rule": "all_enemies",
+    "target_stat_mods": [],
+    "terrain_effects": [],
+    "vfx_key": "focus_aura"
+  },
+  "greymaw_lunge": {
+    "accuracy": 1.0,
+    "ai_tags": [
+      "damage"
+    ],
+    "animation_key": "slash",
+    "area_shape": "single",
+    "class_id": "enemy",
+    "cooldown_turns": 0,
+    "id": "greymaw_lunge",
+    "is_buff_move": false,
+    "move_type": "physical",
+    "name": "Lunge",
+    "power": 15,
+    "property": "edge",
+    "range": 1,
+    "resource_cost": 0,
+    "self_stat_mods": [],
+    "slot": "basic",
+    "speed": 5,
+    "status_effects": [],
+    "tags": [
+      "beast"
+    ],
+    "target_rule": "enemy",
+    "target_stat_mods": [],
+    "terrain_effects": [],
+    "vfx_key": "slash_arc"
+  },
+  "greymaw_pounce": {
+    "accuracy": 0.9,
+    "aftermath_self_statuses": [
+      {
+        "duration": 1,
+        "status": "exposed"
+      }
+    ],
+    "ai_tags": [
+      "damage"
+    ],
+    "animation_key": "charge",
+    "area_shape": "single",
+    "class_id": "enemy",
+    "cooldown_turns": 1,
+    "id": "greymaw_pounce",
+    "is_buff_move": false,
+    "move_type": "physical",
+    "name": "Pounce",
+    "power": 30,
+    "property": "impact",
+    "range": 1,
+    "resource_cost": 0,
+    "self_stat_mods": [],
+    "slot": "gambit",
+    "status_effects": [],
+    "tags": [
+      "beast",
+      "telegraph"
+    ],
+    "target_rule": "enemy",
+    "target_stat_mods": [],
+    "telegraph": true,
+    "terrain_effects": [],
+    "vfx_key": "dust_trail"
+  },
+  "greymaw_rend": {
+    "accuracy": 1.0,
+    "ai_tags": [
+      "damage"
+    ],
+    "animation_key": "heavy_slash",
+    "area_shape": "single",
+    "class_id": "enemy",
+    "cooldown_turns": 1,
+    "id": "greymaw_rend",
+    "is_buff_move": false,
+    "move_type": "physical",
+    "name": "Rend",
+    "power": 12,
+    "property": "edge",
+    "range": 1,
+    "resource_cost": 0,
+    "self_stat_mods": [],
+    "slot": "signature",
+    "status_effects": [
+      {
+        "duration": 2,
+        "status": "bleed",
+        "target": "enemy",
+        "value": 4
+      }
+    ],
+    "tags": [
+      "beast",
+      "bleed"
+    ],
+    "target_rule": "enemy",
+    "target_stat_mods": [],
+    "terrain_effects": [],
+    "vfx_key": "cripple_slash"
+  },
+  "guard_strike": {
+    "accuracy": 1.0,
+    "ai_tags": [
+      "damage"
+    ],
+    "animation_key": "bash",
+    "area_shape": "single",
+    "class_id": "guardian",
+    "cooldown_turns": 0,
+    "id": "guard_strike",
+    "is_buff_move": false,
+    "move_type": "physical",
+    "name": "Guard Strike",
+    "power": 13,
+    "property": "impact",
+    "range": 1,
+    "resource_cost": 0,
+    "self_stat_mods": [
+      {
+        "amount": 4,
+        "stat": "def"
+      }
+    ],
+    "slot": "basic",
+    "status_effects": [],
+    "tags": [
+      "reliable",
+      "defensive"
+    ],
+    "target_rule": "enemy",
+    "target_stat_mods": [],
+    "terrain_effects": [],
+    "vfx_key": "shield_impact"
+  },
   "hex": {
     "accuracy": 1.0,
     "ai_tags": [
@@ -260,6 +882,7 @@
     "move_type": "magical",
     "name": "Hex",
     "power": 13,
+    "property": "arcane",
     "range": 3,
     "resource_cost": 0,
     "self_stat_mods": [],
@@ -291,6 +914,93 @@
     "terrain_effects": [],
     "vfx_key": "hex_sigil"
   },
+  "hilt_strike": {
+    "accuracy": 1.0,
+    "ai_tags": [
+      "damage"
+    ],
+    "animation_key": "slash",
+    "area_shape": "single",
+    "class_id": "warrior",
+    "cooldown_turns": 0,
+    "id": "hilt_strike",
+    "is_buff_move": false,
+    "move_type": "physical",
+    "name": "Hilt Strike",
+    "power": 14,
+    "property": "impact",
+    "range": 1,
+    "resource_cost": 0,
+    "self_stat_mods": [],
+    "slot": "basic",
+    "speed": 10,
+    "status_effects": [],
+    "tags": [
+      "reliable",
+      "quick"
+    ],
+    "target_rule": "enemy",
+    "target_stat_mods": [],
+    "terrain_effects": [],
+    "vfx_key": "shield_impact"
+  },
+  "husk_grind": {
+    "accuracy": 0.8,
+    "ai_tags": [
+      "damage"
+    ],
+    "animation_key": "heavy_slash",
+    "area_shape": "single",
+    "class_id": "enemy",
+    "cooldown_turns": 1,
+    "id": "husk_grind",
+    "is_buff_move": false,
+    "move_type": "physical",
+    "name": "Grind",
+    "power": 22,
+    "property": "impact",
+    "range": 1,
+    "resource_cost": 0,
+    "self_stat_mods": [],
+    "slot": "gambit",
+    "status_effects": [],
+    "tags": [
+      "riven",
+      "guard_break"
+    ],
+    "target_rule": "enemy",
+    "target_stat_mods": [],
+    "terrain_effects": [],
+    "vfx_key": "avalanche_rocks"
+  },
+  "husk_slam": {
+    "accuracy": 1.0,
+    "ai_tags": [
+      "damage"
+    ],
+    "animation_key": "bash",
+    "area_shape": "single",
+    "class_id": "enemy",
+    "cooldown_turns": 0,
+    "id": "husk_slam",
+    "is_buff_move": false,
+    "move_type": "physical",
+    "name": "Slam",
+    "power": 15,
+    "property": "impact",
+    "range": 1,
+    "resource_cost": 0,
+    "self_stat_mods": [],
+    "slot": "basic",
+    "status_effects": [],
+    "tags": [
+      "riven"
+    ],
+    "target_rule": "enemy",
+    "target_stat_mods": [],
+    "terrain_effects": [],
+    "vfx_key": "shield_impact"
+  },
   "hybrid_strike": {
     "accuracy": 1.0,
     "ai_tags": [
@@ -305,6 +1015,7 @@
     "move_type": "adaptive",
     "name": "Hybrid Strike",
     "power": 16,
+    "property": "edge",
     "range": 1,
     "resource_cost": 0,
     "self_stat_mods": [],
@@ -318,6 +1029,34 @@
     "target_stat_mods": [],
     "terrain_effects": [],
     "vfx_key": "hybrid_spark"
+  },
+  "kai_strike": {
+    "accuracy": 1.0,
+    "ai_tags": [
+      "damage"
+    ],
+    "animation_key": "slash",
+    "area_shape": "single",
+    "class_id": "kai",
+    "cooldown_turns": 0,
+    "id": "kai_strike",
+    "is_buff_move": false,
+    "move_type": "physical",
+    "name": "Strike",
+    "power": 15,
+    "property": "edge",
+    "range": 1,
+    "resource_cost": 0,
+    "self_stat_mods": [],
+    "slot": "basic",
+    "status_effects": [],
+    "tags": [
+      "reliable"
+    ],
+    "target_rule": "enemy",
+    "target_stat_mods": [],
+    "terrain_effects": [],
+    "vfx_key": "slash_arc"
   },
   "lethal_edge": {
     "accuracy": 0.7,
@@ -335,6 +1074,7 @@
     "move_type": "physical",
     "name": "Lethal Edge",
     "power": 25,
+    "property": "edge",
     "range": 1,
     "resource_cost": 0,
     "self_stat_mods": [],
@@ -348,6 +1088,35 @@
     "target_stat_mods": [],
     "terrain_effects": [],
     "vfx_key": "lethal_gleam"
+  },
+  "lionfall_verdict": {
+    "accuracy": 1.0,
+    "ai_tags": [
+      "damage"
+    ],
+    "animation_key": "heavy_slash",
+    "area_shape": "single",
+    "class_id": "entity",
+    "cooldown_turns": 1,
+    "id": "lionfall_verdict",
+    "is_buff_move": false,
+    "move_type": "physical",
+    "name": "Lionfall Verdict",
+    "power": 16,
+    "property": "impact",
+    "range": 1,
+    "resource_cost": 0,
+    "self_stat_mods": [],
+    "slot": "signature",
+    "status_effects": [],
+    "tags": [
+      "guard_break",
+      "entity"
+    ],
+    "target_rule": "enemy",
+    "target_stat_mods": [],
+    "terrain_effects": [],
+    "vfx_key": "shield_impact"
   },
   "mind_pierce": {
     "accuracy": 1.0,
@@ -364,6 +1133,7 @@
     "move_type": "magical",
     "name": "Mind Pierce",
     "power": 13,
+    "property": "arcane",
     "range": 3,
     "resource_cost": 0,
     "self_stat_mods": [],
@@ -384,6 +1154,112 @@
     "terrain_effects": [],
     "vfx_key": "mind_shards"
   },
+  "mirror_stance": {
+    "accuracy": 1.0,
+    "ai_tags": [
+      "buff"
+    ],
+    "animation_key": "buff",
+    "area_shape": "single",
+    "class_id": "neutral",
+    "cooldown_turns": 1,
+    "id": "mirror_stance",
+    "is_buff_move": true,
+    "move_type": "adaptive",
+    "name": "Mirror Stance",
+    "power": 0,
+    "property": "arcane",
+    "range": 1,
+    "resource_cost": 0,
+    "self_stat_mods": [
+      {
+        "amount": 6,
+        "stat": "atk"
+      },
+      {
+        "amount": 6,
+        "stat": "mag"
+      }
+    ],
+    "slot": "signature",
+    "status_effects": [],
+    "tags": [
+      "buff",
+      "stance"
+    ],
+    "target_rule": "self",
+    "target_stat_mods": [],
+    "terrain_effects": [],
+    "vfx_key": "wild_shimmer"
+  },
+  "null_burst": {
+    "accuracy": 0.75,
+    "ai_tags": [
+      "damage"
+    ],
+    "animation_key": "burst",
+    "area_shape": "single",
+    "class_id": "sorcerer",
+    "cooldown_turns": 1,
+    "dispel_buffs": true,
+    "id": "null_burst",
+    "is_buff_move": false,
+    "move_type": "magical",
+    "name": "Null Burst",
+    "power": 23,
+    "property": "impact",
+    "range": 3,
+    "resource_cost": 0,
+    "self_stat_mods": [],
+    "slot": "gambit",
+    "status_effects": [],
+    "tags": [
+      "risky",
+      "dispel"
+    ],
+    "target_rule": "enemy",
+    "target_stat_mods": [],
+    "terrain_effects": [],
+    "vfx_key": "voidfire_pillar"
+  },
+  "overflow": {
+    "accuracy": 0.8,
+    "ai_tags": [
+      "damage"
+    ],
+    "animation_key": "burst",
+    "area_shape": "single",
+    "class_id": "kai",
+    "cooldown_turns": 1,
+    "id": "overflow",
+    "is_buff_move": false,
+    "move_type": "adaptive",
+    "name": "Overflow",
+    "power": 26,
+    "property": "arcane",
+    "range": 3,
+    "resource_cost": 0,
+    "self_stat_mods": [
+      {
+        "amount": -4,
+        "stat": "def"
+      },
+      {
+        "amount": -4,
+        "stat": "res"
+      }
+    ],
+    "slot": "gambit",
+    "status_effects": [],
+    "tags": [
+      "risky",
+      "resonance"
+    ],
+    "target_rule": "enemy",
+    "target_stat_mods": [],
+    "terrain_effects": [],
+    "vfx_key": "overload_burst"
+  },
   "overload": {
     "accuracy": 0.75,
     "ai_tags": [
@@ -399,6 +1275,7 @@
     "move_type": "magical",
     "name": "Overload",
     "power": 24,
+    "property": "arcane",
     "range": 3,
     "resource_cost": 0,
     "self_stat_mods": [
@@ -432,6 +1309,7 @@
     "move_type": "physical",
     "name": "Power Slash",
     "power": 16,
+    "property": "edge",
     "range": 1,
     "resource_cost": 0,
     "self_stat_mods": [],
@@ -444,6 +1322,76 @@
     "target_stat_mods": [],
     "terrain_effects": [],
     "vfx_key": "slash_arc"
+  },
+  "prism_severance": {
+    "accuracy": 0.9,
+    "ai_tags": [
+      "damage"
+    ],
+    "animation_key": "heavy_slash",
+    "area_shape": "single",
+    "class_id": "entity",
+    "cooldown_turns": 1,
+    "id": "prism_severance",
+    "is_buff_move": false,
+    "move_type": "physical",
+    "name": "Prism Severance",
+    "power": 20,
+    "property": "edge",
+    "range": 1,
+    "resource_cost": 0,
+    "self_stat_mods": [],
+    "slot": "gambit",
+    "speed": 20,
+    "status_effects": [],
+    "tags": [
+      "risky",
+      "entity",
+      "quick"
+    ],
+    "target_rule": "enemy",
+    "target_stat_mods": [],
+    "terrain_effects": [],
+    "vfx_key": "lethal_gleam"
+  },
+  "procession_of_antlers": {
+    "accuracy": 1.0,
+    "ai_tags": [
+      "damage",
+      "debuff"
+    ],
+    "animation_key": "curse",
+    "area_shape": "single",
+    "class_id": "entity",
+    "cooldown_turns": 1,
+    "id": "procession_of_antlers",
+    "is_buff_move": false,
+    "move_type": "magical",
+    "name": "Procession of Antlers",
+    "power": 10,
+    "property": "arcane",
+    "range": 3,
+    "resource_cost": 0,
+    "self_stat_mods": [],
+    "slot": "signature",
+    "status_effects": [],
+    "tags": [
+      "debuff",
+      "entity"
+    ],
+    "target_rule": "enemy",
+    "target_stat_mods": [
+      {
+        "amount": -6,
+        "stat": "atk"
+      },
+      {
+        "amount": -6,
+        "stat": "mag"
+      }
+    ],
+    "terrain_effects": [],
+    "vfx_key": "hex_sigil"
   },
   "quick_strike": {
     "accuracy": 1.0,
@@ -459,6 +1407,7 @@
     "move_type": "physical",
     "name": "Quick Strike",
     "power": 16,
+    "property": "edge",
     "range": 1,
     "resource_cost": 0,
     "self_stat_mods": [],
@@ -472,6 +1421,43 @@
     "target_stat_mods": [],
     "terrain_effects": [],
     "vfx_key": "quick_flash"
+  },
+  "rallying_roar": {
+    "accuracy": 1.0,
+    "ai_tags": [
+      "buff"
+    ],
+    "animation_key": "buff",
+    "area_shape": "single",
+    "class_id": "warrior",
+    "cooldown_turns": 1,
+    "id": "rallying_roar",
+    "is_buff_move": true,
+    "move_type": "physical",
+    "name": "Rallying Roar",
+    "power": 0,
+    "property": "impact",
+    "range": 1,
+    "resource_cost": 0,
+    "self_stat_mods": [
+      {
+        "amount": 8,
+        "stat": "atk"
+      },
+      {
+        "amount": 4,
+        "stat": "spd"
+      }
+    ],
+    "slot": "signature",
+    "status_effects": [],
+    "tags": [
+      "buff"
+    ],
+    "target_rule": "self",
+    "target_stat_mods": [],
+    "terrain_effects": [],
+    "vfx_key": "focus_aura"
   },
   "reckless_charge": {
     "accuracy": 0.75,
@@ -488,6 +1474,7 @@
     "move_type": "physical",
     "name": "Reckless Charge",
     "power": 24,
+    "property": "impact",
     "range": 2,
     "resource_cost": 0,
     "self_stat_mods": [
@@ -507,6 +1494,35 @@
     "terrain_effects": [],
     "vfx_key": "dust_trail"
   },
+  "shadow_lash": {
+    "accuracy": 1.0,
+    "ai_tags": [
+      "damage"
+    ],
+    "animation_key": "bolt",
+    "area_shape": "single",
+    "class_id": "sorcerer",
+    "cooldown_turns": 0,
+    "id": "shadow_lash",
+    "is_buff_move": false,
+    "move_type": "magical",
+    "name": "Shadow Lash",
+    "power": 14,
+    "property": "edge",
+    "range": 3,
+    "resource_cost": 0,
+    "self_stat_mods": [],
+    "slot": "basic",
+    "status_effects": [],
+    "tags": [
+      "reliable",
+      "ranged"
+    ],
+    "target_rule": "enemy",
+    "target_stat_mods": [],
+    "terrain_effects": [],
+    "vfx_key": "hex_sigil"
+  },
   "shield_bash": {
     "accuracy": 1.0,
     "ai_tags": [
@@ -521,6 +1537,7 @@
     "move_type": "adaptive",
     "name": "Shield Bash",
     "power": 15,
+    "property": "impact",
     "range": 1,
     "resource_cost": 0,
     "self_stat_mods": [],
@@ -534,6 +1551,333 @@
     "target_stat_mods": [],
     "terrain_effects": [],
     "vfx_key": "shield_impact"
+  },
+  "shield_toss": {
+    "accuracy": 1.0,
+    "ai_tags": [
+      "damage",
+      "debuff"
+    ],
+    "animation_key": "bash",
+    "area_shape": "single",
+    "class_id": "guardian",
+    "cooldown_turns": 1,
+    "id": "shield_toss",
+    "is_buff_move": false,
+    "move_type": "physical",
+    "name": "Shield Toss",
+    "power": 13,
+    "property": "impact",
+    "range": 3,
+    "resource_cost": 0,
+    "self_stat_mods": [],
+    "slot": "signature",
+    "status_effects": [],
+    "tags": [
+      "ranged",
+      "debuff"
+    ],
+    "target_rule": "enemy",
+    "target_stat_mods": [
+      {
+        "amount": -6,
+        "stat": "def"
+      }
+    ],
+    "terrain_effects": [],
+    "vfx_key": "shield_impact"
+  },
+  "shoulder_check": {
+    "accuracy": 1.0,
+    "ai_tags": [
+      "damage",
+      "debuff"
+    ],
+    "animation_key": "bash",
+    "area_shape": "single",
+    "class_id": "kai",
+    "cooldown_turns": 1,
+    "id": "shoulder_check",
+    "is_buff_move": false,
+    "move_type": "physical",
+    "name": "Shoulder Check",
+    "power": 12,
+    "property": "impact",
+    "range": 1,
+    "resource_cost": 0,
+    "self_stat_mods": [],
+    "slot": "signature",
+    "status_effects": [],
+    "tags": [
+      "debuff"
+    ],
+    "target_rule": "enemy",
+    "target_stat_mods": [
+      {
+        "amount": -6,
+        "stat": "def"
+      }
+    ],
+    "terrain_effects": [],
+    "vfx_key": "shield_impact"
+  },
+  "smoke_step": {
+    "accuracy": 1.0,
+    "ai_tags": [
+      "buff"
+    ],
+    "animation_key": "buff",
+    "area_shape": "single",
+    "class_id": "assassin",
+    "cooldown_turns": 1,
+    "id": "smoke_step",
+    "is_buff_move": true,
+    "move_type": "physical",
+    "name": "Smoke Step",
+    "power": 0,
+    "property": "edge",
+    "range": 1,
+    "resource_cost": 0,
+    "self_stat_mods": [
+      {
+        "amount": 6,
+        "stat": "def"
+      },
+      {
+        "amount": 10,
+        "stat": "spd"
+      }
+    ],
+    "slot": "signature",
+    "status_effects": [],
+    "tags": [
+      "buff",
+      "evasive"
+    ],
+    "target_rule": "self",
+    "target_stat_mods": [],
+    "terrain_effects": [],
+    "vfx_key": "quick_flash"
+  },
+  "starfall": {
+    "accuracy": 0.8,
+    "ai_tags": [
+      "damage"
+    ],
+    "animation_key": "burst",
+    "area_shape": "single",
+    "class_id": "mage",
+    "cooldown_turns": 1,
+    "id": "starfall",
+    "is_buff_move": false,
+    "move_type": "magical",
+    "name": "Starfall",
+    "power": 15,
+    "property": "arcane",
+    "range": 3,
+    "resource_cost": 0,
+    "self_stat_mods": [],
+    "slot": "gambit",
+    "status_effects": [],
+    "tags": [
+      "risky",
+      "area"
+    ],
+    "target_rule": "all_enemies",
+    "target_stat_mods": [],
+    "terrain_effects": [],
+    "vfx_key": "overload_burst"
+  },
+  "steady_footing": {
+    "accuracy": 1.0,
+    "ai_tags": [
+      "buff"
+    ],
+    "animation_key": "buff",
+    "area_shape": "single",
+    "class_id": "kai",
+    "cooldown_turns": 1,
+    "id": "steady_footing",
+    "is_buff_move": true,
+    "move_type": "physical",
+    "name": "Steady Footing",
+    "power": 0,
+    "property": "impact",
+    "range": 1,
+    "resource_cost": 0,
+    "self_stat_mods": [
+      {
+        "amount": 8,
+        "stat": "def"
+      },
+      {
+        "amount": 6,
+        "stat": "res"
+      }
+    ],
+    "slot": "signature",
+    "status_effects": [],
+    "tags": [
+      "buff",
+      "defensive"
+    ],
+    "target_rule": "self",
+    "target_stat_mods": [],
+    "terrain_effects": [],
+    "vfx_key": "fortify_glow"
+  },
+  "steady_palm": {
+    "accuracy": 1.0,
+    "ai_tags": [
+      "damage"
+    ],
+    "animation_key": "slash",
+    "area_shape": "single",
+    "class_id": "neutral",
+    "cooldown_turns": 0,
+    "id": "steady_palm",
+    "is_buff_move": false,
+    "move_type": "adaptive",
+    "name": "Steady Palm",
+    "power": 15,
+    "property": "impact",
+    "range": 1,
+    "resonance_bonus": 3,
+    "resource_cost": 0,
+    "self_stat_mods": [],
+    "slot": "basic",
+    "status_effects": [],
+    "tags": [
+      "reliable"
+    ],
+    "target_rule": "enemy",
+    "target_stat_mods": [],
+    "terrain_effects": [],
+    "vfx_key": "hybrid_spark"
+  },
+  "stone_lance": {
+    "accuracy": 1.0,
+    "ai_tags": [
+      "damage"
+    ],
+    "animation_key": "bolt",
+    "area_shape": "single",
+    "class_id": "mage",
+    "cooldown_turns": 0,
+    "id": "stone_lance",
+    "is_buff_move": false,
+    "move_type": "magical",
+    "name": "Stone Lance",
+    "power": 14,
+    "property": "impact",
+    "range": 3,
+    "resource_cost": 0,
+    "self_stat_mods": [],
+    "slot": "basic",
+    "status_effects": [],
+    "tags": [
+      "reliable",
+      "ranged"
+    ],
+    "target_rule": "enemy",
+    "target_stat_mods": [],
+    "terrain_effects": [],
+    "vfx_key": "avalanche_rocks"
+  },
+  "sundering_blow": {
+    "accuracy": 0.7,
+    "ai_tags": [
+      "damage"
+    ],
+    "animation_key": "heavy_slash",
+    "area_shape": "single",
+    "class_id": "warrior",
+    "cooldown_turns": 1,
+    "id": "sundering_blow",
+    "is_buff_move": false,
+    "move_type": "physical",
+    "name": "Sundering Blow",
+    "power": 26,
+    "property": "edge",
+    "range": 1,
+    "resource_cost": 0,
+    "self_stat_mods": [],
+    "slot": "gambit",
+    "speed": -15,
+    "status_effects": [],
+    "tags": [
+      "risky",
+      "guard_break"
+    ],
+    "target_rule": "enemy",
+    "target_stat_mods": [],
+    "terrain_effects": [],
+    "vfx_key": "armor_shatter"
+  },
+  "throat_strike": {
+    "accuracy": 0.85,
+    "ai_tags": [
+      "damage"
+    ],
+    "animation_key": "heavy_slash",
+    "area_shape": "single",
+    "class_id": "assassin",
+    "cooldown_turns": 1,
+    "id": "throat_strike",
+    "is_buff_move": false,
+    "move_type": "physical",
+    "name": "Throat Strike",
+    "power": 21,
+    "property": "edge",
+    "range": 1,
+    "resource_cost": 0,
+    "self_stat_mods": [],
+    "slot": "gambit",
+    "status_effects": [
+      {
+        "duration": 2,
+        "status": "bleed",
+        "target": "enemy",
+        "value": 4
+      }
+    ],
+    "tags": [
+      "risky",
+      "bleed"
+    ],
+    "target_rule": "enemy",
+    "target_stat_mods": [],
+    "terrain_effects": [],
+    "vfx_key": "cripple_slash"
+  },
+  "turning_point": {
+    "accuracy": 0.85,
+    "ai_tags": [
+      "damage"
+    ],
+    "animation_key": "burst",
+    "area_shape": "single",
+    "class_id": "neutral",
+    "cooldown_turns": 1,
+    "id": "turning_point",
+    "is_buff_move": false,
+    "move_type": "adaptive",
+    "name": "Turning Point",
+    "power": 22,
+    "property": "edge",
+    "range": 1,
+    "resource_cost": 0,
+    "self_stat_mods": [],
+    "slot": "gambit",
+    "status_effects": [],
+    "tags": [
+      "risky",
+      "adaptive"
+    ],
+    "target_rule": "enemy",
+    "target_stat_mods": [],
+    "terrain_effects": [],
+    "vfx_key": "wild_shimmer"
   },
   "voidfire": {
     "accuracy": 0.75,
@@ -550,6 +1894,7 @@
     "move_type": "magical",
     "name": "Voidfire",
     "power": 24,
+    "property": "arcane",
     "range": 3,
     "resource_cost": 0,
     "self_stat_mods": [
@@ -584,6 +1929,7 @@
     "move_type": "adaptive",
     "name": "Wild Card",
     "power": 24,
+    "property": "impact",
     "range": 2,
     "resource_cost": 0,
     "self_stat_mods": [],
@@ -597,5 +1943,135 @@
     "target_stat_mods": [],
     "terrain_effects": [],
     "vfx_key": "wild_shimmer"
+  },
+  "wild_swing": {
+    "accuracy": 0.75,
+    "ai_tags": [
+      "damage"
+    ],
+    "animation_key": "heavy_slash",
+    "area_shape": "single",
+    "class_id": "kai",
+    "cooldown_turns": 1,
+    "id": "wild_swing",
+    "is_buff_move": false,
+    "move_type": "physical",
+    "name": "Wild Swing",
+    "power": 22,
+    "property": "impact",
+    "range": 1,
+    "resource_cost": 0,
+    "self_stat_mods": [],
+    "slot": "gambit",
+    "status_effects": [],
+    "tags": [
+      "risky"
+    ],
+    "target_rule": "enemy",
+    "target_stat_mods": [],
+    "terrain_effects": [],
+    "vfx_key": "dust_trail"
+  },
+  "wisp_chill": {
+    "accuracy": 1.0,
+    "ai_tags": [
+      "damage",
+      "debuff"
+    ],
+    "animation_key": "bolt",
+    "area_shape": "single",
+    "class_id": "enemy",
+    "cooldown_turns": 1,
+    "id": "wisp_chill",
+    "is_buff_move": false,
+    "move_type": "magical",
+    "name": "Chill",
+    "power": 9,
+    "property": "arcane",
+    "range": 3,
+    "resource_cost": 0,
+    "self_stat_mods": [],
+    "slot": "signature",
+    "status_effects": [],
+    "tags": [
+      "riven",
+      "debuff"
+    ],
+    "target_rule": "enemy",
+    "target_stat_mods": [
+      {
+        "amount": -8,
+        "stat": "spd"
+      }
+    ],
+    "terrain_effects": [],
+    "vfx_key": "mind_shards"
+  },
+  "wisp_flicker": {
+    "accuracy": 1.0,
+    "ai_tags": [
+      "damage"
+    ],
+    "animation_key": "bolt",
+    "area_shape": "single",
+    "class_id": "enemy",
+    "cooldown_turns": 0,
+    "id": "wisp_flicker",
+    "is_buff_move": false,
+    "move_type": "magical",
+    "name": "Flicker",
+    "power": 13,
+    "property": "arcane",
+    "range": 3,
+    "resource_cost": 0,
+    "self_stat_mods": [],
+    "slot": "basic",
+    "status_effects": [],
+    "tags": [
+      "riven"
+    ],
+    "target_rule": "enemy",
+    "target_stat_mods": [],
+    "terrain_effects": [],
+    "vfx_key": "arcane_bolt"
+  },
+  "withering_curse": {
+    "accuracy": 1.0,
+    "ai_tags": [
+      "damage",
+      "debuff"
+    ],
+    "animation_key": "curse",
+    "area_shape": "single",
+    "class_id": "sorcerer",
+    "cooldown_turns": 1,
+    "id": "withering_curse",
+    "is_buff_move": false,
+    "move_type": "magical",
+    "name": "Withering Curse",
+    "power": 11,
+    "property": "arcane",
+    "range": 3,
+    "resource_cost": 0,
+    "self_stat_mods": [],
+    "slot": "signature",
+    "status_effects": [],
+    "tags": [
+      "debuff",
+      "ranged"
+    ],
+    "target_rule": "enemy",
+    "target_stat_mods": [
+      {
+        "amount": -6,
+        "stat": "def"
+      },
+      {
+        "amount": -6,
+        "stat": "res"
+      }
+    ],
+    "terrain_effects": [],
+    "vfx_key": "hex_sigil"
   }
 }

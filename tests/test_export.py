@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 
 from export_game_data import DATASETS, SCHEMA_VERSION, export_all, sync_to_game
+from loaders import load_moves
 
 
 def test_export_produces_all_datasets(tmp_path):
@@ -12,6 +13,7 @@ def test_export_produces_all_datasets(tmp_path):
     expected = {
         "classes", "moves", "combat_config", "crests", "entities",
         "terrain", "battle_objectives", "encounters", "characters", "locations",
+        "items", "equipment", "cast",
     }
     assert set(manifest["datasets"]) == expected
     for name in expected:
@@ -33,8 +35,8 @@ def test_manifest_contents(tmp_path):
     assert manifest["schema_version"] == SCHEMA_VERSION
     assert "exported_at" in manifest
     assert manifest["record_counts"]["classes"] == 6
-    assert manifest["record_counts"]["moves"] == 18
-    assert manifest["record_counts"]["crests"] == 6
+    assert manifest["record_counts"]["moves"] == len(load_moves())
+    assert manifest["record_counts"]["crests"] == 7  # six recognised + Kai's unsettled Crest
     assert manifest["record_counts"]["entities"] == 6
     assert manifest["record_counts"]["encounters"] >= 4
 

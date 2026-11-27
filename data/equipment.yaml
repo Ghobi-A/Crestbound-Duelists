@@ -1,0 +1,73 @@
+# Crestbound Duelists — equipment: charms (single source of truth).
+#
+# Each character wears one charm. Effects are typed records read by both
+# battle runtimes:
+#   affinity            add_weak / add_resist / remove_weak / remove_resist
+#   stat_bonus          {stat, amount}
+#   initiative_bonus    {amount}
+#   property_bonus      {property, amount}  additive damage multiplier
+#   resonance_on_event  {event, amount}     extra Resonance on a crest event
+#   resonance_vs_status {statuses, amount}  Resonance when hitting such a target
+#   brace_pierce        {charges}           Edge hits ignore Brace this many times
+# Charms change how a Duelist fights; none is a flat upgrade on another.
+
+equipment:
+  - id: greymaw_fang
+    name: Greymaw Fang
+    description: >-
+      Old Greymaw's fang, which Ferris says remembers the ridge. Once per
+      battle an Edge hit ignores Brace; hitting an Exposed or Staggered
+      foe stirs Resonance.
+    price: 0
+    source: reward
+    effects:
+      - {type: brace_pierce, charges: 1}
+      - {type: resonance_vs_status, statuses: [exposed, staggered], amount: 10}
+
+  - id: wardens_sigil
+    name: Warden's Sigil
+    description: >-
+      A survey sigil from Almyra's unit. Shrugs off Arcane, but the wearer
+      is slower to act.
+    price: 0
+    source: reward
+    effects:
+      - {type: affinity, add_resist: [arcane], remove_weak: [arcane]}
+      - {type: initiative_bonus, amount: -6}
+
+  - id: drowned_bell
+    name: Drowned Bell
+    description: >-
+      A cracked bell-tongue from the Drowned Gallery. Bracing rings it:
+      +6 Resonance whenever you Brace.
+    price: 0
+    source: found
+    effects:
+      - {type: resonance_on_event, event: braced, amount: 6}
+
+  - id: road_charm
+    name: Road Charm
+    description: A traveller's knot. Act a little sooner.
+    price: 40
+    source: shop
+    effects:
+      - {type: initiative_bonus, amount: 8}
+
+  - id: whetstone_token
+    name: Whetstone Token
+    description: Edge attacks bite deeper (+10%), Impact attacks are unchanged.
+    price: 55
+    source: shop
+    effects:
+      - {type: property_bonus, property: edge, amount: 0.1}
+
+  - id: lamplighters_glass
+    name: Lamplighter's Glass
+    description: >-
+      Civara-made lens. Arcane attacks +10%, but it leaves you open to
+      Impact.
+    price: 70
+    source: shop
+    effects:
+      - {type: property_bonus, property: arcane, amount: 0.1}
+      - {type: affinity, add_weak: [impact]}

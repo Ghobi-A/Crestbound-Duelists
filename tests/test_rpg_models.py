@@ -35,7 +35,11 @@ EXPECTED_ENTITIES = {
 
 
 def test_all_sample_crests_present():
-    assert set(load_crests()) == EXPECTED_CRESTS
+    crests = load_crests()
+    recognised = {cid for cid, c in crests.items() if c.get("recognised", True)}
+    assert recognised == EXPECTED_CRESTS
+    # The only other Crest is Kai's, which settles into none of the six.
+    assert set(crests) - recognised == {"unsettled_crest"}
 
 
 def test_all_sample_entities_present():
@@ -44,7 +48,7 @@ def test_all_sample_entities_present():
 
 def test_crests_are_not_plain_stat_boosts():
     # Every Crest passive must be a typed behavioural modifier.
-    types = {c["passive_modifier"]["type"] for c in load_crests().values()}
+    types = {c["passive_modifier"]["type"] for c in load_crests().values() if c.get("recognised", True)}
     assert len(types) == len(EXPECTED_CRESTS)  # all distinct behaviours
 
 

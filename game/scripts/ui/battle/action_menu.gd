@@ -48,6 +48,15 @@ func build_for(unit: BattleUnit, allow_flee := false) -> void:
 			entry.note = "HEXED"
 			entry.description = "Blocked by Hex.\nUsable again once the Hex fades."
 		entries.append(entry)
+	# Awaken: listed for every Crest-bearer until used, so the meter's goal
+	# is always visible; enabled only when the Crest is ready.
+	if not unit.crest_record.is_empty() and not unit.awakened:
+		var ready := unit.awakening_ready()
+		entries.append({
+			"label": "Awaken", "kind": "awaken", "move": {}, "enabled": ready,
+			"note": "READY" if ready else "%d%%" % unit.resonance,
+			"description": CrestRuntime.ready_hint(unit) if ready else CrestRuntime.progress_text(unit),
+		})
 	entries.append({
 		"label": "Brace", "kind": "brace", "move": {}, "enabled": true, "note": "",
 		"description": "Defensive stance\nGuards this round and feeds some Crests.",

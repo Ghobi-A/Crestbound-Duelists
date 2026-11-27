@@ -1,5 +1,8 @@
 # Crestbound Duelists — battle objective definitions for the tactical layer.
-# params are interpreted by the battle controller for each objective_type.
+# params are interpreted by both battle runtimes for each objective_type;
+# an encounter's objective_params override them (e.g. turns_required).
+# Implemented: eliminate, defeat_target, survive, protect. hold_tile is
+# reserved from the grid era and not used.
 
 battle_objectives:
   - id: defeat_all
@@ -7,6 +10,13 @@ battle_objectives:
     description: The battle is won when every enemy unit has fallen.
     objective_type: eliminate
     params: {}
+
+  - id: defeat_target
+    name: Defeat the Marked Foe
+    description: The battle is won when the marked enemy falls.
+    objective_type: defeat_target
+    params:
+      unit_tag: target
 
   - id: hold_crest_node
     name: Hold the Crest Node

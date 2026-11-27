@@ -19,8 +19,9 @@ def source(relative: str) -> str:
 
 def test_every_yaml_move_vfx_key_resolves_through_runtime_key_lookup() -> None:
     moves = yaml.safe_load((ROOT / "data/moves.yaml").read_text())["moves"]
+    # Moves may share an effect (enemy and alternative moves reuse the
+    # authored set); every key must be a plain asset name.
     keys = [move["vfx_key"] for move in moves]
-    assert len(keys) == len(set(keys))
     assert all(key and "/" not in key and ".." not in key for key in keys)
     vfx = source("scripts/presentation/battle_vfx.gd")
     assert 'str(move.get("vfx_key", ""))' in source(

@@ -102,49 +102,73 @@ special combat effects, not a movement system.
 
 ## Combat math
 
-Identical to the Python Balance Lab, from exported data only:
+The same in both runtimes (`party_combat.py` and the Godot battle layer),
+from exported data only:
 
 ```text
-damage = power × 2·ATK/(ATK+DEF) × U(variance_low, variance_high)
-         × crest passives × row rules × entity/battlefield modifiers,
-         minimum 1
+damage = floor(power × 2·ATK/(ATK+DEF) × multipliers
+               × (variance_low + (variance_high − variance_low)·u)), minimum 1
+multipliers = Crest passives (+ Verdant variety, awakening bonuses)
+            × row rules (close moves into/out of the back row)
+            + Entity and charm bonuses
+            × affinity (weak ×1.3, resist ×0.75)
+            × Grave Stag (a hexed attacker deals −10% to its bearer's side)
+            × 0.5 for a telegraphed attack released into a Brace
 ```
 
-Braced defence is multiplied by `brace_multiplier`; v2.2 uses **1.20×**
-(+ any Azure bonus). At equal attacking and defending stats this is
-roughly a 9% incoming-damage reduction rather than the ~2% produced by
-the old 1.05 multiplier.
+`u` is one draw from the battle's dice stream. Braced defence is
+multiplied by `brace_multiplier` (**1.15×**, plus any Azure bonus) unless
+the move breaks guard or a charm pierces it.
 
 Hex blocks dedicated buff actions, strips active positive stat modifiers
 when applied, and suppresses positive stat changes while active. Negative
 trade-off modifiers are not erased by Hex. Stat modifiers decay after
 `stat_decay_duration` rounds.
 
-## Stateful balance / Nash model
+## Combat System 3.0
 
-The original v2.1 research matrix used
+Every rule here is implemented in the Python reference engine
+(`party_combat.py`) and the Godot runtime (`game/scripts/battle/`), with
+values in YAML. Replay parity (`tools/generate_combat_parity.py` →
+`game/data/combat_replays.json`, checked by `combat_parity_smoke.gd`)
+records whole seeded battles in Python and requires Godot to reproduce
+them event for event.
 
-```text
-A[i,j] = E[damage_A(move_i)] - E[damage_B(move_j)]
-```
-
-which has the separable form `f(i) - g(j)`. That construction makes each
-player's best action independent of the opponent's chosen action, so its
-pure equilibria were not evidence that execution randomness itself
-eliminated strategic mixing.
-
-v2.2 instead estimates a finite-horizon state-action value:
-
-```text
-Q(s, a_i, a_j)
-```
-
-by forcing each joint opening action pair and running seeded three-round
-continuations through the real combat transition system. The state carries
-HP, cooldowns, stat modifiers, statuses/Hex and initiative/Brace effects.
-The resulting matrix can therefore be non-separable, and mixed policies —
-when they appear — are an empirical property of interaction rather than a
-mathematical artifact of the payoff definition.
+- **Dice.** Every random draw (initiative, accuracy, damage, interception,
+  retargeting, AI noise) comes from one stream of integers in [0, 2^24),
+  in the same order in both runtimes.
+- **Attack properties and affinities.** Each move is Impact, Edge or
+  Arcane. A unit's affinity profile (weak and resist) comes from its
+  Crest (`affinity_profile`), its charm, or an authored override for
+  beasts and bosses. A weakness hit **Staggers**: the target loses Brace
+  for the round and a pending telegraph slips a round. *Exposed* makes
+  every property a weakness.
+- **Loadouts.** Classes keep their default kit (`move_ids`) and gain one
+  alternative per slot (`unlockable_moves`). Units equip up to four moves:
+  Basic, Signature, Gambit and Flex. Alternatives trade power, accuracy,
+  initiative (`speed`), riders and Resonance rather than strictly
+  improving. Brace is always available.
+- **Awaken** is a command, not an automatic trigger: available once the
+  meter reaches the Crest's `min_resonance` and its condition holds,
+  once per battle, at Brace priority, lasting `duration` rounds
+  including the round it is used.
+- **Telegraphs.** A move with `telegraph: true` winds up for a round
+  (shown on screen) and lands the next. Brace halves it, a weakness hit
+  delays it, and knocking out the caster cancels it.
+- **Objectives.** `eliminate`, `defeat_target` (enemies tagged `target`),
+  `survive` (`turns_required`) and `protect` (losing a `protected` unit
+  loses the battle). Encounters override parameters with
+  `objective_params`.
+- **Bosses** have `stat_scale` and `phases`: HP- or round-triggered,
+  each with its own moves, AI profile, rotation, affinity, entry move,
+  entry statuses, an optional summon and a banner.
+- **Items** in battle use the Item command (`data/items.yaml`
+  `battle_effect`): heal, cure, Resonance or revive.
+- **Charms** (`data/equipment.yaml`) change affinities, initiative,
+  property damage or Resonance, or let Edge hits pierce Brace.
+- **Named builds** (`data/cast.yaml`): Kai's provisional kits, allies,
+  and the chapter's enemies and bosses. Encounters reference them with
+  `build:`.
 
 ## Resonance and awakening
 
@@ -155,13 +179,22 @@ landed Gambits; Ember on magical pressure against the weakened;
 Eclipse on statuses; Verdant on variety. The 0–100 meter is visible
 per Duelist.
 
-**Awakening** = crest condition **and** `min_resonance`, once per
-battle, presented with a screen flash and banner. Functional effects:
+**Awakening**: the Awaken command, once the Crest's condition holds and
+the meter reaches `min_resonance`. Once per battle, presented with a
+screen flash and banner. Effects:
 
-- **Crimson** — empowered Gambit: +25% power and 50% lifesteal.
-- **Azure** — counter stance: +4 DEF/RES and 30% damage reflection.
-- Eclipse (Hex saturation) and Glass (perfect edge) are wired in the
-  resolver; Ember/Verdant effects are data-complete but inert.
+- **Crimson:** empowered Gambit, +25% power and 50% lifesteal.
+- **Azure:** counter stance, +4 DEF/RES and 30% damage reflection.
+- **Eclipse:** Hex saturation; Hex also pushes back used cooldowns.
+- **Ember:** scorched ground; hits leave the target Scorched (4 per round).
+- **Glass:** perfect edge; never miss, +15% power.
+- **Verdant:** overgrowth; +initiative and a +3 stat bloom rotating each
+  round.
+- **Unsettled** (Kai before Civara): Resonance surge; +20% power, the next
+  hit Exposes, and 5% max HP recoil each round.
+
+Generic Resonance (`combat_config.yaml generic_resonance`) rewards every
+Crest-bearer for a weakness hit (+10) and for Bracing a telegraph (+8).
 
 Battlefield effects modify the whole encounter (never tiles): the
 Hollow Court's dormant node multiplies Resonance gains after round 3;
@@ -169,33 +202,43 @@ the archive's Restricted Sigils shorten stat-modifier durations.
 
 ## Bonded Entities
 
-Entities are manifestations (translucent sprites behind their
-Duelist), not party slots. Functional passives: Storm Lion may
-intercept a hit aimed at an ally; Iron Tortoise extends Brace by a
-round; Ash Seraph gains damage on ruin-tagged battlefields. Other
-entity passives are defined in data but dormant.
+Entities are manifestations (translucent sprites behind their Duelist),
+not party slots. All six passives work:
+- Storm Lion may intercept a hit aimed at an ally.
+- Iron Tortoise extends Brace by a round.
+- Ash Seraph hits harder on ruin- or scorched-tagged battlefields.
+- Glass Mantis presses a target already hit this round.
+- Mirror Fox copies a buff the other side gives itself.
+- Grave Stag weakens hexed attackers.
+
+Granted moves (equipped when the bearer's build doesn't specify moves):
+Lionfall Verdict, Bulwark Protocol, Procession of Antlers and Prism
+Severance. Ash Seraph's and Mirror Fox's granted moves, and awakened
+Entity forms, are later work.
 
 ## Enemy AI
 
-A greedy heuristic (in the spirit of the Balance Lab's greedy policy)
-scoring every available move × target: expected damage × accuracy,
-a large kill bonus, value for fresh statuses (Hex) and debuffs, and
-reluctance to self-weaken when wounded. It reads the same exported
-data as the player's UI and works at any party size.
+Behaviour profiles in `combat_config.yaml ai_profiles` weight each
+(move, target) candidate:
+- **legacy:** the original greedy policy.
+- **aggressive:** damage and finishing.
+- **defensive:** Braces when hurt.
+- **disruptive:** statuses, debuffs, and targeting high Resonance.
+- **opportunistic:** finishes wounded targets, punishes Exposed or
+  Staggered ones.
+- **boss:** follows the phase rotation.
+
+Profiles react to a repeat Bracer (guard-break value), protected units
+and buffs (dispel value), with a small seeded noise term. It reads the
+same exported data as the player's UI and works at any party size.
 
 ## Current limitations
 
-- The v2.2 balance pass deliberately leaves the six class statlines
-  unchanged. Individual-stat tuning should follow the regenerated matchup
-  matrix rather than precede the structural fixes.
-- Ember's scorched-ground and Verdant's overgrowth awakening effects
-  are not implemented (data only).
-- Entity `granted_move` abilities and awakened entity forms are not
-  yet usable in battle.
-- Only the defeat-all objective is implemented; hold/survive/protect
-  objectives exist in data.
-- 1v1/2v2/2v3 encounters are engine-supported and defined in data but
-  not reachable through the story flow yet.
+- The class statlines are unchanged from v2.3; vertical-slice tuning is
+  driven by the party-engine simulations in the snapshot.
+- Ash Seraph's and Mirror Fox's granted moves and awakened Entity forms
+  are not implemented.
+- The `hold_tile` objective is grid-era data and not used.
 - The old grid-tactics battle was **removed** (not archived) in the
   pivot commit `refactor: replace grid tactics with variable-size
   party battles`; it remains available in git history. Terrain data

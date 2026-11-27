@@ -49,8 +49,10 @@ def test_v23_speed_tiers_are_soft_except_large_archetypal_gaps():
 
 
 def test_move_power_bands_match_long_fight_chassis():
+    # The classic chassis: every class's default kit (the 1v1 duel model).
     moves = load_moves()
-    for move in moves.values():
+    defaults = {m for c in load_classes().values() for m in c["move_ids"]}
+    for move in (moves[m] for m in defaults):
         slot = move["slot"]
         if slot == "basic":
             assert 15 <= move["power"] <= 16
@@ -107,3 +109,33 @@ def test_signature_riders_match_v23_class_identity():
 
 def test_brace_is_meaningful_without_using_v22_tankier_value():
     assert load_combat_config()["brace_multiplier"] == 1.15
+
+
+def test_class_alternatives_trade_rather_than_dominate():
+    """Each class has one alternative per slot (Combat System 3.0 loadouts),
+    and no alternative is simply better than the default on every axis."""
+    moves = load_moves()
+    for class_id, record in load_classes().items():
+        alternatives = [moves[m] for m in record["unlockable_moves"]]
+        assert sorted(m["slot"] for m in alternatives) == ["basic", "gambit", "signature"], class_id
+        for alt in alternatives:
+            default = next(moves[m] for m in record["move_ids"] if moves[m]["slot"] == alt["slot"])
+            if alt["slot"] == "basic":
+                assert alt["accuracy"] == 1.0 and alt["cooldown_turns"] == 0
+            if alt["slot"] == "gambit":
+                assert alt["accuracy"] < 1.0, alt["id"]
+            dominates = (
+                alt["power"] >= default["power"]
+                and alt["accuracy"] >= default["accuracy"]
+                and alt.get("speed", 0) >= default.get("speed", 0)
+                and alt.get("target_rule", "enemy") == default.get("target_rule", "enemy")
+                and not any(mod["amount"] < 0 for mod in alt.get("self_stat_mods", []))
+                and alt.get("resonance_bonus", 0) >= default.get("resonance_bonus", 0)
+                and alt["property"] == default["property"]
+                # ...and keeps every rider the default has.
+                and (sum(m["amount"] for m in alt.get("self_stat_mods", []) if m["amount"] > 0)
+                     >= sum(m["amount"] for m in default.get("self_stat_mods", []) if m["amount"] > 0))
+                and (len(alt.get("target_stat_mods", [])) >= len(default.get("target_stat_mods", [])))
+                and (len(alt.get("status_effects", [])) >= len(default.get("status_effects", [])))
+            )
+            assert not dominates, f"{alt['id']} strictly beats {default['id']}"

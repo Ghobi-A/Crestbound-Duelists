@@ -1,22 +1,22 @@
 extends RefCounted
 class_name ItemCatalog
-## Small authored catalogue shared by the shop and field inventory.
+## The item catalogue shared by the shop, the field bag and battle. Items
+## come from data/items.yaml through the export pipeline (GameData's
+## "items" dataset); nothing is authored here.
 
-const PATH := "res://data/items.json"
 
 static func all() -> Array:
-	var file := FileAccess.open(PATH, FileAccess.READ)
-	if file == null:
-		push_error("Missing item catalogue: " + PATH)
-		return []
-	var parsed = JSON.parse_string(file.get_as_text())
-	if typeof(parsed) != TYPE_DICTIONARY:
-		push_error("Invalid item catalogue: " + PATH)
-		return []
-	return parsed.get("items", [])
+	## Every item, cheapest first (then by id for a stable order).
+	var items: Array = GameData.datasets.get("items", {}).values()
+	items.sort_custom(func(a, b): return int(a.price) < int(b.price) or (int(a.price) == int(b.price) and str(a.id) < str(b.id)))
+	return items
+
 
 static func get_item(id: String) -> Dictionary:
-	for item in all():
-		if str(item.get("id", "")) == id:
-			return item
-	return {}
+	return GameData.datasets.get("items", {}).get(id, {})
+
+
+static func field_heal(item: Dictionary) -> int:
+	## HP restored when used from the menu (0 if it does nothing there).
+	var effect: Dictionary = item.get("field_effect", {})
+	return int(effect.get("amount", 0)) if str(effect.get("type", "")) == "heal" else 0

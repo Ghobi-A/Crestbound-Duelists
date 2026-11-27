@@ -2,6 +2,10 @@ class_name BattlePresentation
 extends Node
 ## Explicit visual sequencer consuming already-resolved authoritative events.
 
+## A phase change brought a new combatant onto the field; the controller
+## stages its sprite and HUD before the sequence continues.
+signal summoned(unit: BattleUnit)
+
 const ANTICIPATION := 0.10
 # Heavier moves wind up longer, so the strike reads as committed.
 const ANTICIPATION_HEAVY := 0.16
@@ -110,8 +114,96 @@ func play_events(action: Dictionary, events: Array) -> void:
 				var result: Dictionary = event.get("presentation_result", {})
 				if int(result.get("gained", 0)) >= 10 and sprites.has(event.unit):
 					floats.show_float(event.unit, sprites[event.unit].effect_origin(), "resonance", str(result.gained))
+			_:
+				await play_extra_event(event)
 		for sprite in sprites.values(): sprite.refresh()
 	await get_tree().create_timer(RECOVERY).timeout
+
+
+func play_extra_event(event: Dictionary) -> void:
+	## Combat System 3.0 events: telegraphs, staggers, phases, awakenings,
+	## items and damage over time. Shared by actions and the round end.
+	match str(event.type):
+		"windup":
+			var caster: BattleUnit = event.actor
+			hud.set_message("%s is winding up %s!" % [caster.display_name, event.move_name])
+			_float(caster, "status", "WIND-UP")
+			if sprites.has(caster): sprites[caster].contact_flash(0.12)
+			AudioRouter.play_sfx("battle", "telegraph")
+			await get_tree().create_timer(0.35).timeout
+		"hold":
+			hud.set_message("%s waits, watching." % event.actor.display_name)
+		"falter":
+			hud.set_message("%s's attack falters!" % event.actor.display_name)
+			_float(event.actor, "status", "FALTER")
+		"stagger":
+			_float(event.target, "status", "STAGGER" if not bool(event.get("delayed", false)) else "STAGGER · DELAYED")
+			AudioRouter.play_sfx("battle", "stagger")
+		"awaken":
+			await play_awakening(event.actor, CrestRuntime.awakening_banner_text(event.actor), palette_accent(event.actor))
+		"awakening_ready":
+			_float(event.unit, "resonance", "READY")
+			AudioRouter.play_sfx("battle", "resonance_ready")
+		"resonance":
+			if int(event.get("amount", 0)) >= 5: _float(event.unit, "resonance", str(event.amount))
+		"heal", "revive":
+			_float(event.target, "heal", str(event.amount))
+			AudioRouter.play_sfx("battle", "heal")
+		"cure":
+			_float(event.target, "status", "CURED")
+		"item_used":
+			AudioRouter.play_sfx("battle", "item")
+		"dispel":
+			_float(event.target, "status", "DISPELLED")
+		"mirror":
+			_float(event.unit, "status", "MIRROR %s+%d" % [str(event.stat).to_upper(), int(event.amount)])
+		"dot", "recoil":
+			_float(event.target, "damage", str(event.amount))
+			if sprites.has(event.target):
+				sprites[event.target].contact_flash(0.08)
+				if bool(event.get("ko", false)): sprites[event.target].play("defeat")
+			await get_tree().create_timer(0.18).timeout
+		"phase":
+			var banner := str(event.get("banner", ""))
+			hud.play_awakening_banner(banner if banner != "" else str(event.name).to_upper(), Color(0.86, 0.32, 0.3))
+			AudioRouter.play_sfx("battle", "phase")
+			shake(2.5)
+			await get_tree().create_timer(0.6).timeout
+		"summon":
+			summoned.emit(event.unit)
+			hud.set_message("%s takes shape!" % event.unit.display_name)
+			await get_tree().create_timer(0.35).timeout
+		"fizzle":
+			hud.set_message("Nothing happens.")
+
+
+func play_round_end(events: Array) -> void:
+	for event in events:
+		await play_extra_event(event)
+	for sprite in sprites.values(): sprite.refresh()
+
+
+func _float(unit: BattleUnit, kind: String, value: String) -> void:
+	if unit != null and sprites.has(unit):
+		floats.show_float(unit, sprites[unit].effect_origin(), kind, value)
+
+
+static func palette_accent(unit: BattleUnit) -> Color:
+	match str(unit.crest_record.get("visual_theme", {}).get("palette", "")):
+		"crimson":
+			return Color("c94f4f")
+		"azure":
+			return Color("4a9eff")
+		"ember":
+			return Color("d3743f")
+		"violet_black":
+			return Color("7c5fd3")
+		"pale_glass":
+			return Color("cfe6ef")
+		"verdant":
+			return Color("57c26b")
+		_:
+			return Color(1.0, 0.85, 0.3)
 
 
 func play_awakening(unit: BattleUnit, banner: String, accent: Color) -> void:

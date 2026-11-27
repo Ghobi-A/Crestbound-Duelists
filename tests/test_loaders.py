@@ -35,10 +35,14 @@ def test_load_classes_returns_all_six():
         assert len(record["move_ids"]) == 3
 
 
-def test_load_moves_returns_all_eighteen():
+def test_class_default_kits_hold_eighteen_moves():
+    # The classic chassis: three default moves per class, one per slot.
+    # (moves.yaml also holds class alternatives, Kai's kits, Entity and
+    # enemy moves for Combat System 3.0.)
     moves = load_moves()
-    assert len(moves) == 18
-    slots = [m["slot"] for m in moves.values()]
+    defaults = [moves[m] for c in load_classes().values() for m in c["move_ids"]]
+    assert len(defaults) == 18
+    slots = [m["slot"] for m in defaults]
     assert slots.count("basic") == 6
     assert slots.count("signature") == 6
     assert slots.count("gambit") == 6

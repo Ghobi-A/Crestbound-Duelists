@@ -1,27 +1,33 @@
 {
   "datasets": [
     "battle_objectives",
+    "cast",
     "characters",
     "classes",
     "combat_config",
     "crests",
     "encounters",
     "entities",
+    "equipment",
+    "items",
     "locations",
     "moves",
     "terrain"
   ],
-  "exported_at": "2026-11-25T22:17:46+00:00",
+  "exported_at": "2026-11-27T01:57:45+00:00",
   "record_counts": {
-    "battle_objectives": 4,
+    "battle_objectives": 5,
+    "cast": 12,
     "characters": 6,
     "classes": 6,
-    "combat_config": 7,
-    "crests": 6,
+    "combat_config": 17,
+    "crests": 7,
     "encounters": 8,
     "entities": 6,
+    "equipment": 6,
+    "items": 5,
     "locations": 8,
-    "moves": 18,
+    "moves": 63,
     "terrain": 8
   },
   "schema_version": "1.1.0"

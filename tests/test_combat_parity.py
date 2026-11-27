@@ -2,7 +2,7 @@
 
 import json
 
-from tools.generate_combat_parity import ROOT, build_cases
+from tools.generate_combat_parity import REPLAY_PATH, ROOT, build_cases, build_replays
 
 
 def test_godot_parity_fixture_is_current():
@@ -10,6 +10,24 @@ def test_godot_parity_fixture_is_current():
         json.loads((ROOT / "game/data/combat_parity_cases.json").read_text())
         == build_cases()
     )
+
+
+def test_party_battle_replays_are_current():
+    """The Godot replay fixture must match what the Python engine does now:
+    regenerate with `python tools/generate_combat_parity.py` after a rule
+    or data change, and Godot must then replay it identically."""
+    assert json.loads(REPLAY_PATH.read_text()) == build_replays()
+
+
+def test_replays_cover_every_mechanic():
+    log = "\n".join(line for s in build_replays()["scenarios"] for line in s["log"])
+    for needle in (
+        "type=awaken|actor=p0|effect=empowered_gambit", "effect=counter_stance", "effect=hex_saturation",
+        "effect=scorched_ground", "effect=perfect_edge", "effect=overgrowth", "effect=resonance_surge",
+        "type=windup", "type=stagger", "type=phase", "type=summon", "type=intercept", "type=mirror",
+        "type=dot", "type=item_used", "type=dispel", "affinity=weak", "affinity=resist", "pierced=1",
+    ):
+        assert needle in log, needle
 
 
 def test_cripple_does_not_gain_brace_bypass_from_debuff_magnitude():

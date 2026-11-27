@@ -73,8 +73,8 @@ def test_optional_clearing_chest_and_encounter_terrain_are_reachable():
         0 <= z["probability"] <= 1 and z["cooldown_steps"] >= 5
         for z in ROUTE["encounter_zones"]
     )
-    items = json.loads((ROOT / "game/data/items.json").read_text())["items"]
-    assert chest["item"] in {i["id"] for i in items} and chest["quantity"] > 0
+    items = json.loads((ROOT / "game/data/items.json").read_text())
+    assert chest["item"] in items and chest["quantity"] > 0
 
 
 def test_world_builder_is_reproducible():

@@ -16,8 +16,8 @@ decisions behind it, and how far implementation has got. Update the
 | Area | State | Notes |
 |---|---|---|
 | Spec and provisional canon | done | This file and `CHAPTER_ONE_PROVISIONAL_CANON.md` |
-| Combat 3.0 and the Python party engine | planned | Section 4 |
-| Replay parity | planned | Section 5 |
+| Combat 3.0 and the Python party engine | done | Section 4; `party_combat.py`, `game/scripts/battle/` |
+| Replay parity | done | 38 seeded battles, every mechanic; Godot matches event for event |
 | Progression, saves v3, Quick Battle isolation | planned | Section 6 |
 | Solo encounters and Old Greymaw | planned | Sections 3 and 4.9 |
 | Greymere story rework | planned | Section 2 |
@@ -222,9 +222,11 @@ The Python party engine (`party_combat.py`) and the Godot battle runtime
 - **Granted moves** become real moves and are equipped to Flex when the
   Entity is bonded:
   - Storm Lion `lionfall_verdict`
-  - Iron Tortoise `bastion_stride`
-  - Grave Stag `mourning_toll`
-  - Glass Mantis `shard_mantis_cut`
+  - Iron Tortoise `bulwark_protocol`
+  - Grave Stag `procession_of_antlers`
+  - Glass Mantis `prism_severance`
+
+  Ash Seraph's and Mirror Fox's granted moves stay reserved.
 
 ### 4.6 Enemy behaviour profiles
 
@@ -286,8 +288,9 @@ statuses on entry and a banner.
   modifiers, +SPD), then the Lunge–Rend–Pounce cycle every 2 rounds.
 - **Viable strategies** (checked in simulation, section 10):
   - Brace on each Pounce, then punish the Exposed round;
-  - fast Edge or weakness aggression (Greymaw is weak to Arcane before
-    the enrage and to Impact after it);
+  - weakness aggression: Greymaw is weak to Impact and resists Edge while
+    stalking, then flips (weak to Edge, resists Impact) once enraged.
+    Unbonded Kai has both, so switching property is the lesson;
   - a Resonance burst: Awaken during an Exposed round;
   - item sustain.
 - **Reward:** the *Greymaw Fang* charm. Once per battle, an Edge hit

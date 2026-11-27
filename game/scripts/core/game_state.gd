@@ -138,9 +138,12 @@ func use_item(id: String, party_index: int) -> String:
 	var member: Dictionary = party[party_index]
 	var hp_max := int(GameData.get_class_record(str(member.get("class_id", "neutral"))).get("base_stats", {}).get("hp", 1))
 	var hp := int(member.get("current_hp", hp_max))
+	var heal := ItemCatalog.field_heal(item)
+	if heal <= 0:
+		return "%s can only be used in battle." % str(item.name)
 	if hp >= hp_max:
 		return "Already at full health."
-	member["current_hp"] = mini(hp_max, hp + int(item.get("heal", 0)))
+	member["current_hp"] = mini(hp_max, hp + heal)
 	inventory[id] = int(inventory[id]) - 1
 	return "%s recovered %d HP." % [str(member.name), int(member.current_hp) - hp]
 

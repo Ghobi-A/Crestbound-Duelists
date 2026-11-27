@@ -32,7 +32,6 @@ enum State { INTRO, SELECT_MENU, SELECT_TARGET, PREVIEW, RESOLVING, RESULT }
 
 var runtime: EncounterRuntime
 var resolver: BattleResolver
-var crest_runtime: CrestRuntime
 var hud: BattleHud
 var dialogue: DialogueBox
 var target_selector := TargetSelector.new()
@@ -52,7 +51,6 @@ var result_presentation: ResultPresentation
 func _ready() -> void:
 	runtime = EncounterRuntime.start(GameState.pending_encounter, GameData, GameState)
 	resolver = BattleResolver.new(runtime, GameData)
-	crest_runtime = CrestRuntime.new(runtime)
 	stage = BattleStage.new()
 	add_child(stage)
 	_stage_background()
@@ -61,6 +59,7 @@ func _ready() -> void:
 	presentation = BattlePresentation.new()
 	add_child(presentation)
 	presentation.configure(stage, hud, sprites)
+	presentation.summoned.connect(_on_summoned)
 	AudioRouter.play_music("battle")
 	AudioRouter.stop_ambience()
 	_build_dialogue()
@@ -285,6 +284,9 @@ func _menu_input(event: InputEvent) -> void:
 		if entry.kind == "brace":
 			_commit_action({"actor": unit, "kind": "brace", "move": {}, "target": null})
 			return
+		if entry.kind == "awaken":
+			_commit_action({"actor": unit, "kind": "awaken", "move": {}, "target": null})
+			return
 		pending_move = entry.move
 		if target_selector.open(unit, runtime):
 			state = State.SELECT_TARGET
@@ -350,79 +352,47 @@ func _resolve_round() -> void:
 	_clear_all_highlights()
 	queue_redraw()
 
+	# The resolver owns every rule (Resonance, phases, telegraphs, damage
+	# over time); presentation only plays back the authoritative events.
 	var all_actions := planned_actions.duplicate()
-	for enemy in runtime.living("enemy"):
-		all_actions.append(EnemyAI.choose_action(enemy, resolver, runtime))
-
+	all_actions.append_array(resolver.plan_enemy_actions())
 	var ordered := resolver.order_actions(all_actions)
 	for action in ordered:
-		if runtime.victory() or runtime.defeat():
+		if runtime.outcome() != "":
 			break
 		if not action.actor.is_alive():
 			continue
 		var events := resolver.execute(action)
-		# Resolve all Crest state immediately from authoritative events; presentation
-		# receives only the result and cannot decide combat state.
-		var awakenings: Array[BattleUnit] = []
-		for event in events:
-			if event.type == "crest":
-				var crest_result: Dictionary = crest_runtime.process_event(event.unit, event.event)
-				event["presentation_result"] = crest_result
-				if crest_result.awakened:
-					awakenings.append(event.unit)
 		await presentation.play_events(action, events)
-		for awakened_unit in awakenings:
-			await _play_awakening(awakened_unit)
 		hud.refresh_rows()
 
-	resolver.end_round()
-	await _after_round_tick()
+	var round_end := resolver.end_round()
+	await presentation.play_round_end(round_end)
 	hud.refresh_rows()
 	for sprite in sprites.values():
 		sprite.refresh()
 
-	if runtime.victory():
-		_finish(true)
-	elif runtime.defeat():
-		_finish(false)
-	else:
-		_start_selection()
+	match runtime.outcome():
+		"victory":
+			_finish(true)
+		"defeat":
+			_finish(false)
+		_:
+			_start_selection()
 
 
-func _after_round_tick() -> void:
-	for unit in crest_runtime.end_of_round_awakenings():
-		await _play_awakening(unit)
+func _on_summoned(unit: BattleUnit) -> void:
+	## A boss phase brought a new enemy onto the field.
+	for existing in runtime.all_units():
+		if not sprites.has(existing):
+			sprites[existing] = (stage as BattleStage).add_combatant(existing, runtime.enemy_units.size(), runtime.player_units.size())
+	hud.build_turn_rail(runtime.all_units())
+	hud.refresh_rows()
 
 
 func _play_events(action: Dictionary, events: Array) -> void:
 	## Compatibility entry point for tools/tests; all sequencing lives in one layer.
 	await presentation.play_events(action, events)
-
-
-func _play_awakening(unit: BattleUnit) -> void:
-	var theme: Dictionary = unit.crest_record.get("visual_theme", {})
-	var accent := _palette_accent(theme.get("palette", ""))
-	hud.set_message("%s's Crest answers!" % unit.display_name)
-	hud.refresh_rows()
-	await presentation.play_awakening(unit, CrestRuntime.awakening_banner_text(unit), accent)
-
-
-func _palette_accent(palette: String) -> Color:
-	match palette:
-		"crimson":
-			return Color("c94f4f")
-		"azure":
-			return Color("4a9eff")
-		"ember":
-			return Color("d3743f")
-		"violet_black":
-			return Color("7c5fd3")
-		"pale_glass":
-			return Color("cfe6ef")
-		"verdant":
-			return Color("57c26b")
-		_:
-			return Color(1.0, 0.85, 0.3)
 
 
 

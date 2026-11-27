@@ -1,0 +1,44 @@
+# Crestbound Duelists — consumable items (single source of truth).
+#
+# field_effect applies from the menu between battles; battle_effect
+# applies through the Item command in battle (party_combat.py and the
+# Godot runtime). Prices are in crowns.
+
+items:
+  - id: potion
+    name: Potion
+    description: Restores 25 HP.
+    price: 18
+    category: consumable
+    field_effect: {type: heal, amount: 25}
+    battle_effect: {type: heal, amount: 25}
+
+  - id: hi_potion
+    name: Hi-Potion
+    description: Restores 55 HP.
+    price: 42
+    category: consumable
+    field_effect: {type: heal, amount: 55}
+    battle_effect: {type: heal, amount: 55}
+
+  - id: clearwater
+    name: Clearwater
+    description: Rinses away Hex and stops bleeding.
+    price: 24
+    category: consumable
+    field_effect: {type: cure, statuses: [hexed, bleed, scorched]}
+    battle_effect: {type: cure, statuses: [hexed, bleed, scorched]}
+
+  - id: resonance_tonic
+    name: Resonance Tonic
+    description: A bitter draught that stirs a Crest. +25 Resonance in battle.
+    price: 36
+    category: consumable
+    battle_effect: {type: resonance, amount: 25}
+
+  - id: smelling_salts
+    name: Smelling Salts
+    description: Brings a fallen ally back to their feet at 30% HP.
+    price: 48
+    category: consumable
+    battle_effect: {type: revive, ratio: 0.3}

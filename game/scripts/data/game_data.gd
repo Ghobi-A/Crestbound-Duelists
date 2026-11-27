@@ -9,7 +9,7 @@ extends Node
 const DATA_DIR := "res://data"
 const REQUIRED_DATASETS: Array[String] = [
 	"classes", "moves", "combat_config", "crests", "entities",
-	"terrain", "battle_objectives", "encounters",
+	"terrain", "battle_objectives", "encounters", "items", "equipment",
 ]
 const OPTIONAL_DATASETS: Array[String] = ["characters", "locations", "manifest"]
 
@@ -100,6 +100,18 @@ func get_encounter(encounter_id: String) -> Dictionary:
 	return _get_record("encounters", encounter_id)
 
 
+func has_move(move_id: String) -> bool:
+	return datasets.get("moves", {}).has(move_id)
+
+
+func get_item(item_id: String) -> Dictionary:
+	return _get_record("items", item_id)
+
+
+func get_equipment(equipment_id: String) -> Dictionary:
+	return _get_record("equipment", equipment_id)
+
+
 func class_ids() -> Array:
 	var ids: Array = datasets.get("classes", {}).keys()
 	ids.sort()
@@ -112,6 +124,19 @@ func config_value(key: String) -> float:
 		push_error("combat_config.json is missing '%s' — re-run the export pipeline." % key)
 		return 0.0
 	return float(config[key])
+
+
+func config_dict(key: String) -> Dictionary:
+	## Nested combat settings (ai_profiles, statuses, generic_resonance).
+	var value: Variant = datasets.get("combat_config", {}).get(key, {})
+	if not value is Dictionary:
+		push_error("combat_config.json '%s' is not a mapping — re-run the export pipeline." % key)
+		return {}
+	return value
+
+
+func status_kind(status_name: String) -> String:
+	return str(config_dict("statuses").get(status_name, {}).get("kind", "control"))
 
 
 func moves_for_class(class_id: String) -> Array:

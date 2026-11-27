@@ -1,6 +1,14 @@
 {
   "azure_crest": {
     "affinity": "ward",
+    "affinity_profile": {
+      "resist": [
+        "impact"
+      ],
+      "weak": [
+        "arcane"
+      ]
+    },
     "awakening_condition": {
       "count": 3,
       "min_resonance": 50,
@@ -42,6 +50,14 @@
   },
   "crimson_crest": {
     "affinity": "force",
+    "affinity_profile": {
+      "resist": [
+        "edge"
+      ],
+      "weak": [
+        "arcane"
+      ]
+    },
     "awakening_condition": {
       "min_resonance": 50,
       "threshold": 0.5,
@@ -84,6 +100,14 @@
   },
   "eclipse_crest": {
     "affinity": "umbral",
+    "affinity_profile": {
+      "resist": [
+        "arcane"
+      ],
+      "weak": [
+        "edge"
+      ]
+    },
     "awakening_condition": {
       "count": 3,
       "min_resonance": 60,
@@ -123,15 +147,23 @@
   },
   "ember_crest": {
     "affinity": "flame",
+    "affinity_profile": {
+      "resist": [
+        "arcane"
+      ],
+      "weak": [
+        "impact"
+      ]
+    },
     "awakening_condition": {
       "count": 3,
       "min_resonance": 60,
       "type": "debuffs_applied"
     },
     "awakening_effect": {
+      "dot_damage": 4,
+      "dot_duration": 3,
       "duration": 3,
-      "tile_damage": 4,
-      "tile_effect": "scorched",
       "type": "scorched_ground"
     },
     "compatible_classes": [
@@ -163,6 +195,14 @@
   },
   "glass_crest": {
     "affinity": "edge",
+    "affinity_profile": {
+      "resist": [
+        "edge"
+      ],
+      "weak": [
+        "impact"
+      ]
+    },
     "awakening_condition": {
       "count": 2,
       "min_resonance": 60,
@@ -202,8 +242,62 @@
       "palette": "pale_glass"
     }
   },
+  "unsettled_crest": {
+    "affinity": "unsettled",
+    "affinity_profile": {
+      "resist": [],
+      "weak": []
+    },
+    "awakening_condition": {
+      "min_resonance": 70,
+      "type": "none"
+    },
+    "awakening_effect": {
+      "duration": 3,
+      "expose_duration": 1,
+      "power_bonus": 0.2,
+      "recoil": 0.05,
+      "type": "resonance_surge"
+    },
+    "compatible_classes": [
+      "warrior",
+      "mage",
+      "assassin",
+      "guardian",
+      "neutral",
+      "sorcerer"
+    ],
+    "description": "A Crest that answers every resonance pattern and settles into none. Its pull is strong and unsteady.",
+    "id": "unsettled_crest",
+    "name": "Unsettled Crest",
+    "passive_modifier": {
+      "type": "none"
+    },
+    "rarity": "unique",
+    "recognised": false,
+    "resonance_gain": {
+      "braced": 6,
+      "damage_taken": 5,
+      "gambit_used": 6,
+      "hit_landed": 6,
+      "status_applied": 6,
+      "varied_move": 6
+    },
+    "tags": [
+      "unique",
+      "unstable"
+    ],
+    "visual_theme": {
+      "glow": "shifting_gold",
+      "palette": "unsettled"
+    }
+  },
   "verdant_crest": {
     "affinity": "growth",
+    "affinity_profile": {
+      "resist": [],
+      "weak": []
+    },
     "awakening_condition": {
       "count": 3,
       "min_resonance": 60,
@@ -211,10 +305,16 @@
     },
     "awakening_effect": {
       "duration": 3,
-      "movement_bonus": 1,
+      "initiative_bonus": 15,
       "stat_bloom": {
         "amount": 3,
-        "stat": "cycle"
+        "cycle": [
+          "atk",
+          "def",
+          "mag",
+          "res",
+          "spd"
+        ]
       },
       "type": "overgrowth"
     },

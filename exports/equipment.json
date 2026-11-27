@@ -1,0 +1,106 @@
+{
+  "drowned_bell": {
+    "description": "A cracked bell-tongue from the Drowned Gallery. Bracing rings it: +6 Resonance whenever you Brace.",
+    "effects": [
+      {
+        "amount": 6,
+        "event": "braced",
+        "type": "resonance_on_event"
+      }
+    ],
+    "id": "drowned_bell",
+    "name": "Drowned Bell",
+    "price": 0,
+    "source": "found"
+  },
+  "greymaw_fang": {
+    "description": "Old Greymaw's fang, which Ferris says remembers the ridge. Once per battle an Edge hit ignores Brace; hitting an Exposed or Staggered foe stirs Resonance.",
+    "effects": [
+      {
+        "charges": 1,
+        "type": "brace_pierce"
+      },
+      {
+        "amount": 10,
+        "statuses": [
+          "exposed",
+          "staggered"
+        ],
+        "type": "resonance_vs_status"
+      }
+    ],
+    "id": "greymaw_fang",
+    "name": "Greymaw Fang",
+    "price": 0,
+    "source": "reward"
+  },
+  "lamplighters_glass": {
+    "description": "Civara-made lens. Arcane attacks +10%, but it leaves you open to Impact.",
+    "effects": [
+      {
+        "amount": 0.1,
+        "property": "arcane",
+        "type": "property_bonus"
+      },
+      {
+        "add_weak": [
+          "impact"
+        ],
+        "type": "affinity"
+      }
+    ],
+    "id": "lamplighters_glass",
+    "name": "Lamplighter's Glass",
+    "price": 70,
+    "source": "shop"
+  },
+  "road_charm": {
+    "description": "A traveller's knot. Act a little sooner.",
+    "effects": [
+      {
+        "amount": 8,
+        "type": "initiative_bonus"
+      }
+    ],
+    "id": "road_charm",
+    "name": "Road Charm",
+    "price": 40,
+    "source": "shop"
+  },
+  "wardens_sigil": {
+    "description": "A survey sigil from Almyra's unit. Shrugs off Arcane, but the wearer is slower to act.",
+    "effects": [
+      {
+        "add_resist": [
+          "arcane"
+        ],
+        "remove_weak": [
+          "arcane"
+        ],
+        "type": "affinity"
+      },
+      {
+        "amount": -6,
+        "type": "initiative_bonus"
+      }
+    ],
+    "id": "wardens_sigil",
+    "name": "Warden's Sigil",
+    "price": 0,
+    "source": "reward"
+  },
+  "whetstone_token": {
+    "description": "Edge attacks bite deeper (+10%), Impact attacks are unchanged.",
+    "effects": [
+      {
+        "amount": 0.1,
+        "property": "edge",
+        "type": "property_bonus"
+      }
+    ],
+    "id": "whetstone_token",
+    "name": "Whetstone Token",
+    "price": 55,
+    "source": "shop"
+  }
+}

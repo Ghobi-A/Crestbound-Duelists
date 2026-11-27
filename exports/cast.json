@@ -1,0 +1,421 @@
+{
+  "almyra": {
+    "class_id": "guardian",
+    "crest_id": "azure_crest",
+    "entity_id": "storm_lion",
+    "id": "almyra",
+    "move_ids": [
+      "shield_bash",
+      "fortify",
+      "avalanche",
+      "lionfall_verdict"
+    ],
+    "name": "Warden Almyra",
+    "position": "front",
+    "sprite_key": "elara"
+  },
+  "danfor": {
+    "ai_profile": "defensive",
+    "class_id": "guardian",
+    "id": "danfor",
+    "move_ids": [
+      "shield_bash",
+      "fortify",
+      "danfor_shield_rush"
+    ],
+    "name": "Danfor",
+    "position": "front",
+    "sprite_key": "danfor",
+    "stat_scale": {
+      "hp": 0.85
+    }
+  },
+  "greymaw": {
+    "class_id": "assassin",
+    "id": "greymaw",
+    "name": "Old Greymaw",
+    "phases": [
+      {
+        "affinity": {
+          "resist": [
+            "edge"
+          ],
+          "weak": [
+            "impact"
+          ]
+        },
+        "ai_profile": "boss",
+        "move_ids": [
+          "greymaw_lunge",
+          "greymaw_feint",
+          "greymaw_rend",
+          "greymaw_pounce"
+        ],
+        "name": "Stalking",
+        "rotation": [
+          {
+            "pick": [
+              "greymaw_lunge",
+              "greymaw_feint",
+              "greymaw_rend"
+            ]
+          },
+          {
+            "pick": [
+              "greymaw_lunge",
+              "greymaw_feint",
+              "greymaw_rend"
+            ]
+          },
+          {
+            "move": "greymaw_pounce"
+          }
+        ]
+      },
+      {
+        "affinity": {
+          "resist": [
+            "impact"
+          ],
+          "weak": [
+            "edge"
+          ]
+        },
+        "banner": "OLD GREYMAW IS ENRAGED",
+        "entry_move": "greymaw_howl",
+        "move_ids": [
+          "greymaw_frenzy",
+          "greymaw_rend",
+          "greymaw_pounce",
+          "greymaw_howl"
+        ],
+        "name": "Enraged",
+        "rotation": [
+          {
+            "pick": [
+              "greymaw_frenzy",
+              "greymaw_rend"
+            ]
+          },
+          {
+            "move": "greymaw_pounce"
+          }
+        ],
+        "trigger": {
+          "threshold": 0.4,
+          "type": "hp_below"
+        }
+      }
+    ],
+    "position": "front",
+    "sprite_key": "greymaw",
+    "stat_scale": {
+      "def": 1.1,
+      "hp": 2.2
+    }
+  },
+  "hale": {
+    "class_id": "sorcerer",
+    "crest_id": "eclipse_crest",
+    "entity_id": "grave_stag",
+    "id": "hale",
+    "move_ids": [
+      "flame",
+      "hex",
+      "voidfire",
+      "procession_of_antlers"
+    ],
+    "name": "Specialist Hale",
+    "position": "back",
+    "sprite_key": "hale"
+  },
+  "joey": {
+    "class_id": "",
+    "id": "joey",
+    "name": "Joey",
+    "position": "back",
+    "sprite_key": "joey",
+    "stats": {
+      "atk": 30,
+      "def": 38,
+      "hp": 74,
+      "mag": 20,
+      "res": 34,
+      "spd": 44
+    },
+    "tags": [
+      "protected"
+    ]
+  },
+  "kai_unbonded": {
+    "class_id": "",
+    "id": "kai_unbonded",
+    "move_ids": [
+      "kai_strike",
+      "shoulder_check",
+      "wild_swing"
+    ],
+    "name": "Kai",
+    "position": "front",
+    "sprite_key": "kai_unbonded",
+    "stats": {
+      "atk": 58,
+      "def": 50,
+      "hp": 92,
+      "mag": 40,
+      "res": 46,
+      "spd": 52
+    }
+  },
+  "kai_unsettled": {
+    "class_id": "",
+    "crest_id": "unsettled_crest",
+    "id": "kai_unsettled",
+    "move_ids": [
+      "kai_strike",
+      "crest_flare",
+      "overflow",
+      "shoulder_check"
+    ],
+    "name": "Kai",
+    "position": "front",
+    "sprite_key": "kai_unbonded",
+    "stats": {
+      "atk": 60,
+      "def": 50,
+      "hp": 96,
+      "mag": 56,
+      "res": 48,
+      "spd": 54
+    }
+  },
+  "riven_anchor": {
+    "affinity": {
+      "resist": [
+        "edge"
+      ],
+      "weak": [
+        "impact"
+      ]
+    },
+    "ai_profile": "defensive",
+    "class_id": "mage",
+    "id": "riven_anchor",
+    "move_ids": [
+      "anchor_pulse",
+      "anchor_seal"
+    ],
+    "name": "Riven Anchor",
+    "position": "back",
+    "sprite_key": "riven_anchor",
+    "stat_scale": {
+      "hp": 0.8,
+      "spd": 0.6
+    },
+    "tags": [
+      "target"
+    ]
+  },
+  "riven_husk": {
+    "affinity": {
+      "resist": [
+        "impact"
+      ],
+      "weak": [
+        "arcane"
+      ]
+    },
+    "ai_profile": "aggressive",
+    "class_id": "guardian",
+    "id": "riven_husk",
+    "move_ids": [
+      "husk_slam",
+      "husk_grind"
+    ],
+    "name": "Riven Husk",
+    "position": "front",
+    "sprite_key": "riven_husk",
+    "stat_scale": {
+      "hp": 0.9
+    }
+  },
+  "riven_wisp": {
+    "affinity": {
+      "resist": [
+        "arcane"
+      ],
+      "weak": [
+        "edge"
+      ]
+    },
+    "ai_profile": "disruptive",
+    "class_id": "sorcerer",
+    "id": "riven_wisp",
+    "move_ids": [
+      "wisp_flicker",
+      "wisp_chill"
+    ],
+    "name": "Riven Wisp",
+    "position": "back",
+    "sprite_key": "riven_wisp",
+    "stat_scale": {
+      "hp": 0.55,
+      "mag": 0.9
+    }
+  },
+  "roadside_tough": {
+    "ai_profile": "aggressive",
+    "class_id": "warrior",
+    "id": "roadside_tough",
+    "name": "Roadside Tough",
+    "position": "front",
+    "sprite_key": "riven_raider",
+    "stat_scale": {
+      "atk": 0.85,
+      "hp": 0.62
+    }
+  },
+  "sealed_choir": {
+    "class_id": "neutral",
+    "id": "sealed_choir",
+    "name": "The Sealed Choir",
+    "phases": [
+      {
+        "affinity": {
+          "resist": [
+            "impact",
+            "edge"
+          ],
+          "weak": [
+            "arcane"
+          ]
+        },
+        "ai_profile": "boss",
+        "move_ids": [
+          "choir_toll",
+          "choir_dirge",
+          "choir_requiem"
+        ],
+        "name": "Ward",
+        "rotation": [
+          {
+            "pick": [
+              "choir_toll",
+              "choir_dirge"
+            ]
+          },
+          {
+            "pick": [
+              "choir_toll",
+              "choir_dirge"
+            ]
+          },
+          {
+            "move": "choir_requiem"
+          }
+        ]
+      },
+      {
+        "affinity": {
+          "resist": [
+            "impact"
+          ],
+          "weak": [
+            "arcane",
+            "edge"
+          ]
+        },
+        "banner": "THE CHOIR FRACTURES",
+        "name": "Fracture",
+        "rotation": [
+          {
+            "pick": [
+              "choir_dirge",
+              "choir_toll"
+            ]
+          },
+          {
+            "pick": [
+              "choir_toll",
+              "choir_dirge"
+            ]
+          },
+          {
+            "move": "choir_requiem"
+          }
+        ],
+        "summon": {
+          "affinity": {
+            "resist": [
+              "arcane"
+            ],
+            "weak": [
+              "edge"
+            ]
+          },
+          "ai_profile": "disruptive",
+          "class_id": "sorcerer",
+          "move_ids": [
+            "wisp_flicker",
+            "wisp_chill"
+          ],
+          "name": "Riven Wisp",
+          "position": "back",
+          "sprite_key": "riven_wisp",
+          "stat_scale": {
+            "hp": 0.55,
+            "mag": 0.9
+          }
+        },
+        "trigger": {
+          "threshold": 0.66,
+          "type": "hp_below"
+        }
+      },
+      {
+        "affinity": {
+          "resist": [],
+          "weak": [
+            "arcane",
+            "edge",
+            "impact"
+          ]
+        },
+        "banner": "THE SEAL IS COLLAPSING",
+        "entry_statuses": [
+          {
+            "duration": 1,
+            "status": "exposed"
+          }
+        ],
+        "move_ids": [
+          "choir_toll",
+          "choir_collapse",
+          "choir_requiem"
+        ],
+        "name": "Collapse",
+        "rotation": [
+          {
+            "pick": [
+              "choir_collapse",
+              "choir_toll"
+            ]
+          },
+          {
+            "move": "choir_requiem"
+          }
+        ],
+        "trigger": {
+          "threshold": 0.33,
+          "type": "hp_below"
+        }
+      }
+    ],
+    "position": "front",
+    "sprite_key": "sealed_choir",
+    "stat_scale": {
+      "hp": 3.6,
+      "mag": 1.15
+    }
+  }
+}
