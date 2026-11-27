@@ -7,8 +7,11 @@ mkdir -p /tmp/crestbound-godot "$HOME/.local/share/godot/export_templates/4.3.st
 curl -fsSL https://github.com/godotengine/godot/releases/download/4.3-stable/Godot_v4.3-stable_linux.x86_64.zip -o /tmp/crestbound-godot/editor.zip
 unzip -oq /tmp/crestbound-godot/editor.zip -d /tmp/crestbound-godot
 curl -fsSL https://github.com/godotengine/godot/releases/download/4.3-stable/Godot_v4.3-stable_export_templates.tpz -o /tmp/crestbound-godot/templates.zip
-unzip -oq /tmp/crestbound-godot/templates.zip templates/web_release.zip -d /tmp/crestbound-godot
-cp /tmp/crestbound-godot/templates/web_release.zip "$HOME/.local/share/godot/export_templates/4.3.stable/"
+unzip -oq /tmp/crestbound-godot/templates.zip templates/web_nothreads_debug.zip templates/web_nothreads_release.zip -d /tmp/crestbound-godot
+TEMPLATE_DIR="$HOME/.local/share/godot/export_templates/4.3.stable"
+cp /tmp/crestbound-godot/templates/web_nothreads_*.zip "$TEMPLATE_DIR/"
+test -s "$TEMPLATE_DIR/web_nothreads_debug.zip"
+test -s "$TEMPLATE_DIR/web_nothreads_release.zip"
 GODOT=/tmp/crestbound-godot/Godot_v4.3-stable_linux.x86_64
 chmod +x "$GODOT"
 "$GODOT" --headless --path game --editor --import --quit 2>&1 | tee /tmp/crestbound-import.log
