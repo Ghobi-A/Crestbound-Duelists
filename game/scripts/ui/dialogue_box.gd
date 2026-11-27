@@ -186,6 +186,7 @@ func play(key: String) -> void:
 	_layout(staged)
 	if staged:
 		_stage.begin(_entries)
+		AudioRouter.duck(true)
 	_show_current_line()
 
 
@@ -444,6 +445,8 @@ func _finish() -> void:
 	active = false
 	visible = false
 	revealing = false
+	if staged:
+		AudioRouter.duck(false)
 	_stage.clear()
 	_tab.visible = false
 	var finished_key := _current_key

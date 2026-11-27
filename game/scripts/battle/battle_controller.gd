@@ -65,9 +65,10 @@ func _ready() -> void:
 	add_child(presentation)
 	presentation.configure(stage, hud, sprites)
 	presentation.summoned.connect(_on_summoned)
-	# Bosses name their own theme; a theme not yet delivered falls back to the battle track.
-	var theme := str(runtime.encounter.get("music", "battle"))
-	AudioRouter.play_music(theme if AudioRouter.has_cue("music", theme) else "battle")
+	# Bosses name their own theme; one not delivered yet plays its fallback
+	# (AudioRouter.MUSIC_FALLBACK). The map's track resumes afterwards.
+	AudioRouter.remember_music()
+	AudioRouter.play_music(str(runtime.encounter.get("music", "battle")), 0.5)
 	AudioRouter.stop_ambience()
 	_build_dialogue()
 	_build_onboarding()

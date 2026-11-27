@@ -145,7 +145,7 @@
  "cues": [
   {
    "kind": "music",
-   "id": "main_theme",
+   "id": "chapter_ending",
    "at": 0.0,
    "fade": 2.5
   }

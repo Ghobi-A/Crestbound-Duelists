@@ -879,6 +879,9 @@
     "That night the ground hums. Not a quake. A note, low enough to feel in your teeth.",
     "By morning every dog in Greymere is barking at the ridge, and the spring water tastes of iron."
    ],
+   "effects": {
+    "sfx": "world/tremor"
+   },
    "staging": "scene"
   },
   {
@@ -1036,7 +1039,11 @@
    "lines": [
     "The ground answers before you can. A crack like a door slammed in a cellar, and the ridge sags inward.",
     "Dust rolls down through the arch. Somebody is shouting in Avelan drill-voice."
-   ]
+   ],
+   "effects": {
+    "music": "incident",
+    "sfx": "world/tremor"
+   }
   },
   {
    "speaker": "Specialist Hale",

@@ -22,7 +22,7 @@ LOCATIONS = json.loads((GAME / "world/locations.json").read_text())["locations"]
 ENCOUNTERS = loaders.load_encounters()
 STAGES = ["morning", "village", "abnormal", "cordon", "incident", "aftermath", "civara", "complete"]
 EFFECT_KEYS = {"flags", "clear_flags", "stage", "profile", "class", "join", "leave", "rewards", "recover",
-               "checkpoint", "battle", "travel", "cinematic", "scene"}
+               "checkpoint", "music", "sfx", "battle", "travel", "cinematic", "scene"}
 
 
 def _effects():
@@ -79,6 +79,9 @@ def test_effects_use_only_known_keys_and_valid_values():
             assert (GAME / effects["scene"].removeprefix("res://")).is_file(), key
         if "class" in effects:
             assert effects["class"] in loaders.load_classes(), key
+        if "sfx" in effects:
+            category, cue = effects["sfx"].split("/")
+            assert (GAME / f"assets/audio/sfx/{category}/{cue}.ogg").is_file(), (key, effects["sfx"])
         if "profile" in effects:
             assert effects["profile"] in loaders.load_cast(), key
         for cast_id in effects.get("join", []):

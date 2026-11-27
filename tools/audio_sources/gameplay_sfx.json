@@ -305,6 +305,13 @@
       "level": -32.0,
       "duration": 20.0,
       "prompt": "busy old stone city square ambience, distant murmuring crowd, footsteps on cobbles, a far church bell, pigeons, no music, no clear speech"
+    },
+    {
+      "id": "world/tremor",
+      "kind": "oneshot",
+      "level": -17.0,
+      "duration": 3.0,
+      "prompt": "a deep earth tremor rumble under a village, stones grinding, a distant crack, the ground shaking then settling, no music"
     }
   ]
 }

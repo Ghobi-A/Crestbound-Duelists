@@ -15,6 +15,8 @@ extends RefCounted
 ##   rewards               {crowns, items, equipment, unlock, flags}
 ##   recover               true: the party rests
 ##   checkpoint            {location, spawn}
+##   music                 a music cue to cross into now (AudioRouter fallbacks apply)
+##   sfx                   a sound to play now, "category/cue" (e.g. "world/tremor")
 ##   battle                encounter id, fought from where Kai stands
 ##   travel                {location, spawn, transition}
 ##   cinematic             cinematic id (game/data/cinematics/<id>.json)
@@ -50,6 +52,12 @@ static func apply(effects: Dictionary) -> Array:
 		GameState.recover_party()
 	if effects.has("checkpoint"):
 		GameState.set_checkpoint(str(effects.checkpoint.location), str(effects.checkpoint.spawn))
+	if effects.has("music"):
+		AudioRouter.play_music(str(effects.music), 1.5)
+	if effects.has("sfx"):
+		var parts := str(effects.sfx).split("/")
+		if parts.size() == 2:
+			AudioRouter.play_sfx(parts[0], parts[1])
 	for key in DEFERRED:
 		if effects.has(key):
 			pending[key] = effects[key]

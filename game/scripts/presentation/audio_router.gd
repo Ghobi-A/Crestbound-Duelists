@@ -8,6 +8,11 @@ extends Node
 ## MIN_INTERVAL is dropped, and past MAX_SFX_VOICES the oldest sound is cut.
 ## Footsteps and cursor ticks get a little pitch and level jitter so repeats
 ## don't machine-gun. One ambience bed loops under the music per location.
+##
+## Music (docs/MUSIC_MANIFEST.md): two players crossfade, so a change of
+## track never cuts; a theme not delivered yet plays its fallback (or
+## leaves the ambience alone); the exploration track a battle interrupts
+## resumes where it left off; and staged dialogue ducks the music.
 
 const ROOTS := {
 	"ui": "res://assets/audio/sfx/ui/",
@@ -23,10 +28,31 @@ const MAX_SFX_VOICES := 8
 # cue prefix -> [pitch spread (+/- ratio), level spread (+/- dB)]
 const JITTER := {"world/step_": [0.06, 1.5], "ui/move": [0.03, 0.0], "battle/hit_": [0.04, 0.0]}
 
+## A cue with no file plays this instead; "" means no music (the
+## location's ambience carries it). Each entry is listed with its Suno
+## prompt in docs/MUSIC_MANIFEST.md.
+const MUSIC_FALLBACK := {
+	"hollow_court": "",
+	"court_battle": "battle",
+	"greymaw_boss": "battle",
+	"choir_boss": "battle",
+	"civara": "main_theme",
+	"victory": "battle",   # the battle track carries on under the results
+	"defeat": "battle",
+	"incident": "",
+	"chapter_ending": "main_theme",
+}
+const CROSSFADE := 0.8
+const DUCK_DB := -7.0
+
 var _missing: Dictionary = {}
-var _music: AudioStreamPlayer
+var _music: AudioStreamPlayer          # the player currently carrying the music
+var _music_spare: AudioStreamPlayer    # the other one, for crossfades
+var _music_cue := ""
 var _music_fade: Tween
 var _music_stopping := false
+var _duck_db := 0.0
+var _resume := {}                      # {cue, position} saved when a battle starts
 var _voices: Array[AudioStreamPlayer] = []
 var _sfx: Array[AudioStreamPlayer] = []
 var _variants: Dictionary = {}       # "category/cue" -> Array of paths
@@ -43,6 +69,9 @@ func _ready() -> void:
 	_music = AudioStreamPlayer.new()
 	_music.bus = bus_for("Music")
 	add_child(_music)
+	_music_spare = AudioStreamPlayer.new()
+	_music_spare.bus = bus_for("Music")
+	add_child(_music_spare)
 	_ambience = AudioStreamPlayer.new()
 	_ambience.bus = bus_for("Ambience")
 	add_child(_ambience)
@@ -157,23 +186,62 @@ func stop_ambience(fade_seconds := 0.6) -> void:
 	_ambience_fade.tween_callback(_ambience.stop)
 
 
-func play_music(cue: String, fade_seconds := 0.2) -> void:
-	if not has_cue("music", cue):
+func music_cue_for(cue: String) -> String:
+	## The cue that will actually play: the cue, its fallback, or "".
+	if has_cue("music", cue):
+		return cue
+	return str(MUSIC_FALLBACK.get(cue, ""))
+
+
+func current_music() -> String:
+	return _music_cue if _music.playing and not _music_stopping else ""
+
+
+func play_music(cue: String, fade_seconds := CROSSFADE) -> void:
+	## Crossfade to `cue` (or its fallback). The same track keeps playing.
+	var resolved := music_cue_for(cue)
+	if resolved == "":
+		if MUSIC_FALLBACK.has(cue):
+			stop_music(fade_seconds)  # an ambience-only place
 		return
-	var next_stream: AudioStream = load(asset_path("music", cue))
-	if _music.stream == next_stream and _music.playing and not _music_stopping:
+	if resolved == _music_cue and _music.playing and not _music_stopping:
 		return
 	_cancel_music_fade()
-	if _music.stream == next_stream and _music.playing:
-		_music_fade = create_tween()
-		_music_fade.tween_property(_music, "volume_db", 0.0, fade_seconds)
+	var previous := _music
+	_music = _music_spare
+	_music_spare = previous
+	_music.stream = load(asset_path("music", resolved))
+	_music_cue = resolved
+	var start_at := 0.0
+	if str(_resume.get("cue", "")) == resolved:
+		# Back from a battle: pick the exploration track up where it was.
+		start_at = float(_resume.get("position", 0.0))
+		_resume = {}
+	_music.volume_db = -40.0 if fade_seconds > 0.0 else _duck_db
+	_music.play(start_at)
+	if fade_seconds <= 0.0:
+		previous.stop()
 		return
-	_music.stream = next_stream
-	_music.volume_db = -18.0 if fade_seconds > 0.0 else 0.0
-	_music.play()
-	if fade_seconds > 0.0:
-		_music_fade = create_tween()
-		_music_fade.tween_property(_music, "volume_db", 0.0, fade_seconds)
+	_music_fade = create_tween().set_parallel(true)
+	_music_fade.tween_property(_music, "volume_db", _duck_db, fade_seconds)
+	if previous.playing:
+		_music_fade.tween_property(previous, "volume_db", -40.0, fade_seconds)
+	_music_fade.chain().tween_callback(previous.stop)
+
+
+func remember_music() -> void:
+	## Called as a battle begins: the exploration track resumes afterwards.
+	if _music.playing and not _music_stopping and _music_cue != "":
+		_resume = {"cue": _music_cue, "position": _music.get_playback_position()}
+
+
+func duck(on: bool) -> void:
+	## Lower the music under a staged scene; restore it afterwards.
+	_duck_db = DUCK_DB if on else 0.0
+	if not _music.playing or _music_stopping:
+		return
+	var tween := create_tween()
+	tween.tween_property(_music, "volume_db", _duck_db, 0.4)
 
 
 func play_voice(cue: String, volume_db := 0.0) -> void:
@@ -202,15 +270,21 @@ func stop_voices() -> void:
 
 func stop_music(fade_seconds := 0.4) -> void:
 	_cancel_music_fade()
+	_music_spare.stop()
 	if not _music.playing:
+		_music_cue = ""
 		return
 	if fade_seconds <= 0.0:
 		_music.stop()
+		_music_cue = ""
 		return
 	_music_stopping = true
 	_music_fade = create_tween()
 	_music_fade.tween_property(_music, "volume_db", -40.0, fade_seconds)
-	_music_fade.tween_callback(_music.stop)
+	_music_fade.tween_callback(func() -> void:
+		_music.stop()
+		_music_cue = ""
+		_music_stopping = false)
 
 
 func _cancel_music_fade() -> void:

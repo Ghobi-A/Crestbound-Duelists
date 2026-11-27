@@ -92,7 +92,9 @@ These levels are measured, not listened to. Judge the mix by ear in the
 game and the web build, and adjust a cue's `level` in the cue list, then
 rebuild.
 
-Still missing:
-- music for the Hollow Court, victory and defeat (the battle theme carries
-  on under the result stings);
-- a Resonance cue.
+Still missing: the Chapter One themes listed in `docs/MUSIC_MANIFEST.md`
+(the Hollow Court, Old Greymaw, the Sealed Choir, Civara, the incident, the
+ending, victory and defeat). Each has an integration point, a fallback that
+plays until it arrives, and a Suno prompt there. The Court and Civara
+ambience beds and the tremor are generated (ElevenLabs, through the cue
+list above).
