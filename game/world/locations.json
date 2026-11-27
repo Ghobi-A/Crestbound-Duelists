@@ -1229,6 +1229,56 @@
           ]
         }
       ],
+      "battle_background": {
+        "rows": [
+          "....................",
+          "....................",
+          "....................",
+          "....................",
+          "::::::::::::::::::::",
+          "::::::::::::::::::::",
+          "::::::::::::::::::::",
+          "::::::::::::::::::::",
+          "::::::::::::::::::::"
+        ],
+        "props": [
+          {
+            "asset": "tree",
+            "tile": [
+              1,
+              2
+            ]
+          },
+          {
+            "asset": "tree",
+            "tile": [
+              6,
+              2
+            ]
+          },
+          {
+            "asset": "tree",
+            "tile": [
+              14,
+              2
+            ]
+          },
+          {
+            "asset": "tree",
+            "tile": [
+              19,
+              2
+            ]
+          },
+          {
+            "asset": "lamp",
+            "tile": [
+              10,
+              3
+            ]
+          }
+        ]
+      },
       "triggers": [
         {
           "id": "after_spar",
@@ -3233,6 +3283,7 @@
       },
       "return_grace_steps": 6,
       "hud_name": "THE COLLAPSED STAIR",
+      "battle_backdrop": "res://assets/rework/hollow_court.png",
       "props": [
         {
           "asset": "route_rock",
@@ -3542,6 +3593,7 @@
       },
       "return_grace_steps": 6,
       "hud_name": "THE DROWNED GALLERY",
+      "battle_backdrop": "res://assets/rework/hollow_court.png",
       "props": [
         {
           "asset": "route_stone",
@@ -3832,6 +3884,7 @@
       },
       "return_grace_steps": 6,
       "hud_name": "THE RADIAL CHAMBER",
+      "battle_backdrop": "res://assets/rework/hollow_court.png",
       "props": [
         {
           "asset": "route_stone",
@@ -4629,6 +4682,8 @@
         "location": "civara_hall",
         "spawn": "entrance"
       },
+      "battle_backdrop": "res://assets/cinematics/opening/s2_hall.png",
+      "battle_backdrop_tint": "#7d8296",
       "triggers": [
         {
           "id": "civara_classification",

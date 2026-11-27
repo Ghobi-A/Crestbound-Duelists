@@ -172,3 +172,19 @@ def test_assessments_cover_every_class_with_another_build():
         # Same class, different habits: an Entity and a non-default kit.
         assert assessor["entity_id"] and assessor["move_ids"] != record["move_ids"]
         assert "civara_assessment_won" in encounter["rewards"]["flags"]
+
+
+def test_every_battle_has_a_battlefield():
+    # BattleStage: a painted battle_background, a named battle_backdrop, or
+    # assets/battle/backgrounds/<location>.png. A missing one is a grey stage.
+    # Encounters for places later chapters will build (Veyrhold, Caer Lumen)
+    # cannot be reached yet; every reachable one must have a battlefield.
+    for encounter_id, encounter in ENCOUNTERS.items():
+        if encounter["location"] not in LOCATIONS and encounter["location"] != "hollow_court":
+            continue
+        location = LOCATIONS.get(encounter["location"], {})
+        backdrop = location.get("battle_backdrop", "")
+        painted = (GAME / f"assets/environment/painted/fields_{encounter['location']}_battle.png").is_file()
+        own = (GAME / f"assets/battle/backgrounds/{encounter['location']}.png").is_file() or encounter["location"] == "hollow_court"
+        if not (location.get("battle_background") and painted) and not own:
+            assert backdrop and (GAME / backdrop.removeprefix("res://")).is_file(), (encounter_id, encounter["location"])

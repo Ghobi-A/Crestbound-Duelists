@@ -90,6 +90,9 @@ def add_civara(locations):
         ],
         "lights": [{"tile": [5, 4], "color": "warm"}, {"tile": [15, 8], "color": "warm"}],
         "recovery": {"location": "civara_hall", "spawn": "entrance"},
+        # The assessment is fought in the Hall itself (the opening's hall plate).
+        "battle_backdrop": "res://assets/cinematics/opening/s2_hall.png",
+        "battle_backdrop_tint": "#7d8296",
         "triggers": [
             {"id": "civara_classification", "dialogue": "civara_classification", "once": False,
              "show_if": ["!class_stabilised"]},

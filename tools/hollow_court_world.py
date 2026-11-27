@@ -72,6 +72,8 @@ def _base(id, name, subtitle, grid, **extra):
         "recovery": {"location": "court_stair", "spawn": "shrine"},
         "return_grace_steps": 6,
         "hud_name": name,
+        # Battles down here are fought in front of the Court's painting.
+        "battle_backdrop": "res://assets/rework/hollow_court.png",
     }
     location.update(extra)
     return location

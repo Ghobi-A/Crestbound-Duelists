@@ -36,6 +36,11 @@ def add_story(locations):
     _legacy_only(town["npcs"], {"Warden Almyra", "Liora Sen", "Joey", "Danfor"})
     _legacy_only(town["interactions"], {"court"})
     town["spawn_points"]["aftermath"] = spawn(17, 12, (0, 1))
+    # Danfor's lesson and Joey's wager are fought on the square's cobbles.
+    town["battle_background"] = {
+        "rows": ["." * 20] * 4 + [":" * 20] * 5,
+        "props": [prop("tree", x, 2) for x in [1, 6, 14, 19]] + [prop("lamp", 10, 3)],
+    }
     town["spawn_points"]["civara_road"] = spawn(17, 8, (0, 1))
     # The south road stays shut until Danfor's lesson (flag set by start_story).
     for exit in town["exits"]:
