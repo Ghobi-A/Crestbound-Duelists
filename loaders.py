@@ -9,7 +9,7 @@ Public API:
     load_classes() / load_moves() / load_combat_config()
     load_crests() / load_entities() / load_terrain()
     load_battle_objectives() / load_characters() / load_locations()
-    load_items() / load_equipment() / load_cast()
+    load_items() / load_equipment() / load_cast() / load_quests()
     create_unit_from_data(class_id, name=None)
 
 All loaders cache parsed data. Functions returning raw records hand out
@@ -643,7 +643,33 @@ def _encounters() -> dict[str, dict]:
         params = record.get("objective_params", {})
         if not isinstance(params, dict):
             raise DataValidationError(f"{where}: objective_params must be a mapping.")
+        validate_reward(where, record.get("rewards", {}))
+        after = record.get("return", {})
+        if not isinstance(after, dict) or not isinstance(after.get("flags", []), list):
+            raise DataValidationError(f"{where}: return needs location/spawn strings and a flags list.")
+        for key in ("retry",):
+            if not isinstance(record.get(key, True), bool):
+                raise DataValidationError(f"{where}: {key} must be true or false.")
     return records
+
+
+def validate_reward(where: str, reward: Any) -> None:
+    """Rewards: {crowns, items: {id: count}, equipment: [ids], unlocks: [move ids], flags, once}."""
+    if not isinstance(reward, dict):
+        raise DataValidationError(f"{where}: rewards must be a mapping.")
+    if not isinstance(reward.get("crowns", 0), int) or reward.get("crowns", 0) < 0:
+        raise DataValidationError(f"{where}: reward crowns must be a non-negative integer.")
+    for item_id, count in (reward.get("items") or {}).items():
+        if item_id not in _items() or not isinstance(count, int) or count < 1:
+            raise DataValidationError(f"{where}: reward item '{item_id}' must exist with a positive count.")
+    for charm_id in reward.get("equipment", []):
+        if charm_id not in _equipment():
+            raise DataValidationError(f"{where}: reward charm '{charm_id}' is unknown.")
+    for move_id in reward.get("unlocks", []):
+        if move_id not in _moves():
+            raise DataValidationError(f"{where}: reward unlock '{move_id}' is unknown.")
+    if not isinstance(reward.get("flags", []), list) or not isinstance(reward.get("once", True), bool):
+        raise DataValidationError(f"{where}: reward flags must be a list and once a boolean.")
 
 
 _PHASE_TRIGGERS = ("hp_below", "round")
@@ -789,11 +815,41 @@ def load_cast() -> dict[str, dict]:
     return copy.deepcopy(_cast())
 
 
+# ── Quests ───────────────────────────────────────────────────────────
+
+@lru_cache(maxsize=1)
+def _quests() -> dict[str, dict]:
+    records = _load_records("quests.yaml", "quests", ("name", "kind", "summary", "steps"))
+    seen_flags: dict[str, str] = {}
+    for quest_id, record in records.items():
+        where = f"quests.yaml quest '{quest_id}'"
+        if record["kind"] not in ("main", "side"):
+            raise DataValidationError(f"{where}: kind must be main or side.")
+        if not isinstance(record.get("start_flag", ""), str):
+            raise DataValidationError(f"{where}: start_flag must be a string.")
+        steps = record["steps"]
+        if not isinstance(steps, list) or not steps:
+            raise DataValidationError(f"{where}: steps must be a non-empty list.")
+        for step in steps:
+            if not isinstance(step, dict) or not all(isinstance(step.get(k), str) and step.get(k) for k in ("id", "text", "flag")):
+                raise DataValidationError(f"{where}: each step needs id, text and flag.")
+            if step["flag"] in seen_flags:
+                raise DataValidationError(f"{where}: step flag '{step['flag']}' is already used by {seen_flags[step['flag']]}.")
+            seen_flags[step["flag"]] = quest_id
+        validate_reward(where, record.get("reward", {}))
+    return records
+
+
+def load_quests() -> dict[str, dict]:
+    """Return all journal quests keyed by id (deep copy)."""
+    return copy.deepcopy(_quests())
+
+
 def clear_caches() -> None:
     """Drop all cached data (useful in tests that write temp data)."""
     for cached in (
         _load_records, _combat_config, _moves, _classes,
         _crests, _entities, _terrain, _battle_objectives,
-        _characters, _locations, _encounters, _items, _equipment, _cast,
+        _characters, _locations, _encounters, _items, _equipment, _cast, _quests,
     ):
         cached.cache_clear()

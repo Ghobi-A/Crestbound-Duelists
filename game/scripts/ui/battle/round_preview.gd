@@ -87,9 +87,16 @@ func _draw() -> void:
 		# Actor and move share the first line; the target gets its own line
 		# so long enemy names are never clipped mid-word.
 		UiStyle.draw_text(self, Vector2(TEXT_X, top + 5.2), actor.display_name.to_upper(), 5, UiStyle.TEXT, text_width, HORIZONTAL_ALIGNMENT_LEFT, UiStyle.MEDIUM)
-		var move_name := "Brace" if action.kind == "brace" else str(action.move.get("name", "?"))
+		var move_name := str(action.move.get("name", "?"))
+		match str(action.kind):
+			"brace":
+				move_name = "Brace"
+			"awaken":
+				move_name = "Awaken"
+			"item":
+				move_name = str(GameData.get_item(str(action.get("item_id", ""))).get("name", "Item"))
 		UiStyle.draw_text(self, Vector2(TEXT_X, top + 5.2), move_name, 5, UiStyle.GOLD_BRIGHT, text_width, HORIZONTAL_ALIGNMENT_RIGHT)
-		if action.kind != "brace" and action.target != null:
+		if not ["brace", "awaken"].has(str(action.kind)) and action.target != null:
 			UiStyle.draw_pointer(self, Vector2(TEXT_X + 3.5, top + 9.8), PlaceholderPalette.SPECTRAL_VIOLET, 1.8)
 			UiStyle.draw_text(self, Vector2(TEXT_X + 6, top + 11.6), action.target.display_name, 5, UiStyle.TEXT_DIM, text_width - 6)
 	# Two framed buttons; the focused one takes the selection style.

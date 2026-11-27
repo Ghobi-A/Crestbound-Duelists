@@ -9,6 +9,7 @@ class_name BattleUnit
 ## parity (combat_parity_smoke.gd) holds the two together.
 
 var display_name := ""
+var member_id := ""         # roster id ("kai", "almyra", ...) for player units
 var class_id := ""
 var crest_id := ""
 var entity_id := ""
@@ -67,6 +68,7 @@ var brace_pierce_left := 0
 static func create(build: Dictionary, team_: String, game_data: Node, slot := 0) -> BattleUnit:
 	var unit := BattleUnit.new()
 	unit.display_name = str(build.get("name", "Duelist"))
+	unit.member_id = str(build.get("id", ""))
 	unit.class_id = str(build.get("class_id", ""))
 	unit.crest_id = str(build.get("crest_id", ""))
 	unit.entity_id = str(build.get("entity_id", ""))

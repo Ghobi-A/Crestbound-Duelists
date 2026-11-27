@@ -263,6 +263,34 @@
       "level": -24.0,
       "duration": 0.8,
       "prompt": "a small glass vial uncorked and drunk, a soft gulp followed by a gentle sparkle"
+    },
+    {
+      "id": "world/recovery",
+      "kind": "oneshot",
+      "level": -22.0,
+      "duration": 1.6,
+      "prompt": "a calm restorative breath and a soft warm chime, resting by a hearth, peaceful"
+    },
+    {
+      "id": "ui/quest",
+      "kind": "oneshot",
+      "level": -22.0,
+      "duration": 1.0,
+      "prompt": "a short gentle quill scratch on parchment followed by a soft bright two-note chime, a journal updated"
+    },
+    {
+      "id": "ui/unlock",
+      "kind": "oneshot",
+      "level": -20.0,
+      "duration": 1.4,
+      "prompt": "a short rising shimmering fanfare chime, a new skill learned, bright and warm, fantasy"
+    },
+    {
+      "id": "ui/save",
+      "kind": "oneshot",
+      "level": -24.0,
+      "duration": 0.8,
+      "prompt": "a soft book closing with a gentle clasp click, quiet"
     }
   ]
 }

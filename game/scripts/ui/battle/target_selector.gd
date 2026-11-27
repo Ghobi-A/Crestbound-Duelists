@@ -14,6 +14,14 @@ func open(attacker: BattleUnit, runtime: EncounterRuntime) -> bool:
 	return not targets.is_empty()
 
 
+func open_allies(actor: BattleUnit, runtime: EncounterRuntime, fallen := false) -> bool:
+	## Item targets: living allies, or the fallen for a revive.
+	var side: Array = runtime.player_units if actor.team == "player" else runtime.enemy_units
+	targets = side.filter(func(u): return u.is_alive() != fallen)
+	index = maxi(0, targets.find(actor))
+	return not targets.is_empty()
+
+
 func cycle(delta: int) -> void:
 	if not targets.is_empty():
 		index = wrapi(index + delta, 0, targets.size())

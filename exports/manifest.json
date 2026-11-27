@@ -12,9 +12,10 @@
     "items",
     "locations",
     "moves",
+    "quests",
     "terrain"
   ],
-  "exported_at": "2026-11-27T01:57:45+00:00",
+  "exported_at": "2026-11-27T02:07:40+00:00",
   "record_counts": {
     "battle_objectives": 5,
     "cast": 12,
@@ -28,6 +29,7 @@
     "items": 5,
     "locations": 8,
     "moves": 63,
+    "quests": 8,
     "terrain": 8
   },
   "schema_version": "1.1.0"

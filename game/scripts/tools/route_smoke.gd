@@ -141,7 +141,7 @@ func _ready() -> void:
 		if battle.state in [battle.State.SELECT_MENU,battle.State.SELECT_TARGET,battle.State.PREVIEW]: battle._unhandled_input(confirm)
 		await get_tree().process_frame
 	check(battle.runtime.victory(), "actual battle resolves player victory")
-	battle._after_result(true)
+	battle._after_result("continue", true)
 	await settled()
 	check(world.location_id == "route_01", "victory returns to route")
 	check(GameState.has_flag("route01_rowan_defeated"), "confirmed victory marks trainer")

@@ -13,7 +13,7 @@ def test_export_produces_all_datasets(tmp_path):
     expected = {
         "classes", "moves", "combat_config", "crests", "entities",
         "terrain", "battle_objectives", "encounters", "characters", "locations",
-        "items", "equipment", "cast",
+        "items", "equipment", "cast", "quests",
     }
     assert set(manifest["datasets"]) == expected
     for name in expected:

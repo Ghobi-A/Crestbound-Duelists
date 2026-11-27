@@ -18,7 +18,7 @@ decisions behind it, and how far implementation has got. Update the
 | Spec and provisional canon | done | This file and `CHAPTER_ONE_PROVISIONAL_CANON.md` |
 | Combat 3.0 and the Python party engine | done | Section 4; `party_combat.py`, `game/scripts/battle/` |
 | Replay parity | done | 38 seeded battles, every mechanic; Godot matches event for event |
-| Progression, saves v3, Quick Battle isolation | planned | Section 6 |
+| Progression, saves v3, Quick Battle isolation | done | Section 6; quests in `data/quests.yaml`, the Item command, Retry; menus that expose loadouts, charms and the journal come with the UI pass |
 | Solo encounters and Old Greymaw | planned | Sections 3 and 4.9 |
 | Greymere story rework | planned | Section 2 |
 | Hollow Court dungeon | planned | Section 2 |
@@ -349,8 +349,15 @@ action and resolves at Brace priority.
 - **No XP and no levels.** Kai grows through new moves, charms, Resonance
   mastery (a per-Crest counter that unlocks the class alternatives) and
   the class choice.
-- **Recovery points:** Kai's bed, the Court shrine and the Civara hall.
-  Each one heals the party fully and saves. Items are not refilled.
+- **Recovery points:** Kai's bed, the Court shrine and the Civara hall
+  (an interaction of kind `recovery`). Each heals the party fully, sets
+  the checkpoint and saves. Items are not refilled.
+- **Retry:** story battles (`retry: true`, the default) offer Retry or
+  Give up after a defeat. Retry restores the HP and items the battle
+  started with; Give up returns to the last checkpoint, rested.
+- **Quests** come only from flags: hidden until `start_flag`, a step is
+  done when its flag is set, and the reward is granted once on
+  completion.
 - **Economy:** crowns come from battles (8–20) and quests (15–40). Gell
   stocks consumables; the Civara stall stocks one charm and Tonics.
   Prices are set so a careful first run can afford about 2 Potions and

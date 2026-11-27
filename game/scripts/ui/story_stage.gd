@@ -23,7 +23,6 @@ var _order: Array[String] = []
 
 
 func _ready() -> void:
-	set_anchors_preset(Control.PRESET_FULL_RECT)
 	position = Vector2.ZERO
 	size = PresentationLayout.CANVAS
 	mouse_filter = Control.MOUSE_FILTER_IGNORE

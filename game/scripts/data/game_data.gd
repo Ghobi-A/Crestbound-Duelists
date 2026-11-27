@@ -10,6 +10,7 @@ const DATA_DIR := "res://data"
 const REQUIRED_DATASETS: Array[String] = [
 	"classes", "moves", "combat_config", "crests", "entities",
 	"terrain", "battle_objectives", "encounters", "items", "equipment",
+	"cast", "quests",
 ]
 const OPTIONAL_DATASETS: Array[String] = ["characters", "locations", "manifest"]
 

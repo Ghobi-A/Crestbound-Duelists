@@ -216,8 +216,8 @@ func set_message(text: String) -> void:
 		_message_plate.position.x = (320.0 - width) / 2.0
 
 
-func show_menu(unit: BattleUnit, allow_flee := false) -> void:
-	action_menu.build_for(unit, allow_flee)
+func show_menu(unit: BattleUnit, allow_flee := false, inventory: Dictionary = {}) -> void:
+	action_menu.build_for(unit, allow_flee, inventory)
 	if not action_menu.cursor_moved.is_connected(_show_description):
 		action_menu.cursor_moved.connect(_show_description)
 	action_menu.visible = true

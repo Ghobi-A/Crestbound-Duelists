@@ -37,6 +37,7 @@ from loaders import (
     load_items,
     load_locations,
     load_moves,
+    load_quests,
     load_terrain,
 )
 
@@ -62,6 +63,7 @@ DATASETS: dict[str, Callable[[], dict[str, Any]]] = {
     "items": load_items,
     "equipment": load_equipment,
     "cast": load_cast,
+    "quests": load_quests,
 }
 
 

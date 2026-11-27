@@ -298,6 +298,13 @@ func _try_interact() -> void:
 						child.queue_free()
 		elif interaction.get("kind", "") == "shop":
 			_trade.open(true)
+		elif interaction.get("kind", "") == "recovery":
+			# A recovery point: the party rests, and play resumes here.
+			GameState.recover_party()
+			GameState.set_checkpoint(location_id, str(interaction.get("spawn", "entrance")))
+			SaveManager.save_game()
+			AudioRouter.play_sfx("world", "recovery")
+			_show_text(str(interaction.get("text", "You rest a while. Everyone is back on their feet.")))
 		elif interaction.get("kind", "") == "court":
 			_play_dialogue("court_entrance_cleared" if GameState.has_flag("hollow_court_cleared") else "court_entrance")
 		elif interaction.has("dialogue"):

@@ -27,7 +27,7 @@ func _init() -> void:
 	add_child(_banner)
 
 
-func build_for(unit: BattleUnit, allow_flee := false) -> void:
+func build_for(unit: BattleUnit, allow_flee := false, inventory: Dictionary = {}) -> void:
 	entries = []
 	for move in unit.moves:
 		var entry := {
@@ -61,6 +61,14 @@ func build_for(unit: BattleUnit, allow_flee := false) -> void:
 		"label": "Brace", "kind": "brace", "move": {}, "enabled": true, "note": "",
 		"description": "Defensive stance\nGuards this round and feeds some Crests.",
 	})
+	# Items: one entry that opens the bag (see build_items).
+	var usable := usable_items(inventory)
+	if not usable.is_empty():
+		entries.append({
+			"label": "Items", "kind": "items", "move": {}, "enabled": true,
+			"note": "%d" % usable.size(),
+			"description": "Use a consumable.\nActs early in the round, like Brace.",
+		})
 	if allow_flee:
 		entries.append({"label": "Flee", "kind": "flee", "move": {}, "enabled": true, "note": "", "description": "Withdraw safely.\nKeep damage. No victory or rewards."})
 	cursor = 0
@@ -83,6 +91,31 @@ func build_for(unit: BattleUnit, allow_flee := false) -> void:
 		band.filter_clip = true
 		_banner.texture = band
 	queue_redraw()
+
+
+static func usable_items(inventory: Dictionary) -> Array:
+	## Items in the bag that do something in battle, cheapest first.
+	var items: Array = []
+	for item in ItemCatalog.all():
+		if int(inventory.get(str(item.id), 0)) > 0 and item.get("battle_effect", {}) is Dictionary and not item.get("battle_effect", {}).is_empty():
+			items.append(item)
+	return items
+
+
+func build_items(unit: BattleUnit, inventory: Dictionary) -> void:
+	## The bag: each battle-usable item, then Back.
+	entries = []
+	for item in usable_items(inventory):
+		entries.append({
+			"label": str(item.name), "kind": "item", "move": {}, "item_id": str(item.id), "enabled": true,
+			"note": "x%d" % int(inventory.get(str(item.id), 0)),
+			"description": str(item.description),
+		})
+	entries.append({"label": "Back", "kind": "back", "move": {}, "enabled": true, "note": "", "description": "Return to commands."})
+	cursor = 0
+	size.y = BANNER_HEIGHT + ROW_PITCH * entries.size() + 3
+	queue_redraw()
+	cursor_moved.emit()
 
 
 func _describe_move(unit: BattleUnit, move: Dictionary) -> String:
