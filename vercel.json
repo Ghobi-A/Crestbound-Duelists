@@ -1,0 +1,6 @@
+{
+  "framework": null,
+  "installCommand": "true",
+  "buildCommand": "bash tools/build_mobile_preview.sh",
+  "outputDirectory": "build/web"
+}
