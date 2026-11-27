@@ -67,6 +67,14 @@
     "head_ratio": 0.197,
     "width_ratio": 0.714
   },
+  "record:assessor": {
+    "head_ratio": 0.388,
+    "width_ratio": 1.041
+  },
+  "record:hale": {
+    "head_ratio": 0.332,
+    "width_ratio": 0.898
+  },
   "record:route01_challenger": {
     "head_ratio": 0.293,
     "width_ratio": 0.629

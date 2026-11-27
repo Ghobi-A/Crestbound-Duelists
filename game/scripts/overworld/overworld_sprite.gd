@@ -136,7 +136,8 @@ func attach(parent: Node2D, sprite_key: String) -> bool:
 		_sprite.centered = false
 		_sprite.offset = -anchor
 		var body = world.get("body_height", registry.get("overworld_body_heights", {}).get(record.canonical_id))
-		_sprite.scale = body_scale(registry.overworld_display_height, body, anchor.y)
+		# People share one height; a beast or Riven construct sets its own.
+		_sprite.scale = body_scale(world.get("display_height", registry.overworld_display_height), body, anchor.y)
 		parent.add_child(_sprite)
 		_apply()
 		return true

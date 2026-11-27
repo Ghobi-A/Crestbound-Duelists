@@ -307,6 +307,111 @@
       ],
       "replacement_status": "in_review",
       "runtime_sheet": "game/assets/route01/challenger_overworld.png"
+    },
+    {
+      "id": "kai_unbonded",
+      "display_name": "Kai (Unbonded)",
+      "classification": "C",
+      "aliases": [
+        "kai_unbonded",
+        "kai_unsettled"
+      ],
+      "references": [
+        "tools/battle_sources/kai_unbonded/idle_00.png"
+      ],
+      "replacement_status": "in_review",
+      "runtime_sheet": "game/assets/battle/cast/kai_unbonded.png"
+    },
+    {
+      "id": "hale",
+      "display_name": "Specialist Corwen Hale",
+      "classification": "C",
+      "aliases": [
+        "hale"
+      ],
+      "references": [
+        "tools/battle_sources/hale/idle_00.png"
+      ],
+      "replacement_status": "in_review",
+      "runtime_sheet": "game/assets/battle/cast/hale.png"
+    },
+    {
+      "id": "assessor",
+      "display_name": "Civara Assessor",
+      "classification": "C",
+      "aliases": [
+        "assessor"
+      ],
+      "references": [
+        "tools/battle_sources/assessor/idle_00.png"
+      ],
+      "replacement_status": "in_review",
+      "runtime_sheet": "game/assets/battle/cast/assessor.png"
+    },
+    {
+      "id": "greymaw",
+      "display_name": "Old Greymaw",
+      "classification": "C",
+      "aliases": [
+        "greymaw"
+      ],
+      "references": [
+        "tools/battle_sources/greymaw/idle_00.png"
+      ],
+      "replacement_status": "in_review",
+      "runtime_sheet": "game/assets/battle/cast/greymaw.png"
+    },
+    {
+      "id": "riven_wisp",
+      "display_name": "Riven Wisp",
+      "classification": "C",
+      "aliases": [
+        "riven_wisp"
+      ],
+      "references": [
+        "tools/battle_sources/riven_wisp/idle_00.png"
+      ],
+      "replacement_status": "in_review",
+      "runtime_sheet": "game/assets/battle/cast/riven_wisp.png"
+    },
+    {
+      "id": "riven_husk",
+      "display_name": "Riven Husk",
+      "classification": "C",
+      "aliases": [
+        "riven_husk"
+      ],
+      "references": [
+        "tools/battle_sources/riven_husk/idle_00.png"
+      ],
+      "replacement_status": "in_review",
+      "runtime_sheet": "game/assets/battle/cast/riven_husk.png"
+    },
+    {
+      "id": "riven_anchor",
+      "display_name": "Riven Anchor",
+      "classification": "C",
+      "aliases": [
+        "riven_anchor"
+      ],
+      "references": [
+        "tools/battle_sources/riven_anchor/idle_00.png"
+      ],
+      "replacement_status": "in_review",
+      "runtime_sheet": "game/assets/battle/cast/riven_anchor.png"
+    },
+    {
+      "id": "sealed_choir",
+      "display_name": "The Sealed Choir",
+      "classification": "C",
+      "aliases": [
+        "sealed_choir"
+      ],
+      "references": [
+        "tools/battle_sources/sealed_choir/idle_00.png"
+      ],
+      "replacement_status": "in_review",
+      "runtime_sheet": "game/assets/battle/cast/sealed_choir.png"
     }
   ]
 }

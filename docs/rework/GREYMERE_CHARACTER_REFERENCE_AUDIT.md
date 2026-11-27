@@ -129,3 +129,23 @@ valid atlas rectangle. Keep incomplete sheets off the production path.
 The current procedural v2 assets remain a known visual limitation until these
 replacement sheets pass this gate. Combat, class balance, portrait art and story
 are not changed by this audit.
+
+## Vertical slice additions (Chapter One)
+
+Added for `docs/VERTICAL_SLICE_SPEC.md`. These are generated with PixelLab
+against the style of the approved battle cast (`battle_almyra.png`) and the
+references named below, reviewed frame by frame, and remain `in_review` until a
+human pass at 320x180.
+
+| Character | Class | References | Identity to preserve |
+| --- | --- | --- | --- |
+| Kai (Unbonded) | C | Kai's class battle art (face, hair) | Kai's face and tousled auburn-brown hair; plain village clothes: blue linen shirt, brown leather vest, dark trousers, short sword. The shirt is blue so he never reads as Joey |
+| Specialist Corwen Hale | C | none (new, provisional canon) | Close-cropped dark hair, navy field coat with silver trim, survey satchel, brass sigil rod with a violet tip |
+| Civara Assessor | C | none (new) | Grey-streaked short hair, navy and silver Avelan uniform coat, steel training staff |
+| Old Greymaw | C | none (new) | Huge grizzled grey wolf, scarred muzzle, faint gold eyes; ordinary fauna, no Riven marks |
+| Riven Wisp, Husk, Anchor; the Sealed Choir | C | none (new, provisional canon) | Hollow Court stone and violet Riven light with the Court's gold; no faces on the Wisp |
+
+Battle-size figures of established residents (Joey, Lena, Elder Silas, Gell,
+Danfor) follow their rows above: Joey keeps the cream sleeves and brown vest,
+Lena's hair is gathered back, Danfor keeps the ridged helmet and blue tabard,
+Gell the green cap, and Silas carries a walking staff but no wizard gear.
