@@ -23,11 +23,11 @@ decisions behind it, and how far implementation has got. Update the
 | Greymere story rework | done | `StoryDirector`, dialogue choices and story variants, map triggers, `show_if` staging (`tools/greymere_story_world.py`, `game/data/dialogue/chapter_one.json`) |
 | Hollow Court dungeon | done | Three rooms (`tools/hollow_court_world.py`), a shrine, Almyra, Protect Joey, the anchor, the bond memory, the Sealed Choir |
 | Civara, assessment, ending, credits | done | Forecourt and Hall (`tools/civara_world.py`), the six-class choice, same-class assessors, the ending cinematic, credits and the end-of-demo screen |
-| Pause menu, battle HUD, results, title, settings | planned | Section 7 |
-| Music director, SFX, music manifest | planned | Section 8 |
-| Art (PixelLab) | in progress | 13 animated figures (battle sheets, story staging, map sprites); environments and ending stills reuse existing plates |
-| Balance snapshot and Streamlit tab | planned | Section 10 |
-| End-to-end QA (native and web) | planned | Section 11 |
+| Pause menu, battle HUD, results, title, settings | done | Field menu (`ui/menu/pause_menu.gd`), title with Quick Battle, Settings and Credits; objective progress, a WIND-UP tag and affinity in the target preview |
+| Music director, SFX, music manifest | done | Crossfades, fallbacks, battle resume, ducking, buses with saved levels; `docs/MUSIC_MANIFEST.md` lists the nine missing themes with Suno prompts |
+| Art (PixelLab) | done for characters | 13 animated figures plus Kai Unbonded's map walk sheet; the Court and Civara reuse existing textures and plates (see section 12) |
+| Balance snapshot and Streamlit tab | done | `vertical_slice` section (seeded, 200 battles per policy); the Balance Lab's Chapter One tab |
+| End-to-end QA (native and web) | done, automated | `story_smoke` (the whole chapter through the real autoloads), every Godot smoke, the web verifier on a real export at 1x and 4x CPU throttle, screenshots at 1280x720 and 960x540 (`docs/visual_refs/vertical_slice/`); human playtesting still required |
 
 ## 1. Goals and non-goals
 
@@ -508,3 +508,28 @@ Known gaps against the targets above:
   `mira_intro` key is retired from Greymere.
 - Seeds: the snapshot default is 42; parity scenarios use seed 1000 plus
   the scenario index.
+
+### Known limitations of v0.1
+
+- **Music:** nine themes are missing (`docs/MUSIC_MANIFEST.md`). Each plays
+  a fallback: the battle track for bosses, ambience alone in the Court, the
+  main theme in Civara and over the ending.
+- **Environments:** the Hollow Court is an interior room in a cold "court"
+  style (cobble floor, still-water overlay, tinted light) with existing
+  rubble props. It has no bespoke statues, plinths or Crest node art.
+  Civara is a paved forecourt and a candlelit hall. The bond memory and
+  the ending reuse the opening's painted plates.
+- **Animation polish:** the battle has no entrance slide-ins, no
+  per-status effects and no awakening portrait cut-in. Telegraphs, phases,
+  staggers and awakenings use the existing banners, floats, flashes and
+  shake.
+- **Balance:** the Unbonded kit has four moves, so one attack often
+  carries more than 45% of `tactical` usage (section 10). The scripted
+  policies under-use items and Brace, so human win rates should run
+  higher than the table's.
+- **Joey's goats** are narrated rather than chased on the map: there is no
+  goat art.
+- **Not verified by a person:** feel, pacing and the 45 to 60 minute
+  estimate; a physical controller (bindings are tested, a pad was not
+  used); the audio mix by ear.
+
