@@ -79,11 +79,10 @@ const travels = (log, from) => travelTimes(log, from).length;
 await page.goto(base);
 await page.locator('canvas[data-ready="true"]').waitFor({timeout:120000});
 await page.locator('canvas').click();   // the user gesture browsers require for sound
-await page.waitForTimeout(2500);
+let log = await until(l => l.starts.some(s => s.seconds > 30), 30000, 'title music');
+await page.waitForTimeout(500);
 await page.screenshot({path:`${out}/web-title.png`});
-let log = await audio();
 assert.ok(log.states.includes('running'), `AudioContext not running: ${log.states}`);
-assert.ok(log.starts.some(s => s.seconds > 30), 'title music did not start');
 
 // Menu cursor and confirm sounds, then class choice.
 let mark = await now();
@@ -92,21 +91,19 @@ await page.waitForTimeout(200);
 await page.keyboard.press('ArrowUp');
 await page.waitForTimeout(200);
 await page.keyboard.press('z');           // Play Story Demo -> class choice
-await page.waitForTimeout(600);
+log = await until(l => since(l, mark).filter(s => s.seconds < 1).length >= 3, 15000, 'menu move and confirm sounds');
+await page.waitForTimeout(400);
 await page.screenshot({path:`${out}/web-class-select.png`});
-log = await audio();
-assert.ok(since(log, mark).filter(s => s.seconds < 1).length >= 3, 'menu move/confirm sounds did not play');
 
 // The opening: its theme and the first two narration lines.
 mark = await now();
 await page.keyboard.press('z');           // Begin -> "The Last Accord"
-await page.waitForTimeout(10000);
+// The theme starts with the movie; narration lines 1 and 2 follow at
+// 1.5 s and 7.3 s of movie time, however long the scene takes to load.
+const isNarration = s => s.seconds > 1.5 && s.seconds < 9;
+log = await until(l => since(l, mark).some(s => s.seconds > 95) && since(l, mark).filter(isNarration).length >= 2,
+  45000, 'the opening theme and two narration lines');
 await page.screenshot({path:`${out}/web-opening.png`});
-log = await audio();
-const opening = since(log, mark);
-assert.ok(opening.some(s => s.seconds > 95), 'opening theme did not start');
-const narration = opening.filter(s => s.seconds > 1.5 && s.seconds < 9);
-assert.ok(narration.length >= 2, `narration lines did not start: ${JSON.stringify(opening)}`);
 
 // Skip, then Greymere: music and ambience. A new game starts two tiles
 // above the south road's edge, so holding Down walks off it onto Route 01
