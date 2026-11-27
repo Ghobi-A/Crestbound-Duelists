@@ -2,11 +2,16 @@
 <html lang="en">
 	<head>
 		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 		<title>$GODOT_PROJECT_NAME</title>
 		<style>
 body {
 	touch-action: none;
+	/* iOS: a held button must never start a text selection or the callout. */
+	-webkit-user-select: none;
+	user-select: none;
+	-webkit-touch-callout: none;
+	-webkit-tap-highlight-color: transparent;
 	margin: 0;
 	border: 0 none;
 	padding: 0;
@@ -131,6 +136,7 @@ body {
 #game-frame { height: 100dvh; }
 #mobile-pad { display:none; position:fixed; inset:0; pointer-events:none; z-index:10; --dpad:48px; --act:52px; --gap:3px; }
 #mobile-pad.active { display:block; }
+#mobile-pad, #mobile-pad * { -webkit-user-select:none; user-select:none; -webkit-touch-callout:none; }
 /* Idle buttons are see-through, so whatever they overlap stays readable. */
 #mobile-pad button { pointer-events:auto; touch-action:none; user-select:none; -webkit-user-select:none; background:#18212c80; color:#ffffffd9; border:1px solid #ffffff59; border-radius:12px; width:var(--dpad); height:var(--dpad); font:bold 18px sans-serif; padding:0; }
 #mobile-pad button.held { background:#62758ee6; color:white; border-color:#ffffffaa; }
@@ -187,12 +193,24 @@ const engine = new Engine(GODOT_CONFIG);
 const gdCanvas = document.getElementById('canvas');
 // Backing buffer and CSS dimensions agree, keeping pointer coordinates correct.
 function fitPixelCanvas() {
-	const available = Math.min(window.innerWidth / 320, (window.visualViewport?.height || window.innerHeight) / 180);
-	const scale = Math.max(1, Math.floor(available));
-	const width = 320 * scale;
-	const height = 180 * scale;
-	gdCanvas.width = width;
-	gdCanvas.height = height;
+	// The device width, not the layout width: on a phone the last
+	// orientation's wider canvas can stretch the layout viewport.
+	const viewW = Math.min(window.innerWidth, screen.width > 0 && matchMedia('(orientation: portrait)').matches ? screen.width : Infinity);
+	const viewH = window.visualViewport?.height || window.innerHeight;
+	const available = Math.min(viewW / 320, viewH / 180);
+	let scale = Math.max(1, Math.floor(available));
+	let backing = scale;
+	// An upright phone would only fit 1x. With the touch pad up, fill the
+	// width instead: Godot still draws a whole-number multiple (the backing
+	// buffer, sized for the screen's pixel density) and the page scales it.
+	if (document.getElementById('mobile-pad').classList.contains('active') && viewH > viewW) {
+		scale = Math.min((viewW - 8) / 320, (viewH * 0.55) / 180);
+		backing = Math.max(1, Math.floor(scale * (window.devicePixelRatio || 1)));
+	}
+	const width = Math.round(320 * scale);
+	const height = Math.round(180 * scale);
+	gdCanvas.width = 320 * backing;
+	gdCanvas.height = 180 * backing;
 	gdCanvas.style.width = width + 'px';
 	gdCanvas.style.height = height + 'px';
 	const wrap = document.getElementById('canvas-wrap');
@@ -213,7 +231,9 @@ function layoutPad(width, height) {
 	if (!pad.classList.contains('active')) return;
 	const probe = getComputedStyle(document.getElementById('safe-probe'));
 	const inset = {left: parseFloat(probe.paddingLeft) || 0, right: parseFloat(probe.paddingRight) || 0, bottom: parseFloat(probe.paddingBottom) || 0};
-	const viewW = window.innerWidth;
+	// The device width, not the layout width: on a phone the last
+	// orientation's wider canvas can stretch the layout viewport.
+	const viewW = Math.min(window.innerWidth, screen.width > 0 && matchMedia('(orientation: portrait)').matches ? screen.width : Infinity);
 	const viewH = window.visualViewport?.height || window.innerHeight;
 	const edge = 4, gap = 3, actionGap = 8;
 	const size = (room, count, gaps, low, high) => Math.max(low, Math.min(high, Math.floor((room - gaps) / count)));
@@ -291,6 +311,9 @@ function enableMobilePad() {
 		}
 		button.addEventListener('contextmenu', event => event.preventDefault());
 	}
+	// iOS starts a selection from a long press anywhere on the pad, even the gaps.
+	pad.addEventListener('touchstart', event => event.preventDefault(), {passive: false});
+	document.addEventListener('selectstart', event => event.preventDefault());
 	window.addEventListener('blur', releaseAll);
 	window.addEventListener('pagehide', releaseAll);
 	document.addEventListener('visibilitychange', () => { if (document.hidden) releaseAll(); });
