@@ -264,7 +264,17 @@ static func contact_shadow() -> Polygon2D:
 		var angle := TAU * i / 20.0
 		points.append(Vector2(cos(angle) * 6.0, sin(angle) * 1.8 - 0.4))
 	shadow.polygon = points
-	shadow.color = Color(0.02, 0.03, 0.05, 0.38)
+	shadow.color = Color(0.02, 0.03, 0.05, 0.26)
+	# A darker core right under the feet, so every character reads as standing
+	# on the ground rather than over it.
+	var core := Polygon2D.new()
+	var inner := PackedVector2Array()
+	for i in 16:
+		var angle := TAU * i / 16.0
+		inner.append(Vector2(cos(angle) * 3.6, sin(angle) * 1.1 - 0.3))
+	core.polygon = inner
+	core.color = Color(0.02, 0.03, 0.05, 0.3)
+	shadow.add_child(core)
 	return shadow
 
 

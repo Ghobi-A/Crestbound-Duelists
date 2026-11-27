@@ -75,9 +75,9 @@ func _build_prop_lights() -> void:
 	halo.width = 64
 	halo.height = 64
 	var ramp := Gradient.new()
-	ramp.set_color(0, Color(1.0, 0.78, 0.42, 0.55))
+	ramp.set_color(0, Color(1.0, 0.78, 0.42, 0.34))
 	ramp.set_color(1, Color(1.0, 0.6, 0.25, 0.0))
-	ramp.add_point(0.35, Color(1.0, 0.72, 0.36, 0.22))
+	ramp.add_point(0.35, Color(1.0, 0.72, 0.36, 0.12))
 	halo.gradient = ramp
 	var additive := CanvasItemMaterial.new()
 	additive.blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
@@ -88,7 +88,7 @@ func _build_prop_lights() -> void:
 			sprite.texture = halo
 			sprite.material = additive
 			sprite.position = origin + LANTERN
-			sprite.scale = Vector2.ONE * 0.42
+			sprite.scale = Vector2.ONE * 0.32
 			sprite.z_index = 32
 			add_child(sprite)
 			_halos.append(sprite)
@@ -149,6 +149,8 @@ func _build_foreground() -> void:
 		sprite.scale = Vector2.ONE * float(item[2])
 		sprite.flip_h = bool(item[3])
 		sprite.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
+		# Playtest: the framing foliage hid too much of the town; it frames, faintly.
+		sprite.modulate.a = 0.55
 		sprite.set_meta("home", item[1])
 		layer.add_child(sprite)
 		_foreground.append(sprite)

@@ -6,10 +6,10 @@ shader_type canvas_item;
 
 uniform sampler2D screen : hint_screen_texture, filter_linear, repeat_disable;
 uniform bool blur_enabled = true;
-uniform float tilt_start = 0.58;    // |y| (0 centre, 1 edge) where blur begins
-uniform float tilt_radius = 2.4;    // logical px at the frame edge
-uniform float bloom_strength = 0.22;
-uniform float bloom_threshold = 0.72;
+uniform float tilt_start = 0.74;    // |y| (0 centre, 1 edge) where blur begins
+uniform float tilt_radius = 1.3;    // logical px at the frame edge
+uniform float bloom_strength = 0.12;
+uniform float bloom_threshold = 0.8;
 uniform vec3 warm : source_color = vec3(1.10, 1.02, 0.86);
 uniform vec3 cool : source_color = vec3(0.86, 0.95, 1.06);
 uniform float vignette = 0.22;
