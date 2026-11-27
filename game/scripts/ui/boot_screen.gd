@@ -12,6 +12,7 @@ const BOOT_SCENE := "res://scenes/boot/boot.tscn"
 const QUICK_BATTLE_CLASS := "warrior"
 
 const CONTROLS_TEXT := "             KEYBOARD                CONTROLLER\nMOVE         WASD / Arrow keys       D-pad / left stick\nCONFIRM      Z / Enter / Space       A\nBACK         X / Escape              B\nObjective: speak to Warden Almyra, then investigate the Hollow Court."
+const TOUCH_CONTROLS_TEXT := "             ON-SCREEN BUTTONS\nMOVE         D-pad, left\nCONFIRM      A, right\nBACK, MENU   B, right\nHold A to skip the opening."
 
 enum Screen { MENU, CLASS_SELECT, CONTROLS, SETTINGS }
 
@@ -209,7 +210,7 @@ func _refresh() -> void:
 			_body_panel.size = Vector2(296, 98)
 			_body_panel.position = Vector2(12, 56)
 			_list_label.text = "Controls"
-			_detail_label.text = CONTROLS_TEXT
+			_detail_label.text = TOUCH_CONTROLS_TEXT if InputDevice.touch_pad() else CONTROLS_TEXT
 			_detail_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 			_preview.visible = false
 			_hints.set_items([["cancel", "Back"]])

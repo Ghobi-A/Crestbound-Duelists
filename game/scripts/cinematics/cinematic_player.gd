@@ -413,7 +413,7 @@ func _draw_overlay() -> void:
 			Color(str(title.get("color", "#e9dcb8")), a), VIEW.x, HORIZONTAL_ALIGNMENT_CENTER, UiStyle.DISPLAY, tracking)
 	if _hint_left > 0.0:
 		var a := minf(1.0, _hint_left / 0.5)
-		var hint := "Hold Z to skip  ·  X skip now"
+		var hint := "Hold %s to skip  ·  %s skip now" % [InputDevice.cap("interact"), InputDevice.cap("cancel")]
 		UiStyle.draw_text(canvas, Vector2(0, VIEW.y - 5.0), hint, 5, Color(0.75, 0.72, 0.66, a * 0.85), VIEW.x - 6.0, HORIZONTAL_ALIGNMENT_RIGHT)
 		if _hold > 0.0:
 			canvas.draw_rect(Rect2(VIEW.x - 66.0, VIEW.y - 3.0, 60.0 * clampf(_hold / SKIP_HOLD, 0.0, 1.0), 0.8), Color(0.9, 0.82, 0.6, a))

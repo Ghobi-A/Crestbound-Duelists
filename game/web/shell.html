@@ -129,13 +129,18 @@ body {
 }
 		
 #game-frame { height: 100dvh; }
-#mobile-pad { display:none; position:fixed; inset:0; pointer-events:none; z-index:10; }
+#mobile-pad { display:none; position:fixed; inset:0; pointer-events:none; z-index:10; --dpad:48px; --act:52px; --gap:3px; }
 #mobile-pad.active { display:block; }
-#mobile-pad button { pointer-events:auto; touch-action:none; user-select:none; -webkit-user-select:none; background:#18212cbb; color:white; border:1px solid #ffffff88; border-radius:12px; width:48px; height:48px; font:bold 18px sans-serif; padding:0; }
-#mobile-pad button.held { background:#62758e; }
-#mobile-directions { position:absolute; left:max(8px, env(safe-area-inset-left)); bottom:max(8px, env(safe-area-inset-bottom)); display:grid; grid-template-columns:repeat(3,48px); gap:3px; }
-#mobile-actions { position:absolute; right:max(8px, env(safe-area-inset-right)); bottom:max(8px, env(safe-area-inset-bottom)); display:flex; gap:8px; }
-@media (orientation:portrait) { #mobile-directions,#mobile-actions { bottom: max(24px, env(safe-area-inset-bottom)); } }
+/* Idle buttons are see-through, so whatever they overlap stays readable. */
+#mobile-pad button { pointer-events:auto; touch-action:none; user-select:none; -webkit-user-select:none; background:#18212c80; color:#ffffffd9; border:1px solid #ffffff59; border-radius:12px; width:var(--dpad); height:var(--dpad); font:bold 18px sans-serif; padding:0; }
+#mobile-pad button.held { background:#62758ee6; color:white; border-color:#ffffffaa; }
+#mobile-actions button { width:var(--act); height:var(--act); border-radius:50%; font-size:20px; }
+#tap-to-begin { display:none; position:fixed; inset:0; z-index:20; align-items:center; justify-content:center; background:#05070bcc; color:#e9dcb8; font:600 20px Georgia, serif; letter-spacing:0.12em; touch-action:none; user-select:none; -webkit-user-select:none; }
+#tap-to-begin.active { display:flex; }
+/* layoutPad() sets the vertical position; the safe areas keep the sides clear of notches. */
+#mobile-directions { position:absolute; left:max(4px, env(safe-area-inset-left)); bottom:max(8px, env(safe-area-inset-bottom)); display:grid; grid-template-columns:repeat(3,var(--dpad)); gap:var(--gap); }
+#mobile-actions { position:absolute; right:max(4px, env(safe-area-inset-right)); bottom:max(8px, env(safe-area-inset-bottom)); display:flex; align-items:flex-end; gap:8px; }
+#safe-probe { position:fixed; visibility:hidden; pointer-events:none; padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left); }
 </style>
 		$GODOT_HEAD_INCLUDE
 	</head>
@@ -165,6 +170,8 @@ body {
 			</div>
 		</div>
 
+		<div id="safe-probe"></div>
+		<div id="tap-to-begin" role="button" aria-label="Tap to begin">TAP TO BEGIN</div>
 		<div id="mobile-pad" aria-label="Touch game controls">
 <div id="mobile-directions">
 <span></span><button data-code="ArrowUp" aria-label="Up">▲</button><span></span>
@@ -191,6 +198,51 @@ function fitPixelCanvas() {
 	const wrap = document.getElementById('canvas-wrap');
 	wrap.style.width = width + 'px';
 	wrap.style.height = height + 'px';
+	layoutPad(width, height);
+}
+// The touch pad goes around the game, not over it, wherever the screen has
+// room. The game draws at a whole-number scale (scale_mode="integer"), so
+// the canvas cannot shrink to make room; the pad adapts instead:
+//   * beside the canvas, centred in the side gutters, when they fit it;
+//   * in a band under the canvas (portrait, tablets), the canvas above it;
+//   * otherwise (most phones held sideways) beside it at the smallest
+//     comfortable size, overlapping the canvas edge as little as it can.
+function layoutPad(width, height) {
+	const pad = document.getElementById('mobile-pad');
+	const frame = document.getElementById('game-frame');
+	if (!pad.classList.contains('active')) return;
+	const probe = getComputedStyle(document.getElementById('safe-probe'));
+	const inset = {left: parseFloat(probe.paddingLeft) || 0, right: parseFloat(probe.paddingRight) || 0, bottom: parseFloat(probe.paddingBottom) || 0};
+	const viewW = window.innerWidth;
+	const viewH = window.visualViewport?.height || window.innerHeight;
+	const edge = 4, gap = 3, actionGap = 8;
+	const size = (room, count, gaps, low, high) => Math.max(low, Math.min(high, Math.floor((room - gaps) / count)));
+	const gutter = (viewW - width) / 2 - Math.max(edge, inset.left, inset.right);
+	const band = viewH - height;
+	const directions = document.getElementById('mobile-directions');
+	const actions = document.getElementById('mobile-actions');
+	let dpad, act;
+	if (gutter < 3 * 40 + 2 * gap && band >= 3 * 44 + 2 * gap + 24 + inset.bottom) {
+		// Under the canvas: big buttons, and the game centred in what is left.
+		dpad = size(Math.min(viewW / 2 - 16, band - 24 - inset.bottom), 3, 2 * gap, 44, 60);
+		act = Math.min(64, Math.round(dpad * 1.15));
+		const padHeight = 3 * dpad + 2 * gap;
+		const bottom = Math.max(16, inset.bottom + 8, (band - padHeight) / 3);
+		frame.style.height = Math.max(height, viewH - padHeight - bottom) + 'px';
+		for (const cluster of [directions, actions]) { cluster.style.top = ''; cluster.style.bottom = bottom + 'px'; }
+	} else {
+		dpad = size(gutter, 3, 2 * gap, 40, 52);
+		act = size(gutter, 2, actionGap, 40, 56);
+		frame.style.height = '';
+		const padHeight = 3 * dpad + 2 * gap;
+		directions.style.bottom = 'auto';
+		actions.style.bottom = 'auto';
+		directions.style.top = Math.round((viewH - padHeight) / 2) + 'px';
+		actions.style.top = Math.round((viewH - act) / 2 + act * 0.6) + 'px';
+	}
+	pad.style.setProperty('--dpad', dpad + 'px');
+	pad.style.setProperty('--act', act + 'px');
+	pad.style.setProperty('--gap', gap + 'px');
 }
 fitPixelCanvas();
 window.addEventListener('resize', fitPixelCanvas);
@@ -203,6 +255,9 @@ function enableMobilePad() {
 	const pad = document.getElementById('mobile-pad');
 	if (!matchMedia('(any-pointer: coarse)').matches && !navigator.maxTouchPoints) return;
 	pad.classList.add('active');
+	// The game reads this to label its prompts A and B, like the buttons.
+	window.crestboundTouchPad = true;
+	fitPixelCanvas();
 	const held = new Map();
 	const keys = {KeyZ:'z', KeyX:'x'};
 	function emit(code, down) {
@@ -239,6 +294,18 @@ function enableMobilePad() {
 	window.addEventListener('blur', releaseAll);
 	window.addEventListener('pagehide', releaseAll);
 	document.addEventListener('visibilitychange', () => { if (document.hidden) releaseAll(); });
+	// Phones block sound until a tap. The first tap only wakes the audio (a
+	// harmless Shift press reaches the game, which resumes its AudioContext),
+	// so it can never also choose a title-screen option.
+	const gate = document.getElementById('tap-to-begin');
+	gate.classList.add('active');
+	gate.addEventListener('pointerdown', event => {
+		event.preventDefault();
+		gdCanvas.focus();
+		emit('ShiftLeft', true);
+		emit('ShiftLeft', false);
+		gate.classList.remove('active');
+	}, {once: true});
 }
 (function () {
 	const INDETERMINATE_STATUS_STEP_MS = 100;
