@@ -13,7 +13,7 @@
     "...That's a lot of goats.",
     "That's Joey's ma's goats. That's all of Joey's ma's goats."
    ],
-   "portrait": "kai_unbonded"
+   "portrait": "player"
   }
  ],
  "kai_note": [
@@ -60,7 +60,7 @@
    "lines": [
     "Where are the goats, Joey."
    ],
-   "portrait": "kai_unbonded",
+   "portrait": "player",
    "show_if": [
     "stage>=morning",
     "!goats_rounded"
@@ -83,7 +83,7 @@
    "lines": [
     "How many?"
    ],
-   "portrait": "kai_unbonded",
+   "portrait": "player",
    "show_if": [
     "stage>=morning",
     "!goats_rounded"
@@ -333,7 +333,7 @@
    "lines": [
     "Is that a pass?"
    ],
-   "portrait": "kai_unbonded"
+   "portrait": "player"
   },
   {
    "speaker": "Danfor",
@@ -470,7 +470,7 @@
    "lines": [
     "It's nothing."
    ],
-   "portrait": "kai_unbonded",
+   "portrait": "player",
    "show_if": [
     "greymere_spar_danfor_won",
     "!talked_lena_story"
@@ -492,7 +492,7 @@
    "lines": [
     "There were goats."
    ],
-   "portrait": "kai_unbonded",
+   "portrait": "player",
    "show_if": [
     "greymere_spar_danfor_won",
     "!talked_lena_story"
@@ -515,7 +515,7 @@
    "lines": [
     "Which ones smell?"
    ],
-   "portrait": "kai_unbonded",
+   "portrait": "player",
    "show_if": [
     "greymere_spar_danfor_won",
     "!talked_lena_story"
@@ -641,7 +641,7 @@
    "lines": [
     "...No. Why?"
    ],
-   "portrait": "kai_unbonded",
+   "portrait": "player",
    "choices": [
     {
      "label": "Only the goats did.",
@@ -755,7 +755,7 @@
    "lines": [
     "You've been?"
    ],
-   "portrait": "kai_unbonded"
+   "portrait": "player"
   },
   {
    "speaker": "Gell",
@@ -893,7 +893,7 @@
    "lines": [
     "You felt it too."
    ],
-   "portrait": "kai_unbonded"
+   "portrait": "player"
   },
   {
    "speaker": "Elder Silas",
@@ -985,7 +985,7 @@
    "lines": [
     "How do you know my name?"
    ],
-   "portrait": "kai_unbonded"
+   "portrait": "player"
   },
   {
    "speaker": "Warden Almyra",
@@ -1066,7 +1066,7 @@
    "lines": [
     "He went down. For his... things. He's been going down for years."
    ],
-   "portrait": "kai_unbonded"
+   "portrait": "player"
   },
   {
    "speaker": "Elder Silas",
@@ -1125,7 +1125,7 @@
     "Joey?",
     "...Joey!"
    ],
-   "portrait": "kai_unbonded"
+   "portrait": "player"
   },
   {
    "speaker": "",
@@ -1195,7 +1195,7 @@
    "lines": [
     "Joey's down here."
    ],
-   "portrait": "kai_unbonded"
+   "portrait": "player"
   },
   {
    "speaker": "Warden Almyra",
@@ -1225,7 +1225,7 @@
    "lines": [
     "Was the plan the lights?"
    ],
-   "portrait": "kai_unbonded"
+   "portrait": "player"
   },
   {
    "speaker": "Joey",
@@ -1287,7 +1287,7 @@
    "lines": [
     "Stay down, Joey."
    ],
-   "portrait": "kai_unbonded",
+   "portrait": "player",
    "choices": [
     {
      "label": "Break the seal.",
@@ -1320,7 +1320,7 @@
    "lines": [
     "Silas said... don't answer."
    ],
-   "portrait": "kai_unbonded"
+   "portrait": "player"
   },
   {
    "speaker": "",
@@ -1424,7 +1424,7 @@
    "lines": [
     "...No."
    ],
-   "portrait": "kai_unbonded"
+   "portrait": "player"
   },
   {
    "speaker": "Lena",
@@ -1594,7 +1594,7 @@
    "lines": [
     "If I take it, can I leave? If it turns out to be the wrong road?"
    ],
-   "portrait": "kai_unbonded"
+   "portrait": "player"
   },
   {
    "speaker": "Warden Almyra",
@@ -1608,7 +1608,7 @@
    "lines": [
     "Write it down. With my name on it."
    ],
-   "portrait": "kai_unbonded",
+   "portrait": "player",
    "choices": [
     {
      "label": "Classification, then. In writing.",
@@ -1722,7 +1722,7 @@
    "lines": [
     "Nobody's even looking."
    ],
-   "portrait": "kai_unbonded"
+   "portrait": "player"
   },
   {
    "speaker": "Warden Almyra",
@@ -2390,7 +2390,7 @@
    "lines": [
     "...Tomorrow's fine."
    ],
-   "portrait": "kai_unbonded",
+   "portrait": "player",
    "effects": {
     "stage": "complete",
     "flags": [

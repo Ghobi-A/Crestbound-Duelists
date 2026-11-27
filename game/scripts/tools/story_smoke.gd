@@ -26,6 +26,7 @@ func check(ok: bool, message: String) -> void:
 
 func _ready() -> void:
 	await get_tree().process_frame
+	await check_real_arrival()
 	dialogue = DialogueBox.new()
 	add_child(dialogue)
 	dialogue.load_file("res://data/dialogue/greymere.json")
@@ -34,6 +35,35 @@ func _ready() -> void:
 	check_greymaw_and_retry()
 	print("STORY_SMOKE: %d failures" % failures.size())
 	get_tree().quit(0 if failures.is_empty() else 1)
+
+
+func check_real_arrival() -> void:
+	## The real scenes: New Game opens Kai's house and its arrival beat plays
+	## once the fade has finished (a trigger must not be lost to the fade),
+	## and Kai stands on the map in his village clothes.
+	get_tree().current_scene = null
+	Engine.time_scale = 10
+	GameState.start_story()
+	SceneTransition.change_scene(GameState.current_scene)
+	var house: WorldLocation = null
+	for _frame in 600:
+		await get_tree().process_frame
+		house = get_tree().current_scene as WorldLocation
+		if house != null and not SceneTransition._busy and house._dialogue.active:
+			break
+	check(house != null and house.location_id == "kai_house", "New Game loads Kai's house")
+	if house == null:
+		return
+	check(house._dialogue.active and house._dialogue._current_key == "morning_wake", "the wake-up scene plays on arrival")
+	check(house._player.tile == WorldCatalog.tile(WorldCatalog.location("kai_house").spawn_points.bed.tile), "Kai wakes by his bed")
+	check(house._player._has_sheet, "Kai has a map sprite before he has a class")
+	while house._dialogue.active:
+		house._dialogue.complete_reveal()
+		house._dialogue.confirm()
+	Engine.time_scale = 1
+	get_tree().current_scene = null
+	house.queue_free()
+	await get_tree().process_frame
 
 
 # ── Helpers ──────────────────────────────────────────────────────────

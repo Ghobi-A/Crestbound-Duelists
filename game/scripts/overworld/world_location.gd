@@ -65,7 +65,7 @@ func _ready() -> void:
 	_location_started()
 	SaveManager.save_game()
 	# Story beats that start as Kai arrives (authored "triggers" with no area).
-	_run_triggers.call_deferred(_player.tile, true)
+	_arrival_triggers()
 
 func _build_world() -> void:
 	if definition.has("painted"):
@@ -431,6 +431,17 @@ func _engage_trainer(trainer: Dictionary, alerted: bool) -> void:
 
 func _location_started() -> void:
 	pass
+
+
+func _arrival_triggers() -> void:
+	## Arrival beats wait for the fade into this location to finish, so the
+	## scene opens on the conversation rather than during the transition.
+	await get_tree().process_frame
+	while SceneTransition._busy:
+		if not is_inside_tree(): return
+		await get_tree().process_frame
+	if is_inside_tree():
+		_run_triggers(_player.tile, true)
 
 
 func _run_triggers(tile: Vector2i, entering: bool) -> bool:

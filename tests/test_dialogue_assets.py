@@ -40,7 +40,10 @@ CHARACTERS = json.loads((REPO_ROOT / "game/assets/rework/characters.json").read_
 
 def _record_portrait(portrait: str) -> bool:
     """CharacterPresentation.portrait: a manifest record (by id or alias)
-    crops its portrait_rect from its atlas, before any portraits/ folder."""
+    crops its portrait_rect from its atlas, before any portraits/ folder.
+    "player" is Kai as he is now (StoryStage.resolve): Unbonded until Civara."""
+    if portrait == "player":
+        portrait = "kai_unbonded"
     for record_id, record in CHARACTERS["characters"].items():
         if portrait == record_id or portrait in record.get("aliases", []):
             atlas = str(record.get("atlas", CHARACTERS["atlas"])).removeprefix("res://")

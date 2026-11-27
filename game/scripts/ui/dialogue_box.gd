@@ -334,7 +334,7 @@ static func paginate(text: String, font: Font, font_size: int, width: float, hei
 
 
 func _apply_portrait(portrait_key: String, expression := "neutral") -> void:
-	CharacterPresentation.apply_portrait(_portrait, portrait_key, expression)
+	CharacterPresentation.apply_portrait(_portrait, StoryStage.resolve(portrait_key), expression)
 	var shown := _portrait.texture != null
 	_portrait_frame.visible = shown
 	var text_x := PresentationLayout.PORTRAIT_RECT.end.x + 6.0 if shown else 6.0

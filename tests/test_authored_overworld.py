@@ -24,7 +24,7 @@ def test_all_greymere_and_kai_classes_have_authored_sheets():
         assert "aren/" + name in MANIFEST["aliases"]
 
 def test_frames_have_explicit_facings_bounds_and_feet():
-    assert len(MANIFEST["entries"]) == 17
+    assert len(MANIFEST["entries"]) == 18  # Kai Unbonded joined the 17 residents and classes
     for entry in MANIFEST["entries"].values():
         assert (ROOT / "game" / entry["atlas"].removeprefix("res://")).is_file()
         assert entry["native_body_height"] > 0

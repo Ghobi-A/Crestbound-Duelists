@@ -51,6 +51,10 @@
     "head_ratio": 0.281,
     "width_ratio": 0.704
   },
+  "kai_unbonded": {
+    "head_ratio": 0.302,
+    "width_ratio": 0.585
+  },
   "kai_warrior": {
     "head_ratio": 0.281,
     "width_ratio": 0.627

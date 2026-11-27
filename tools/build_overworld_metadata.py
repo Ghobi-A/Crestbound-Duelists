@@ -7,6 +7,8 @@ ROOT = Path(__file__).resolve().parents[1]
 DIRECTORY = ROOT / "game/assets/overworld"
 ALIASES = {
     "kai_neutral": ["aren/neutral", "kai_neutral"],
+    # Kai before Civara (Unbonded, then Unsettled): his village clothes.
+    "kai_unbonded": ["kai_unbonded", "kai_unsettled"],
     "almyra": ["elara", "almyra"],
     "joey": ["townsfolk/farmboy", "farmboy", "joey"],
     "lena": ["townsfolk/herbalist_woman", "herbalist_woman", "lena"],

@@ -2082,6 +2082,214 @@
       "animation_review": "pending",
       "body_height": 260
     },
+    "kai_unbonded": {
+      "atlas": "res://assets/overworld/kai_unbonded.png",
+      "native_body_height": 108,
+      "frames": {
+        "down": [
+          {
+            "rect": [
+              0,
+              0,
+              128,
+              128
+            ],
+            "foot": [
+              64.0,
+              121
+            ]
+          },
+          {
+            "rect": [
+              128,
+              0,
+              128,
+              128
+            ],
+            "foot": [
+              64.0,
+              121
+            ]
+          },
+          {
+            "rect": [
+              256,
+              0,
+              128,
+              128
+            ],
+            "foot": [
+              64.0,
+              121
+            ]
+          },
+          {
+            "rect": [
+              384,
+              0,
+              128,
+              128
+            ],
+            "foot": [
+              64.0,
+              121
+            ]
+          }
+        ],
+        "up": [
+          {
+            "rect": [
+              0,
+              128,
+              128,
+              128
+            ],
+            "foot": [
+              64.0,
+              117
+            ]
+          },
+          {
+            "rect": [
+              128,
+              128,
+              128,
+              128
+            ],
+            "foot": [
+              64.0,
+              118
+            ]
+          },
+          {
+            "rect": [
+              256,
+              128,
+              128,
+              128
+            ],
+            "foot": [
+              64.0,
+              118
+            ]
+          },
+          {
+            "rect": [
+              384,
+              128,
+              128,
+              128
+            ],
+            "foot": [
+              64.0,
+              118
+            ]
+          }
+        ],
+        "east": [
+          {
+            "rect": [
+              0,
+              256,
+              128,
+              128
+            ],
+            "foot": [
+              64.0,
+              115
+            ]
+          },
+          {
+            "rect": [
+              128,
+              256,
+              128,
+              128
+            ],
+            "foot": [
+              64.0,
+              115
+            ]
+          },
+          {
+            "rect": [
+              256,
+              256,
+              128,
+              128
+            ],
+            "foot": [
+              64.0,
+              115
+            ]
+          },
+          {
+            "rect": [
+              384,
+              256,
+              128,
+              128
+            ],
+            "foot": [
+              64.0,
+              115
+            ]
+          }
+        ],
+        "west": [
+          {
+            "rect": [
+              0,
+              384,
+              128,
+              128
+            ],
+            "foot": [
+              64.0,
+              110
+            ]
+          },
+          {
+            "rect": [
+              128,
+              384,
+              128,
+              128
+            ],
+            "foot": [
+              64.0,
+              111
+            ]
+          },
+          {
+            "rect": [
+              256,
+              384,
+              128,
+              128
+            ],
+            "foot": [
+              64.0,
+              111
+            ]
+          },
+          {
+            "rect": [
+              384,
+              384,
+              128,
+              128
+            ],
+            "foot": [
+              64.0,
+              111
+            ]
+          }
+        ]
+      },
+      "animation_review": "pending",
+      "body_height": 106
+    },
     "kai_warrior": {
       "atlas": "res://assets/overworld/kai_warrior.png",
       "native_body_height": 266,
@@ -3564,6 +3772,8 @@
     "kai_neutral": "kai_neutral",
     "aren/sorcerer": "kai_sorcerer",
     "kai_sorcerer": "kai_sorcerer",
+    "kai_unbonded": "kai_unbonded",
+    "kai_unsettled": "kai_unbonded",
     "aren/warrior": "kai_warrior",
     "kai_warrior": "kai_warrior",
     "townsfolk/herbalist_woman": "lena",

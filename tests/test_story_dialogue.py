@@ -29,6 +29,8 @@ def _staged(key: str) -> bool:
 
 
 def _battle_sheet(portrait: str) -> str | None:
+    if portrait == "player":  # Kai as he is now; every class has a sheet too
+        portrait = "kai_unbonded"
     for record_id, record in CHARACTERS.items():
         if portrait == record_id or portrait in record.get("aliases", []):
             return record.get("battle_sheet")
