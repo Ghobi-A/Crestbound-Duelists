@@ -93,6 +93,12 @@ func check_closed_south_road() -> void:
 	check(not town._dialogue.active and lines < 20, "the closed-road line does not loop")
 	check(town._player.tile == road + Vector2i.UP, "Kai is turned back off the closed road")
 	check(not town.movement_blocked(), "Kai can walk again after the closed road")
+	# Playtest: Kai's door to the square took the long way round the east
+	# lane. The lane west and the link north make it a short walk.
+	var from := WorldCatalog.tile(WorldCatalog.location("greymere").spawn_points.kai_return.tile)
+	var steps := path_length(town, from, Vector2i(17, 16))
+	# 31 is the grid distance itself; the old way round was 41.
+	check(steps > 0 and steps <= 32, "Kai's house to the square is a short walk (%d steps)" % steps)
 	town.queue_free()
 	await get_tree().process_frame
 
@@ -362,3 +368,21 @@ func check_quick_battle() -> void:
 			check(runtime.player_units.size() == builds.size() and not runtime.enemy_units.is_empty(), "Quick Battle builds %s as %s" % [id, class_id])
 			check(runtime.player_units[0].entity_id == "storm_lion", "Kai's chosen Entity fights with him")
 			check(GameState.mode == "quick" and not SaveManager.save_game(), "Quick Battle never saves")
+
+
+func path_length(town: WorldLocation, from: Vector2i, to: Vector2i) -> int:
+	## Fewest steps between two tiles on the real collision (-1: no way).
+	var seen := {from: 0}
+	var queue: Array[Vector2i] = [from]
+	while not queue.is_empty():
+		var at: Vector2i = queue.pop_front()
+		if at == to:
+			return int(seen[at])
+		for direction in [Vector2i.UP, Vector2i.DOWN, Vector2i.LEFT, Vector2i.RIGHT]:
+			var next: Vector2i = at + direction
+			if seen.has(next) or next.x < 0 or next.y < 0 or next.x >= town.map_width() or next.y >= town.map_height():
+				continue
+			if town.is_walkable(next) or next == to:
+				seen[next] = int(seen[at]) + 1
+				queue.append(next)
+	return -1
