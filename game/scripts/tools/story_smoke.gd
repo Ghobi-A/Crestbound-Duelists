@@ -33,6 +33,7 @@ func _ready() -> void:
 	dialogue.merge_file(WorldLocation.CHAPTER_DIALOGUE)
 	run_chapter()
 	check_greymaw_and_retry()
+	check_quick_battle()
 	print("STORY_SMOKE: %d failures" % failures.size())
 	get_tree().quit(0 if failures.is_empty() else 1)
 
@@ -60,10 +61,48 @@ func check_real_arrival() -> void:
 	while house._dialogue.active:
 		house._dialogue.complete_reveal()
 		house._dialogue.confirm()
+	check_pause_menu(house)
 	Engine.time_scale = 1
 	get_tree().current_scene = null
 	house.queue_free()
 	await get_tree().process_frame
+
+
+func press(node: Node, action: String) -> void:
+	var event := InputEventAction.new()
+	event.action = action
+	event.pressed = true
+	node._unhandled_input(event)
+
+
+func check_pause_menu(house: WorldLocation) -> void:
+	## The field menu on the real scene: it opens on Back, blocks the field,
+	## swaps a move in the loadout, changes a volume, and closes.
+	press(house, "cancel")
+	var menu := house._pause
+	check(menu.visible and house._menu_open and house.movement_blocked(), "Back opens the field menu over a frozen field")
+	for tab_name in PauseMenu.TABS:
+		menu.select_tab(tab_name)
+		menu._page.queue_redraw()
+	check(menu.current_tab() == "Title", "every tab can be shown")
+	GameState.unlock_move("kai", "steady_footing")
+	menu.select_tab("Abilities")
+	press(menu, "interact")
+	var before: Array = GameState.equipped_moves(GameState.member("kai")).duplicate()
+	press(menu, "move_right")
+	var after: Array = GameState.equipped_moves(GameState.member("kai"))
+	check(after != before and after.has("steady_footing"), "Abilities swaps an unlocked move into the loadout")
+	press(menu, "cancel")
+	menu.select_tab("Settings")
+	press(menu, "interact")
+	var level := AudioSettings.level("Master")
+	press(menu, "move_left")
+	check(AudioSettings.level("Master") == level - 1, "Settings lowers the master volume")
+	press(menu, "move_right")
+	check(AudioSettings.level("Master") == level, "and raises it back")
+	press(menu, "cancel")
+	press(menu, "cancel")
+	check(not menu.visible and not house._menu_open, "Back closes the menu")
 
 
 # ── Helpers ──────────────────────────────────────────────────────────
@@ -274,3 +313,23 @@ func check_greymaw_and_retry() -> void:
 	GameState.start_story()
 	GameState.advance_stage("incident")
 	check(npc("route_01", "Old Greymaw").is_empty(), "Greymaw is out of reach after the incident")
+
+
+func check_quick_battle() -> void:
+	## Every class against every challenge builds a real battle from data,
+	## with the chosen Entity, and Quick Battle never writes the story save.
+	var quick := preload("res://scripts/ui/quick_battle.gd")
+	for class_id in quick.CLASSES:
+		for challenge in quick.CHALLENGES:
+			GameState.start_quick_battle(class_id)
+			GameState.member("kai")["entity_id"] = "storm_lion"
+			var id := str(challenge[1])
+			id = id % class_id if "%s" in id else id
+			var encounter := GameData.get_encounter(id)
+			check(not encounter.is_empty(), "Quick Battle challenge exists: " + id)
+			var builds := GameState.encounter_party(encounter)
+			check(builds.size() == int(encounter.player_slots), "Quick Battle party fills %s" % id)
+			var runtime := EncounterRuntime.from_data(encounter, builds, GameData, GameState.inventory)
+			check(runtime.player_units.size() == builds.size() and not runtime.enemy_units.is_empty(), "Quick Battle builds %s as %s" % [id, class_id])
+			check(runtime.player_units[0].entity_id == "storm_lion", "Kai's chosen Entity fights with him")
+			check(GameState.mode == "quick" and not SaveManager.save_game(), "Quick Battle never saves")

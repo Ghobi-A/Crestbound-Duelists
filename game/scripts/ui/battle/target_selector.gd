@@ -47,6 +47,10 @@ func estimate_text(attacker: BattleUnit, move: Dictionary, resolver: BattleResol
 		extras.append("%s%+d" % [str(mod.stat).to_upper(), int(mod.amount)])
 	for effect in move.get("status_effects", []):
 		extras.append(str(effect.get("status", "")).to_upper())
+	# Affinity: a weakness hits harder and staggers; a resistance softens it.
+	match resolver.affinity_of(target, move):
+		"weak": extras.push_front("WEAK %s" % str(move.get("property", "")).to_upper())
+		"resist": extras.push_front("RESISTS %s" % str(move.get("property", "")).to_upper())
 	if target.is_braced():
 		extras.append("BRACED")
 	if not extras.is_empty():

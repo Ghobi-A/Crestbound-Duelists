@@ -11,6 +11,7 @@ extends Node2D
 
 const OVERWORLD_SCENE := "res://scenes/overworld/greymere.tscn"
 const BOOT_SCENE := "res://scenes/boot/boot.tscn"
+const QUICK_BATTLE_SCENE := "res://scenes/ui/quick_battle.tscn"
 const BATTLE_SCENE := "res://scenes/battle/party_battle.tscn"
 
 ## Where the floating party cards begin (battle_hud.gd); combatants stand
@@ -70,8 +71,7 @@ func _ready() -> void:
 	AudioRouter.stop_ambience()
 	_build_dialogue()
 	_build_onboarding()
-	var objective: Dictionary = GameData.get_objective(runtime.encounter.get("objective", "defeat_all"))
-	hud.set_objective(objective.get("name", "Defeat all enemies"))
+	_show_objective()
 	hud.set_title(str(runtime.encounter.get("name", "Battle")).trim_prefix("The "))
 	hud.set_phase("ROUND %d" % runtime.round_number)
 	hud.set_footer_note(str(runtime.encounter.get("battlefield_effect", {}).get("name", "")))
@@ -425,6 +425,7 @@ func _resolve_round() -> void:
 
 	var round_end := resolver.end_round()
 	await presentation.play_round_end(round_end)
+	_show_objective()
 	hud.refresh_rows()
 	for sprite in sprites.values():
 		sprite.refresh()
@@ -453,6 +454,13 @@ func _play_events(action: Dictionary, events: Array) -> void:
 
 
 
+func _show_objective() -> void:
+	## The objective and, where it counts, its progress ("Survive the Assault 2/4").
+	var objective: Dictionary = GameData.get_objective(runtime.encounter.get("objective", "defeat_all"))
+	var progress := runtime.objective_progress()
+	hud.set_objective(str(objective.get("name", "Defeat all enemies")) + ("  " + progress if progress != "" else ""))
+
+
 # ── Battle end ───────────────────────────────────────────────────────
 
 func _finish(player_won: bool) -> void:
@@ -479,6 +487,10 @@ func _after_result(choice: String, player_won: bool) -> void:
 		# Same battle, same HP and supplies as when it began.
 		GameState.restore_retry_snapshot()
 		SceneTransition.change_scene(BATTLE_SCENE, "spectral")
+		return
+	if GameState.mode == "quick":
+		# Quick Battle never enters the story: back to its own screen.
+		SceneTransition.change_scene(QUICK_BATTLE_SCENE, "gold" if player_won else "defeat")
 		return
 	if not GameState.world_battle.is_empty():
 		if player_won:

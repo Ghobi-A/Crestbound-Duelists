@@ -47,6 +47,12 @@ jobs:
           grep -q 'SHOP_SMOKE: 0 failures' "$RUNNER_TEMP/world-qa/shop.log"
           timeout 150s "$GODOT" --headless --max-fps 120 --path game res://scenes/tools/route_smoke.tscn 2>&1 | tee "$RUNNER_TEMP/world-qa/route.log"
           grep -q 'ROUTE_SMOKE: 0 failures' "$RUNNER_TEMP/world-qa/route.log"
+          # Chapter One end to end (story graph through the real autoloads, the
+          # real arrival scene, the field menu, Quick Battle) and progression.
+          timeout 120s "$GODOT" --headless --max-fps 120 --path game res://scenes/tools/story_smoke.tscn 2>&1 | tee "$RUNNER_TEMP/world-qa/story.log"
+          grep -q 'STORY_SMOKE: 0 failures' "$RUNNER_TEMP/world-qa/story.log"
+          timeout 60s "$GODOT" --headless --path game res://scenes/tools/progression_smoke.tscn 2>&1 | tee "$RUNNER_TEMP/world-qa/progression.log"
+          grep -q 'PROGRESSION_SMOKE: 0 failures' "$RUNNER_TEMP/world-qa/progression.log"
       - name: Export and exercise browser build
         run: |
           curl -fsSL https://github.com/godotengine/godot/releases/download/4.3-stable/Godot_v4.3-stable_export_templates.tpz -o "$RUNNER_TEMP/templates.zip"

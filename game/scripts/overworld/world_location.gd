@@ -25,8 +25,7 @@ var _encounter_rng := RandomNumberGenerator.new()
 var _encounter_state: Dictionary = {}
 var _trainers: Dictionary = {}
 var _menu_open := false
-var _menu_cursor := 0
-var _menu_status := ""
+var _pause: PauseMenu
 
 func _ready() -> void:
 	process_priority = 10   # after the player has moved this frame
@@ -55,6 +54,11 @@ func _ready() -> void:
 	add_child(_hud)
 	_trade = TradePanel.new()
 	add_child(_trade)
+	_pause = PauseMenu.new()
+	add_child(_pause)
+	_pause.closed.connect(_on_menu_closed)
+	_pause.save_requested.connect(_on_menu_save)
+	_pause.title_requested.connect(func() -> void: SceneTransition.change_scene("res://scenes/boot/boot.tscn"))
 	_hud.location_label.text = str(definition.get("hud_name", definition.name)).to_upper()
 	GameState.current_scene = str(definition.scene)
 	GameState.location_id = location_id
@@ -221,7 +225,7 @@ func _process(_delta: float) -> void:
 	# player shimmer a pixel back and forth every frame.
 	_camera_follow = _player.position + CAMERA_LOOK_AHEAD
 	_camera.position = _camera_follow.round()
-	_hud.visible = not _dialogue.active
+	_hud.visible = not (_dialogue.active or _menu_open)
 	_hud.show_context(context_verb())
 
 func try_exit(from: Vector2i, direction: Vector2i) -> bool:
@@ -247,31 +251,31 @@ func context_verb() -> String:
 
 func _unhandled_input(event: InputEvent) -> void:
 	if not event.is_pressed() or event.is_echo() or _dialogue.active or _trade.active or SceneTransition._busy or _player.is_moving() or _engagement_busy: return
+	if _menu_open: return  # the pause menu handles its own input
 	if event.is_action_pressed("cancel"):
-		_menu_open = not _menu_open
-		_menu_status = ""
-		if not _menu_open: _hud.hide_menu()
-	elif _menu_open:
-		if event.is_action_pressed("move_up"): _menu_cursor = wrapi(_menu_cursor-1,0,WorldHud.CHOICES.size())
-		elif event.is_action_pressed("move_down"): _menu_cursor = wrapi(_menu_cursor+1,0,WorldHud.CHOICES.size())
-		elif event.is_action_pressed("interact"):
-			match _menu_cursor:
-				0:
-					_menu_open = false
-					_hud.hide_menu()
-				1:
-					_remember_position()
-					_menu_status = "Saved." if SaveManager.save_game() else "Save failed."
-				2:
-					_menu_open = false
-					_hud.hide_menu()
-					_trade.open(false)
-				WorldHud.GRAPHICS_ROW:
-					_menu_status = "%s preset — applies on entering an area." % GraphicsSettings.cycle().capitalize()
-				4: SceneTransition.change_scene("res://scenes/boot/boot.tscn")
+		get_viewport().set_input_as_handled()
+		open_menu()
 	elif event.is_action_pressed("interact"):
 		_try_interact()
-	if _menu_open: _hud.show_menu(_menu_cursor,_menu_status)
+
+
+func open_menu() -> void:
+	## The field menu (PauseMenu): party, status, loadouts, Crests, Entities,
+	## the bag, the journal, settings, saving and the title screen.
+	_menu_open = true
+	_remember_position()
+	_pause.open()
+
+
+func _on_menu_closed() -> void:
+	_menu_open = false
+
+
+func _on_menu_save() -> void:
+	_remember_position()
+	var saved := SaveManager.save_game()
+	if saved: AudioRouter.play_sfx("ui", "save")
+	_pause.set_status("Saved." if saved else "Save failed.")
 
 func _try_interact() -> void:
 	var target := _player.tile + _player.facing

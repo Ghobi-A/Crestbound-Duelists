@@ -13,7 +13,7 @@ const QUICK_BATTLE_CLASS := "warrior"
 
 const CONTROLS_TEXT := "             KEYBOARD                CONTROLLER\nMOVE         WASD / Arrow keys       D-pad / left stick\nCONFIRM      Z / Enter / Space       A\nBACK         X / Escape              B\nObjective: speak to Warden Almyra, then investigate the Hollow Court."
 
-enum Screen { MENU, CLASS_SELECT, CONTROLS }
+enum Screen { MENU, CLASS_SELECT, CONTROLS, SETTINGS }
 
 var _screen: Screen = Screen.MENU
 var _menu_options: Array[String] = []
@@ -31,12 +31,15 @@ var _preview: TextureRect
 var _body_panel: UiPanel
 var _menu_rows: Array[Label] = []
 var _menu_band: UiDecor
+var _settings: SettingsPanel
 
 # Menu row geometry, shared by the labels and the selection band drawn
 # behind them, so the two can never disagree about where a row sits.
-const MENU_TOP := 80.0
+const MENU_TOP := 74.0
 const MENU_PITCH := 11.0
-const MENU_ROWS := 5   # Play, Quick Battle, Continue (with a save), Watch Opening, Controls
+const MENU_ROWS := 7   # New Game, Continue (with a save), Quick Battle, Settings, Credits, Watch Opening, Controls
+const QUICK_BATTLE_SCENE := "res://scenes/ui/quick_battle.tscn"
+const CREDITS_SCENE := "res://scenes/ui/end_of_demo.tscn"
 const MENU_BAND := Rect2(24, 0, 98, 9)
 
 
@@ -48,11 +51,10 @@ func _ready() -> void:
 		_show_data_error()
 		return
 	_class_list = GameData.class_ids()
-	_menu_options = ["Play Story Demo", "Quick Battle"]
+	_menu_options = ["New Game"]
 	if SaveManager.has_compatible_save():
 		_menu_options.append("Continue")
-	_menu_options.append("Watch Opening")
-	_menu_options.append("Controls")
+	_menu_options += ["Quick Battle", "Settings", "Credits", "Watch Opening", "Controls"]
 	_refresh()
 
 
@@ -100,6 +102,11 @@ func _build_ui() -> void:
 	_hints = HintBar.create(self, Rect2(0, 162, 320, 12), [])
 	_error_label = _make_label(Vector2(0, 80), 6, PlaceholderPalette.TEXT_DANGER)
 
+	_settings = SettingsPanel.new()
+	_settings.position = Vector2(48, 64)
+	_settings.size = Vector2(224, 96)
+	add_child(_settings)
+
 	_preview = TextureRect.new()
 	PresentationLayout.texture_box(_preview, Rect2(232, 88, 64, 64))
 	_preview.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
@@ -135,6 +142,8 @@ func _position_menu_band() -> void:
 
 func _refresh() -> void:
 	_position_menu_band()
+	_settings.visible = _screen == Screen.SETTINGS
+	_settings.queue_redraw()
 	if _screen != Screen.MENU:
 		for row in _menu_rows:
 			row.visible = false
@@ -144,7 +153,7 @@ func _refresh() -> void:
 		Screen.MENU:
 			# The panel hugs however many options this run offers.
 			var menu_height := 12.0 + _menu_options.size() * MENU_PITCH
-			_body_panel.position = Vector2(14, 72)
+			_body_panel.position = Vector2(14, 66)
 			_body_panel.custom_minimum_size = Vector2(118, menu_height)
 			_body_panel.size = Vector2(118, menu_height)
 			_list_label.text = ""
@@ -160,7 +169,8 @@ func _refresh() -> void:
 				)
 			_detail_label.text = ""
 			PresentationLayout.texture_box(_preview, Rect2(168, 54, 140, 106))
-			_update_preview("neutral")
+			# The story starts with Kai in his village clothes.
+			_update_preview("", "kai_unbonded")
 			_hints.set_items([["move_v", "Choose"], ["interact", "Confirm"]])
 		Screen.CLASS_SELECT:
 			_body_panel.custom_minimum_size = Vector2(296, 98)
@@ -186,6 +196,14 @@ func _refresh() -> void:
 			)
 			_hints.set_items([["move_h", "Class"], ["interact", "Begin"], ["cancel", "Back"]])
 			_update_preview(class_id)
+		Screen.SETTINGS:
+			_body_panel.custom_minimum_size = Vector2(240, 104)
+			_body_panel.size = Vector2(240, 104)
+			_body_panel.position = Vector2(40, 56)
+			_list_label.text = ""
+			_detail_label.text = ""
+			_preview.visible = false
+			_hints.set_items([["move_v", "Choose"], ["move_h", "Change"], ["cancel", "Back"]])
 		Screen.CONTROLS:
 			_body_panel.custom_minimum_size = Vector2(296, 98)
 			_body_panel.size = Vector2(296, 98)
@@ -197,8 +215,8 @@ func _refresh() -> void:
 			_hints.set_items([["cancel", "Back"]])
 
 
-func _update_preview(class_id: String) -> void:
-	var record := CharacterPresentation.record_for("aren/%s" % class_id)
+func _update_preview(class_id: String, record_key := "") -> void:
+	var record := CharacterPresentation.record_for(record_key if record_key != "" else "aren/%s" % class_id)
 	if record.is_empty():
 		_preview.visible = false
 		return
@@ -221,6 +239,14 @@ func _unhandled_input(event: InputEvent) -> void:
 			_class_select_input()
 		Screen.CONTROLS:
 			_controls_input()
+		Screen.SETTINGS:
+			if event.is_action_pressed("cancel"):
+				AudioRouter.play_sfx("ui", "cancel")
+				_screen = Screen.MENU
+				_settings.active = false
+				_refresh()
+			elif _settings.handle(event):
+				_refresh()
 
 
 func _menu_input() -> void:
@@ -233,14 +259,21 @@ func _menu_input() -> void:
 	elif Input.is_action_just_pressed("interact"):
 		AudioRouter.play_sfx("ui", "confirm")
 		match _menu_options[_menu_index]:
-			"Play Story Demo":
+			"New Game":
 				# Chapter One: Kai's class is chosen in Civara, not here.
 				GameState.start_story()
 				CinematicPlayer.return_scene = GameState.current_scene
 				SceneTransition.change_scene(OPENING_SCENE)
 				return
 			"Quick Battle":
-				_start_quick_battle()
+				SceneTransition.change_scene(QUICK_BATTLE_SCENE)
+				return
+			"Settings":
+				_screen = Screen.SETTINGS
+				_settings.active = true
+			"Credits":
+				EndOfDemoScreen.credits_only = true
+				SceneTransition.change_scene(CREDITS_SCENE)
 				return
 			"Continue":
 				if SaveManager.load_game():
@@ -259,7 +292,7 @@ func _start_quick_battle() -> void:
 	## Recruiter shortcut: sensible default class, the existing opening
 	## party, straight to party setup for the Hollow Court battle —
 	## no need to explore Greymere first. The full story flow is
-	## untouched and still reachable via Play Story Demo.
+	## untouched and still reachable via New Game.
 	GameState.start_new_game(QUICK_BATTLE_CLASS)
 	SceneTransition.change_scene(PARTY_SETUP_SCENE, "spectral")
 

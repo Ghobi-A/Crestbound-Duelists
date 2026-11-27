@@ -1,4 +1,5 @@
 extends Control
+class_name EndOfDemoScreen
 ## End of Chapter One: the credits roll, then the end-of-demo card with
 ## Continue (back to Civara, save intact), Quick Battle and Title.
 ## Confirm or Back during the roll jumps straight to the card.
@@ -33,6 +34,9 @@ const CREDITS := [
 	["head", "Thank you for playing"],
 ]
 
+## Set by the title screen's Credits: the roll, then straight back to the title.
+static var credits_only := false
+
 var _roll := 0.0
 var _card := false
 var _index := 0
@@ -41,14 +45,12 @@ var _hints: HintBar
 
 
 func _ready() -> void:
-	var background := ColorRect.new()
-	background.color = Color(0.045, 0.05, 0.065)
-	background.size = PresentationLayout.CANVAS
-	add_child(background)
+	# The background is drawn in _draw: a child would paint over it.
 	_hints = HintBar.create(self, Rect2(0, 166, 320, 12), [["interact", "Skip"]])
 	AudioRouter.play_music("main_theme")
 	AudioRouter.stop_ambience()
-	SaveManager.save_game()
+	if not credits_only:
+		SaveManager.save_game()
 
 
 func _process(delta: float) -> void:
@@ -64,6 +66,11 @@ func _credits_height() -> float:
 
 
 func _show_card() -> void:
+	if credits_only:
+		credits_only = false
+		SceneTransition.change_scene(BOOT_SCENE)
+		set_process(false)
+		return
 	_card = true
 	_hints.set_items([["move_v", "Choose"], ["interact", "Confirm"]])
 
@@ -95,6 +102,7 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 func _draw() -> void:
+	draw_rect(Rect2(Vector2.ZERO, PresentationLayout.CANVAS), Color(0.035, 0.04, 0.055))
 	if not _card:
 		var y := 190.0 - _roll
 		for row in CREDITS:

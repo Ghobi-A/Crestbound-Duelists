@@ -240,17 +240,26 @@ func member_build(entry: Dictionary) -> Dictionary:
 	return build
 
 
-func member_max_hp(entry: Dictionary) -> int:
-	## Max HP from the member's build: explicit stats or class base, scaled.
+func member_stats(entry: Dictionary) -> Dictionary:
+	## Base stats from the member's build: explicit stats or the class base,
+	## with any stat_scale applied (floored, as BattleUnit.create does).
 	var build := member_build(entry)
 	var stats: Dictionary = build.get("stats", {}) if build.get("stats", {}) is Dictionary else {}
 	if stats.is_empty():
 		stats = GameData.get_class_record(str(build.get("class_id", ""))).get("base_stats", {}) if str(build.get("class_id", "")) != "" else {}
-	var hp := float(stats.get("hp", 1))
 	var scale: Dictionary = build.get("stat_scale", {}) if build.get("stat_scale", {}) is Dictionary else {}
-	if scale.has("hp"):
-		hp = floorf(hp * float(scale.hp))
-	return maxi(1, int(hp))
+	var result := {}
+	for stat in ["hp", "atk", "def", "mag", "res", "spd"]:
+		var value := float(stats.get(stat, 1 if stat == "hp" else 0))
+		if scale.has(stat):
+			value = floorf(value * float(scale[stat]))
+		result[stat] = int(value)
+	return result
+
+
+func member_max_hp(entry: Dictionary) -> int:
+	## Max HP from the member's build: explicit stats or class base, scaled.
+	return maxi(1, int(member_stats(entry).hp))
 
 
 func member_hp(entry: Dictionary) -> int:
@@ -258,8 +267,16 @@ func member_hp(entry: Dictionary) -> int:
 
 
 func equipped_moves(entry: Dictionary) -> Array:
+	## The loadout, else the build's kit, else the class's default kit (what
+	## BattleUnit.create equips for a class build with no move list).
 	var loadout: Array = entry.get("loadout", [])
-	return loadout if not loadout.is_empty() else member_build(entry).get("move_ids", [])
+	if not loadout.is_empty():
+		return loadout
+	var build := member_build(entry)
+	var kit: Array = build.get("move_ids", [])
+	if not kit.is_empty() or str(build.get("class_id", "")) == "":
+		return kit
+	return GameData.get_class_record(str(build.class_id)).get("move_ids", []).duplicate()
 
 
 func active_party(slots: int) -> Array:

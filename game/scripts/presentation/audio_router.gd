@@ -38,15 +38,19 @@ var _ambience_fade: Tween
 
 
 func _ready() -> void:
+	# Buses come from default_bus_layout.tres; Godot Web sample playback
+	# requires the bus to exist, so a missing one falls back to Master.
 	_music = AudioStreamPlayer.new()
-	# Godot Web sample playback requires the bus to exist.
-	if AudioServer.get_bus_index("Music") >= 0:
-		_music.bus = "Music"
+	_music.bus = bus_for("Music")
 	add_child(_music)
 	_ambience = AudioStreamPlayer.new()
-	if AudioServer.get_bus_index("Music") >= 0:
-		_ambience.bus = "Music"
+	_ambience.bus = bus_for("Ambience")
 	add_child(_ambience)
+	AudioSettings.apply()
+
+
+static func bus_for(name: String) -> StringName:
+	return StringName(name) if AudioServer.get_bus_index(name) >= 0 else &"Master"
 
 
 func asset_path(category: String, cue: String) -> String:
@@ -107,6 +111,7 @@ func play_sfx(category: String, cue: String, volume_db := 0.0) -> void:
 			oldest.queue_free()
 	var player := AudioStreamPlayer.new()
 	player.stream = load(str(paths[index]))
+	player.bus = bus_for("SFX")
 	player.volume_db = volume_db
 	for prefix in JITTER:
 		if key.begins_with(prefix):
@@ -178,6 +183,7 @@ func play_voice(cue: String, volume_db := 0.0) -> void:
 		return
 	var player := AudioStreamPlayer.new()
 	player.stream = load(asset_path("voice", cue))
+	player.bus = bus_for("Voice")
 	player.volume_db = volume_db
 	add_child(player)
 	_voices.append(player)

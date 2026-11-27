@@ -38,6 +38,8 @@ const SCENE_PATHS := {
 	"route_clearing": "res://scenes/overworld/route_01.tscn",
 	"battle_route": "res://scenes/battle/party_battle.tscn",
 	"boot": "res://scenes/boot/boot.tscn",
+	"title_settings": "res://scenes/boot/boot.tscn",
+	"quick_battle": "res://scenes/ui/quick_battle.tscn",
 	"class_select": "res://scenes/boot/boot.tscn",
 	"controls": "res://scenes/boot/boot.tscn",
 	"party_setup": "res://scenes/ui/party_setup.tscn",
@@ -54,6 +56,15 @@ const SCENE_PATHS := {
 	"inventory_open": "res://scenes/overworld/greymere.tscn",
 	"inventory_used": "res://scenes/overworld/greymere.tscn",
 	"pause_menu": "res://scenes/overworld/greymere.tscn",
+	# menu_<tab>: the field menu open on one tab (PauseMenu.TABS).
+	"menu_party": "res://scenes/overworld/greymere.tscn",
+	"menu_status": "res://scenes/overworld/greymere.tscn",
+	"menu_abilities": "res://scenes/overworld/greymere.tscn",
+	"menu_crests": "res://scenes/overworld/greymere.tscn",
+	"menu_entities": "res://scenes/overworld/greymere.tscn",
+	"menu_inventory": "res://scenes/overworld/greymere.tscn",
+	"menu_journal": "res://scenes/overworld/greymere.tscn",
+	"menu_settings": "res://scenes/overworld/greymere.tscn",
 	"joey_home": "res://scenes/overworld/joey_home.tscn",
 	"kai_house": "res://scenes/overworld/kai_house.tscn",
 	"east_lane": "res://scenes/overworld/greymere.tscn",
@@ -109,6 +120,10 @@ func _ready() -> void:
 			await _press_times(1)
 	elif target in ["battle_preview", "victory", "defeat"]:
 		await _drive_battle(scene)
+	elif target == "title_settings":
+		scene._screen = scene.Screen.SETTINGS
+		scene._settings.active = true
+		scene._refresh()
 	elif target in ["class_select", "controls"]:
 		scene._screen = scene.Screen.CLASS_SELECT if target == "class_select" else scene.Screen.CONTROLS
 		scene._refresh()
@@ -130,8 +145,10 @@ func _ready() -> void:
 		scene._trade.open(false)
 		if target == "inventory_used": _press_trade(scene._trade)
 	elif target == "pause_menu":
-		scene._menu_open = true
-		scene._hud.show_menu(2, "")
+		scene.open_menu()
+	elif target.begins_with("menu_"):
+		scene.open_menu()
+		scene._pause.select_tab(target.trim_prefix("menu_").capitalize())
 	await _frames(SETTLE_FRAMES)
 	await _capture("baseline_%s" % target)
 	get_tree().quit(0)

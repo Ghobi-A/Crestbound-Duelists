@@ -223,6 +223,8 @@ func _unhandled_input(event: InputEvent) -> void:
 	elif event.is_action_pressed("cancel"):
 		AudioRouter.play_sfx("ui", "cancel")
 		var destination := GameState.finish_world_battle("cancel") if not GameState.world_battle.is_empty() else OVERWORLD_SCENE
+		if GameState.mode == "quick":
+			destination = "res://scenes/ui/quick_battle.tscn"  # Quick Battle never enters the story
 		SceneTransition.change_scene(destination)
 		return
 	_refresh()

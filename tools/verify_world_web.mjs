@@ -127,7 +127,7 @@ await page.keyboard.press('ArrowDown');
 await page.waitForTimeout(200);
 await page.keyboard.press('ArrowUp');
 await page.waitForTimeout(200);
-await page.keyboard.press('z');           // Play Story Demo -> "The Last Accord"
+await page.keyboard.press('z');           // New Game -> "The Last Accord"
 log = await until(l => since(l, mark).filter(s => s.seconds < 1).length >= 3, 15000, 'menu move and confirm sounds');
 
 // The opening: its theme and the first two narration lines, at 1.5 s and
