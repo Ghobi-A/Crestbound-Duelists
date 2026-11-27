@@ -2,7 +2,7 @@
 <html lang="en">
 	<head>
 		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width, user-scalable=no">
+		<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 		<title>$GODOT_PROJECT_NAME</title>
 		<style>
 body {
@@ -127,7 +127,16 @@ body {
 	padding: 4px 6px;
 	visibility: visible;
 }
-		</style>
+		
+#game-frame { height: 100dvh; }
+#mobile-pad { display:none; position:fixed; inset:0; pointer-events:none; z-index:10; }
+#mobile-pad.active { display:block; }
+#mobile-pad button { pointer-events:auto; touch-action:none; user-select:none; -webkit-user-select:none; background:#18212cbb; color:white; border:1px solid #ffffff88; border-radius:12px; width:48px; height:48px; font:bold 18px sans-serif; padding:0; }
+#mobile-pad button.held { background:#62758e; }
+#mobile-directions { position:absolute; left:max(8px, env(safe-area-inset-left)); bottom:max(8px, env(safe-area-inset-bottom)); display:grid; grid-template-columns:repeat(3,48px); gap:3px; }
+#mobile-actions { position:absolute; right:max(8px, env(safe-area-inset-right)); bottom:max(8px, env(safe-area-inset-bottom)); display:flex; gap:8px; }
+@media (orientation:portrait) { #mobile-directions,#mobile-actions { bottom: max(24px, env(safe-area-inset-bottom)); } }
+</style>
 		$GODOT_HEAD_INCLUDE
 	</head>
 	<body>
@@ -156,14 +165,23 @@ body {
 			</div>
 		</div>
 
-		<script src="$GODOT_URL"></script>
+		<div id="mobile-pad" aria-label="Touch game controls">
+<div id="mobile-directions">
+<span></span><button data-code="ArrowUp" aria-label="Up">▲</button><span></span>
+<button data-code="ArrowLeft" aria-label="Left">◀</button><span></span><button data-code="ArrowRight" aria-label="Right">▶</button>
+<span></span><button data-code="ArrowDown" aria-label="Down">▼</button><span></span>
+</div>
+<div id="mobile-actions"><button data-code="KeyX" aria-label="Cancel or back">B</button><button data-code="KeyZ" aria-label="Confirm or interact">A</button></div>
+</div>
+<script src="$GODOT_URL"></script>
 		<script>
 const GODOT_CONFIG = $GODOT_CONFIG;
 const engine = new Engine(GODOT_CONFIG);
 const gdCanvas = document.getElementById('canvas');
 // Backing buffer and CSS dimensions agree, keeping pointer coordinates correct.
 function fitPixelCanvas() {
-	const scale = Math.max(1, Math.floor(Math.min(window.innerWidth / 320, window.innerHeight / 180)));
+	const available = Math.min(window.innerWidth / 320, (window.visualViewport?.height || window.innerHeight) / 180);
+	const scale = Math.max(1, Math.floor(available));
 	const width = 320 * scale;
 	const height = 180 * scale;
 	gdCanvas.width = width;
@@ -180,6 +198,48 @@ gdCanvas.addEventListener('pointerdown', function () {
 	gdCanvas.focus();
 });
 
+// Preview adapter: reuse existing physical keyboard actions without changing gameplay.
+function enableMobilePad() {
+	const pad = document.getElementById('mobile-pad');
+	if (!matchMedia('(any-pointer: coarse)').matches && !navigator.maxTouchPoints) return;
+	pad.classList.add('active');
+	const held = new Map();
+	const keys = {KeyZ:'z', KeyX:'x'};
+	function emit(code, down) {
+		gdCanvas.dispatchEvent(new KeyboardEvent(down ? 'keydown' : 'keyup', {
+			code, key: keys[code] || code, bubbles:true, cancelable:true
+		}));
+	}
+	function release(id) {
+		const button = held.get(id);
+		if (!button) return;
+		held.delete(id);
+		if (![...held.values()].includes(button)) {
+			button.classList.remove('held');
+			emit(button.dataset.code, false);
+		}
+	}
+	function releaseAll() { for (const id of [...held.keys()]) release(id); }
+	for (const button of pad.querySelectorAll('button')) {
+		button.addEventListener('pointerdown', event => {
+			event.preventDefault();
+			if (held.has(event.pointerId)) return;
+			gdCanvas.focus();
+			button.setPointerCapture(event.pointerId);
+			const alreadyHeld = [...held.values()].includes(button);
+			held.set(event.pointerId, button);
+			button.classList.add('held');
+			if (!alreadyHeld) emit(button.dataset.code, true);
+		});
+		for (const name of ['pointerup','pointercancel','lostpointercapture']) {
+			button.addEventListener(name, event => release(event.pointerId));
+		}
+		button.addEventListener('contextmenu', event => event.preventDefault());
+	}
+	window.addEventListener('blur', releaseAll);
+	window.addEventListener('pagehide', releaseAll);
+	document.addEventListener('visibilitychange', () => { if (document.hidden) releaseAll(); });
+}
 (function () {
 	const INDETERMINATE_STATUS_STEP_MS = 100;
 	const statusProgress = document.getElementById('status-progress');
@@ -285,6 +345,7 @@ gdCanvas.addEventListener('pointerdown', function () {
 			gdCanvas.focus();
 			fitPixelCanvas();
 			gdCanvas.dataset.ready = 'true';
+			enableMobilePad();
 		}, displayFailureNotice);
 	}
 }());
