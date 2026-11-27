@@ -33,6 +33,14 @@ DEFAULT_CREST = {
     "sorcerer": "eclipse_crest", "assassin": "glass_crest", "neutral": "verdant_crest",
 }
 SLICE_PREFIXES = ("route01_", "greymaw", "greymere_", "court_", "civara_", "joey_")
+# The supplies a player can have by each boss without grinding: Route 01's
+# chest and the Squire's prize by Greymaw; the stair's pack, the Wisp pair's
+# and the gallery's rewards by the Choir. Bosses are reported with and
+# without them.
+BOSS_SUPPLIES = {
+    "greymaw_den": {"potion": 2},
+    "court_sealed_choir": {"potion": 3, "clearwater": 1},
+}
 
 
 def kai_builds(encounter_id: str) -> dict[str, dict]:
@@ -107,6 +115,28 @@ def simulate(encounter_id: str, sims: int = 200, seed: int = 42, inventory: dict
 
 def slice_encounters() -> list[str]:
     return [eid for eid in loaders.load_encounters() if eid.startswith(SLICE_PREFIXES)]
+
+
+def shape(encounter: dict) -> str:
+    """'1v2', '3v1' ...: the sides as authored."""
+    return f"{len(encounter.get('player_party') or [1] * int(encounter['player_slots']))}v{len(encounter['enemy_party'])}"
+
+
+def report(sims: int, seed: int) -> dict:
+    """The snapshot's vertical_slice section: every chapter encounter under
+    every policy, bosses also with their supplies (BOSS_SUPPLIES)."""
+    encounters = loaders.load_encounters()
+    rows = []
+    for encounter_id in slice_encounters():
+        encounter = encounters[encounter_id]
+        for supplies in ([{}] + ([BOSS_SUPPLIES[encounter_id]] if encounter_id in BOSS_SUPPLIES else [])):
+            for key, row in simulate(encounter_id, sims, seed, supplies).items():
+                kit, policy = key.split("/")
+                rows.append({"encounter": encounter_id, "name": encounter.get("name", encounter_id),
+                             "shape": shape(encounter), "objective": encounter.get("objective", "defeat_all"),
+                             "kit": kit, "policy": policy, "supplies": supplies, **row})
+    return {"sims_per_policy": sims, "seed": seed, "policies": list(policies(seed)),
+            "boss_supplies": BOSS_SUPPLIES, "rows": rows}
 
 
 def main() -> None:

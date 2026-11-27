@@ -122,6 +122,10 @@ def wilson_interval(wins: int, n: int, z: float = 1.96) -> tuple[float, float]:
 
 snapshot = load_snapshot()
 CLASS_NAMES = [c.value for c in ALL_CLASSES]
+# Counted from the suite itself so the claim cannot go stale.
+TEST_FUNCTIONS = sum(
+    path.read_text(encoding="utf-8").count("\ndef test_") for path in (REPO_ROOT / "tests").glob("test_*.py")
+)
 
 
 # ── Header ───────────────────────────────────────────────────────────
@@ -133,7 +137,7 @@ st.caption(
 )
 
 m1, m2, m3, m4 = st.columns(4)
-m1.metric("Regression tests", "140")
+m1.metric("Regression test functions", str(TEST_FUNCTIONS))
 m2.metric("Playable classes", str(len(CLASS_NAMES)))
 m3.metric(
     "Simulations per matchup",
@@ -157,8 +161,8 @@ if snapshot is None:
 
 st.divider()
 
-tab_duel, tab_matrix, tab_policy, tab_arch = st.tabs(
-    ["Live Duel", "Balance Matrix", "AI Policy Comparison", "Engineering Architecture"]
+tab_duel, tab_matrix, tab_policy, tab_chapter, tab_arch = st.tabs(
+    ["Live Duel", "Balance Matrix", "AI Policy Comparison", "Chapter One", "Engineering Architecture"]
 )
 
 
@@ -538,6 +542,69 @@ with tab_policy:
 
 # ── Engineering Architecture ─────────────────────────────────────────
 
+# ── Chapter One (vertical slice) ─────────────────────────────────────
+
+with tab_chapter:
+    st.subheader("Chapter One encounters")
+    chapter = snapshot.get("vertical_slice") if snapshot else None
+    if not chapter:
+        st.info(
+            "Generate the snapshot's Chapter One section with "
+            "`python tools/generate_snapshot.py --only vertical_slice` "
+            "(or a full run) to populate this tab."
+        )
+    else:
+        st.write(
+            "Every battle in the playable opening chapter, simulated with the "
+            "party engine (`party_combat.py`, which the Godot runtime replays "
+            "event for event). Each encounter is played "
+            f"{chapter['sims_per_policy']:,} times per player policy with "
+            f"seed `{chapter['seed']}`: `tactical` braces against telegraphs "
+            "and plays weaknesses, `greedy` takes the biggest hit, `setup` "
+            "buffs first, and `random` picks anything. Kai's kit follows the "
+            "story: Unbonded until the bond, the Unsettled Crest against the "
+            "Sealed Choir, and his stabilised class in Civara."
+        )
+        frame = pd.DataFrame(chapter["rows"])
+        frame["supplies"] = frame["supplies"].map(
+            lambda bag: ", ".join(f"{n}× {item.replace('_', ' ')}" for item, n in bag.items()) or "none"
+        )
+        table = frame.pivot_table(
+            index=["name", "shape", "kit", "supplies"],
+            columns="policy",
+            values="win_rate",
+            aggfunc="first",
+            sort=False,
+        ).reset_index()
+        for policy in chapter["policies"]:
+            if policy in table:
+                table[policy] = (100 * table[policy]).round(0)
+        tactical = frame[frame["policy"] == "tactical"].set_index(["name", "kit", "supplies"])
+        table["rounds (tactical)"] = [
+            tactical.loc[(r["name"], r["kit"], r["supplies"]), "rounds_median"] for _, r in table.iterrows()
+        ]
+        table["top action (tactical)"] = [
+            f"{tactical.loc[(r['name'], r['kit'], r['supplies']), 'top_action']} "
+            f"{100 * tactical.loc[(r['name'], r['kit'], r['supplies']), 'top_action_share']:.0f}%"
+            for _, r in table.iterrows()
+        ]
+        st.dataframe(
+            table.rename(columns={p: f"{p} win %" for p in chapter["policies"]}),
+            hide_index=True,
+            use_container_width=True,
+        )
+        bosses = frame[frame["encounter"].isin(chapter["boss_supplies"]) & (frame["policy"].isin(["tactical", "random"]))]
+        gap = bosses.pivot_table(index=["name", "supplies"], columns="policy", values="win_rate", aggfunc="first")
+        if not gap.empty:
+            spread = (100 * (gap["tactical"] - gap["random"])).round(0)
+            st.caption(
+                "Skill gap on the bosses (tactical minus random win rate, "
+                "percentage points): "
+                + "; ".join(f"{name} with {bag}: {value:+.0f}" for (name, bag), value in spread.items())
+                + ". A boss that random play also beats would not be testing anything."
+            )
+
+
 with tab_arch:
     st.subheader("Engineering Architecture")
     st.write(
@@ -580,8 +647,9 @@ Godot client                game/ — 320x180 pixel-art RPG, gl_compatibility
   `data/classes.yaml`, re-run the suite, re-export.
 - The simulation harness and the shipped game read the *same* numbers,
   so the analysis can never drift from the product.
-- 140 regression tests cover loaders, combat resolution, AI policies,
-  the Nash solver, encounters and the export pipeline.
+- The regression suite covers loaders, combat resolution, AI policies,
+  the Nash solver, encounters, the export pipeline, the party engine's
+  parity with Godot and the Chapter One story graph.
             """
         )
     with a2:

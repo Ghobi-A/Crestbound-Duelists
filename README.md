@@ -4,14 +4,16 @@
 tactical RPG.**
 
 ### ▶ [Launch the interactive Balance Lab](https://crestbound-balance-lab.streamlit.app)
-### ▶ [Play the browser prototype](https://ghobi-a.github.io/Crestbound-Duelists/) — Quick Battle reaches gameplay in one click, no install
+### ▶ [Play the browser build](https://ghobi-a.github.io/Crestbound-Duelists/) — Chapter One, or Quick Battle in one click, no install
 
 [Read the technical case study](docs/ARCHITECTURE.md)
 · [Browse the source](https://github.com/Ghobi-A/Crestbound-Duelists)
 
-**Technical highlights:** 140+ regression tests · YAML-driven game data ·
+**Technical highlights:** 500+ regression tests · YAML-driven game data ·
 Monte Carlo simulation (100,000 battles per matchup) · three AI decision
-policies · stateful Nash/maximin analysis · Godot 4 client
+policies · stateful Nash/maximin analysis · a Python party-battle engine
+that the Godot runtime replays event for event · a playable Godot 4
+opening chapter
 
 ---
 
@@ -29,7 +31,7 @@ positioning, Resonance, and Crest awakening — not by moving on a grid.
 | Layer | Status | What it does |
 |-------|--------|--------------|
 | **Balance Lab** (Python) | Stable, tested | Combat engine, Monte Carlo simulation, AI policies, stateful Nash/maximin analysis, YAML-driven game data, JSON export |
-| **Game Client** (Godot 4) | First playable prototype | 320x180 pixel-art client: class selection, Greymere overworld, dialogue, pre-battle party setup, and a round-based 3v3 party battle in the Hollow Court with original sprite art |
+| **Game Client** (Godot 4) | Vertical slice v0.1 | Chapter One, about 50 minutes: Greymere, Route 01 and its optional boss, the Hollow Court dungeon, Civara and the class choice, with story scenes, a field menu, saves and Quick Battle (`docs/VERTICAL_SLICE_SPEC.md`) |
 
 **What it was:** a stochastic combat simulation and decision-system
 case study (that work is preserved and corrected — see
@@ -106,13 +108,22 @@ commits changed generated outputs.
 **In the browser:** [ghobi-a.github.io/Crestbound-Duelists](https://ghobi-a.github.io/Crestbound-Duelists/)
 — no install. From the title screen:
 
-- **Play Story Demo** — full flow: class selection → Greymere → dialogue
-  and exploration → party setup → battle.
-- **Quick Battle** — recruiter shortcut. Skips Greymere entirely: picks
-  a default class, loads the opening party, and drops straight into party
-  setup for the Hollow Court battle.
+- **New Game** — Chapter One, *The Crest at Greymere*: the opening movie,
+  a morning in Greymere, Route 01 (three duels, an ambush, and Old
+  Greymaw's den if you can find it), the inspection and the collapse, the
+  Hollow Court, the custody choice, and Civara, where you choose the class
+  Kai stabilises. About 50 minutes; credits and an end-of-demo screen
+  follow.
 - **Continue** — appears once a compatible save exists.
-- **Controls** — shows the key bindings below at any time.
+- **Quick Battle** — pick any class, a Bonded Entity and a challenge (a
+  same-class duel, Old Greymaw, the Sealed Choir, a 3v3 skirmish). It
+  never touches the story save.
+- **Settings** — volume per channel and the graphics preset.
+- **Credits**, **Watch Opening** and **Controls**.
+
+In the field, **X/Esc** opens the menu: party, status, loadouts, Crests,
+Bonded Entities, the bag, the journal of main and side quests, settings
+and saving.
 
 Controls: WASD/arrows to move, **Z/Enter/Space** to interact/confirm,
 **X/Esc** to cancel. Party setup: Up/Down select, Left/Right toggle
@@ -121,10 +132,14 @@ controls and the objective the first time you enter Greymere, and
 battle basics the first time you enter a battle. Battle rules:
 `docs/BATTLE_SYSTEM.md`; setup details: `docs/GODOT_SETUP.md`.
 
-**Greymere Outskirts — Route 01:** Travel through the village’s southern road
-exit with Z. Explore the forest road, challenge three duelists, investigate tall
-grass and find supplies in the optional clearing. See
-[Route 01 implementation notes](docs/rework/ROUTE_01_IMPLEMENTATION.md).
+**Chapter One** is data: conversations with choices and story effects
+(`game/data/dialogue/chapter_one.json`), stage-gated maps built by
+`tools/build_greymere_world.py` and its modules (`greymere_story_world.py`,
+`route_01_world.py`, `hollow_court_world.py`, `civara_world.py`), and
+encounters in `data/encounters.yaml`. The design, encounter roster and
+balance results are in `docs/VERTICAL_SLICE_SPEC.md`; new story material is
+recorded as provisional canon in `docs/rework/CHAPTER_ONE_PROVISIONAL_CANON.md`;
+music cues and the prompts for missing tracks are in `docs/MUSIC_MANIFEST.md`.
 
 **Locally (Godot editor):**
 

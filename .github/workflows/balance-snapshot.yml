@@ -18,6 +18,8 @@ on:
       - "game/scripts/battle/**"
       - "tests/**"
       - "tools/generate_snapshot.py"
+      - "tools/slice_balance.py"
+      - "party_combat.py"
       - "export_game_data.py"
       - ".github/workflows/balance-snapshot.yml"
   push:
@@ -34,6 +36,8 @@ on:
       - "game/scripts/battle/**"
       - "tests/**"
       - "tools/generate_snapshot.py"
+      - "tools/slice_balance.py"
+      - "party_combat.py"
       - "export_game_data.py"
       - ".github/workflows/balance-snapshot.yml"
   workflow_dispatch:
