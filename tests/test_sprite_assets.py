@@ -42,13 +42,49 @@ def _townsfolk_keys() -> list[str]:
 TOWNSFOLK_KEYS = _townsfolk_keys()
 
 
+STAGES = ["morning", "village", "abnormal", "cordon", "incident", "aftermath", "civara", "complete"]
+
+
+def _window(npc: dict) -> tuple[set, set, int, int]:
+    """(flags required, flags forbidden, first stage, last stage) of a show_if."""
+    required, forbidden, low, high = set(), set(), -1, len(STAGES)
+    conditions = npc.get("show_if", [])
+    for condition in [conditions] if isinstance(conditions, str) else conditions:
+        if condition.startswith("stage>="):
+            low = max(low, STAGES.index(condition[7:]))
+        elif condition.startswith("stage<"):
+            high = min(high, STAGES.index(condition[6:]) - 1)
+        elif condition.startswith("!"):
+            forbidden.add(condition[1:])
+        else:
+            required.add(condition)
+    return required, forbidden, low, high
+
+
+def _never_together(a: dict, b: dict) -> bool:
+    ra, fa, la, ha = _window(a)
+    rb, fb, lb, hb = _window(b)
+    return bool(ra & fb or rb & fa) or ha < lb or hb < la
+
+
+def test_game_state_stage_order_matches():
+    source = (WORLD_PATH.parents[1] / "scripts/core/game_state.gd").read_text()
+    assert "const STORY_STAGES := " + json.dumps(STAGES) in source
+
+
 def test_townsfolk_spawn_tiles_are_unique_and_inside_each_location() -> None:
-    """A duplicate or invalid spawn hides one resident in the authored world."""
+    """A duplicate or invalid spawn hides one resident in the authored world.
+    Story variants of a place may share a tile when they can never both be
+    present (their show_if conditions exclude each other)."""
     locations = json.loads(WORLD_PATH.read_text())["locations"]
     for location in locations.values():
         rows = location["rows"]
-        tiles = [tuple(npc["tile"]) for npc in location.get("npcs", [])]
-        assert len(tiles) == len(set(tiles)), location["id"]
+        npcs = location.get("npcs", [])
+        tiles = [tuple(npc["tile"]) for npc in npcs]
+        for i, a in enumerate(npcs):
+            for b in npcs[i + 1:]:
+                if a["tile"] == b["tile"]:
+                    assert _never_together(a, b), (location["id"], a["name"], b["name"], a["tile"])
         for x, y in tiles:
             assert 0 <= y < len(rows) and 0 <= x < len(rows[y]), (location["id"], x, y)
             assert rows[y][x] != "#", (location["id"], x, y)

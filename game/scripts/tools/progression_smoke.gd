@@ -32,7 +32,9 @@ func check_story_roster() -> void:
 	check(GameState.party.size() == 1 and GameState.party[0].id == "kai", "story starts with Kai alone")
 	var build := GameState.member_build(GameState.member("kai"))
 	check(build.get("move_ids", []) == ["kai_strike", "shoulder_check", "wild_swing"], "Kai starts Unbonded")
-	check(str(build.get("crest_id", "")) == "" and GameState.member_max_hp(GameState.member("kai")) == 92, "Unbonded Kai has no Crest, 92 HP")
+	# HP comes from data/cast.yaml (kai_unbonded's explicit stats), never a copy here.
+	var unbonded_hp := int(GameState.cast_build("kai_unbonded").get("stats", {}).get("hp", 0))
+	check(str(build.get("crest_id", "")) == "" and unbonded_hp > 0 and GameState.member_max_hp(GameState.member("kai")) == unbonded_hp, "Unbonded Kai has no Crest; HP from his cast build")
 	GameState.set_kai_profile("kai_unsettled")
 	build = GameState.member_build(GameState.member("kai"))
 	check(str(build.crest_id) == "unsettled_crest" and build.move_ids.has("crest_flare"), "the bond gives Kai the Unsettled kit")

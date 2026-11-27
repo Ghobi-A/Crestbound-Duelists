@@ -926,7 +926,7 @@ moves:
     move_type: physical
     property: impact
     slot: gambit
-    power: 22
+    power: 20
     accuracy: 0.75
     cooldown_turns: 1
     range: 1
@@ -1118,7 +1118,7 @@ moves:
     move_type: physical
     property: edge
     slot: basic
-    power: 15
+    power: 13
     accuracy: 1.0
     cooldown_turns: 0
     range: 1
@@ -1188,7 +1188,7 @@ moves:
     move_type: physical
     property: impact
     slot: gambit
-    power: 30
+    power: 26
     accuracy: 0.9
     cooldown_turns: 1
     range: 1
@@ -1237,7 +1237,7 @@ moves:
     move_type: physical
     property: edge
     slot: basic
-    power: 16
+    power: 14
     accuracy: 1.0
     cooldown_turns: 0
     range: 1
@@ -1448,7 +1448,7 @@ moves:
     move_type: magical
     property: arcane
     slot: gambit
-    power: 19
+    power: 23
     accuracy: 1.0
     cooldown_turns: 1
     range: 3

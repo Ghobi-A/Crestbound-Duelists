@@ -1,0 +1,2404 @@
+{
+ "morning_wake": [
+  {
+   "speaker": "",
+   "lines": [
+    "Morning in Greymere. Light through the shutters, the smell of the hearth, and somebody's goats complaining in the distance."
+   ],
+   "staging": "scene"
+  },
+  {
+   "speaker": "Kai",
+   "lines": [
+    "...That's a lot of goats.",
+    "That's Joey's ma's goats. That's all of Joey's ma's goats."
+   ],
+   "portrait": "kai_unbonded"
+  }
+ ],
+ "kai_note": [
+  {
+   "speaker": "",
+   "lines": [
+    "Bread, a knife and a note in Lena's hand:",
+    "EAT SOMETHING.",
+    "She has underlined it twice. You eat something."
+   ],
+   "effects": {
+    "flags": [
+     "read_lena_note"
+    ]
+   }
+  }
+ ],
+ "joey_talk": [
+  {
+   "speaker": "Joey",
+   "lines": [
+    "Ma says I'm too young to go near the Court. I say I'm too young to muck out the goat pen either, but here we are.",
+    "You're not going up there, are you? To the arch?"
+   ],
+   "portrait": "joey",
+   "show_if": [
+    "stage<morning"
+   ]
+  },
+  {
+   "speaker": "Joey",
+   "lines": [
+    "Kai! Before you say anything, I want you to know I had a plan."
+   ],
+   "portrait": "joey",
+   "staging": "scene",
+   "show_if": [
+    "stage>=morning",
+    "!goats_rounded"
+   ]
+  },
+  {
+   "speaker": "Kai",
+   "lines": [
+    "Where are the goats, Joey."
+   ],
+   "portrait": "kai_unbonded",
+   "show_if": [
+    "stage>=morning",
+    "!goats_rounded"
+   ]
+  },
+  {
+   "speaker": "Joey",
+   "lines": [
+    "The plan was that the gate would stay shut.",
+    "It's a very simple plan. The gate let me down."
+   ],
+   "portrait": "joey",
+   "show_if": [
+    "stage>=morning",
+    "!goats_rounded"
+   ]
+  },
+  {
+   "speaker": "Kai",
+   "lines": [
+    "How many?"
+   ],
+   "portrait": "kai_unbonded",
+   "show_if": [
+    "stage>=morning",
+    "!goats_rounded"
+   ]
+  },
+  {
+   "speaker": "Joey",
+   "lines": [
+    "All of them. Technically. They're in Silas's orchard. Technically also eating it."
+   ],
+   "portrait": "joey",
+   "show_if": [
+    "stage>=morning",
+    "!goats_rounded"
+   ]
+  },
+  {
+   "speaker": "",
+   "lines": [
+    "It takes the better part of an hour. Joey is enthusiastic and almost no help. The last goat surrenders under the pear tree."
+   ],
+   "effects": {
+    "flags": [
+     "goats_rounded"
+    ]
+   },
+   "show_if": [
+    "stage>=morning",
+    "!goats_rounded"
+   ]
+  },
+  {
+   "speaker": "Danfor",
+   "lines": [
+    "Joey. Kai. Goats.",
+    "Three things I didn't want to see before breakfast."
+   ],
+   "portrait": "danfor",
+   "show_if": [
+    "stage>=morning",
+    "!goats_rounded"
+   ]
+  },
+  {
+   "speaker": "Danfor",
+   "lines": [
+    "Since you're both up and already out of breath: lesson. Kai first. Joey, you're holding the goats.",
+    "Guard up. If you two are going to be stupid, you'll be stupid with your guard up."
+   ],
+   "portrait": "danfor",
+   "choices": [
+    {
+     "label": "Ready when you are.",
+     "effects": {
+      "battle": "greymere_spar_danfor"
+     }
+    },
+    {
+     "label": "Give me a minute.",
+     "next": "spar_later"
+    }
+   ],
+   "show_if": [
+    "stage>=morning",
+    "!goats_rounded"
+   ]
+  },
+  {
+   "speaker": "Joey",
+   "lines": [
+    "Danfor's waiting on you. I'd go before he decides I need a lesson too."
+   ],
+   "portrait": "joey",
+   "show_if": [
+    "goats_rounded",
+    "!greymere_spar_danfor_won"
+   ]
+  },
+  {
+   "speaker": "Joey",
+   "lines": [
+    "So. Funny thing. I may have bet a traveller that you could beat the Wandering Challenger.",
+    "Twice. In one day. On the south road.",
+    "He's very confident. I was more confident. Please don't make me a liar."
+   ],
+   "portrait": "joey",
+   "effects": {
+    "flags": [
+     "joey_wager_offered"
+    ]
+   },
+   "show_if": [
+    "greymere_spar_danfor_won",
+    "!joey_wager_offered",
+    "stage<abnormal"
+   ]
+  },
+  {
+   "speaker": "Joey",
+   "lines": [
+    "The Challenger's out on Route 01, east of the tall grass. Beat him once and I'll set up the rematch."
+   ],
+   "portrait": "joey",
+   "show_if": [
+    "joey_wager_offered",
+    "!route01_challenger_won",
+    "stage<abnormal"
+   ]
+  },
+  {
+   "speaker": "Joey",
+   "lines": [
+    "You beat him! He wants a rematch, which, between us, is how I win the bet."
+   ],
+   "portrait": "joey",
+   "choices": [
+    {
+     "label": "Fine. One more.",
+     "effects": {
+      "battle": "joey_wager"
+     }
+    },
+    {
+     "label": "Not right now."
+    }
+   ],
+   "show_if": [
+    "joey_wager_offered",
+    "route01_challenger_won",
+    "!joey_wager_won",
+    "stage<abnormal"
+   ]
+  },
+  {
+   "speaker": "Joey",
+   "lines": [
+    "Twice in one day. I'm a genius. You're also fine, I suppose.",
+    "Half the winnings are yours. A third. A generous quarter."
+   ],
+   "portrait": "joey",
+   "show_if": [
+    "joey_wager_won",
+    "stage<abnormal"
+   ]
+  },
+  {
+   "speaker": "Joey",
+   "lines": [
+    "Did you feel that, last night? The ground did a thing.",
+    "It's fine. It's probably fine. Nobody go up the ridge, that's all."
+   ],
+   "portrait": "joey",
+   "show_if": [
+    "stage>=abnormal",
+    "stage<cordon"
+   ]
+  },
+  {
+   "speaker": "Joey",
+   "lines": [
+    "They're putting a fence round the ridge. Round the whole... round the ridge.",
+    "No reason. I just like the ridge. As a ridge."
+   ],
+   "portrait": "joey",
+   "show_if": [
+    "stage>=cordon"
+   ]
+  }
+ ],
+ "spar_later": [
+  {
+   "speaker": "Danfor",
+   "lines": [
+    "Take your minute. I'll be by the south road. The goats and I aren't going anywhere."
+   ],
+   "portrait": "danfor"
+  }
+ ],
+ "danfor_talk": [
+  {
+   "speaker": "Danfor",
+   "lines": [
+    "Morning, Kai. If you see Joey, tell him I can hear goats. Tell him I can hear them from here."
+   ],
+   "portrait": "danfor",
+   "show_if": [
+    "!goats_rounded"
+   ]
+  },
+  {
+   "speaker": "Danfor",
+   "lines": [
+    "Lesson's still on. Basic, Signature, Gambit, Brace. And watch me when I wind up."
+   ],
+   "portrait": "danfor",
+   "choices": [
+    {
+     "label": "Let's go.",
+     "effects": {
+      "battle": "greymere_spar_danfor"
+     }
+    },
+    {
+     "label": "Not yet."
+    }
+   ],
+   "show_if": [
+    "goats_rounded",
+    "!greymere_spar_danfor_won"
+   ]
+  },
+  {
+   "speaker": "Danfor",
+   "lines": [
+    "Road's open. Trainers out there mostly want a bout and a story to tell about it.",
+    "When somebody winds up for something big, Brace. When they're weak to what you're swinging, they'll stagger."
+   ],
+   "portrait": "danfor",
+   "show_if": [
+    "greymere_spar_danfor_won",
+    "stage<abnormal"
+   ]
+  },
+  {
+   "speaker": "Danfor",
+   "lines": [
+    "Dogs won't stop barking at the hill. Silas won't stop looking at it.",
+    "I'd take the dogs."
+   ],
+   "portrait": "danfor",
+   "show_if": [
+    "stage>=abnormal"
+   ]
+  }
+ ],
+ "after_spar": [
+  {
+   "speaker": "Danfor",
+   "lines": [
+    "Not bad. You hit like somebody who'd rather not, which is the right instinct and the wrong habit."
+   ],
+   "portrait": "danfor",
+   "staging": "scene"
+  },
+  {
+   "speaker": "Kai",
+   "lines": [
+    "Is that a pass?"
+   ],
+   "portrait": "kai_unbonded"
+  },
+  {
+   "speaker": "Danfor",
+   "lines": [
+    "It's a pass. South road's open. Take a potion, keep your guard up, and come home before dark."
+   ],
+   "portrait": "danfor"
+  },
+  {
+   "speaker": "Joey",
+   "lines": [
+    "The goats are back in the pen, by the way. You're welcome. Mostly you're welcome."
+   ],
+   "portrait": "joey",
+   "effects": {
+    "clear_flags": [
+     "south_road_closed"
+    ],
+    "stage": "village"
+   }
+  }
+ ],
+ "south_road_closed": [
+  {
+   "speaker": "Danfor",
+   "lines": [
+    "Not before your lesson, Kai! Square, by the south road. I'll find you."
+   ],
+   "portrait": "danfor"
+  }
+ ],
+ "ferris_talk": [
+  {
+   "speaker": "Old Ferris",
+   "lines": [
+    "Someone's got to keep the lamps lit and walk the rounds. Forty years now, give or take.",
+    "Quiet town, Greymere. I intend to keep it that way as long as this torch holds out."
+   ],
+   "portrait": "townsfolk/torch_bearer",
+   "show_if": [
+    "stage<morning"
+   ]
+  },
+  {
+   "speaker": "Old Ferris",
+   "lines": [
+    "You'll be heading down the south road, I expect. Mind the west clearing.",
+    "Old Greymaw's walking again. Grey wolf, older than the road. Comes down off the ridge before the frost.",
+    "Eyes like lamp-glass this year. Never seen him bold like this."
+   ],
+   "portrait": "townsfolk/torch_bearer",
+   "effects": {
+    "flags": [
+     "ferris_rumour_heard"
+    ]
+   },
+   "show_if": [
+    "stage>=morning",
+    "!ferris_rumour_heard",
+    "!greymaw_den_won"
+   ]
+  },
+  {
+   "speaker": "Old Ferris",
+   "lines": [
+    "West clearing, then south through the hedge where it's torn. You'll see his marks. You'll smell him first."
+   ],
+   "portrait": "townsfolk/torch_bearer",
+   "show_if": [
+    "ferris_rumour_heard",
+    "!greymaw_den_won",
+    "stage<incident"
+   ]
+  },
+  {
+   "speaker": "Old Ferris",
+   "lines": [
+    "You did WHAT?",
+    "...Well. Keep that fang. It remembers the ridge, that one. So will you."
+   ],
+   "portrait": "townsfolk/torch_bearer",
+   "show_if": [
+    "greymaw_den_won"
+   ]
+  },
+  {
+   "speaker": "Old Ferris",
+   "lines": [
+    "Lamps are lit. Not that it helps, some nights."
+   ],
+   "portrait": "townsfolk/torch_bearer",
+   "show_if": [
+    "stage>=incident",
+    "!greymaw_den_won"
+   ]
+  }
+ ],
+ "lena_talk": [
+  {
+   "speaker": "Lena",
+   "lines": [
+    "Feverbalm, willowbark, a little dried nettle for the swelling. Nothing fancy, but it keeps Greymere on its feet."
+   ],
+   "portrait": "lena",
+   "show_if": [
+    "stage<morning"
+   ]
+  },
+  {
+   "speaker": "Lena",
+   "lines": [
+    "Did you eat? The note was not decorative, Kai."
+   ],
+   "portrait": "lena",
+   "show_if": [
+    "stage>=morning",
+    "!greymere_spar_danfor_won"
+   ]
+  },
+  {
+   "speaker": "Lena",
+   "lines": [
+    "Sit. No, sit. Danfor's lessons always end in a scrape."
+   ],
+   "portrait": "lena",
+   "staging": "scene",
+   "show_if": [
+    "greymere_spar_danfor_won",
+    "!talked_lena_story"
+   ]
+  },
+  {
+   "speaker": "Kai",
+   "lines": [
+    "It's nothing."
+   ],
+   "portrait": "kai_unbonded",
+   "show_if": [
+    "greymere_spar_danfor_won",
+    "!talked_lena_story"
+   ]
+  },
+  {
+   "speaker": "Lena",
+   "lines": [
+    "It's nothing because I'm cleaning it. Was Joey involved?"
+   ],
+   "portrait": "lena",
+   "show_if": [
+    "greymere_spar_danfor_won",
+    "!talked_lena_story"
+   ]
+  },
+  {
+   "speaker": "Kai",
+   "lines": [
+    "There were goats."
+   ],
+   "portrait": "kai_unbonded",
+   "show_if": [
+    "greymere_spar_danfor_won",
+    "!talked_lena_story"
+   ]
+  },
+  {
+   "speaker": "Lena",
+   "lines": [
+    "There are always goats. Tell him the next one he loses, he finds himself.",
+    "While you're on the road, bring me marshwort from the pond. Green, flat leaves. Not the ones that smell."
+   ],
+   "portrait": "lena",
+   "show_if": [
+    "greymere_spar_danfor_won",
+    "!talked_lena_story"
+   ]
+  },
+  {
+   "speaker": "Kai",
+   "lines": [
+    "Which ones smell?"
+   ],
+   "portrait": "kai_unbonded",
+   "show_if": [
+    "greymere_spar_danfor_won",
+    "!talked_lena_story"
+   ]
+  },
+  {
+   "speaker": "Lena",
+   "lines": [
+    "You'll know."
+   ],
+   "portrait": "lena",
+   "effects": {
+    "flags": [
+     "talked_lena_story",
+     "lena_herbs_asked"
+    ]
+   },
+   "show_if": [
+    "greymere_spar_danfor_won",
+    "!talked_lena_story"
+   ]
+  },
+  {
+   "speaker": "Lena",
+   "lines": [
+    "Marshwort. The reeds on Route 01, by the pond. You'll know."
+   ],
+   "portrait": "lena",
+   "show_if": [
+    "talked_lena_story",
+    "!herbs_gathered",
+    "stage<abnormal"
+   ]
+  },
+  {
+   "speaker": "Lena",
+   "lines": [
+    "That's the right one. You did know.",
+    "Here. Clearwater, for a hex or a fever. Don't save it for a special occasion."
+   ],
+   "portrait": "lena",
+   "effects": {
+    "flags": [
+     "herbs_delivered"
+    ]
+   },
+   "show_if": [
+    "herbs_gathered",
+    "!herbs_delivered"
+   ]
+  },
+  {
+   "speaker": "Lena",
+   "lines": [
+    "If Danfor sends you home with a black eye, I'm sending him a bill."
+   ],
+   "portrait": "lena",
+   "show_if": [
+    "herbs_delivered",
+    "stage<abnormal"
+   ]
+  },
+  {
+   "speaker": "Lena",
+   "lines": [
+    "The spring tastes of iron and half the town has a headache. I've run out of willowbark.",
+    "Have you eaten? You haven't. Sit."
+   ],
+   "portrait": "lena",
+   "show_if": [
+    "stage>=abnormal",
+    "stage<aftermath"
+   ]
+  },
+  {
+   "speaker": "Lena",
+   "lines": [
+    "Eat. Then sleep. Then you can tell me about Civara."
+   ],
+   "portrait": "lena",
+   "show_if": [
+    "stage>=aftermath"
+   ]
+  }
+ ],
+ "silas_talk": [
+  {
+   "speaker": "Elder Silas",
+   "lines": [
+    "I was younger than you when they sealed that arch. My grandfather was younger than me.",
+    "Strange, how well that worked, right up until it didn't."
+   ],
+   "portrait": "silas",
+   "show_if": [
+    "stage<morning"
+   ]
+  },
+  {
+   "speaker": "Elder Silas",
+   "lines": [
+    "Kai. Close the door."
+   ],
+   "portrait": "silas",
+   "staging": "scene",
+   "show_if": [
+    "stage>=morning",
+    "!talked_silas_ridge"
+   ]
+  },
+  {
+   "speaker": "Elder Silas",
+   "lines": [
+    "Have you been near the old ridge? Up past the arch. Lately."
+   ],
+   "portrait": "silas",
+   "show_if": [
+    "stage>=morning",
+    "!talked_silas_ridge"
+   ]
+  },
+  {
+   "speaker": "Kai",
+   "lines": [
+    "...No. Why?"
+   ],
+   "portrait": "kai_unbonded",
+   "choices": [
+    {
+     "label": "Only the goats did.",
+     "next": "silas_goats"
+    },
+    {
+     "label": "Should I have been?",
+     "next": "silas_should"
+    }
+   ],
+   "show_if": [
+    "stage>=morning",
+    "!talked_silas_ridge"
+   ]
+  },
+  {
+   "speaker": "Elder Silas",
+   "lines": [
+    "Stay off the ridge for a while. Humour an old man."
+   ],
+   "portrait": "silas",
+   "show_if": [
+    "talked_silas_ridge",
+    "stage<abnormal"
+   ]
+  },
+  {
+   "speaker": "Elder Silas",
+   "lines": [
+    "It's waking up. I don't know what else to call it.",
+    "Don't look at me like that. I'm not a child either."
+   ],
+   "portrait": "silas",
+   "show_if": [
+    "stage>=abnormal",
+    "stage<cordon"
+   ]
+  },
+  {
+   "speaker": "Elder Silas",
+   "lines": [
+    "Don't ask me about the Warden, Kai. Not today."
+   ],
+   "portrait": "silas",
+   "show_if": [
+    "stage>=cordon",
+    "stage<aftermath"
+   ]
+  },
+  {
+   "speaker": "Elder Silas",
+   "lines": [
+    "I've seen that light before. Once. A long time ago.",
+    "No. That's all you get. That's all I've got."
+   ],
+   "portrait": "silas",
+   "show_if": [
+    "stage>=aftermath"
+   ]
+  }
+ ],
+ "silas_goats": [
+  {
+   "speaker": "Elder Silas",
+   "lines": [
+    "Good. Let them. Goats are allowed to be curious.",
+    "If you feel the ground hum up there, or anything else that isn't the wind, you come and tell me."
+   ],
+   "portrait": "silas",
+   "effects": {
+    "flags": [
+     "talked_silas_ridge"
+    ]
+   }
+  }
+ ],
+ "silas_should": [
+  {
+   "speaker": "Elder Silas",
+   "lines": [
+    "No. You shouldn't. That's the answer.",
+    "If you feel the ground hum, or anything else that isn't the wind, you come and tell me. Before you tell Joey."
+   ],
+   "portrait": "silas",
+   "effects": {
+    "flags": [
+     "talked_silas_ridge"
+    ]
+   }
+  }
+ ],
+ "gell_talk": [
+  {
+   "speaker": "Gell",
+   "lines": [
+    "Kai! Just the man. You've heard about Civara? Course you haven't. Nobody here reads."
+   ],
+   "portrait": "gell",
+   "staging": "scene"
+  },
+  {
+   "speaker": "Gell",
+   "lines": [
+    "Biggest city in Avelan. Every second person a Duelist, and every Duelist with a Crest the size of a dinner plate.",
+    "Throw fire, walk through walls. One fellow turned into a lion. Or had a lion. One of the two."
+   ],
+   "portrait": "gell"
+  },
+  {
+   "speaker": "Kai",
+   "lines": [
+    "You've been?"
+   ],
+   "portrait": "kai_unbonded"
+  },
+  {
+   "speaker": "Gell",
+   "lines": [
+    "I've been near. I've talked to people who've been. Which is better, because they tell you the good parts."
+   ],
+   "portrait": "gell"
+  },
+  {
+   "speaker": "",
+   "lines": [
+    "Behind you, Joey admires a brass thimble. Then the brass thimble is no longer on the shelf."
+   ],
+   "choices": [
+    {
+     "label": "Say nothing.",
+     "effects": {
+      "flags": [
+       "let_joey_go"
+      ]
+     }
+    },
+    {
+     "label": "Clear your throat at Joey.",
+     "next": "gell_thimble"
+    }
+   ]
+  },
+  {
+   "speaker": "Gell",
+   "lines": [
+    "Now. Favour. The inn wants a crate of lamp oil and I'd rather not carry it. It's by the door. Senna's paying."
+   ],
+   "portrait": "gell",
+   "effects": {
+    "flags": [
+     "talked_gell_story",
+     "gell_crates_asked"
+    ]
+   }
+  }
+ ],
+ "gell_thimble": [
+  {
+   "speaker": "Joey",
+   "lines": [
+    "...I was going to pay for this. With money. That I have."
+   ],
+   "portrait": "joey"
+  },
+  {
+   "speaker": "Gell",
+   "lines": [
+    "Put it back, Joey. And Kai, favour.",
+    "The inn wants a crate of lamp oil and I'd rather not carry it. It's by the door. Senna's paying."
+   ],
+   "portrait": "gell",
+   "effects": {
+    "flags": [
+     "talked_gell_story",
+     "gell_crates_asked"
+    ]
+   }
+  }
+ ],
+ "senna_talk": [
+  {
+   "speaker": "Goodwife Senna",
+   "lines": [
+    "Silas's told you the arch story already, hasn't he. He tells everyone the arch story.",
+    "It's a good story. Doesn't mean it's the whole one."
+   ],
+   "portrait": "townsfolk/elder_woman",
+   "show_if": [
+    "stage<morning"
+   ]
+  },
+  {
+   "speaker": "Goodwife Senna",
+   "lines": [
+    "Gell's oil! Carried by somebody who isn't Gell. That's a first.",
+    "Here, for your trouble. Don't tell him I paid you more than he would."
+   ],
+   "portrait": "townsfolk/elder_woman",
+   "effects": {
+    "flags": [
+     "crates_delivered"
+    ]
+   },
+   "show_if": [
+    "crates_picked",
+    "!crates_delivered"
+   ]
+  },
+  {
+   "speaker": "Goodwife Senna",
+   "lines": [
+    "Breakfast's gone, lunch isn't ready, and Ferris has been telling the wolf story again."
+   ],
+   "portrait": "townsfolk/elder_woman",
+   "show_if": [
+    "stage>=morning",
+    "!crates_picked"
+   ]
+  },
+  {
+   "speaker": "Goodwife Senna",
+   "lines": [
+    "Lamps are full, thanks to you. Ferris says I'm wasting oil. Ferris can sit in the dark."
+   ],
+   "portrait": "townsfolk/elder_woman",
+   "show_if": [
+    "crates_delivered"
+   ]
+  }
+ ],
+ "abnormal_signs": [
+  {
+   "speaker": "",
+   "lines": [
+    "That night the ground hums. Not a quake. A note, low enough to feel in your teeth.",
+    "By morning every dog in Greymere is barking at the ridge, and the spring water tastes of iron."
+   ],
+   "staging": "scene"
+  },
+  {
+   "speaker": "Elder Silas",
+   "lines": [
+    "Kai."
+   ],
+   "portrait": "silas"
+  },
+  {
+   "speaker": "Kai",
+   "lines": [
+    "You felt it too."
+   ],
+   "portrait": "kai_unbonded"
+  },
+  {
+   "speaker": "Elder Silas",
+   "lines": [
+    "Everyone felt it. Everyone has decided it was the weather.",
+    "It isn't the weather."
+   ],
+   "portrait": "silas",
+   "effects": {
+    "stage": "abnormal"
+   }
+  }
+ ],
+ "almyra_arrives": [
+  {
+   "speaker": "",
+   "lines": [
+    "Two wagons stand in the square with the Avelan seal on their canvas. Survey stakes. Brass instruments. People in navy coats."
+   ],
+   "staging": "scene"
+  },
+  {
+   "speaker": "Warden Almyra",
+   "lines": [
+    "Warden Almyra, Avelan Survey Office. We're here to inspect the ground under the ridge.",
+    "There's been settling. Nobody's in danger. We'd like to keep it that way."
+   ],
+   "portrait": "elara"
+  },
+  {
+   "speaker": "Specialist Hale",
+   "lines": [
+    "Specialist Hale. Instruments, mostly. If you see anything that looks like it costs more than your house, it does. Please don't lean on it."
+   ],
+   "portrait": "hale"
+  },
+  {
+   "speaker": "Elder Silas",
+   "lines": [
+    "...Warden."
+   ],
+   "portrait": "silas"
+  },
+  {
+   "speaker": "Warden Almyra",
+   "lines": [
+    "Silas.",
+    "It's been a long time."
+   ],
+   "portrait": "elara"
+  },
+  {
+   "speaker": "",
+   "lines": [
+    "They look at each other a moment too long. Neither says anything else."
+   ]
+  },
+  {
+   "speaker": "Danfor",
+   "lines": [
+    "Paperwork's in order. Seals and all. I'll put a man on the arch."
+   ],
+   "portrait": "danfor"
+  },
+  {
+   "speaker": "Gell",
+   "lines": [
+    "I knew it. Didn't I say? Avelan. I said it."
+   ],
+   "portrait": "gell"
+  },
+  {
+   "speaker": "Lena",
+   "lines": [
+    "You're fencing off half the hill. People forage up there."
+   ],
+   "portrait": "lena"
+  },
+  {
+   "speaker": "Warden Almyra",
+   "lines": [
+    "For a few days. I'm sorry for it.",
+    "...You're Kai, aren't you?"
+   ],
+   "portrait": "elara"
+  },
+  {
+   "speaker": "Kai",
+   "lines": [
+    "How do you know my name?"
+   ],
+   "portrait": "kai_unbonded"
+  },
+  {
+   "speaker": "Warden Almyra",
+   "lines": [
+    "Small town. Big survey. Stay off the ridge, all of you."
+   ],
+   "portrait": "elara",
+   "effects": {
+    "flags": [
+     "almyra_arrived",
+     "cordon_up"
+    ],
+    "stage": "cordon"
+   }
+  }
+ ],
+ "almyra_cordon": [
+  {
+   "speaker": "Warden Almyra",
+   "lines": [
+    "It's a geological inspection, Kai. Rocks. Very old rocks.",
+    "If that were all of it, I wouldn't have come myself. That's all you get."
+   ],
+   "portrait": "elara"
+  }
+ ],
+ "hale_cordon": [
+  {
+   "speaker": "Specialist Hale",
+   "lines": [
+    "Readings under the ridge are... loud. Officially: interesting.",
+    "We go down at dusk. Procedure. I'm the procedure."
+   ],
+   "portrait": "hale"
+  }
+ ],
+ "danfor_cordon": [
+  {
+   "speaker": "Danfor",
+   "lines": [
+    "Dusk already. Kai, have you seen Joey? His ma says he went out with a sack and a guilty face."
+   ],
+   "portrait": "danfor",
+   "staging": "scene"
+  },
+  {
+   "speaker": "",
+   "lines": [
+    "The ground answers before you can. A crack like a door slammed in a cellar, and the ridge sags inward.",
+    "Dust rolls down through the arch. Somebody is shouting in Avelan drill-voice."
+   ]
+  },
+  {
+   "speaker": "Specialist Hale",
+   "lines": [
+    "Back! Everyone back from the arch!"
+   ],
+   "portrait": "hale"
+  },
+  {
+   "speaker": "Specialist Hale",
+   "lines": [
+    "The floor went. We had a bonding attempt prepared, and the Court... answered it wrong.",
+    "Bonding attempt: unsuccessful. Cause: me.",
+    "The passages sealed behind the Warden. There's light down there that shouldn't be."
+   ],
+   "portrait": "hale"
+  },
+  {
+   "speaker": "Danfor",
+   "lines": [
+    "Joey's sack's on the steps. It's empty."
+   ],
+   "portrait": "danfor"
+  },
+  {
+   "speaker": "Kai",
+   "lines": [
+    "He went down. For his... things. He's been going down for years."
+   ],
+   "portrait": "kai_unbonded"
+  },
+  {
+   "speaker": "Elder Silas",
+   "lines": [
+    "Kai. Listen to me.",
+    "If you hear something calling you, do not answer it."
+   ],
+   "portrait": "silas",
+   "effects": {
+    "stage": "incident",
+    "flags": [
+     "incident_started"
+    ]
+   },
+   "choices": [
+    {
+     "label": "Go after Joey.",
+     "effects": {
+      "travel": {
+       "location": "court_stair",
+       "spawn": "entrance"
+      }
+     }
+    },
+    {
+     "label": "Not yet."
+    }
+   ]
+  }
+ ],
+ "court_descend": [
+  {
+   "speaker": "",
+   "lines": [
+    "Silas's warning sits in your chest like a stone. You climb down through the broken arch."
+   ],
+   "effects": {
+    "travel": {
+     "location": "court_stair",
+     "spawn": "entrance"
+    }
+   }
+  }
+ ],
+ "court_stair_arrive": [
+  {
+   "speaker": "",
+   "lines": [
+    "You land hard on cold stone. Above, the breach is a ragged slice of dusk. Below, the stair goes on, lit by a gold that comes from nowhere."
+   ],
+   "staging": "scene"
+  },
+  {
+   "speaker": "Kai",
+   "lines": [
+    "Joey?",
+    "...Joey!"
+   ],
+   "portrait": "kai_unbonded"
+  },
+  {
+   "speaker": "",
+   "lines": [
+    "The name comes back three times from three directions. None of them sound like you."
+   ]
+  }
+ ],
+ "gallery_almyra": [
+  {
+   "speaker": "Warden Almyra",
+   "lines": [
+    "Kai? Of course it's you. Of course it is."
+   ],
+   "portrait": "elara",
+   "staging": "scene"
+  },
+  {
+   "speaker": "",
+   "lines": [
+    "Almyra is half under a fallen statue, shield arm free, sword arm not. The water beside her moves without wind."
+   ]
+  },
+  {
+   "speaker": "Warden Almyra",
+   "lines": [
+    "Don't lift that. Something's using the stone. It's going to stand up."
+   ],
+   "portrait": "elara"
+  },
+  {
+   "speaker": "",
+   "lines": [
+    "The statue's twin, across the water, turns its broken head toward you."
+   ]
+  },
+  {
+   "speaker": "Warden Almyra",
+   "lines": [
+    "Shield's free. Get me a moment and I'll get us both out of this."
+   ],
+   "portrait": "elara",
+   "choices": [
+    {
+     "label": "Together, then.",
+     "effects": {
+      "battle": "court_gallery_husk"
+     }
+    },
+    {
+     "label": "Wait."
+    }
+   ]
+  }
+ ],
+ "gallery_almyra_freed": [
+  {
+   "speaker": "Warden Almyra",
+   "lines": [
+    "That's twice I owe Greymere something today. I hate owing."
+   ],
+   "portrait": "elara",
+   "staging": "scene"
+  },
+  {
+   "speaker": "Kai",
+   "lines": [
+    "Joey's down here."
+   ],
+   "portrait": "kai_unbonded"
+  },
+  {
+   "speaker": "Warden Almyra",
+   "lines": [
+    "Then we find Joey. The far passage, past the water. The light's strongest that way.",
+    "Stay behind my shield when you can, and in front of it when you can't."
+   ],
+   "portrait": "elara",
+   "effects": {
+    "join": [
+     "almyra"
+    ]
+   }
+  }
+ ],
+ "chamber_joey": [
+  {
+   "speaker": "Joey",
+   "lines": [
+    "Kai! Before you say anything, I want you to know I had a plan!"
+   ],
+   "portrait": "joey",
+   "staging": "scene"
+  },
+  {
+   "speaker": "Kai",
+   "lines": [
+    "Was the plan the lights?"
+   ],
+   "portrait": "kai_unbonded"
+  },
+  {
+   "speaker": "Joey",
+   "lines": [
+    "The plan was NOT the lights!"
+   ],
+   "portrait": "joey"
+  },
+  {
+   "speaker": "",
+   "lines": [
+    "Two knots of violet light drift between him and you. The chamber hums like a held breath."
+   ]
+  },
+  {
+   "speaker": "Warden Almyra",
+   "lines": [
+    "Get to him and hold. Don't chase them. Keep them off him until the light settles."
+   ],
+   "portrait": "elara",
+   "choices": [
+    {
+     "label": "Hold the line.",
+     "effects": {
+      "battle": "court_protect_joey"
+     }
+    },
+    {
+     "label": "Wait."
+    }
+   ]
+  }
+ ],
+ "chamber_anchor": [
+  {
+   "speaker": "Joey",
+   "lines": [
+    "Thank you. Thank you. I'm never coming down here again. I'm never doing anything again."
+   ],
+   "portrait": "joey",
+   "staging": "scene"
+  },
+  {
+   "speaker": "Warden Almyra",
+   "lines": [
+    "That pillar. The sealed light. It's what's holding the passages shut. Hale's on the other side."
+   ],
+   "portrait": "elara"
+  },
+  {
+   "speaker": "Joey",
+   "lines": [
+    "So we hit the glowing pillar. I can help. I can point."
+   ],
+   "portrait": "joey"
+  },
+  {
+   "speaker": "Kai",
+   "lines": [
+    "Stay down, Joey."
+   ],
+   "portrait": "kai_unbonded",
+   "choices": [
+    {
+     "label": "Break the seal.",
+     "effects": {
+      "battle": "court_anchor"
+     }
+    },
+    {
+     "label": "Wait."
+    }
+   ]
+  }
+ ],
+ "chamber_bond": [
+  {
+   "speaker": "",
+   "lines": [
+    "The anchor shatters. The passages groan open. And the gold disc in the floor wakes all at once."
+   ],
+   "staging": "scene"
+  },
+  {
+   "speaker": "",
+   "lines": [
+    "Something is calling. Not your name. Something older than names."
+   ]
+  },
+  {
+   "speaker": "Kai",
+   "lines": [
+    "Silas said... don't answer."
+   ],
+   "portrait": "kai_unbonded"
+  },
+  {
+   "speaker": "",
+   "lines": [
+    "You don't answer.",
+    "It takes you anyway."
+   ],
+   "effects": {
+    "flags": [
+     "kai_bonded"
+    ],
+    "profile": "kai_unsettled",
+    "cinematic": "bond_memory"
+   }
+  }
+ ],
+ "chamber_choir": [
+  {
+   "speaker": "",
+   "lines": [
+    "When you can see again, there is light between Joey and the falling stone. Your light.",
+    "It holds. Then the chamber cracks from wall to wall."
+   ],
+   "staging": "scene"
+  },
+  {
+   "speaker": "Specialist Hale",
+   "lines": [
+    "Warden! The seal broke and the readings went... Kai? Why is the reading coming from Kai?"
+   ],
+   "portrait": "hale"
+  },
+  {
+   "speaker": "Warden Almyra",
+   "lines": [
+    "Later. Look at the walls."
+   ],
+   "portrait": "elara"
+  },
+  {
+   "speaker": "",
+   "lines": [
+    "The robed statues around the chamber lean inward. Their mouths are open. They are singing."
+   ]
+  },
+  {
+   "speaker": "Specialist Hale",
+   "lines": [
+    "The containment rite. It's still running and it thinks we're what it's containing."
+   ],
+   "portrait": "hale"
+  },
+  {
+   "speaker": "Warden Almyra",
+   "lines": [
+    "Joey, behind the plinth. Hale, with me. Kai...",
+    "...whatever that is on your hand, use it."
+   ],
+   "portrait": "elara",
+   "choices": [
+    {
+     "label": "Face the Choir.",
+     "effects": {
+      "battle": "court_sealed_choir"
+     }
+    },
+    {
+     "label": "Wait."
+    }
+   ]
+  }
+ ],
+ "aftermath": [
+  {
+   "speaker": "",
+   "lines": [
+    "Greymere in grey morning light. Two roofs down in the square, the spring cracked, people sweeping.",
+    "Damaged. Standing."
+   ],
+   "effects": {
+    "stage": "aftermath"
+   },
+   "staging": "scene"
+  },
+  {
+   "speaker": "Danfor",
+   "lines": [
+    "Nobody dead. Nobody. I counted twice."
+   ],
+   "portrait": "danfor"
+  },
+  {
+   "speaker": "Lena",
+   "lines": [
+    "Kai. Have you eaten?"
+   ],
+   "portrait": "lena"
+  },
+  {
+   "speaker": "Kai",
+   "lines": [
+    "...No."
+   ],
+   "portrait": "kai_unbonded"
+  },
+  {
+   "speaker": "Lena",
+   "lines": [
+    "Of course you haven't."
+   ],
+   "portrait": "lena"
+  },
+  {
+   "speaker": "Joey",
+   "lines": [
+    "I'm going to change. I mean it this time. I'm going to be a completely different person.",
+    "Starting tomorrow. Probably."
+   ],
+   "portrait": "joey"
+  },
+  {
+   "speaker": "Elder Silas",
+   "lines": [
+    "Let me see your hand."
+   ],
+   "portrait": "silas"
+  },
+  {
+   "speaker": "",
+   "lines": [
+    "The mark on the back of your hand catches the light. Every colour. Then none."
+   ]
+  },
+  {
+   "speaker": "Elder Silas",
+   "lines": [
+    "I've seen that light before. Once.",
+    "No. Don't ask me where. Not yet."
+   ],
+   "portrait": "silas"
+  },
+  {
+   "speaker": "Warden Almyra",
+   "lines": [
+    "Kai. Walk with me.",
+    "My specialists tried for an hour. The Crest isn't on you. It's in you. Taking it out would kill you."
+   ],
+   "portrait": "elara"
+  },
+  {
+   "speaker": "Warden Almyra",
+   "lines": [
+    "So now there are two legal roads, and I need you to understand both of them."
+   ],
+   "portrait": "elara",
+   "choices": [
+    {
+     "label": "What's custody?",
+     "next": "custody_terms"
+    },
+    {
+     "label": "Why was Avelan here?",
+     "next": "custody_why"
+    },
+    {
+     "label": "Did you know about me?",
+     "next": "custody_records"
+    },
+    {
+     "label": "And the other road?",
+     "next": "custody_classification"
+    }
+   ]
+  }
+ ],
+ "custody_terms": [
+  {
+   "speaker": "Warden Almyra",
+   "lines": [
+    "Permanent protective custody. A safe house, a staff, researchers. Restricted movement.",
+    "You'd be looked after. You would not be let go."
+   ],
+   "portrait": "elara",
+   "choices": [
+    {
+     "label": "What's custody?",
+     "next": "custody_terms"
+    },
+    {
+     "label": "Why was Avelan here?",
+     "next": "custody_why"
+    },
+    {
+     "label": "Did you know about me?",
+     "next": "custody_records"
+    },
+    {
+     "label": "And the other road?",
+     "next": "custody_classification"
+    }
+   ]
+  }
+ ],
+ "custody_why": [
+  {
+   "speaker": "Warden Almyra",
+   "lines": [
+    "Avelan noticed resonance under the town. That's true.",
+    "There's more, and I'm not going to tell you it today. Not because it's yours to fear. Because it's mine to carry."
+   ],
+   "portrait": "elara",
+   "choices": [
+    {
+     "label": "What's custody?",
+     "next": "custody_terms"
+    },
+    {
+     "label": "Why was Avelan here?",
+     "next": "custody_why"
+    },
+    {
+     "label": "Did you know about me?",
+     "next": "custody_records"
+    },
+    {
+     "label": "And the other road?",
+     "next": "custody_classification"
+    }
+   ]
+  }
+ ],
+ "custody_records": [
+  {
+   "speaker": "Warden Almyra",
+   "lines": [
+    "There was a quiet survey here when you were a child. Your result was... inconclusive. Contradictory.",
+    "I'd seen your name. I didn't know it would be you. Nobody did."
+   ],
+   "portrait": "elara",
+   "choices": [
+    {
+     "label": "What's custody?",
+     "next": "custody_terms"
+    },
+    {
+     "label": "Why was Avelan here?",
+     "next": "custody_why"
+    },
+    {
+     "label": "Did you know about me?",
+     "next": "custody_records"
+    },
+    {
+     "label": "And the other road?",
+     "next": "custody_classification"
+    }
+   ]
+  }
+ ],
+ "custody_classification": [
+  {
+   "speaker": "Warden Almyra",
+   "lines": [
+    "Duelist classification. Civara. Training, monitored travel, the Trial.",
+    "In time, an independent licence. It's the harder road, and it's yours more than the other one is."
+   ],
+   "portrait": "elara"
+  },
+  {
+   "speaker": "Kai",
+   "lines": [
+    "If I take it, can I leave? If it turns out to be the wrong road?"
+   ],
+   "portrait": "kai_unbonded"
+  },
+  {
+   "speaker": "Warden Almyra",
+   "lines": [
+    "...There's a petition clause. Almost nobody uses it."
+   ],
+   "portrait": "elara"
+  },
+  {
+   "speaker": "Kai",
+   "lines": [
+    "Write it down. With my name on it."
+   ],
+   "portrait": "kai_unbonded",
+   "choices": [
+    {
+     "label": "Classification, then. In writing.",
+     "next": "custody_decided"
+    },
+    {
+     "label": "Ask something else.",
+     "next": "custody_menu"
+    }
+   ]
+  }
+ ],
+ "custody_menu": [
+  {
+   "speaker": "Warden Almyra",
+   "lines": [
+    "Ask."
+   ],
+   "portrait": "elara",
+   "choices": [
+    {
+     "label": "What's custody?",
+     "next": "custody_terms"
+    },
+    {
+     "label": "Why was Avelan here?",
+     "next": "custody_why"
+    },
+    {
+     "label": "Did you know about me?",
+     "next": "custody_records"
+    },
+    {
+     "label": "And the other road?",
+     "next": "custody_classification"
+    }
+   ]
+  }
+ ],
+ "custody_decided": [
+  {
+   "speaker": "Warden Almyra",
+   "lines": [
+    "In writing. You're harder to protect than you look, you know that?"
+   ],
+   "portrait": "elara"
+  },
+  {
+   "speaker": "Warden Almyra",
+   "lines": [
+    "The north road, then. Civara. I'll ride with you as far as the Hall."
+   ],
+   "portrait": "elara"
+  },
+  {
+   "speaker": "",
+   "lines": [
+    "Joey waves until the road bends. Lena doesn't wave; she's packed you lunch, which is the same thing."
+   ],
+   "effects": {
+    "flags": [
+     "custody_choice_made"
+    ],
+    "stage": "civara",
+    "travel": {
+     "location": "civara_forecourt",
+     "spawn": "entrance",
+     "transition": "fade"
+    }
+   }
+  }
+ ],
+ "danfor_aftermath": [
+  {
+   "speaker": "Danfor",
+   "lines": [
+    "Two roofs and a spring. We'll rebuild the roofs. The spring can fix itself."
+   ],
+   "portrait": "danfor"
+  }
+ ],
+ "joey_aftermath": [
+  {
+   "speaker": "Joey",
+   "lines": [
+    "Completely different person. You'll see. Tomorrow."
+   ],
+   "portrait": "joey"
+  }
+ ],
+ "almyra_aftermath": [
+  {
+   "speaker": "Warden Almyra",
+   "lines": [
+    "Whenever you're ready, Kai. Not before."
+   ],
+   "portrait": "elara"
+  }
+ ],
+ "civara_arrive": [
+  {
+   "speaker": "",
+   "lines": [
+    "Civara. Stone on stone on stone, six storeys high, with people in every window.",
+    "A woman on the corner lights a lamp with a flick of Crest-fire. Nobody turns to look."
+   ],
+   "staging": "scene"
+  },
+  {
+   "speaker": "Kai",
+   "lines": [
+    "Nobody's even looking."
+   ],
+   "portrait": "kai_unbonded"
+  },
+  {
+   "speaker": "Warden Almyra",
+   "lines": [
+    "Here, that's ordinary. You're not.",
+    "Three departments have already asked to borrow you. I've said no to all of them, politely, in writing."
+   ],
+   "portrait": "elara"
+  },
+  {
+   "speaker": "Warden Almyra",
+   "lines": [
+    "The Hall's through the arch. Report to the clerk. I'll be close."
+   ],
+   "portrait": "elara",
+   "effects": {
+    "flags": [
+     "arrived_civara"
+    ],
+    "checkpoint": {
+     "location": "civara_forecourt",
+     "spawn": "entrance"
+    }
+   }
+  }
+ ],
+ "civara_clerk": [
+  {
+   "speaker": "Clerk",
+   "lines": [
+    "Registrants through the arch. Resonance testing in order of arrival.",
+    "You're the Greymere case? Then you're in order of arrival and also a memo."
+   ]
+  }
+ ],
+ "almyra_civara": [
+  {
+   "speaker": "Warden Almyra",
+   "lines": [
+    "In Greymere I was the authority. Here I'm one desk of many. Mind which desks you trust."
+   ],
+   "portrait": "elara"
+  }
+ ],
+ "civara_stall": [
+  {
+   "speaker": "Stall Keeper",
+   "lines": [
+    "Tonics, salves, a better price than Gell's. Don't tell Gell."
+   ]
+  }
+ ],
+ "liora_hall": [
+  {
+   "speaker": "Liora Sen",
+   "lines": [
+    "Liora Sen, Prudentian consultancy. I'm here for the resonance, not for you.",
+    "No offence. You're very interesting adjacent to it."
+   ],
+   "portrait": "mira",
+   "show_if": [
+    "!class_stabilised"
+   ]
+  },
+  {
+   "speaker": "Liora Sen",
+   "lines": [
+    "Six channels. Six. And then you chose one, and it listened.",
+    "I'll be writing about this for a year."
+   ],
+   "portrait": "mira",
+   "show_if": [
+    "class_stabilised"
+   ]
+  }
+ ],
+ "civara_classification": [
+  {
+   "speaker": "Clerk",
+   "lines": [
+    "Hand on the plate, please. Breathe normally. It will tell us which pattern your Crest settles into."
+   ],
+   "staging": "scene"
+  },
+  {
+   "speaker": "",
+   "lines": [
+    "Six columns of glass light up along the wall. Crimson. Azure. Ember. Eclipse. Glass. Verdant.",
+    "All six. At once."
+   ]
+  },
+  {
+   "speaker": "Clerk",
+   "lines": [
+    "...That's a fault. Again, please."
+   ]
+  },
+  {
+   "speaker": "",
+   "lines": [
+    "All six. Again."
+   ]
+  },
+  {
+   "speaker": "Liora Sen",
+   "lines": [
+    "It isn't a fault. Don't touch the plate. Don't touch anything. Look at it."
+   ],
+   "portrait": "mira"
+  },
+  {
+   "speaker": "Warden Almyra",
+   "lines": [
+    "It answers everything because nothing has told it what it is yet. Kai. You can tell it."
+   ],
+   "portrait": "elara"
+  },
+  {
+   "speaker": "Liora Sen",
+   "lines": [
+    "Pick one and hold it. Stabilise it. It'll be yours, and you'll be its, and that's that."
+   ],
+   "portrait": "mira",
+   "choices": [
+    {
+     "label": "Crimson: Pressure. Advance, break, overpower.",
+     "next": "civara_chosen_warrior",
+     "effects": {
+      "class": "warrior"
+     }
+    },
+    {
+     "label": "Azure: Endurance. Hold, protect, withstand.",
+     "next": "civara_chosen_guardian",
+     "effects": {
+      "class": "guardian"
+     }
+    },
+    {
+     "label": "Ember: Projection. Channel it outward.",
+     "next": "civara_chosen_mage",
+     "effects": {
+      "class": "mage"
+     }
+    },
+    {
+     "label": "Eclipse: Manipulation. Change the rules.",
+     "next": "civara_chosen_sorcerer",
+     "effects": {
+      "class": "sorcerer"
+     }
+    },
+    {
+     "label": "Glass: Precision. Speed and openings.",
+     "next": "civara_chosen_assassin",
+     "effects": {
+      "class": "assassin"
+     }
+    },
+    {
+     "label": "Verdant: Adaptation. Stay flexible.",
+     "next": "civara_chosen_neutral",
+     "effects": {
+      "class": "neutral"
+     }
+    }
+   ]
+  }
+ ],
+ "civara_chosen_warrior": [
+  {
+   "speaker": "",
+   "lines": [
+    "You hold one pattern and let the others go. The Crimson column burns steady. The rest go dark."
+   ]
+  },
+  {
+   "speaker": "Liora Sen",
+   "lines": [
+    "It listened. It actually listened."
+   ],
+   "portrait": "mira"
+  },
+  {
+   "speaker": "Assessor",
+   "lines": [
+    "Then it can be assessed. Same pattern as yours, Greymere. Different habits. Show me what you'll do with it."
+   ],
+   "portrait": "assessor",
+   "choices": [
+    {
+     "label": "Begin the assessment.",
+     "effects": {
+      "battle": "civara_assessment_warrior"
+     }
+    },
+    {
+     "label": "A moment first."
+    }
+   ]
+  }
+ ],
+ "civara_chosen_guardian": [
+  {
+   "speaker": "",
+   "lines": [
+    "You hold one pattern and let the others go. The Azure column burns steady. The rest go dark."
+   ]
+  },
+  {
+   "speaker": "Liora Sen",
+   "lines": [
+    "It listened. It actually listened."
+   ],
+   "portrait": "mira"
+  },
+  {
+   "speaker": "Assessor",
+   "lines": [
+    "Then it can be assessed. Same pattern as yours, Greymere. Different habits. Show me what you'll do with it."
+   ],
+   "portrait": "assessor",
+   "choices": [
+    {
+     "label": "Begin the assessment.",
+     "effects": {
+      "battle": "civara_assessment_guardian"
+     }
+    },
+    {
+     "label": "A moment first."
+    }
+   ]
+  }
+ ],
+ "civara_chosen_mage": [
+  {
+   "speaker": "",
+   "lines": [
+    "You hold one pattern and let the others go. The Ember column burns steady. The rest go dark."
+   ]
+  },
+  {
+   "speaker": "Liora Sen",
+   "lines": [
+    "It listened. It actually listened."
+   ],
+   "portrait": "mira"
+  },
+  {
+   "speaker": "Assessor",
+   "lines": [
+    "Then it can be assessed. Same pattern as yours, Greymere. Different habits. Show me what you'll do with it."
+   ],
+   "portrait": "assessor",
+   "choices": [
+    {
+     "label": "Begin the assessment.",
+     "effects": {
+      "battle": "civara_assessment_mage"
+     }
+    },
+    {
+     "label": "A moment first."
+    }
+   ]
+  }
+ ],
+ "civara_chosen_sorcerer": [
+  {
+   "speaker": "",
+   "lines": [
+    "You hold one pattern and let the others go. The Eclipse column burns steady. The rest go dark."
+   ]
+  },
+  {
+   "speaker": "Liora Sen",
+   "lines": [
+    "It listened. It actually listened."
+   ],
+   "portrait": "mira"
+  },
+  {
+   "speaker": "Assessor",
+   "lines": [
+    "Then it can be assessed. Same pattern as yours, Greymere. Different habits. Show me what you'll do with it."
+   ],
+   "portrait": "assessor",
+   "choices": [
+    {
+     "label": "Begin the assessment.",
+     "effects": {
+      "battle": "civara_assessment_sorcerer"
+     }
+    },
+    {
+     "label": "A moment first."
+    }
+   ]
+  }
+ ],
+ "civara_chosen_assassin": [
+  {
+   "speaker": "",
+   "lines": [
+    "You hold one pattern and let the others go. The Glass column burns steady. The rest go dark."
+   ]
+  },
+  {
+   "speaker": "Liora Sen",
+   "lines": [
+    "It listened. It actually listened."
+   ],
+   "portrait": "mira"
+  },
+  {
+   "speaker": "Assessor",
+   "lines": [
+    "Then it can be assessed. Same pattern as yours, Greymere. Different habits. Show me what you'll do with it."
+   ],
+   "portrait": "assessor",
+   "choices": [
+    {
+     "label": "Begin the assessment.",
+     "effects": {
+      "battle": "civara_assessment_assassin"
+     }
+    },
+    {
+     "label": "A moment first."
+    }
+   ]
+  }
+ ],
+ "civara_chosen_neutral": [
+  {
+   "speaker": "",
+   "lines": [
+    "You hold one pattern and let the others go. The Verdant column burns steady. The rest go dark."
+   ]
+  },
+  {
+   "speaker": "Liora Sen",
+   "lines": [
+    "It listened. It actually listened."
+   ],
+   "portrait": "mira"
+  },
+  {
+   "speaker": "Assessor",
+   "lines": [
+    "Then it can be assessed. Same pattern as yours, Greymere. Different habits. Show me what you'll do with it."
+   ],
+   "portrait": "assessor",
+   "choices": [
+    {
+     "label": "Begin the assessment.",
+     "effects": {
+      "battle": "civara_assessment_neutral"
+     }
+    },
+    {
+     "label": "A moment first."
+    }
+   ]
+  }
+ ],
+ "assessor_hall": [
+  {
+   "speaker": "Assessor",
+   "lines": [
+    "Hall first, assessment after. The clerk is waiting."
+   ],
+   "portrait": "assessor",
+   "show_if": [
+    "!class_stabilised"
+   ]
+  },
+  {
+   "speaker": "Assessor",
+   "lines": [
+    "Ready when you are, Greymere."
+   ],
+   "portrait": "assessor",
+   "choices": [
+    {
+     "label": "Begin the assessment.",
+     "effects": {
+      "battle": "civara_assessment_warrior"
+     }
+    },
+    {
+     "label": "Not yet."
+    }
+   ],
+   "show_if": [
+    "class_warrior",
+    "!civara_assessment_won"
+   ]
+  },
+  {
+   "speaker": "Assessor",
+   "lines": [
+    "Ready when you are, Greymere."
+   ],
+   "portrait": "assessor",
+   "choices": [
+    {
+     "label": "Begin the assessment.",
+     "effects": {
+      "battle": "civara_assessment_guardian"
+     }
+    },
+    {
+     "label": "Not yet."
+    }
+   ],
+   "show_if": [
+    "class_guardian",
+    "!civara_assessment_won"
+   ]
+  },
+  {
+   "speaker": "Assessor",
+   "lines": [
+    "Ready when you are, Greymere."
+   ],
+   "portrait": "assessor",
+   "choices": [
+    {
+     "label": "Begin the assessment.",
+     "effects": {
+      "battle": "civara_assessment_mage"
+     }
+    },
+    {
+     "label": "Not yet."
+    }
+   ],
+   "show_if": [
+    "class_mage",
+    "!civara_assessment_won"
+   ]
+  },
+  {
+   "speaker": "Assessor",
+   "lines": [
+    "Ready when you are, Greymere."
+   ],
+   "portrait": "assessor",
+   "choices": [
+    {
+     "label": "Begin the assessment.",
+     "effects": {
+      "battle": "civara_assessment_sorcerer"
+     }
+    },
+    {
+     "label": "Not yet."
+    }
+   ],
+   "show_if": [
+    "class_sorcerer",
+    "!civara_assessment_won"
+   ]
+  },
+  {
+   "speaker": "Assessor",
+   "lines": [
+    "Ready when you are, Greymere."
+   ],
+   "portrait": "assessor",
+   "choices": [
+    {
+     "label": "Begin the assessment.",
+     "effects": {
+      "battle": "civara_assessment_assassin"
+     }
+    },
+    {
+     "label": "Not yet."
+    }
+   ],
+   "show_if": [
+    "class_assassin",
+    "!civara_assessment_won"
+   ]
+  },
+  {
+   "speaker": "Assessor",
+   "lines": [
+    "Ready when you are, Greymere."
+   ],
+   "portrait": "assessor",
+   "choices": [
+    {
+     "label": "Begin the assessment.",
+     "effects": {
+      "battle": "civara_assessment_neutral"
+     }
+    },
+    {
+     "label": "Not yet."
+    }
+   ],
+   "show_if": [
+    "class_neutral",
+    "!civara_assessment_won"
+   ]
+  }
+ ],
+ "civara_assess_retry": [
+  {
+   "speaker": "Assessor",
+   "lines": [
+    "Again? Good. Nobody passes by quitting."
+   ],
+   "portrait": "assessor",
+   "choices": [
+    {
+     "label": "Again.",
+     "effects": {
+      "battle": "civara_assessment_warrior"
+     }
+    },
+    {
+     "label": "Not yet."
+    }
+   ],
+   "show_if": [
+    "class_warrior"
+   ]
+  },
+  {
+   "speaker": "Assessor",
+   "lines": [
+    "Again? Good. Nobody passes by quitting."
+   ],
+   "portrait": "assessor",
+   "choices": [
+    {
+     "label": "Again.",
+     "effects": {
+      "battle": "civara_assessment_guardian"
+     }
+    },
+    {
+     "label": "Not yet."
+    }
+   ],
+   "show_if": [
+    "class_guardian"
+   ]
+  },
+  {
+   "speaker": "Assessor",
+   "lines": [
+    "Again? Good. Nobody passes by quitting."
+   ],
+   "portrait": "assessor",
+   "choices": [
+    {
+     "label": "Again.",
+     "effects": {
+      "battle": "civara_assessment_mage"
+     }
+    },
+    {
+     "label": "Not yet."
+    }
+   ],
+   "show_if": [
+    "class_mage"
+   ]
+  },
+  {
+   "speaker": "Assessor",
+   "lines": [
+    "Again? Good. Nobody passes by quitting."
+   ],
+   "portrait": "assessor",
+   "choices": [
+    {
+     "label": "Again.",
+     "effects": {
+      "battle": "civara_assessment_sorcerer"
+     }
+    },
+    {
+     "label": "Not yet."
+    }
+   ],
+   "show_if": [
+    "class_sorcerer"
+   ]
+  },
+  {
+   "speaker": "Assessor",
+   "lines": [
+    "Again? Good. Nobody passes by quitting."
+   ],
+   "portrait": "assessor",
+   "choices": [
+    {
+     "label": "Again.",
+     "effects": {
+      "battle": "civara_assessment_assassin"
+     }
+    },
+    {
+     "label": "Not yet."
+    }
+   ],
+   "show_if": [
+    "class_assassin"
+   ]
+  },
+  {
+   "speaker": "Assessor",
+   "lines": [
+    "Again? Good. Nobody passes by quitting."
+   ],
+   "portrait": "assessor",
+   "choices": [
+    {
+     "label": "Again.",
+     "effects": {
+      "battle": "civara_assessment_neutral"
+     }
+    },
+    {
+     "label": "Not yet."
+    }
+   ],
+   "show_if": [
+    "class_neutral"
+   ]
+  }
+ ],
+ "civara_after": [
+  {
+   "speaker": "Assessor",
+   "lines": [
+    "Pass. Rough, and yours. Classification confirmed."
+   ],
+   "portrait": "assessor",
+   "staging": "scene"
+  },
+  {
+   "speaker": "Liora Sen",
+   "lines": [
+    "I'll need to see that again. Many, many times. For science."
+   ],
+   "portrait": "mira"
+  },
+  {
+   "speaker": "Warden Almyra",
+   "lines": [
+    "Welcome to Civara, Duelist. The hard part starts tomorrow."
+   ],
+   "portrait": "elara"
+  },
+  {
+   "speaker": "Kai",
+   "lines": [
+    "...Tomorrow's fine."
+   ],
+   "portrait": "kai_unbonded",
+   "effects": {
+    "stage": "complete",
+    "flags": [
+     "chapter_one_complete"
+    ],
+    "cinematic": "chapter_one_ending",
+    "scene": "res://scenes/ui/end_of_demo.tscn"
+   }
+  }
+ ]
+}

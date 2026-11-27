@@ -47,8 +47,9 @@ static func figure_record(portrait_key: String) -> Dictionary:
 
 
 static func player_key() -> String:
+	## Kai in his village clothes until Civara stabilises a class.
 	var class_id := str(GameState.player_class_id)
-	return "aren/%s" % class_id if class_id != "" else "kai_neutral"
+	return "aren/%s" % class_id if class_id != "" else "kai_unbonded"
 
 
 static func cast_for(entries: Array) -> Array[String]:

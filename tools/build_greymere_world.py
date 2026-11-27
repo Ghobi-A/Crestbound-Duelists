@@ -124,8 +124,14 @@ def compile_world():
           lights=[dict(tile=list(tile),color="warm") for tile in room["lights"]],
           painted_interior=dict(style="candlelit"))
     from route_01_world import add_route
+    from hollow_court_world import add_court
+    from greymere_story_world import add_story
+    from civara_world import add_civara
     locations = {"greymere":town, **rooms}
     add_route(locations)
+    add_court(locations)
+    add_story(locations)
+    add_civara(locations)
     OUT.mkdir(exist_ok=True)
     (OUT/"locations.json").write_text(json.dumps({"revision":1,"locations":locations},indent=2)+"\n")
 

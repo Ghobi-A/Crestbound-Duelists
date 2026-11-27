@@ -16,6 +16,8 @@ var _interactions: Dictionary = {}
 var _exits: Dictionary = {}   # edge tile -> exit (walk outward to travel)
 var _camera_follow := Vector2.ZERO
 const CAMERA_LOOK_AHEAD := Vector2(0, -24)
+const CHAPTER_DIALOGUE := "res://data/dialogue/chapter_one.json"
+const CINEMATIC_SCENE := "res://scenes/cinematics/opening.tscn"
 var _engagement_busy := false
 var _pending_world_encounter := ""
 var _pending_victory_flag := ""
@@ -62,6 +64,8 @@ func _ready() -> void:
 	AudioRouter.play_ambience(str(definition.get("ambience_id", "")))
 	_location_started()
 	SaveManager.save_game()
+	# Story beats that start as Kai arrives (authored "triggers" with no area).
+	_run_triggers.call_deferred(_player.tile, true)
 
 func _build_world() -> void:
 	if definition.has("painted"):
@@ -83,6 +87,7 @@ func _build_world() -> void:
 		add_child(room)
 		var finish := PaintedAtmosphere.new()
 		finish.interior = true
+		finish.cold = str(definition.painted_interior.get("style", "")) == "court"
 		finish.map_tiles = Vector2(map_width(), map_height())
 		add_child(finish)
 	else:
@@ -92,6 +97,7 @@ func _build_world() -> void:
 		terrain.z_index = -20
 		add_child(terrain)
 	for item in definition.props:
+		if not WorldCatalog.present(item): continue
 		add_child(WorldProp.create(item))
 		var footprint := WorldCatalog.footprint(item)
 		for y in range(footprint.position.y, footprint.end.y):
@@ -101,11 +107,16 @@ func _build_world() -> void:
 		PaintedDressing.build(self, definition.rows, _blocked)
 	for door in definition.doors:
 		var tile := WorldCatalog.tile(door.tile)
+		if not WorldCatalog.present(door):
+			door = door.duplicate()
+			door["locked"] = true
 		_doors[tile] = door
 		_blocked[tile] = true
 	for item in definition.interactions:
+		if not WorldCatalog.present(item): continue
 		_interactions[WorldCatalog.tile(item.tile)] = item
 	for exit in definition.get("exits", []):
+		if not WorldCatalog.present(exit): continue
 		for edge in exit.tiles:
 			_exits[WorldCatalog.tile(edge)] = exit
 	if definition.has("painted_interior"):
@@ -120,11 +131,14 @@ func _build_world() -> void:
 func _build_dialogue() -> void:
 	_dialogue = DialogueBox.new()
 	_dialogue.load_file("res://data/dialogue/greymere.json")
+	# Chapter One's story scenes (StoryDirector effects, choices, staging).
+	_dialogue.merge_file(CHAPTER_DIALOGUE)
 	_dialogue.dialogue_finished.connect(_on_dialogue_finished)
 	add_child(_dialogue)
 
 func _build_npcs() -> void:
 	for item in definition.npcs:
+		if not WorldCatalog.present(item): continue
 		var npc := OverworldNPC.new()
 		add_child(npc)
 		npc.setup(str(item.name),WorldCatalog.tile(item.tile),str(item.dialogue),PlaceholderPalette.NPC_COLOR,str(item.sprite_key),WorldCatalog.tile(item.facing))
@@ -271,7 +285,9 @@ func _try_interact() -> void:
 			if GameState.has_flag(str(trainer.id) + "_defeated"):
 				_show_text(str(trainer.after), str(trainer.name))
 			else: _engage_trainer(trainer, false)
-		elif location_id == "gell_shop" and _npc_tiles[target].npc_name == "Gell":
+		elif location_id == "gell_shop" and _npc_tiles[target].npc_name == "Gell" \
+				and (GameState.story_stage == "legacy" or GameState.has_flag("talked_gell_story")):
+			# Gell has his say once; after that, talking to him is shopping.
 			_trade.open(true)
 		else:
 			_play_dialogue(_npc_tiles[target].dialogue_key)
@@ -311,6 +327,9 @@ func _try_interact() -> void:
 			AudioRouter.play_sfx("world", "interact")
 			_play_dialogue(str(interaction.dialogue))
 		else:
+			# Reading a sign or clue can mark progress (a quest step, a rumour).
+			if str(interaction.get("flag", "")) != "" and not GameState.has_flag(str(interaction.flag)):
+				GameState.set_flag(str(interaction.flag))
 			var inspection_key := "local_inspection"
 			_dialogue._dialogue_data[inspection_key] = [{"speaker":"", "lines":[str(interaction.text)]}]
 			_play_dialogue(inspection_key)
@@ -324,6 +343,27 @@ func _play_dialogue(key: String) -> void:
 func _on_dialogue_finished(_key: String) -> void:
 	_camera.offset = Vector2.ZERO
 	_player.movement_locked = false
+	# What the conversation set in motion (StoryDirector), once it has closed.
+	var next := StoryDirector.take_pending()
+	if next.has("battle"):
+		_pending_world_encounter = str(next.battle)
+		_pending_victory_flag = str(next.battle) + "_won"
+	elif next.has("travel"):
+		_player.movement_locked = true
+		_remember_position()
+		if not StoryDirector.travel(next.travel):
+			_player.movement_locked = false
+		return
+	elif next.has("cinematic") or next.has("scene"):
+		_player.movement_locked = true
+		_remember_position()
+		SaveManager.save_game()
+		if next.has("cinematic"):
+			CinematicPlayer.play_next(str(next.cinematic), str(next.get("scene", "")))
+		SceneTransition.change_scene(CINEMATIC_SCENE if next.has("cinematic") else str(next.scene), "fade")
+		return
+	elif not _dialogue.active and _run_triggers(_player.tile, false):
+		return
 	if _pending_world_encounter != "":
 		var encounter := _pending_world_encounter
 		_pending_world_encounter = ""
@@ -343,6 +383,7 @@ func _remember_position() -> void:
 func _on_player_stepped(tile: Vector2i) -> void:
 	_remember_position()
 	if not encounters_allowed(): return
+	if _run_triggers(tile, false): return
 	var grace := int(_encounter_state.get("cooldown", 0)) > 0
 	if not grace:
 		for origin in _trainers:
@@ -390,3 +431,30 @@ func _engage_trainer(trainer: Dictionary, alerted: bool) -> void:
 
 func _location_started() -> void:
 	pass
+
+
+func _run_triggers(tile: Vector2i, entering: bool) -> bool:
+	## Authored story beats: {id, dialogue, show_if?, area?: [x, y, w, h],
+	## once?: true}. Without an area a trigger fires on arriving; with one,
+	## on stepping into it. A one-shot trigger records "seen_<id>"; a battle
+	## beat stays repeatable (once: false, gated on its own win flag) so a
+	## lost fight can always be taken up again.
+	if _dialogue.active or SceneTransition._busy or not GameState.world_battle.is_empty():
+		return false
+	for trigger in definition.get("triggers", []):
+		var once := bool(trigger.get("once", true))
+		if once and GameState.has_flag("seen_" + str(trigger.id)):
+			continue
+		if not WorldCatalog.present(trigger) or not _dialogue.has_key(str(trigger.dialogue)):
+			continue
+		var area: Array = trigger.get("area", [])
+		if area.is_empty():
+			if not entering:
+				continue
+		elif not Rect2i(int(area[0]), int(area[1]), int(area[2]), int(area[3])).has_point(tile):
+			continue
+		if once:
+			GameState.set_flag("seen_" + str(trigger.id))
+		_play_dialogue(str(trigger.dialogue))
+		return true
+	return false

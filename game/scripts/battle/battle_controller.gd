@@ -64,7 +64,9 @@ func _ready() -> void:
 	add_child(presentation)
 	presentation.configure(stage, hud, sprites)
 	presentation.summoned.connect(_on_summoned)
-	AudioRouter.play_music("battle")
+	# Bosses name their own theme; a theme not yet delivered falls back to the battle track.
+	var theme := str(runtime.encounter.get("music", "battle"))
+	AudioRouter.play_music(theme if AudioRouter.has_cue("music", theme) else "battle")
 	AudioRouter.stop_ambience()
 	_build_dialogue()
 	_build_onboarding()
@@ -463,7 +465,9 @@ func _finish(player_won: bool) -> void:
 	if player_won:
 		GameState.store_battle_results(runtime.player_units, runtime.inventory)
 		rewards = GameState.grant_encounter_rewards(runtime.encounter)
-	var can_retry := not player_won and GameState.world_battle.is_empty() and bool(runtime.encounter.get("retry", true))
+	# Story battles offer Retry unless data says otherwise; field battles only
+	# when they opt in (an optional boss), so roadside losses still send you home.
+	var can_retry := not player_won and bool(runtime.encounter.get("retry", GameState.world_battle.is_empty()))
 	result_presentation = ResultPresentation.new()
 	add_child(result_presentation)
 	result_presentation.chose.connect(_after_result.bind(player_won))
@@ -517,13 +521,16 @@ func _try_flee() -> void:
 
 
 func _leave_after_victory() -> void:
-	if not GameState.world_battle.is_empty():
-		SceneTransition.change_scene(GameState.finish_world_battle("victory"), "gold")
-		return
 	var encounter_id: String = runtime.encounter.get("id", GameState.pending_encounter)
+	# Every won encounter is recorded the same way, wherever it was fought.
 	GameState.set_flag("%s_won" % encounter_id)
-	# Story battles say in data where play resumes and what they unlock.
 	var after: Dictionary = runtime.encounter.get("return", {})
+	if not GameState.world_battle.is_empty():
+		var scene := GameState.finish_world_battle("victory")
+		if after.is_empty():
+			SceneTransition.change_scene(scene, "gold")
+			return
+	# Story battles say in data where play resumes and what they unlock.
 	for flag_name in after.get("flags", []):
 		GameState.set_flag(str(flag_name))
 	if not after.is_empty():

@@ -21,8 +21,18 @@ class_name DialogueBox
 ## panel grows into a nameplate tab over a wider serif text box. Speakers
 ## without large art keep their small portrait inside the panel, and
 ## incidental conversations keep the compact box.
+##
+## Story entries may also carry (Chapter One, StoryDirector):
+##   "show_if"  conditions (WorldCatalog.condition_met), checked when the
+##              conversation starts: one NPC conversation can hold a variant
+##              for each point in the story without its own effects
+##              revealing the next variant early;
+##   "effects"  StoryDirector effects, applied once its last line is read;
+##   "choices"  [{"label", "next"?, "effects"?, "show_if"?}] offered under
+##              the last line; "next" continues with another conversation.
 
 signal dialogue_finished(key: String)
+signal choice_made(label: String)
 
 const PORTRAIT_PATH := "res://assets/portraits/%s/neutral.png"
 const PORTRAIT_SIZE := Vector2(34, 38)
@@ -61,6 +71,9 @@ var _tab_label: Label
 var _reveal := 0.0
 var _pause := 0.0
 var _speaker_key := ""
+var _choices: Array = []     # the offered choices while the player decides
+var _choice_index := 0
+var _choice_box: Control
 
 
 func _ready() -> void:
@@ -117,12 +130,23 @@ func _ready() -> void:
 	_tab_label = UiStyle.make_label(_tab, Rect2(0, 1, 60, STORY_TAB_HEIGHT - 2), "", 7, UiStyle.GOLD_BRIGHT, UiStyle.DISPLAY)
 	_tab_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_tab_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	_choice_box = Control.new()
+	_choice_box.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_choice_box.visible = false
+	_choice_box.draw.connect(_draw_choices)
+	add_child(_choice_box)
 
 	visible = false
 
 
 func load_file(path: String) -> void:
 	_dialogue_data = {}
+	merge_file(path)
+
+
+func merge_file(path: String) -> void:
+	## Adds another file's conversations (Chapter One keeps its story in
+	## chapter_one.json alongside the location's incidental talk).
 	if not FileAccess.file_exists(path):
 		push_error("Dialogue file not found: %s" % path)
 		return
@@ -131,7 +155,7 @@ func load_file(path: String) -> void:
 	if json.parse(file.get_as_text()) != OK:
 		push_error("Invalid dialogue JSON in %s: %s" % [path, json.get_error_message()])
 		return
-	_dialogue_data = json.data
+	_dialogue_data.merge(json.data, true)
 
 
 func has_key(key: String) -> bool:
@@ -145,12 +169,17 @@ func play(key: String) -> void:
 		push_error("Unknown dialogue key '%s'." % key)
 		return
 	_current_key = key
-	_entries = _dialogue_data[key]
-	if _entries.is_empty():
+	if (_dialogue_data[key] as Array).is_empty():
 		push_error("DialogueBox: empty conversation " + key)
 		return
+	_entries = _present(_dialogue_data[key])
 	_entry_index = 0
 	_line_index = 0
+	if _entries.is_empty():
+		# Every entry is conditional and none applies: nothing to say.
+		_current_key = ""
+		dialogue_finished.emit(key)
+		return
 	active = true
 	visible = true
 	staged = str((_entries[0] as Dictionary).get("staging", "")) == "scene"
@@ -330,11 +359,87 @@ func _advance() -> void:
 	if _line_index < lines.size():
 		_show_current_line()
 		return
+	# The entry is read: its effects land, and a question waits for an answer.
+	if entry.has("effects"):
+		StoryDirector.apply(entry.effects)
+	var offered: Array = entry.get("choices", []).filter(func(c): return WorldCatalog.present(c))
+	if not offered.is_empty():
+		_open_choices(offered)
+		return
+	_next_entry()
+
+
+static func _present(entries: Array) -> Array:
+	return entries.filter(func(entry): return WorldCatalog.present(entry))
+
+
+func _next_entry() -> void:
 	_entry_index += 1
 	_line_index = 0
 	if _entry_index < _entries.size():
 		_show_current_line()
 		return
+	_finish()
+
+
+func _open_choices(offered: Array) -> void:
+	_choices = offered
+	_choice_index = 0
+	_advance_chevron.visible = false
+	_choice_box.visible = true
+	_choice_box.queue_redraw()
+
+
+func choose(index: int) -> void:
+	## Picks an offered choice (also the entry point for tests and tools).
+	if _choices.is_empty():
+		return
+	var choice: Dictionary = _choices[clampi(index, 0, _choices.size() - 1)]
+	_choices = []
+	_choice_box.visible = false
+	AudioRouter.play_sfx("ui", "confirm")
+	choice_made.emit(str(choice.get("label", "")))
+	if choice.has("effects"):
+		StoryDirector.apply(choice.effects)
+	var next := str(choice.get("next", ""))
+	if next == "" or not _dialogue_data.has(next):
+		_next_entry()
+		return
+	var before := StoryStage.cast_for(_entries)
+	_entries = _present(_dialogue_data[next])
+	_entry_index = 0
+	_line_index = 0
+	if _entries.is_empty():
+		_finish()
+		return
+	if staged and StoryStage.cast_for(_entries) != before:
+		_stage.begin(_entries)
+	_show_current_line()
+
+
+func is_choosing() -> bool:
+	return not _choices.is_empty()
+
+
+func _draw_choices() -> void:
+	var labels: Array = _choices.map(func(c): return str(c.get("label", "")))
+	var width := 0.0
+	for label in labels:
+		width = maxf(width, UiStyle.text_width(label, 7, UiStyle.SERIF))
+	var row := 11.0
+	var box := Rect2(0, 0, width + 22.0, row * labels.size() + 6.0)
+	var panel := _panel.get_rect()
+	_choice_box.position = Vector2(panel.end.x - box.size.x - 4.0, panel.position.y - box.size.y - (STORY_TAB_HEIGHT if staged else 3.0))
+	UiStyle.draw_panel(_choice_box, box, UiStyle.COMMAND, false)
+	for i in labels.size():
+		var band := Rect2(5, 3 + i * row, box.size.x - 9, row - 1)
+		if i == _choice_index:
+			UiStyle.draw_selection_band(_choice_box, band)
+		UiStyle.draw_text(_choice_box, Vector2(9, band.position.y + 8), labels[i], 7,
+			UiStyle.GOLD_BRIGHT if i == _choice_index else UiStyle.TEXT, -1, HORIZONTAL_ALIGNMENT_LEFT, UiStyle.SERIF)
+
+
+func _finish() -> void:
 	# Sequence finished.
 	active = false
 	visible = false
@@ -348,6 +453,19 @@ func _advance() -> void:
 
 func _unhandled_input(event: InputEvent) -> void:
 	if not active:
+		return
+	if is_choosing():
+		var step := int(event.is_action_pressed("move_down")) - int(event.is_action_pressed("move_up"))
+		if step != 0:
+			_choice_index = wrapi(_choice_index + step, 0, _choices.size())
+			AudioRouter.play_sfx("ui", "move", -6.0)
+			_choice_box.queue_redraw()
+			get_viewport().set_input_as_handled()
+		elif event.is_action_pressed("interact"):
+			get_viewport().set_input_as_handled()
+			choose(_choice_index)
+		elif event.is_action_pressed("cancel"):
+			get_viewport().set_input_as_handled()
 		return
 	if event.is_action_pressed("interact") or event.is_action_pressed("cancel"):
 		get_viewport().set_input_as_handled()

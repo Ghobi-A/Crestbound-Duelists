@@ -32,6 +32,7 @@ const INTERIOR_FOREGROUND := [
 
 var location_id := ""
 var interior := false   # rooms bring their own light; only grade and depth here
+var cold := false       # the Hollow Court's grade instead of candlelight
 var map_tiles := Vector2.ONE
 var props: Array = []
 var _halos: Array[Sprite2D] = []
@@ -115,7 +116,14 @@ func _build_grade() -> void:
 	var shader := ShaderMaterial.new()
 	shader.shader = GRADE
 	shader.set_shader_parameter("blur_enabled", GraphicsSettings.post_blur())
-	if interior:
+	if interior and cold:
+		# The Hollow Court: cold highlights, heavy corners, the gold glow blooms.
+		shader.set_shader_parameter("warm", Color(1.0, 0.96, 0.9))
+		shader.set_shader_parameter("cool", Color(0.72, 0.76, 1.05))
+		shader.set_shader_parameter("vignette", 0.62)
+		shader.set_shader_parameter("bloom_threshold", 0.5)
+		shader.set_shader_parameter("tilt_start", 0.72)
+	elif interior:
 		# Candle-lit rooms: warmer highlights, deeper corners, candles bloom.
 		shader.set_shader_parameter("warm", Color(1.14, 1.0, 0.8))
 		shader.set_shader_parameter("cool", Color(0.84, 0.86, 1.0))

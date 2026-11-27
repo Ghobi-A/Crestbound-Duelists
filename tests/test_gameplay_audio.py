@@ -61,7 +61,7 @@ def test_every_computed_cue_has_a_sound():
 def test_every_location_ambience_exists():
     locations = json.loads((GAME / "world/locations.json").read_text())["locations"]
     ids = {str(loc.get("ambience_id", "")) for loc in locations.values()}
-    assert ids == {"greymere", "interior", "route"}
+    assert ids == {"greymere", "interior", "route", "court", "civara"}
     assert all(resolves("ambience", cue) for cue in ids)
 
 

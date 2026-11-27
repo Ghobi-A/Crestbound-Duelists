@@ -234,7 +234,11 @@ func _menu_input() -> void:
 		AudioRouter.play_sfx("ui", "confirm")
 		match _menu_options[_menu_index]:
 			"Play Story Demo":
-				_screen = Screen.CLASS_SELECT
+				# Chapter One: Kai's class is chosen in Civara, not here.
+				GameState.start_story()
+				CinematicPlayer.return_scene = GameState.current_scene
+				SceneTransition.change_scene(OPENING_SCENE)
+				return
 			"Quick Battle":
 				_start_quick_battle()
 				return

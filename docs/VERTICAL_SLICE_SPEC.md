@@ -19,13 +19,13 @@ decisions behind it, and how far implementation has got. Update the
 | Combat 3.0 and the Python party engine | done | Section 4; `party_combat.py`, `game/scripts/battle/` |
 | Replay parity | done | 38 seeded battles, every mechanic; Godot matches event for event |
 | Progression, saves v3, Quick Battle isolation | done | Section 6; quests in `data/quests.yaml`, the Item command, Retry; menus that expose loadouts, charms and the journal come with the UI pass |
-| Solo encounters and Old Greymaw | planned | Sections 3 and 4.9 |
-| Greymere story rework | planned | Section 2 |
-| Hollow Court dungeon | planned | Section 2 |
-| Civara, assessment, ending, credits | planned | Section 2 |
+| Solo encounters and Old Greymaw | done | Route 01 trainers are 1v1, a 1v2 ambush, Greymaw's hidden den with Retry and a persistent defeat |
+| Greymere story rework | done | `StoryDirector`, dialogue choices and story variants, map triggers, `show_if` staging (`tools/greymere_story_world.py`, `game/data/dialogue/chapter_one.json`) |
+| Hollow Court dungeon | done | Three rooms (`tools/hollow_court_world.py`), a shrine, Almyra, Protect Joey, the anchor, the bond memory, the Sealed Choir |
+| Civara, assessment, ending, credits | done | Forecourt and Hall (`tools/civara_world.py`), the six-class choice, same-class assessors, the ending cinematic, credits and the end-of-demo screen |
 | Pause menu, battle HUD, results, title, settings | planned | Section 7 |
 | Music director, SFX, music manifest | planned | Section 8 |
-| Art (PixelLab) | planned | Section 9 |
+| Art (PixelLab) | in progress | 13 animated figures (battle sheets, story staging, map sprites); environments and ending stills reuse existing plates |
 | Balance snapshot and Streamlit tab | planned | Section 10 |
 | End-to-end QA (native and web) | planned | Section 11 |
 
@@ -450,6 +450,33 @@ process them. Each asset is listed in `docs/ASSET_MANIFEST.md`.
   - no single action exceeds 45% of a class's usage under `tactical`.
 - **Equal win rates are not evidence of good play.** Repetition and
   dominance metrics are reported alongside them.
+
+### Current results (tools/slice_balance.py, seed 42, 120–150 battles each)
+
+Kai's kit follows the chapter: Unbonded until the bond, Unsettled against
+the Sealed Choir, the stabilised class in Civara. No items unless noted.
+
+| Encounter | Tactical | Random | Notes |
+|---|---|---|---|
+| Danfor's spar | 98% | 93% | the tutorial; meant to be forgiving |
+| Rowan / Squire / Challenger | 91% / 100% / 87% | 51% / 36% / 32% | |
+| Roadside 1v2 | 83% | 20% | |
+| Joey's wager | 71% | 23% | the Challenger, sharper |
+| Old Greymaw (2 Potions) | 79% | 0% | 50% without items; random play cannot win |
+| Wisp / Wisp pair | 100% / 92% | 79% / 8% | |
+| Gallery Husk / pair (with Almyra) | 100% / 100% | 64% / 22% | |
+| Protect Joey / the anchor | 82% / 98% | 28% / 29% | |
+| The Sealed Choir (3 Potions, Clearwater) | 93% | 33% | 64% tactical with no items |
+| Civara assessment, per class | 77–88% | 28–48% | warrior 88, guardian 82, mage 77, sorcerer 82, assassin 80, neutral 79 |
+
+Known gaps against the targets above:
+- With an Unbonded kit of four moves, one attack often carries more than
+  45% of `tactical` usage (Strike against Edge-weak Riven, Wild Swing
+  against the Challenger). The kit grows with the bond; the Civara kits
+  sit at 47–56% for their gambits.
+- The trainers and Court fights are below 85% for `tactical` in places
+  (71–83%). They are tuned for a player who uses items and Brace, which
+  the scripted policies under-use.
 
 ## 11. QA
 

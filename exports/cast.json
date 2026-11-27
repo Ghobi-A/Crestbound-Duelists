@@ -110,8 +110,9 @@
     "position": "front",
     "sprite_key": "greymaw",
     "stat_scale": {
-      "def": 1.1,
-      "hp": 2.2
+      "atk": 1.0,
+      "def": 1.05,
+      "hp": 2.0
     }
   },
   "hale": {
@@ -159,12 +160,12 @@
     "position": "front",
     "sprite_key": "kai_unbonded",
     "stats": {
-      "atk": 58,
-      "def": 50,
-      "hp": 92,
+      "atk": 62,
+      "def": 54,
+      "hp": 94,
       "mag": 40,
       "res": 46,
-      "spd": 52
+      "spd": 54
     }
   },
   "kai_unsettled": {
@@ -271,8 +272,8 @@
     "position": "front",
     "sprite_key": "riven_raider",
     "stat_scale": {
-      "atk": 0.85,
-      "hp": 0.62
+      "atk": 0.5,
+      "hp": 0.3
     }
   },
   "sealed_choir": {
@@ -414,8 +415,9 @@
     "position": "front",
     "sprite_key": "sealed_choir",
     "stat_scale": {
-      "hp": 3.6,
-      "mag": 1.15
+      "hp": 4.4,
+      "mag": 1.65,
+      "res": 1.1
     }
   }
 }

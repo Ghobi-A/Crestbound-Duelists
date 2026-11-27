@@ -528,6 +528,58 @@
             20,
             30
           ]
+        },
+        {
+          "asset": "crates",
+          "tile": [
+            14,
+            8
+          ],
+          "show_if": [
+            "stage>=cordon",
+            "stage<aftermath"
+          ]
+        },
+        {
+          "asset": "crates",
+          "tile": [
+            21,
+            8
+          ],
+          "show_if": [
+            "stage>=cordon",
+            "stage<aftermath"
+          ]
+        },
+        {
+          "asset": "route_rock",
+          "tile": [
+            13,
+            17
+          ],
+          "show_if": [
+            "stage>=aftermath"
+          ]
+        },
+        {
+          "asset": "route_rock",
+          "tile": [
+            22,
+            15
+          ],
+          "show_if": [
+            "stage>=aftermath"
+          ]
+        },
+        {
+          "asset": "route_stone",
+          "tile": [
+            19,
+            18
+          ],
+          "show_if": [
+            "stage>=aftermath"
+          ]
         }
       ],
       "painted": {
@@ -623,6 +675,36 @@
           "facing": [
             0,
             -1
+          ]
+        },
+        "court_climb": {
+          "tile": [
+            17,
+            8
+          ],
+          "facing": [
+            0,
+            1
+          ]
+        },
+        "aftermath": {
+          "tile": [
+            17,
+            12
+          ],
+          "facing": [
+            0,
+            1
+          ]
+        },
+        "civara_road": {
+          "tile": [
+            17,
+            8
+          ],
+          "facing": [
+            0,
+            1
           ]
         }
       },
@@ -741,7 +823,10 @@
           ],
           "verb": "Inspect",
           "dialogue": "court_entrance",
-          "kind": "court"
+          "kind": "court",
+          "show_if": [
+            "stage<morning"
+          ]
         },
         {
           "tile": [
@@ -758,6 +843,42 @@
           ],
           "verb": "Read",
           "text": "South road: the Greymere Outskirts, and the training grounds beyond."
+        },
+        {
+          "tile": [
+            17,
+            5
+          ],
+          "verb": "Look",
+          "show_if": [
+            "stage>=morning",
+            "stage<cordon"
+          ],
+          "text": "The north arch. Past it, the ridge path climbs to the old ruins. Nobody goes up there, which is mostly why Joey does."
+        },
+        {
+          "tile": [
+            17,
+            5
+          ],
+          "verb": "Descend",
+          "show_if": [
+            "stage>=incident",
+            "stage<aftermath"
+          ],
+          "dialogue": "court_descend"
+        },
+        {
+          "tile": [
+            22,
+            24
+          ],
+          "verb": "Drink",
+          "show_if": [
+            "stage>=abnormal",
+            "stage<aftermath"
+          ],
+          "text": "The spring water tastes of iron this week. Everyone has noticed. Nobody has said so to Silas."
         }
       ],
       "npcs": [
@@ -772,6 +893,9 @@
           "facing": [
             0,
             1
+          ],
+          "show_if": [
+            "stage<morning"
           ]
         },
         {
@@ -785,6 +909,9 @@
           "facing": [
             1,
             0
+          ],
+          "show_if": [
+            "stage<morning"
           ]
         },
         {
@@ -798,6 +925,9 @@
           "facing": [
             0,
             1
+          ],
+          "show_if": [
+            "stage<morning"
           ]
         },
         {
@@ -811,6 +941,9 @@
           "facing": [
             0,
             1
+          ],
+          "show_if": [
+            "stage<morning"
           ]
         },
         {
@@ -829,7 +962,7 @@
         {
           "name": "Old Ferris",
           "sprite_key": "townsfolk/torch_bearer",
-          "dialogue": "ferris_flavor",
+          "dialogue": "ferris_talk",
           "tile": [
             14,
             27
@@ -850,6 +983,145 @@
           "facing": [
             0,
             1
+          ]
+        },
+        {
+          "name": "Joey",
+          "sprite_key": "townsfolk/farmboy",
+          "dialogue": "joey_talk",
+          "tile": [
+            15,
+            20
+          ],
+          "facing": [
+            0,
+            1
+          ],
+          "show_if": [
+            "stage>=morning",
+            "stage<incident"
+          ]
+        },
+        {
+          "name": "Danfor",
+          "sprite_key": "townsfolk/guard_sword",
+          "dialogue": "danfor_talk",
+          "tile": [
+            20,
+            26
+          ],
+          "facing": [
+            -1,
+            0
+          ],
+          "show_if": [
+            "stage>=morning",
+            "stage<cordon"
+          ]
+        },
+        {
+          "name": "Warden Almyra",
+          "sprite_key": "elara",
+          "dialogue": "almyra_cordon",
+          "tile": [
+            18,
+            9
+          ],
+          "facing": [
+            0,
+            1
+          ],
+          "show_if": [
+            "stage>=morning",
+            "stage>=cordon",
+            "stage<incident"
+          ]
+        },
+        {
+          "name": "Specialist Hale",
+          "sprite_key": "hale",
+          "dialogue": "hale_cordon",
+          "tile": [
+            15,
+            9
+          ],
+          "facing": [
+            0,
+            1
+          ],
+          "show_if": [
+            "stage>=morning",
+            "stage>=cordon",
+            "stage<incident"
+          ]
+        },
+        {
+          "name": "Danfor",
+          "sprite_key": "townsfolk/guard_sword",
+          "dialogue": "danfor_cordon",
+          "tile": [
+            17,
+            9
+          ],
+          "facing": [
+            0,
+            1
+          ],
+          "show_if": [
+            "stage>=morning",
+            "stage>=cordon",
+            "stage<incident"
+          ]
+        },
+        {
+          "name": "Danfor",
+          "sprite_key": "townsfolk/guard_sword",
+          "dialogue": "danfor_aftermath",
+          "tile": [
+            20,
+            13
+          ],
+          "facing": [
+            -1,
+            0
+          ],
+          "show_if": [
+            "stage>=morning",
+            "stage>=aftermath"
+          ]
+        },
+        {
+          "name": "Joey",
+          "sprite_key": "townsfolk/farmboy",
+          "dialogue": "joey_aftermath",
+          "tile": [
+            14,
+            14
+          ],
+          "facing": [
+            1,
+            0
+          ],
+          "show_if": [
+            "stage>=morning",
+            "stage>=aftermath"
+          ]
+        },
+        {
+          "name": "Warden Almyra",
+          "sprite_key": "elara",
+          "dialogue": "almyra_aftermath",
+          "tile": [
+            18,
+            10
+          ],
+          "facing": [
+            0,
+            1
+          ],
+          "show_if": [
+            "stage>=morning",
+            "stage>=aftermath"
           ]
         }
       ],
@@ -951,7 +1223,75 @@
           "destination_spawn": "greymere",
           "return_spawn": "route_return",
           "transition_type": "fade",
-          "verb": "Travel"
+          "verb": "Travel",
+          "show_if": [
+            "!south_road_closed"
+          ]
+        }
+      ],
+      "triggers": [
+        {
+          "id": "after_spar",
+          "dialogue": "after_spar",
+          "show_if": [
+            "greymere_spar_danfor_won"
+          ]
+        },
+        {
+          "id": "south_road_closed",
+          "dialogue": "south_road_closed",
+          "area": [
+            16,
+            31,
+            3,
+            1
+          ],
+          "once": false,
+          "show_if": [
+            "south_road_closed"
+          ]
+        },
+        {
+          "id": "abnormal_signs",
+          "dialogue": "abnormal_signs",
+          "show_if": [
+            "stage>=village",
+            "stage<abnormal",
+            "talked_silas_ridge",
+            "route01_rowan_defeated"
+          ]
+        },
+        {
+          "id": "abnormal_signs_road",
+          "dialogue": "abnormal_signs",
+          "show_if": [
+            "stage>=village",
+            "stage<abnormal",
+            "route01_rowan_defeated",
+            "route01_squire_defeated",
+            "route01_challenger_defeated"
+          ]
+        },
+        {
+          "id": "almyra_arrives",
+          "dialogue": "almyra_arrives",
+          "area": [
+            11,
+            11,
+            13,
+            10
+          ],
+          "show_if": [
+            "stage>=abnormal",
+            "stage<cordon"
+          ]
+        },
+        {
+          "id": "aftermath",
+          "dialogue": "aftermath",
+          "show_if": [
+            "court_sealed_choir_won"
+          ]
         }
       ]
     },
@@ -1027,7 +1367,7 @@
         {
           "name": "Lena",
           "sprite_key": "townsfolk/herbalist_woman",
-          "dialogue": "wren_flavor",
+          "dialogue": "lena_talk",
           "tile": [
             6,
             10
@@ -1176,7 +1516,7 @@
         {
           "name": "Goodwife Senna",
           "sprite_key": "townsfolk/elder_woman",
-          "dialogue": "senna_flavor",
+          "dialogue": "senna_talk",
           "tile": [
             12,
             4
@@ -1197,6 +1537,9 @@
           "facing": [
             0,
             1
+          ],
+          "show_if": [
+            "stage<morning"
           ]
         },
         {
@@ -1210,6 +1553,9 @@
           "facing": [
             -1,
             0
+          ],
+          "show_if": [
+            "stage<morning"
           ]
         }
       ],
@@ -1351,7 +1697,7 @@
         {
           "name": "Elder Silas",
           "sprite_key": "townsfolk/village_elder",
-          "dialogue": "kassian_flavor",
+          "dialogue": "silas_talk",
           "tile": [
             10,
             9
@@ -1500,7 +1846,7 @@
         {
           "name": "Gell",
           "sprite_key": "townsfolk/farmhand_capped",
-          "dialogue": "pell_flavor",
+          "dialogue": "gell_talk",
           "tile": [
             11,
             5
@@ -1565,6 +1911,19 @@
           ],
           "verb": "Inspect",
           "text": "Wares from passing merchants. Gell can say where each one was made, accurately or not."
+        },
+        {
+          "tile": [
+            4,
+            10
+          ],
+          "verb": "Lift",
+          "flag": "crates_picked",
+          "show_if": [
+            "gell_crates_asked",
+            "!crates_picked"
+          ],
+          "text": "A crate of lamp oil, labelled INN in Gell's careful hand. It is heavier than Gell said."
         }
       ],
       "lights": [
@@ -1817,6 +2176,16 @@
             0,
             -1
           ]
+        },
+        "bed": {
+          "tile": [
+            14,
+            6
+          ],
+          "facing": [
+            0,
+            1
+          ]
         }
       },
       "doors": [
@@ -1840,14 +2209,6 @@
         {
           "tile": [
             15,
-            5
-          ],
-          "verb": "Inspect",
-          "text": "Your bed. Made this morning, mostly."
-        },
-        {
-          "tile": [
-            15,
             9
           ],
           "verb": "Inspect",
@@ -1859,7 +2220,8 @@
             7
           ],
           "verb": "Inspect",
-          "text": "Bread, a knife and a note in Lena's hand: EAT SOMETHING."
+          "text": "Bread, a knife and a note in Lena's hand: EAT SOMETHING.",
+          "dialogue": "kai_note"
         },
         {
           "tile": [
@@ -1868,6 +2230,30 @@
           ],
           "verb": "Inspect",
           "text": "Tools for tomorrow's work, laid out the way you like them."
+        },
+        {
+          "tile": [
+            15,
+            5
+          ],
+          "verb": "Rest",
+          "kind": "recovery",
+          "spawn": "bed",
+          "show_if": [
+            "stage>=morning"
+          ],
+          "text": "You lie down for a moment. It helps more than you expected."
+        },
+        {
+          "tile": [
+            15,
+            5
+          ],
+          "verb": "Inspect",
+          "text": "Your bed. Made this morning, mostly.",
+          "show_if": [
+            "stage<morning"
+          ]
         }
       ],
       "lights": [
@@ -1888,7 +2274,16 @@
       ],
       "painted_interior": {
         "style": "candlelit"
-      }
+      },
+      "triggers": [
+        {
+          "id": "morning_wake",
+          "dialogue": "morning_wake",
+          "show_if": [
+            "stage>=morning"
+          ]
+        }
+      ]
     },
     "route_01": {
       "id": "route_01",
@@ -1919,14 +2314,14 @@
         "###..................##...............,,,...ggggggg..,,,.###",
         "###..................##.,,,...........,,,...ggggggg..,,,.###",
         "###...f|||...........##.,,,.......ff..,,,...ggggggg..,,,.###",
-        "######ff###############.,,,.......ff..,,,...ggggggg..,,,.###",
-        "#######################.,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,.###",
-        "#########ff############.,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,.###",
-        "#########ff############.,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,.###",
-        "#######################..................................###",
-        "#######################.........................r........###",
-        "################################################ff##########",
-        "################################################ff##########",
+        "###,,#ff###############.,,,.......ff..,,,...ggggggg..,,,.###",
+        "###,,##################.,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,.###",
+        "###,,####ff############.,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,.###",
+        "###......ff....########.,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,.###",
+        "###..,,,,,,....########..................................###",
+        "###..,,,,,,....########.........................r........###",
+        "###............#################################ff##########",
+        "###............#################################ff##########",
         "############################################################",
         "############################################################",
         "############################################################",
@@ -1985,6 +2380,34 @@
           ]
         },
         {
+          "asset": "hedge",
+          "tile": [
+            6,
+            25
+          ]
+        },
+        {
+          "asset": "route_rock",
+          "tile": [
+            13,
+            26
+          ]
+        },
+        {
+          "asset": "crates",
+          "tile": [
+            12,
+            29
+          ]
+        },
+        {
+          "asset": "route_chest_open",
+          "tile": [
+            5,
+            30
+          ]
+        },
+        {
           "asset": "route_oak",
           "tile": [
             4,
@@ -2031,20 +2454,6 @@
           "tile": [
             57,
             6
-          ]
-        },
-        {
-          "asset": "route_oak",
-          "tile": [
-            4,
-            28
-          ]
-        },
-        {
-          "asset": "route_oak",
-          "tile": [
-            10,
-            30
           ]
         },
         {
@@ -2379,50 +2788,8 @@
         {
           "asset": "route_oak",
           "tile": [
-            7,
-            27
-          ]
-        },
-        {
-          "asset": "route_oak",
-          "tile": [
-            12,
-            27
-          ]
-        },
-        {
-          "asset": "route_oak",
-          "tile": [
-            14,
-            27
-          ]
-        },
-        {
-          "asset": "route_oak",
-          "tile": [
             19,
             27
-          ]
-        },
-        {
-          "asset": "route_oak",
-          "tile": [
-            6,
-            30
-          ]
-        },
-        {
-          "asset": "route_oak",
-          "tile": [
-            8,
-            30
-          ]
-        },
-        {
-          "asset": "route_oak",
-          "tile": [
-            13,
-            30
           ]
         },
         {
@@ -2629,6 +2996,28 @@
           "after": "A fine match. The road beyond the north gate is closed for now."
         },
         {
+          "name": "Old Greymaw",
+          "sprite_key": "greymaw",
+          "dialogue": "",
+          "tile": [
+            10,
+            28
+          ],
+          "facing": [
+            -1,
+            0
+          ],
+          "id": "greymaw_den",
+          "encounter": "greymaw_den",
+          "sight": 3,
+          "intro": "A low growl rolls out of the hollow. Old Greymaw rises \u2014 bigger than the stories, its eyes catching a strange gold light.",
+          "after": "The den is quiet now.",
+          "show_if": [
+            "!greymaw_den_defeated",
+            "stage<incident"
+          ]
+        },
+        {
           "name": "Roadside Traveller",
           "sprite_key": "townsfolk/elder_woman",
           "dialogue": "",
@@ -2670,6 +3059,60 @@
           ],
           "verb": "Read",
           "text": "North road closed. The next region will open in a future chapter."
+        },
+        {
+          "tile": [
+            12,
+            21
+          ],
+          "verb": "Look",
+          "text": "Paw prints the size of a dinner plate, pressed deep into the mud. They head south, off the road.",
+          "flag": "greymaw_tracks_found"
+        },
+        {
+          "tile": [
+            4,
+            22
+          ],
+          "verb": "Look",
+          "text": "Claw marks score the bank. Something heavy has been using this gap in the hedge.",
+          "flag": "greymaw_tracks_found"
+        },
+        {
+          "tile": [
+            5,
+            30
+          ],
+          "verb": "Search",
+          "kind": "chest",
+          "flag": "greymaw_camp_searched",
+          "item": "hi_potion",
+          "quantity": 1,
+          "text": "A traveller's camp, torn apart. The bedroll is shredded and the food sack is gone. A Hi-Potion survived, wedged under the chest."
+        },
+        {
+          "tile": [
+            10,
+            28
+          ],
+          "verb": "Look",
+          "text": "Old Greymaw's hollow. Grey fur snagged on every root, and the ground still warm. The ridge hums faintly underfoot.",
+          "show_if": [
+            "greymaw_den_defeated"
+          ]
+        },
+        {
+          "tile": [
+            27,
+            7
+          ],
+          "verb": "Gather",
+          "flag": "herbs_gathered",
+          "show_if": [
+            "lena_herbs_asked",
+            "!herbs_gathered"
+          ],
+          "text": "Marshwort, growing thick in the reeds at the pond's edge. You cut what Lena asked for and a little more."
         }
       ],
       "encounter_zones": [
@@ -2747,6 +3190,1471 @@
           }
         ]
       }
+    },
+    "court_stair": {
+      "id": "court_stair",
+      "name": "THE COLLAPSED STAIR",
+      "subtitle": "Under the ridge",
+      "scene": "res://scenes/overworld/court_stair.tscn",
+      "rows": [
+        "______________________________",
+        "_############################_",
+        "_############################_",
+        "_#wwwwwwwwwwwwwwwwwwwwwwwwww#_",
+        "_#wwwwwwwwwwwwwwwwwwwwwwwwww#_",
+        "_#wwwwwwwwwwwwwwwwwwwwwwwwww#_",
+        "_#wwwwwwwwwwwwwwwwwwwwwwwwww#_",
+        "_#wwwwwwwwwwwwwwwwwwwwwwwwww#_",
+        "_#wwwwwwwwwwwwwwwwwwwwwwwwww#_",
+        "_#wwwwwwwwwwwwwwwwwwwwwwwwww#_",
+        "_#wwwwwwwwwwwwwwwwwwwwwwwwww#_",
+        "_#wwwwwwwwwwwwwwwwwwwwwwwwww#_",
+        "_#wwwwwwwwwwwwwwwwwwwwwwwwww#_",
+        "_#wwwwwwwwwwwwwwwwwwwwwwwwww#_",
+        "_#wwwwwwwwwwwwwwwwwwwwwwwwww#_",
+        "_############################_",
+        "______________________________"
+      ],
+      "interior": true,
+      "music_id": "hollow_court",
+      "ambience_id": "court",
+      "painted_interior": {
+        "style": "court"
+      },
+      "blocked_symbols": [
+        "#",
+        "_",
+        "~"
+      ],
+      "doors": [],
+      "recovery": {
+        "location": "court_stair",
+        "spawn": "shrine"
+      },
+      "return_grace_steps": 6,
+      "hud_name": "THE COLLAPSED STAIR",
+      "props": [
+        {
+          "asset": "route_rock",
+          "tile": [
+            4,
+            6
+          ]
+        },
+        {
+          "asset": "route_rock",
+          "tile": [
+            7,
+            4
+          ]
+        },
+        {
+          "asset": "route_stone",
+          "tile": [
+            3,
+            8
+          ]
+        },
+        {
+          "asset": "route_stone",
+          "tile": [
+            11,
+            6
+          ]
+        },
+        {
+          "asset": "route_rock",
+          "tile": [
+            12,
+            11
+          ]
+        },
+        {
+          "asset": "route_stone",
+          "tile": [
+            18,
+            4
+          ]
+        },
+        {
+          "asset": "route_rock",
+          "tile": [
+            20,
+            8
+          ]
+        },
+        {
+          "asset": "route_stone",
+          "tile": [
+            25,
+            6
+          ]
+        },
+        {
+          "asset": "route_rock",
+          "tile": [
+            8,
+            13
+          ]
+        },
+        {
+          "asset": "spring",
+          "tile": [
+            16,
+            7
+          ]
+        }
+      ],
+      "lights": [
+        {
+          "tile": [
+            4,
+            3
+          ],
+          "color": "gold"
+        },
+        {
+          "tile": [
+            16,
+            6
+          ],
+          "color": "gold"
+        },
+        {
+          "tile": [
+            26,
+            12
+          ],
+          "color": "violet"
+        }
+      ],
+      "npcs": [
+        {
+          "name": "Riven Wisp",
+          "sprite_key": "riven_wisp",
+          "dialogue": "",
+          "tile": [
+            10,
+            9
+          ],
+          "facing": [
+            0,
+            1
+          ],
+          "id": "court_stair_wisp",
+          "encounter": "court_stair_wisp",
+          "sight": 3,
+          "intro": "The light knots itself into something that turns toward you.",
+          "after": "Only cold air where it was.",
+          "show_if": [
+            "!court_stair_wisp_defeated"
+          ]
+        },
+        {
+          "name": "Riven Wisps",
+          "sprite_key": "riven_wisp",
+          "dialogue": "",
+          "tile": [
+            23,
+            11
+          ],
+          "facing": [
+            -1,
+            0
+          ],
+          "id": "court_stair_pair",
+          "encounter": "court_stair_pair",
+          "sight": 3,
+          "intro": "The light knots itself into something that turns toward you.",
+          "after": "Only cold air where it was.",
+          "show_if": [
+            "!court_stair_pair_defeated"
+          ]
+        }
+      ],
+      "spawn_points": {
+        "entrance": {
+          "tile": [
+            4,
+            4
+          ],
+          "facing": [
+            0,
+            1
+          ]
+        },
+        "shrine": {
+          "tile": [
+            16,
+            9
+          ],
+          "facing": [
+            0,
+            -1
+          ]
+        },
+        "gallery_return": {
+          "tile": [
+            26,
+            12
+          ],
+          "facing": [
+            -1,
+            0
+          ]
+        }
+      },
+      "exits": [
+        {
+          "building_id": "greymere",
+          "tiles": [
+            [
+              2,
+              4
+            ],
+            [
+              2,
+              5
+            ]
+          ],
+          "direction": [
+            -1,
+            0
+          ],
+          "destination_location": "greymere",
+          "destination_scene": "res://scenes/overworld/greymere.tscn",
+          "destination_spawn": "court_climb",
+          "return_spawn": "entrance",
+          "transition_type": "fade",
+          "verb": "Climb"
+        },
+        {
+          "building_id": "court_gallery",
+          "tiles": [
+            [
+              27,
+              12
+            ],
+            [
+              27,
+              13
+            ]
+          ],
+          "direction": [
+            1,
+            0
+          ],
+          "destination_location": "court_gallery",
+          "destination_scene": "res://scenes/overworld/court_gallery.tscn",
+          "destination_spawn": "entrance",
+          "return_spawn": "entrance",
+          "transition_type": "fade",
+          "verb": "Descend"
+        }
+      ],
+      "interactions": [
+        {
+          "tile": [
+            16,
+            7
+          ],
+          "verb": "Rest",
+          "kind": "recovery",
+          "spawn": "shrine",
+          "text": "An old basin of still water. The air around it is calm, and so, for a moment, are you."
+        },
+        {
+          "tile": [
+            6,
+            9
+          ],
+          "verb": "Look",
+          "flag": "found_joey_lantern",
+          "text": "A tin lantern on its side, still warm. There's a J scratched into the lid. Joey's."
+        },
+        {
+          "tile": [
+            18,
+            4
+          ],
+          "verb": "Look",
+          "text": "Bronze fittings, prised out of the wall years ago. Somebody has been coming down here a long time."
+        },
+        {
+          "tile": [
+            25,
+            6
+          ],
+          "verb": "Search",
+          "kind": "chest",
+          "flag": "court_stair_supplies",
+          "item": "potion",
+          "quantity": 1,
+          "text": "A survey pack, dropped in a hurry. Avelan stamps on the straps."
+        }
+      ],
+      "triggers": [
+        {
+          "id": "court_stair_arrive",
+          "dialogue": "court_stair_arrive"
+        }
+      ]
+    },
+    "court_gallery": {
+      "id": "court_gallery",
+      "name": "THE DROWNED GALLERY",
+      "subtitle": "Still water, older than the town",
+      "scene": "res://scenes/overworld/court_gallery.tscn",
+      "rows": [
+        "________________________________",
+        "_##############################_",
+        "_##############################_",
+        "_#wwwwwwwwwwwwwwwwwwwwwwwwwwww#_",
+        "_#wwwwwwwwwwwwwwwwwwwwwwwwwwww#_",
+        "_#wwwwwwwwwwwwwwwwwwwwwwwwwwww#_",
+        "_#wwwwwwwwwwwwwwwwwwwwwwwwwwww#_",
+        "_#www~~~~~~~~~~ww~~~~~~~~~~www#_",
+        "_#www~~~~~~~~~~ww~~~~~~~~~~www#_",
+        "_#www~~~~~~~~~~ww~~~~~~~~~~www#_",
+        "_#wwwwwwwwwwwwwwwwwwwwwwwwwwww#_",
+        "_#wwwwwwwwwwwwwwwwwwwwwwwwwwww#_",
+        "_#wwwwwwwwwwwwwwwwwwwwwwwwwwww#_",
+        "_#wwwwwwwwwwwwwwwwwwwwwwwwwwww#_",
+        "_#wwwwwwwwwwwwwwwwwwwwwwwwwwww#_",
+        "_##############################_",
+        "________________________________"
+      ],
+      "interior": true,
+      "music_id": "hollow_court",
+      "ambience_id": "court",
+      "painted_interior": {
+        "style": "court"
+      },
+      "blocked_symbols": [
+        "#",
+        "_",
+        "~"
+      ],
+      "doors": [],
+      "recovery": {
+        "location": "court_stair",
+        "spawn": "shrine"
+      },
+      "return_grace_steps": 6,
+      "hud_name": "THE DROWNED GALLERY",
+      "props": [
+        {
+          "asset": "route_stone",
+          "tile": [
+            6,
+            4
+          ]
+        },
+        {
+          "asset": "route_stone",
+          "tile": [
+            9,
+            5
+          ]
+        },
+        {
+          "asset": "route_rock",
+          "tile": [
+            23,
+            4
+          ]
+        },
+        {
+          "asset": "route_stone",
+          "tile": [
+            27,
+            5
+          ]
+        },
+        {
+          "asset": "route_rock",
+          "tile": [
+            6,
+            12
+          ]
+        },
+        {
+          "asset": "route_stone",
+          "tile": [
+            12,
+            13
+          ]
+        },
+        {
+          "asset": "route_rock",
+          "tile": [
+            21,
+            12
+          ]
+        }
+      ],
+      "lights": [
+        {
+          "tile": [
+            15,
+            6
+          ],
+          "color": "gold"
+        },
+        {
+          "tile": [
+            25,
+            4
+          ],
+          "color": "violet"
+        },
+        {
+          "tile": [
+            28,
+            12
+          ],
+          "color": "gold"
+        }
+      ],
+      "npcs": [
+        {
+          "name": "Warden Almyra",
+          "sprite_key": "elara",
+          "dialogue": "",
+          "tile": [
+            25,
+            5
+          ],
+          "facing": [
+            -1,
+            0
+          ],
+          "show_if": [
+            "!court_gallery_husk_won"
+          ]
+        },
+        {
+          "name": "Riven Husk",
+          "sprite_key": "riven_husk",
+          "dialogue": "",
+          "tile": [
+            27,
+            12
+          ],
+          "facing": [
+            -1,
+            0
+          ],
+          "id": "court_gallery_pair",
+          "encounter": "court_gallery_pair",
+          "sight": 3,
+          "intro": "The light knots itself into something that turns toward you.",
+          "after": "Only cold air where it was.",
+          "show_if": [
+            "!court_gallery_pair_defeated",
+            "court_gallery_husk_won"
+          ]
+        }
+      ],
+      "spawn_points": {
+        "entrance": {
+          "tile": [
+            3,
+            4
+          ],
+          "facing": [
+            1,
+            0
+          ]
+        },
+        "chamber_return": {
+          "tile": [
+            28,
+            13
+          ],
+          "facing": [
+            -1,
+            0
+          ]
+        },
+        "almyra": {
+          "tile": [
+            22,
+            5
+          ],
+          "facing": [
+            1,
+            0
+          ]
+        }
+      },
+      "exits": [
+        {
+          "building_id": "court_stair",
+          "tiles": [
+            [
+              2,
+              4
+            ],
+            [
+              2,
+              5
+            ]
+          ],
+          "direction": [
+            -1,
+            0
+          ],
+          "destination_location": "court_stair",
+          "destination_scene": "res://scenes/overworld/court_stair.tscn",
+          "destination_spawn": "gallery_return",
+          "return_spawn": "entrance",
+          "transition_type": "fade",
+          "verb": "Climb"
+        },
+        {
+          "building_id": "court_chamber",
+          "tiles": [
+            [
+              29,
+              12
+            ],
+            [
+              29,
+              13
+            ]
+          ],
+          "direction": [
+            1,
+            0
+          ],
+          "destination_location": "court_chamber",
+          "destination_scene": "res://scenes/overworld/court_chamber.tscn",
+          "destination_spawn": "entrance",
+          "return_spawn": "entrance",
+          "transition_type": "fade",
+          "verb": "Descend",
+          "show_if": [
+            "court_gallery_pair_won"
+          ]
+        }
+      ],
+      "interactions": [
+        {
+          "tile": [
+            9,
+            5
+          ],
+          "verb": "Look",
+          "text": "Rings scorched into the floor, one inside another. People knelt here and tried to answer something. A long time ago."
+        },
+        {
+          "tile": [
+            12,
+            13
+          ],
+          "verb": "Look",
+          "text": "Names cut into the stone, centuries old. Most have been struck through."
+        },
+        {
+          "tile": [
+            21,
+            12
+          ],
+          "verb": "Look",
+          "flag": "found_survey_peg",
+          "text": "A brass survey peg with Avelan markings, snapped in half. Hale's team got this far."
+        }
+      ],
+      "triggers": [
+        {
+          "id": "gallery_almyra",
+          "dialogue": "gallery_almyra",
+          "area": [
+            19,
+            3,
+            8,
+            4
+          ],
+          "once": false,
+          "show_if": [
+            "!court_gallery_husk_won"
+          ]
+        },
+        {
+          "id": "gallery_almyra_freed",
+          "dialogue": "gallery_almyra_freed",
+          "show_if": [
+            "court_gallery_husk_won"
+          ]
+        }
+      ]
+    },
+    "court_chamber": {
+      "id": "court_chamber",
+      "name": "THE RADIAL CHAMBER",
+      "subtitle": "Where the Court still sings",
+      "scene": "res://scenes/overworld/court_chamber.tscn",
+      "rows": [
+        "__________________________",
+        "_########################_",
+        "_########################_",
+        "_#wwwwwwwwwwwwwwwwwwwwww#_",
+        "_#wwwwwwwwwwwwwwwwwwwwww#_",
+        "_#wwwwwwwwwwwwwwwwwwwwww#_",
+        "_#wwwwwwwwwwwwwwwwwwwwww#_",
+        "_#wwwwwwwwwwwwwwwwwwwwww#_",
+        "_#wwwwwwwwwwwwwwwwwwwwww#_",
+        "_#wwwwwwwwwwwwwwwwwwwwww#_",
+        "_#wwwwwwwwwwwwwwwwwwwwww#_",
+        "_#wwwwwwwwwwwwwwwwwwwwww#_",
+        "_#wwwwwwwwwwwwwwwwwwwwww#_",
+        "_#wwwwwwwwwwwwwwwwwwwwww#_",
+        "_#wwwwwwwwwwwwwwwwwwwwww#_",
+        "_########################_",
+        "__________________________"
+      ],
+      "interior": true,
+      "music_id": "hollow_court",
+      "ambience_id": "court",
+      "painted_interior": {
+        "style": "court"
+      },
+      "blocked_symbols": [
+        "#",
+        "_",
+        "~"
+      ],
+      "doors": [],
+      "recovery": {
+        "location": "court_stair",
+        "spawn": "shrine"
+      },
+      "return_grace_steps": 6,
+      "hud_name": "THE RADIAL CHAMBER",
+      "props": [
+        {
+          "asset": "route_stone",
+          "tile": [
+            9,
+            6
+          ]
+        },
+        {
+          "asset": "route_stone",
+          "tile": [
+            15,
+            6
+          ]
+        },
+        {
+          "asset": "route_stone",
+          "tile": [
+            8,
+            9
+          ]
+        },
+        {
+          "asset": "route_stone",
+          "tile": [
+            16,
+            9
+          ]
+        },
+        {
+          "asset": "route_stone",
+          "tile": [
+            9,
+            12
+          ]
+        },
+        {
+          "asset": "route_stone",
+          "tile": [
+            15,
+            12
+          ]
+        },
+        {
+          "asset": "route_rock",
+          "tile": [
+            4,
+            5
+          ]
+        },
+        {
+          "asset": "route_rock",
+          "tile": [
+            20,
+            13
+          ]
+        }
+      ],
+      "lights": [
+        {
+          "tile": [
+            12,
+            8
+          ],
+          "color": "gold"
+        },
+        {
+          "tile": [
+            12,
+            4
+          ],
+          "color": "violet"
+        },
+        {
+          "tile": [
+            4,
+            12
+          ],
+          "color": "gold"
+        },
+        {
+          "tile": [
+            20,
+            5
+          ],
+          "color": "violet"
+        }
+      ],
+      "npcs": [
+        {
+          "name": "Joey",
+          "sprite_key": "townsfolk/farmboy",
+          "dialogue": "",
+          "tile": [
+            19,
+            7
+          ],
+          "facing": [
+            -1,
+            0
+          ],
+          "show_if": [
+            "!kai_bonded"
+          ]
+        },
+        {
+          "name": "Riven Anchor",
+          "sprite_key": "riven_anchor",
+          "dialogue": "",
+          "tile": [
+            12,
+            4
+          ],
+          "facing": [
+            0,
+            1
+          ],
+          "show_if": [
+            "!court_anchor_won"
+          ]
+        },
+        {
+          "name": "The Sealed Choir",
+          "sprite_key": "sealed_choir",
+          "dialogue": "",
+          "tile": [
+            12,
+            4
+          ],
+          "facing": [
+            0,
+            1
+          ],
+          "show_if": [
+            "court_anchor_won",
+            "kai_bonded",
+            "!court_sealed_choir_won"
+          ]
+        },
+        {
+          "name": "Specialist Hale",
+          "sprite_key": "hale",
+          "dialogue": "",
+          "tile": [
+            6,
+            9
+          ],
+          "facing": [
+            1,
+            0
+          ],
+          "show_if": [
+            "kai_bonded"
+          ]
+        },
+        {
+          "name": "Warden Almyra",
+          "sprite_key": "elara",
+          "dialogue": "",
+          "tile": [
+            7,
+            11
+          ],
+          "facing": [
+            1,
+            0
+          ],
+          "show_if": [
+            "kai_bonded"
+          ]
+        }
+      ],
+      "spawn_points": {
+        "entrance": {
+          "tile": [
+            3,
+            12
+          ],
+          "facing": [
+            1,
+            0
+          ]
+        },
+        "centre": {
+          "tile": [
+            12,
+            10
+          ],
+          "facing": [
+            0,
+            -1
+          ]
+        }
+      },
+      "exits": [
+        {
+          "building_id": "court_gallery",
+          "tiles": [
+            [
+              2,
+              12
+            ],
+            [
+              2,
+              13
+            ]
+          ],
+          "direction": [
+            -1,
+            0
+          ],
+          "destination_location": "court_gallery",
+          "destination_scene": "res://scenes/overworld/court_gallery.tscn",
+          "destination_spawn": "chamber_return",
+          "return_spawn": "entrance",
+          "transition_type": "fade",
+          "verb": "Climb"
+        }
+      ],
+      "interactions": [
+        {
+          "tile": [
+            12,
+            8
+          ],
+          "verb": "Look",
+          "show_if": [
+            "!kai_bonded"
+          ],
+          "text": "A disc of gold set into the floor, lines running out from it to every wall. It is warm. It is humming."
+        }
+      ],
+      "triggers": [
+        {
+          "id": "chamber_joey",
+          "dialogue": "chamber_joey",
+          "once": false,
+          "show_if": [
+            "!court_protect_joey_won"
+          ]
+        },
+        {
+          "id": "chamber_anchor",
+          "dialogue": "chamber_anchor",
+          "once": false,
+          "show_if": [
+            "court_protect_joey_won",
+            "!court_anchor_won"
+          ]
+        },
+        {
+          "id": "chamber_bond",
+          "dialogue": "chamber_bond",
+          "show_if": [
+            "court_anchor_won"
+          ]
+        },
+        {
+          "id": "chamber_choir",
+          "dialogue": "chamber_choir",
+          "once": false,
+          "show_if": [
+            "kai_bonded",
+            "!court_sealed_choir_won"
+          ]
+        }
+      ]
+    },
+    "civara_forecourt": {
+      "id": "civara_forecourt",
+      "name": "CIVARA",
+      "subtitle": "The Classification Hall forecourt",
+      "scene": "res://scenes/overworld/civara_forecourt.tscn",
+      "rows": [
+        "##############################",
+        "##############################",
+        "##...........:::::..........##",
+        "##...........:::::..........##",
+        "##...........:::::..........##",
+        "##...........:::::..........##",
+        "##...........:::::..........##",
+        "##..::::::::::::::::::::::..##",
+        "##..::::::::::::::::::::::..##",
+        "##..::::::::::::::::::::::..##",
+        "##..::::::::::::::::::::::..##",
+        "##..::::::::::::::::::::::..##",
+        "##..::::::::::::::::::::::..##",
+        "##..::::::::::::::::::::::..##",
+        "##..::::::::::::::::::::::..##",
+        "##..::::::::::::::::::::::..##",
+        "##..::::::::::::::::::::::..##",
+        "##..::::::::::::::::::::::..##",
+        "##..::::::::::::::::::::::..##",
+        "##..::::::::::::::::::::::..##",
+        "##############################",
+        "##############################"
+      ],
+      "music_id": "civara",
+      "ambience_id": "civara",
+      "interior": false,
+      "painted": {
+        "path_symbols": ":",
+        "path_material": "cobble"
+      },
+      "props": [
+        {
+          "asset": "gate",
+          "tile": [
+            15,
+            6
+          ]
+        },
+        {
+          "asset": "wall",
+          "tile": [
+            10,
+            6
+          ]
+        },
+        {
+          "asset": "wall",
+          "tile": [
+            20,
+            6
+          ]
+        },
+        {
+          "asset": "notice",
+          "tile": [
+            8,
+            9
+          ]
+        },
+        {
+          "asset": "crates",
+          "tile": [
+            23,
+            12
+          ]
+        },
+        {
+          "asset": "crates",
+          "tile": [
+            24,
+            14
+          ]
+        },
+        {
+          "asset": "lamp",
+          "tile": [
+            6,
+            8
+          ]
+        },
+        {
+          "asset": "lamp",
+          "tile": [
+            12,
+            8
+          ]
+        },
+        {
+          "asset": "lamp",
+          "tile": [
+            18,
+            8
+          ]
+        },
+        {
+          "asset": "lamp",
+          "tile": [
+            24,
+            8
+          ]
+        },
+        {
+          "asset": "lamp",
+          "tile": [
+            6,
+            17
+          ]
+        },
+        {
+          "asset": "lamp",
+          "tile": [
+            24,
+            17
+          ]
+        },
+        {
+          "asset": "hedge",
+          "tile": [
+            5,
+            12
+          ]
+        },
+        {
+          "asset": "hedge",
+          "tile": [
+            5,
+            15
+          ]
+        },
+        {
+          "asset": "hedge",
+          "tile": [
+            25,
+            10
+          ]
+        },
+        {
+          "asset": "tree",
+          "tile": [
+            3,
+            4
+          ]
+        },
+        {
+          "asset": "tree",
+          "tile": [
+            27,
+            4
+          ]
+        },
+        {
+          "asset": "tree",
+          "tile": [
+            3,
+            19
+          ]
+        },
+        {
+          "asset": "tree",
+          "tile": [
+            27,
+            19
+          ]
+        }
+      ],
+      "npcs": [
+        {
+          "name": "Avelan Clerk",
+          "sprite_key": "townsfolk/elder_woman",
+          "dialogue": "civara_clerk",
+          "tile": [
+            13,
+            8
+          ],
+          "facing": [
+            0,
+            1
+          ]
+        },
+        {
+          "name": "Warden Almyra",
+          "sprite_key": "elara",
+          "dialogue": "almyra_civara",
+          "tile": [
+            18,
+            9
+          ],
+          "facing": [
+            -1,
+            0
+          ],
+          "show_if": [
+            "!civara_assessment_won"
+          ]
+        },
+        {
+          "name": "Stall Keeper",
+          "sprite_key": "townsfolk/farmhand_capped",
+          "dialogue": "civara_stall",
+          "tile": [
+            22,
+            13
+          ],
+          "facing": [
+            -1,
+            0
+          ]
+        }
+      ],
+      "spawn_points": {
+        "entrance": {
+          "tile": [
+            15,
+            18
+          ],
+          "facing": [
+            0,
+            -1
+          ]
+        },
+        "hall_return": {
+          "tile": [
+            15,
+            8
+          ],
+          "facing": [
+            0,
+            1
+          ]
+        }
+      },
+      "doors": [
+        {
+          "building_id": "hall",
+          "tile": [
+            15,
+            6
+          ],
+          "destination_location": "civara_hall",
+          "destination_scene": "res://scenes/overworld/civara_hall.tscn",
+          "destination_spawn": "entrance",
+          "return_spawn": "hall_return",
+          "locked": false,
+          "locked_dialogue_id": "locked_door",
+          "transition_type": "fade",
+          "verb": "Enter"
+        }
+      ],
+      "exits": [],
+      "interactions": [
+        {
+          "tile": [
+            8,
+            9
+          ],
+          "verb": "Read",
+          "text": "CLASSIFICATION HALL. Registrants report to the clerk. Resonance testing in order of arrival. No Crest demonstrations in the forecourt."
+        },
+        {
+          "tile": [
+            23,
+            12
+          ],
+          "verb": "Browse",
+          "kind": "shop"
+        }
+      ],
+      "lights": [
+        {
+          "tile": [
+            6,
+            8
+          ],
+          "color": "warm"
+        },
+        {
+          "tile": [
+            12,
+            8
+          ],
+          "color": "warm"
+        },
+        {
+          "tile": [
+            18,
+            8
+          ],
+          "color": "warm"
+        },
+        {
+          "tile": [
+            24,
+            8
+          ],
+          "color": "warm"
+        }
+      ],
+      "recovery": {
+        "location": "civara_hall",
+        "spawn": "entrance"
+      },
+      "hud_name": "CIVARA",
+      "triggers": [
+        {
+          "id": "civara_arrive",
+          "dialogue": "civara_arrive"
+        }
+      ],
+      "battle_background": {
+        "rows": [
+          "....................",
+          "....................",
+          "....................",
+          "....................",
+          ",,,,,,,,,,,,,,,,,,,,",
+          ",,,,,,,,,,,,,,,,,,,,",
+          ",,,,,,,,,,,,,,,,,,,,",
+          ",,,,,,,,,,,,,,,,,,,,",
+          ",,,,,,,,,,,,,,,,,,,,"
+        ],
+        "props": [
+          {
+            "asset": "route_oak",
+            "tile": [
+              1,
+              2
+            ]
+          },
+          {
+            "asset": "route_oak",
+            "tile": [
+              5,
+              2
+            ]
+          },
+          {
+            "asset": "route_oak",
+            "tile": [
+              10,
+              2
+            ]
+          },
+          {
+            "asset": "route_oak",
+            "tile": [
+              15,
+              2
+            ]
+          },
+          {
+            "asset": "route_oak",
+            "tile": [
+              19,
+              2
+            ]
+          }
+        ]
+      }
+    },
+    "civara_hall": {
+      "id": "civara_hall",
+      "name": "CLASSIFICATION HALL",
+      "subtitle": "Civara",
+      "scene": "res://scenes/overworld/civara_hall.tscn",
+      "rows": [
+        "______________________",
+        "_####################_",
+        "_####################_",
+        "_#wwwwwwwwwwwwwwwwww#_",
+        "_#wwwwwwwwwwwwwwwwww#_",
+        "_#wwwwwwwwwwwwwwwwww#_",
+        "_#wwwwwwwwwwwwwwwwww#_",
+        "_#wwwwwwwwwwwwwwwwww#_",
+        "_#wwwwwwwwwwwwwwwwww#_",
+        "_#wwwwwwwwwwwwwwwwww#_",
+        "_#wwwwwwwwwwwwwwwwww#_",
+        "_#wwwwwwww::wwwwwwww#_",
+        "_####################_",
+        "______________________"
+      ],
+      "interior": true,
+      "music_id": "civara",
+      "ambience_id": "interior",
+      "painted_interior": {
+        "style": "candlelit"
+      },
+      "props": [
+        {
+          "asset": "counter",
+          "tile": [
+            10,
+            5
+          ]
+        },
+        {
+          "asset": "books",
+          "tile": [
+            4,
+            5
+          ]
+        },
+        {
+          "asset": "books",
+          "tile": [
+            17,
+            5
+          ]
+        },
+        {
+          "asset": "table",
+          "tile": [
+            15,
+            9
+          ]
+        },
+        {
+          "asset": "desk",
+          "tile": [
+            5,
+            9
+          ]
+        }
+      ],
+      "npcs": [
+        {
+          "name": "Liora Sen",
+          "sprite_key": "mira",
+          "dialogue": "liora_hall",
+          "tile": [
+            15,
+            7
+          ],
+          "facing": [
+            -1,
+            0
+          ]
+        },
+        {
+          "name": "Assessor",
+          "sprite_key": "assessor",
+          "dialogue": "assessor_hall",
+          "tile": [
+            6,
+            6
+          ],
+          "facing": [
+            1,
+            0
+          ],
+          "show_if": [
+            "!civara_assessment_won"
+          ]
+        }
+      ],
+      "spawn_points": {
+        "entrance": {
+          "tile": [
+            10,
+            10
+          ],
+          "facing": [
+            0,
+            -1
+          ]
+        }
+      },
+      "doors": [
+        {
+          "building_id": "civara_hall",
+          "tile": [
+            10,
+            12
+          ],
+          "destination_location": "civara_forecourt",
+          "destination_scene": "res://scenes/overworld/civara_forecourt.tscn",
+          "destination_spawn": "hall_return",
+          "return_spawn": "entrance",
+          "locked": false,
+          "locked_dialogue_id": "locked_door",
+          "transition_type": "fade",
+          "verb": "Leave"
+        }
+      ],
+      "interactions": [
+        {
+          "tile": [
+            5,
+            9
+          ],
+          "verb": "Rest",
+          "kind": "recovery",
+          "spawn": "entrance",
+          "text": "A bench for registrants. You sit. Nobody tells you to stand."
+        },
+        {
+          "tile": [
+            17,
+            5
+          ],
+          "verb": "Read",
+          "text": "Six resonance patterns, six columns in a ledger. In every row but one, a single column is ticked."
+        }
+      ],
+      "lights": [
+        {
+          "tile": [
+            5,
+            4
+          ],
+          "color": "warm"
+        },
+        {
+          "tile": [
+            15,
+            8
+          ],
+          "color": "warm"
+        }
+      ],
+      "recovery": {
+        "location": "civara_hall",
+        "spawn": "entrance"
+      },
+      "triggers": [
+        {
+          "id": "civara_classification",
+          "dialogue": "civara_classification",
+          "once": false,
+          "show_if": [
+            "!class_stabilised"
+          ]
+        },
+        {
+          "id": "civara_assess_retry",
+          "dialogue": "civara_assess_retry",
+          "once": false,
+          "show_if": [
+            "class_stabilised",
+            "!civara_assessment_won"
+          ]
+        },
+        {
+          "id": "civara_after",
+          "dialogue": "civara_after",
+          "show_if": [
+            "civara_assessment_won"
+          ]
+        }
+      ]
     }
   }
 }

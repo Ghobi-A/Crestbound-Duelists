@@ -23,7 +23,7 @@ cast:
   - id: kai_unbonded
     name: Kai
     class_id: ""
-    stats: {hp: 92, atk: 58, def: 50, mag: 40, res: 46, spd: 52}
+    stats: {hp: 94, atk: 62, def: 54, mag: 40, res: 46, spd: 54}
     move_ids: [kai_strike, shoulder_check, wild_swing]
     position: front
     sprite_key: kai_unbonded
@@ -77,7 +77,7 @@ cast:
   - id: roadside_tough
     name: Roadside Tough
     class_id: warrior
-    stat_scale: {hp: 0.62, atk: 0.85}
+    stat_scale: {hp: 0.3, atk: 0.5}
     ai_profile: aggressive
     position: front
     sprite_key: riven_raider
@@ -85,7 +85,7 @@ cast:
   - id: greymaw
     name: Old Greymaw
     class_id: assassin
-    stat_scale: {hp: 2.2, def: 1.1}
+    stat_scale: {hp: 2.0, atk: 1.0, def: 1.05}
     position: front
     sprite_key: greymaw
     phases:
@@ -142,7 +142,7 @@ cast:
   - id: sealed_choir
     name: The Sealed Choir
     class_id: neutral
-    stat_scale: {hp: 3.6, mag: 1.15}
+    stat_scale: {hp: 4.4, mag: 1.65, res: 1.1}
     position: front
     sprite_key: sealed_choir
     phases:

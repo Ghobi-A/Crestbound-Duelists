@@ -85,16 +85,19 @@ encounters:
     victory_dialogue: ""
     defeat_dialogue: ""
 
+  # ── Route 01: Kai fights alone (Unbonded) ─────────────────────────
   - id: route01_rowan
     name: Apprentice Rowan
     location: route_01
-    player_slots: 2
+    player_slots: 1
+    player_party: [kai]
     enemy_slots: 1
-    pre_battle_positioning: true
+    pre_battle_positioning: false
     objective: defeat_all
     battlefield_effect: {}
     enemy_party:
-      - {name: Apprentice Rowan, class_id: neutral, crest_id: "", entity_id: "", position: front, sprite_key: route01_rowan}
+      - {name: Apprentice Rowan, class_id: neutral, crest_id: "", entity_id: "", position: front, sprite_key: route01_rowan, ai_profile: legacy, stat_scale: {hp: 0.8, atk: 0.85, mag: 0.85}, affinity: {weak: [impact], resist: []}}
+    rewards: {crowns: 12}
     intro_dialogue: ""
     victory_dialogue: ""
     defeat_dialogue: ""
@@ -102,13 +105,15 @@ encounters:
   - id: route01_squire
     name: Travelling Squire
     location: route_01
-    player_slots: 2
+    player_slots: 1
+    player_party: [kai]
     enemy_slots: 1
-    pre_battle_positioning: true
+    pre_battle_positioning: false
     objective: defeat_all
     battlefield_effect: {}
     enemy_party:
-      - {name: Travelling Squire, class_id: guardian, crest_id: "", entity_id: "", position: front, sprite_key: route01_squire}
+      - {name: Travelling Squire, class_id: guardian, crest_id: "", entity_id: "", position: front, sprite_key: route01_squire, ai_profile: defensive, stat_scale: {hp: 0.8, atk: 1.0}, affinity: {weak: [edge], resist: [impact]}}
+    rewards: {crowns: 14, items: {potion: 1}}
     intro_dialogue: ""
     victory_dialogue: ""
     defeat_dialogue: ""
@@ -116,27 +121,337 @@ encounters:
   - id: route01_challenger
     name: Wandering Challenger
     location: route_01
-    player_slots: 2
+    player_slots: 1
+    player_party: [kai]
     enemy_slots: 1
-    pre_battle_positioning: true
+    pre_battle_positioning: false
     objective: defeat_all
     battlefield_effect: {}
     enemy_party:
-      - {name: Wandering Challenger, class_id: warrior, crest_id: "", entity_id: "", position: front, sprite_key: route01_challenger}
+      - {name: Wandering Challenger, class_id: warrior, crest_id: "", entity_id: "", position: front, sprite_key: route01_challenger, ai_profile: aggressive, stat_scale: {hp: 0.8, atk: 0.75}, affinity: {weak: [impact], resist: [edge]}}
+    rewards: {crowns: 16}
     intro_dialogue: ""
     victory_dialogue: ""
     defeat_dialogue: ""
 
   - id: route01_roadside
-    name: Roadside Raider
+    name: Roadside Toughs
     location: route_01
-    player_slots: 2
+    player_slots: 1
+    player_party: [kai]
+    enemy_slots: 2
+    pre_battle_positioning: false
+    objective: defeat_all
+    battlefield_effect: {}
+    enemy_party:
+      - {build: roadside_tough, name: Roadside Tough}
+      - {build: roadside_tough, name: Roadside Lookout, position: back, class_id: neutral, ai_profile: disruptive, stat_scale: {hp: 0.3, atk: 0.42, mag: 0.42}}
+    rewards: {crowns: 8, once: false}
+    intro_dialogue: ""
+    victory_dialogue: ""
+    defeat_dialogue: ""
+
+  # ── Optional boss: Old Greymaw (docs/VERTICAL_SLICE_SPEC.md 4.9) ──
+  - id: greymaw_den
+    name: Old Greymaw
+    location: route_01
+    player_slots: 1
+    player_party: [kai]
     enemy_slots: 1
+    pre_battle_positioning: false
+    objective: defeat_all
+    battlefield_effect:
+      name: The Old Ridge
+      description: Something under the ridge hums. Resonance runs a little faster here.
+      type: resonance_surge
+      after_round: 0
+      multiplier: 1.25
+      tags: [ruin]
+    enemy_party:
+      - {build: greymaw}
+    music: greymaw_boss
+    retry: true
+    rewards: {crowns: 40, equipment: [greymaw_fang], flags: [greymaw_den_won]}
+    intro_dialogue: ""
+    victory_dialogue: ""
+    defeat_dialogue: ""
+
+  # ── Greymere: Danfor's sparring lesson (the tutorial) ─────────────
+  - id: greymere_spar_danfor
+    name: Sparring with Danfor
+    location: greymere
+    player_slots: 1
+    player_party: [kai]
+    enemy_slots: 1
+    pre_battle_positioning: false
+    objective: defeat_all
+    battlefield_effect: {}
+    enemy_party:
+      - {build: danfor}
+    retry: true
+    tutorial: true
+    rewards: {crowns: 10, items: {potion: 1}, flags: [spar_won]}
+    intro_dialogue: ""
+    victory_dialogue: ""
+    defeat_dialogue: ""
+
+  # ── The Hollow Court (Kai is still Unbonded until the Radial Chamber) ─
+  - id: court_stair_wisp
+    name: A Riven Wisp
+    location: court_stair
+    player_slots: 1
+    player_party: [kai]
+    enemy_slots: 1
+    pre_battle_positioning: false
+    objective: defeat_all
+    battlefield_effect: {}
+    enemy_party:
+      - {build: riven_wisp}
+    music: court_battle
+    retry: true
+    rewards: {crowns: 6}
+    intro_dialogue: ""
+    victory_dialogue: ""
+    defeat_dialogue: ""
+
+  - id: court_stair_pair
+    name: Riven Wisps
+    location: court_stair
+    player_slots: 1
+    player_party: [kai]
+    enemy_slots: 2
+    pre_battle_positioning: false
+    objective: defeat_all
+    battlefield_effect: {}
+    enemy_party:
+      - {build: riven_wisp, position: front, stat_scale: {hp: 0.5, mag: 0.7}}
+      - {build: riven_wisp, stat_scale: {hp: 0.35, mag: 0.55}}
+    music: court_battle
+    retry: true
+    rewards: {crowns: 8, items: {potion: 1}}
+    intro_dialogue: ""
+    victory_dialogue: ""
+    defeat_dialogue: ""
+
+  - id: court_gallery_husk
+    name: A Riven Husk
+    location: court_gallery
+    player_slots: 2
+    player_party: [kai, almyra]
+    enemy_slots: 1
+    pre_battle_positioning: false
+    objective: defeat_all
+    battlefield_effect: {}
+    enemy_party:
+      - {build: riven_husk, stat_scale: {hp: 1.7, atk: 1.15}}
+    music: court_battle
+    retry: true
+    rewards: {crowns: 8}
+    intro_dialogue: ""
+    victory_dialogue: ""
+    defeat_dialogue: ""
+
+  - id: court_gallery_pair
+    name: The Drowned Gallery
+    location: court_gallery
+    player_slots: 2
+    player_party: [kai, almyra]
+    enemy_slots: 2
     pre_battle_positioning: true
     objective: defeat_all
     battlefield_effect: {}
     enemy_party:
-      - {name: Roadside Raider, class_id: warrior, crest_id: "", entity_id: "", position: front, sprite_key: riven_raider}
+      - {build: riven_husk, stat_scale: {hp: 1.1, atk: 1.1}}
+      - {build: riven_wisp}
+    music: court_battle
+    retry: true
+    rewards: {crowns: 10, items: {clearwater: 1}}
+    intro_dialogue: ""
+    victory_dialogue: ""
+    defeat_dialogue: ""
+
+  - id: court_protect_joey
+    name: Hold the Line
+    location: court_chamber
+    player_slots: 2
+    player_party: [kai, joey]
+    enemy_slots: 2
+    pre_battle_positioning: false
+    objective: survive_assault
+    objective_params: {turns_required: 4}
+    battlefield_effect: {}
+    enemy_party:
+      - {build: riven_wisp, position: front}
+      - {build: riven_wisp, stat_scale: {hp: 0.5, mag: 0.8}}
+    music: court_battle
+    retry: true
+    rewards: {}
+    intro_dialogue: ""
+    victory_dialogue: ""
+    defeat_dialogue: ""
+
+  - id: court_anchor
+    name: The Anchor
+    location: court_chamber
+    player_slots: 1
+    player_party: [kai]
+    enemy_slots: 2
+    pre_battle_positioning: false
+    objective: defeat_target
+    battlefield_effect: {}
+    enemy_party:
+      - {build: riven_anchor, position: front, stat_scale: {hp: 0.6, mag: 0.7, spd: 0.6}}
+      - {build: riven_wisp, stat_scale: {hp: 0.35, mag: 0.55}}
+    music: court_battle
+    retry: true
+    rewards: {}
+    intro_dialogue: ""
+    victory_dialogue: ""
+    defeat_dialogue: ""
+
+  # ── The climax: Kai has bonded (Unsettled Crest) ──────────────────
+  - id: court_sealed_choir
+    name: The Sealed Choir
+    location: court_chamber
+    player_slots: 3
+    player_party: [kai, almyra, hale]
+    enemy_slots: 1
+    pre_battle_positioning: true
+    objective: defeat_all
+    battlefield_effect:
+      name: The Radial Chamber
+      description: The Court's old rite is still singing. Resonance answers quickly here.
+      type: resonance_surge
+      after_round: 0
+      multiplier: 1.25
+      tags: [ruin]
+    enemy_party:
+      - {build: sealed_choir}
+    music: choir_boss
+    retry: true
+    rewards: {flags: [choir_defeated]}
+    return: {location: greymere, spawn: aftermath, flags: [hollow_court_cleared]}
+    intro_dialogue: ""
+    victory_dialogue: ""
+    defeat_dialogue: ""
+
+  # ── Joey's wager: the Wandering Challenger wants a rematch ────────
+  - id: joey_wager
+    name: Joey's Wager
+    location: greymere
+    player_slots: 1
+    player_party: [kai]
+    enemy_slots: 1
+    pre_battle_positioning: false
+    objective: defeat_all
+    battlefield_effect: {}
+    enemy_party:
+      - {name: Wandering Challenger, class_id: warrior, crest_id: "", entity_id: "", position: front, sprite_key: route01_challenger, ai_profile: opportunistic, stat_scale: {hp: 0.85, atk: 0.8}, affinity: {weak: [impact], resist: [edge]}}
+    retry: true
+    rewards: {crowns: 10}
+    intro_dialogue: ""
+    victory_dialogue: ""
+    defeat_dialogue: ""
+
+  # ── Civara: the combat assessment (same class, another build) ──
+  - id: civara_assessment_warrior
+    name: Combat Assessment
+    location: civara_hall
+    player_slots: 1
+    player_party: [kai]
+    enemy_slots: 1
+    pre_battle_positioning: false
+    objective: defeat_all
+    battlefield_effect: {}
+    enemy_party:
+      - {name: Avelan Assessor, class_id: warrior, crest_id: crimson_crest, entity_id: iron_tortoise, position: front, sprite_key: assessor, ai_profile: opportunistic, stat_scale: {hp: 0.9, atk: 0.85, mag: 0.85}, move_ids: [hilt_strike, rallying_roar, sundering_blow, bulwark_protocol]}
+    retry: true
+    rewards: {crowns: 30, flags: [civara_assessment_won]}
+    intro_dialogue: ""
+    victory_dialogue: ""
+    defeat_dialogue: ""
+
+  - id: civara_assessment_guardian
+    name: Combat Assessment
+    location: civara_hall
+    player_slots: 1
+    player_party: [kai]
+    enemy_slots: 1
+    pre_battle_positioning: false
+    objective: defeat_all
+    battlefield_effect: {}
+    enemy_party:
+      - {name: Avelan Assessor, class_id: guardian, crest_id: azure_crest, entity_id: glass_mantis, position: front, sprite_key: assessor, ai_profile: opportunistic, stat_scale: {hp: 0.82, atk: 0.8, mag: 0.8}, move_ids: [guard_strike, shield_toss, earthbreaker, prism_severance]}
+    retry: true
+    rewards: {crowns: 30, flags: [civara_assessment_won]}
+    intro_dialogue: ""
+    victory_dialogue: ""
+    defeat_dialogue: ""
+
+  - id: civara_assessment_mage
+    name: Combat Assessment
+    location: civara_hall
+    player_slots: 1
+    player_party: [kai]
+    enemy_slots: 1
+    pre_battle_positioning: false
+    objective: defeat_all
+    battlefield_effect: {}
+    enemy_party:
+      - {name: Avelan Assessor, class_id: mage, crest_id: ember_crest, entity_id: grave_stag, position: front, sprite_key: assessor, ai_profile: opportunistic, stat_scale: {hp: 0.68, atk: 0.7, mag: 0.66}, move_ids: [stone_lance, binding_glyph, starfall, procession_of_antlers]}
+    retry: true
+    rewards: {crowns: 30, flags: [civara_assessment_won]}
+    intro_dialogue: ""
+    victory_dialogue: ""
+    defeat_dialogue: ""
+
+  - id: civara_assessment_sorcerer
+    name: Combat Assessment
+    location: civara_hall
+    player_slots: 1
+    player_party: [kai]
+    enemy_slots: 1
+    pre_battle_positioning: false
+    objective: defeat_all
+    battlefield_effect: {}
+    enemy_party:
+      - {name: Avelan Assessor, class_id: sorcerer, crest_id: eclipse_crest, entity_id: storm_lion, position: front, sprite_key: assessor, ai_profile: opportunistic, stat_scale: {hp: 0.66, atk: 0.7, mag: 0.62}, move_ids: [shadow_lash, withering_curse, null_burst, lionfall_verdict]}
+    retry: true
+    rewards: {crowns: 30, flags: [civara_assessment_won]}
+    intro_dialogue: ""
+    victory_dialogue: ""
+    defeat_dialogue: ""
+
+  - id: civara_assessment_assassin
+    name: Combat Assessment
+    location: civara_hall
+    player_slots: 1
+    player_party: [kai]
+    enemy_slots: 1
+    pre_battle_positioning: false
+    objective: defeat_all
+    battlefield_effect: {}
+    enemy_party:
+      - {name: Avelan Assessor, class_id: assassin, crest_id: glass_crest, entity_id: mirror_fox, position: front, sprite_key: assessor, ai_profile: opportunistic, stat_scale: {hp: 0.8, atk: 0.8, mag: 0.8}, move_ids: [feint_cut, smoke_step, throat_strike]}
+    retry: true
+    rewards: {crowns: 30, flags: [civara_assessment_won]}
+    intro_dialogue: ""
+    victory_dialogue: ""
+    defeat_dialogue: ""
+
+  - id: civara_assessment_neutral
+    name: Combat Assessment
+    location: civara_hall
+    player_slots: 1
+    player_party: [kai]
+    enemy_slots: 1
+    pre_battle_positioning: false
+    objective: defeat_all
+    battlefield_effect: {}
+    enemy_party:
+      - {name: Avelan Assessor, class_id: neutral, crest_id: verdant_crest, entity_id: ash_seraph, position: front, sprite_key: assessor, ai_profile: opportunistic, stat_scale: {hp: 0.88, atk: 0.85, mag: 0.85}, move_ids: [steady_palm, mirror_stance, turning_point]}
+    retry: true
+    rewards: {crowns: 30, flags: [civara_assessment_won]}
     intro_dialogue: ""
     victory_dialogue: ""
     defeat_dialogue: ""

@@ -95,10 +95,16 @@ for key, entries in dialogue.items():
     for entry in entries:
         if "lines" not in entry or not entry["lines"]:
             errors.append(f"dialogue '{key}': entry missing lines")
-    # "staging" marks an authored story scene; only the first entry decides.
-    staging = [entry.get("staging") for entry in entries if "staging" in entry]
-    if staging and (staging != ["scene"] or "staging" not in entries[0]):
-        errors.append(f"dialogue '{key}': staging must be \"scene\" on the first entry only")
+    # "staging" marks an authored story scene. It opens a conversation, or
+    # one of its story variants (an entry whose show_if differs from the
+    # entry before it): DialogueBox keeps the variants whose conditions
+    # hold and stages from the first one shown.
+    for index, entry in enumerate(entries):
+        if "staging" not in entry:
+            continue
+        opens_variant = index == 0 or entry.get("show_if") != entries[index - 1].get("show_if")
+        if entry["staging"] != "scene" or not opens_variant:
+            errors.append(f"dialogue '{key}': staging must be \"scene\" and open the conversation or a story variant")
 
 # 7. Exported data the client expects must be present in game/data.
 for dataset in ["classes", "moves", "combat_config", "crests", "entities",

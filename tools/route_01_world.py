@@ -41,6 +41,11 @@ def add_route(locations):
         (25, 2, 15, 7),
     ]:
         rect(grid, *clearing, ".")
+    # Old Greymaw's den: a narrow game trail off the western clearing, easy
+    # to walk past, opens into a hollow under the ridge (Chapter One canon).
+    rect(grid, 3, 23, 2, 3, ",")
+    rect(grid, 3, 26, 12, 5, ".")
+    rect(grid, 5, 27, 6, 2, ",")
     rect(grid, 0, 0, 60, 2, "#")
     rect(grid, 0, 33, 60, 2, "#")
     rect(grid, 0, 0, 2, 35, "#")
@@ -83,6 +88,11 @@ def add_route(locations):
         prop("crates", 46, 27),
         prop("route_rock", 21, 15),
         prop("route_fence", 8, 22),
+        # The den: torn hedges at the trail mouth, a ransacked camp.
+        prop("hedge", 6, 25),
+        prop("route_rock", 13, 26),
+        prop("crates", 12, 29),
+        prop("route_chest_open", 5, 30),
     ]
     props += [
         prop("route_oak", x, y)
@@ -94,8 +104,6 @@ def add_route(locations):
             (41, 7),
             (48, 7),
             (57, 6),
-            (4, 28),
-            (10, 30),
             (17, 30),
             (22, 30),
             (30, 31),
@@ -150,6 +158,17 @@ def add_route(locations):
             after="A fine match. The road beyond the north gate is closed for now.",
         ),
     ]
+    greymaw = dict(
+        npc("Old Greymaw", "greymaw", "", 10, 28, (-1, 0)),
+        id="greymaw_den",
+        encounter="greymaw_den",
+        sight=3,
+        intro="A low growl rolls out of the hollow. Old Greymaw rises — bigger than the stories, its eyes catching a strange gold light.",
+        after="The den is quiet now.",
+        # Gone once beaten; out of reach once the cordon closes the chapter's
+        # ridge country (docs/VERTICAL_SLICE_SPEC.md, progression gates).
+        show_if=["!greymaw_den_defeated", "stage<incident"],
+    )
     route = {
         "id": "route_01",
         "name": "Greymere Outskirts — Route 01",
@@ -183,6 +202,7 @@ def add_route(locations):
             }
         ],
         "npcs": trainers
+        + [greymaw]
         + [
             dict(
                 npc("Roadside Traveller", "townsfolk/elder_woman", "", 29, 25, (0, -1)),
@@ -207,6 +227,34 @@ def add_route(locations):
                 "tile": [54, 6],
                 "verb": "Read",
                 "text": "North road closed. The next region will open in a future chapter.",
+            },
+            # Foreshadowing on the main road, then the trail itself.
+            {
+                "tile": [12, 21],
+                "verb": "Look",
+                "text": "Paw prints the size of a dinner plate, pressed deep into the mud. They head south, off the road.",
+                "flag": "greymaw_tracks_found",
+            },
+            {
+                "tile": [4, 22],
+                "verb": "Look",
+                "text": "Claw marks score the bank. Something heavy has been using this gap in the hedge.",
+                "flag": "greymaw_tracks_found",
+            },
+            {
+                "tile": [5, 30],
+                "verb": "Search",
+                "kind": "chest",
+                "flag": "greymaw_camp_searched",
+                "item": "hi_potion",
+                "quantity": 1,
+                "text": "A traveller's camp, torn apart. The bedroll is shredded and the food sack is gone. A Hi-Potion survived, wedged under the chest.",
+            },
+            {
+                "tile": [10, 28],
+                "verb": "Look",
+                "text": "Old Greymaw's hollow. Grey fur snagged on every root, and the ground still warm. The ridge hums faintly underfoot.",
+                "show_if": ["greymaw_den_defeated"],
             },
         ],
         "encounter_zones": [

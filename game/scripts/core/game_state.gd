@@ -39,6 +39,9 @@ var player_crest_id := ""
 ## "story" writes saves; "quick" (Quick Battle) never touches the story save.
 var mode := "story"
 var story_stage := "morning"
+## Chapter One in order (docs/VERTICAL_SLICE_SPEC.md). Map objects gate on
+## these with show_if "stage>=..." / "stage<..." (WorldCatalog.present).
+const STORY_STAGES := ["morning", "village", "abnormal", "cordon", "incident", "aftermath", "civara", "complete"]
 
 # The roster: member dictionaries with a stable "id" ("kai", "almyra",
 # ...): {id, name, cast?, class_id, crest_id, entity_id, position,
@@ -105,6 +108,8 @@ func start_story() -> void:
 	pending_encounter = ""
 	party = [new_member("kai", "kai_unbonded")]
 	party[0]["unlocked_moves"] = cast_build("kai_unbonded").get("move_ids", []).duplicate()
+	# Danfor keeps the south road shut until the morning's lesson.
+	set_flag("south_road_closed")
 
 
 func start_new_game(class_id: String) -> void:
@@ -310,6 +315,7 @@ func stabilise_class(class_id: String) -> void:
 	kai["loadout"] = GameData.get_class_record(class_id).get("move_ids", []).duplicate()
 	kai["unlocked_moves"] = GameData.get_class_record(class_id).get("move_ids", []).duplicate()
 	kai.erase("current_hp")
+	set_flag("class_" + class_id)
 	set_flag("class_stabilised")
 
 
@@ -353,6 +359,18 @@ func set_flag(flag_name: String, value: bool = true) -> void:
 	if changed and value:
 		flag_changed.emit(flag_name)
 		_update_quests(flag_name)
+
+
+func stage_index(stage: String) -> int:
+	return STORY_STAGES.find(stage)
+
+
+func advance_stage(stage: String) -> void:
+	## Stages only move forward; replaying a beat never rewinds the chapter.
+	if stage_index(stage) > stage_index(story_stage):
+		story_stage = stage
+		# Quests and dialogue can key off a stage like any other flag.
+		set_flag("stage_" + stage)
 
 
 func has_flag(flag_name: String) -> bool:
@@ -528,7 +546,7 @@ func collect_world_item(item: Dictionary) -> String:
 	var flag := str(item.get("flag", ""))
 	var id := str(item.get("item", ""))
 	var quantity := int(item.get("quantity", 1))
-	if has_flag(flag): return "The chest is empty."
+	if has_flag(flag): return "Nothing else here." if str(item.get("text", "")) != "" else "The chest is empty."
 	if str(item.get("equipment", "")) != "" and flag != "":
 		var charm_id := str(item.equipment)
 		var charm := GameData.get_equipment(charm_id)
@@ -542,7 +560,9 @@ func collect_world_item(item: Dictionary) -> String:
 	inventory[id] = int(inventory.get(id, 0)) + quantity
 	set_flag(flag)
 	SaveManager.save_game()
-	return "Found %d × %s." % [quantity, str(record.name)]
+	var found := "Found %d × %s." % [quantity, str(record.name)]
+	# A searched spot can describe itself before the find.
+	return found if str(item.get("text", "")) == "" else "%s\n%s" % [str(item.text), found]
 
 
 # ── Persistence ──────────────────────────────────────────────────────
