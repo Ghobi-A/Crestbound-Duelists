@@ -1,7 +1,7 @@
 {
   "almyra": {
-    "head_ratio": 0.293,
-    "width_ratio": 0.664
+    "head_ratio": 0.287,
+    "width_ratio": 0.696
   },
   "cassian": {
     "head_ratio": 0.378,
@@ -12,8 +12,8 @@
     "width_ratio": 0.689
   },
   "danfor": {
-    "head_ratio": 0.325,
-    "width_ratio": 0.745
+    "head_ratio": 0.293,
+    "width_ratio": 0.716
   },
   "ferris": {
     "head_ratio": 0.294,
@@ -52,8 +52,8 @@
     "width_ratio": 0.704
   },
   "kai_unbonded": {
-    "head_ratio": 0.302,
-    "width_ratio": 0.585
+    "head_ratio": 0.439,
+    "width_ratio": 0.412
   },
   "kai_warrior": {
     "head_ratio": 0.281,
