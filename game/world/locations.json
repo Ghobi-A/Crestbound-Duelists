@@ -1297,6 +1297,10 @@
             1
           ],
           "once": false,
+          "step_back": [
+            0,
+            -1
+          ],
           "show_if": [
             "south_road_closed"
           ]

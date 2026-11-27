@@ -66,6 +66,35 @@ func check_real_arrival() -> void:
 	get_tree().current_scene = null
 	house.queue_free()
 	await get_tree().process_frame
+	await check_closed_south_road()
+
+
+func check_closed_south_road() -> void:
+	## Playtest softlock: before the lesson, stepping onto the south road
+	## played Danfor's line, and closing it played it again from the same
+	## tile, forever. The line plays once and Kai is turned back north.
+	var town: WorldLocation = load("res://scenes/overworld/greymere.tscn").instantiate()
+	add_child(town)
+	await get_tree().process_frame
+	await get_tree().process_frame
+	while town._dialogue.active:
+		town._dialogue.complete_reveal()
+		town._dialogue.confirm()
+	var road := Vector2i(17, 31)
+	town._player.tile = road
+	town._on_player_stepped(road)
+	check(town._dialogue.active and town._dialogue._current_key == "south_road_closed", "Danfor stops Kai at the closed south road")
+	var lines := 0
+	while town._dialogue.active and lines < 20:
+		town._dialogue.complete_reveal()
+		town._dialogue.confirm()
+		lines += 1
+	await get_tree().process_frame
+	check(not town._dialogue.active and lines < 20, "the closed-road line does not loop")
+	check(town._player.tile == road + Vector2i.UP, "Kai is turned back off the closed road")
+	check(not town.movement_blocked(), "Kai can walk again after the closed road")
+	town.queue_free()
+	await get_tree().process_frame
 
 
 func press(node: Node, action: String) -> void:

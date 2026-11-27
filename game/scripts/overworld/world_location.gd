@@ -8,6 +8,8 @@ var _player: OverworldPlayer
 var _camera: Camera2D
 var _dialogue: DialogueBox
 var _hud: WorldHud
+var _last_trigger := ""  # the trigger whose line is playing or just played
+var _turn_back := Vector2i.ZERO  # its step_back, applied when the line closes
 var _trade: TradePanel
 var _npc_tiles: Dictionary = {}
 var _blocked: Dictionary = {}
@@ -366,7 +368,12 @@ func _on_dialogue_finished(_key: String) -> void:
 			CinematicPlayer.play_next(str(next.cinematic), str(next.get("scene", "")))
 		SceneTransition.change_scene(CINEMATIC_SCENE if next.has("cinematic") else str(next.scene), "fade")
 		return
-	elif not _dialogue.active and _run_triggers(_player.tile, false):
+	elif _turn_back != Vector2i.ZERO:
+		# A closed way (a guard's "not yet"): step Kai back out of it, so the
+		# same line cannot fire again while he stands there.
+		_step_player_back(_turn_back)
+		_turn_back = Vector2i.ZERO
+	elif not _dialogue.active and _run_triggers(_player.tile, false, _last_trigger):
 		return
 	if _pending_world_encounter != "":
 		var encounter := _pending_world_encounter
@@ -448,7 +455,17 @@ func _arrival_triggers() -> void:
 		_run_triggers(_player.tile, true)
 
 
-func _run_triggers(tile: Vector2i, entering: bool) -> bool:
+func _step_player_back(direction: Vector2i) -> void:
+	var to := _player.tile + direction
+	_player.tile = to
+	_player.position = Vector2(to * _player.TILE) + Vector2(_player.TILE / 2.0, _player.TILE / 2.0)
+	_player.facing = direction
+	if _player._has_sheet:
+		_player._sprite.set_facing(direction)
+	_remember_position()
+
+
+func _run_triggers(tile: Vector2i, entering: bool, skip_id := "") -> bool:
 	## Authored story beats: {id, dialogue, show_if?, area?: [x, y, w, h],
 	## once?: true}. Without an area a trigger fires on arriving; with one,
 	## on stepping into it. A one-shot trigger records "seen_<id>"; a battle
@@ -457,6 +474,9 @@ func _run_triggers(tile: Vector2i, entering: bool) -> bool:
 	if _dialogue.active or SceneTransition._busy or not GameState.world_battle.is_empty():
 		return false
 	for trigger in definition.get("triggers", []):
+		# The beat that just played does not fire again from where it fired.
+		if skip_id != "" and str(trigger.id) == skip_id:
+			continue
 		var once := bool(trigger.get("once", true))
 		if once and GameState.has_flag("seen_" + str(trigger.id)):
 			continue
@@ -470,6 +490,9 @@ func _run_triggers(tile: Vector2i, entering: bool) -> bool:
 			continue
 		if once:
 			GameState.set_flag("seen_" + str(trigger.id))
+		_last_trigger = str(trigger.id)
+		var back: Array = trigger.get("step_back", [])
+		_turn_back = Vector2i(int(back[0]), int(back[1])) if back.size() == 2 else Vector2i.ZERO
 		_play_dialogue(str(trigger.dialogue))
 		return true
 	return false

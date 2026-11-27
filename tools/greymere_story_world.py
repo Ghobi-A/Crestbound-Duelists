@@ -81,6 +81,7 @@ def add_story(locations):
     town["triggers"] = [
         {"id": "after_spar", "dialogue": "after_spar", "show_if": ["greymere_spar_danfor_won"]},
         {"id": "south_road_closed", "dialogue": "south_road_closed", "area": [16, 31, 3, 1], "once": False,
+         "step_back": [0, -1],
          "show_if": ["south_road_closed"]},
         # Abnormal signs: after Silas's question and a first taste of the road,
         # or once every trainer on Route 01 has been beaten.
