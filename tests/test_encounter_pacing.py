@@ -21,5 +21,9 @@ def test_random_encounters_need_a_minimum_distance_and_stay_rare():
 
 def test_arrival_grace_applies_on_every_entry_not_only_the_first():
     world = (ROOT / "game/scripts/overworld/world_location.gd").read_text()
-    assert "var arriving := GameState.location_id != location_id" in world
+    # WorldCatalog.travel stamps the destination before the scene loads, so the
+    # arrival is detected from the recorded departure, not the location id.
+    assert 'var arriving := GameState.arrived_from != "" and GameState.arrived_from != location_id' in world
+    catalog = (ROOT / "game/scripts/overworld/world_catalog.gd").read_text()
+    assert catalog.index("GameState.arrived_from = GameState.location_id") < catalog.index("GameState.location_id = str(door.destination_location)")
     assert 'maxi(int(_encounter_state.get("cooldown", 0)), int(definition.get("arrival_grace_steps", 0)))' in world

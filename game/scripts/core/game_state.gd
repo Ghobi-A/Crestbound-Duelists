@@ -40,6 +40,9 @@ var player_tile := Vector2i(11, 9)
 var flags: Dictionary = {}  # e.g. {"hollow_court_cleared": true}
 var location_id := "greymere"
 var location_spawn := "approach"
+# Transient: the location a door or road exit just left, so the next
+# location can tell a real arrival from a reload or a battle return.
+var arrived_from := ""
 var location_revision := 1
 var player_facing := Vector2i(0,-1)
 var world_encounters: Dictionary = {} # saved cooldowns and RNG states by location

@@ -28,6 +28,7 @@ func _ready() -> void:
 	check(WorldCatalog.travel(exit), "travel out of town")
 	await settled()
 	check(world.location_id == "route_01" and world._player.tile == Vector2i(5,18), "safe route arrival")
+	check(int(world._encounter_state.cooldown) >= int(world.definition.arrival_grace_steps), "arrival grace applied on a real road exit")
 	check(world.is_walkable(world._player.tile), "route spawn walkable")
 	check(not world.is_walkable(Vector2i(8,22)) and not world.is_walkable(Vector2i(21,15)), "fences and rocks have collision")
 	check(WorldCatalog.travel(world.definition.exits[0]), "return to town")

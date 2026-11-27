@@ -16,6 +16,13 @@ const out = process.env.CRESTBOUND_QA_OUT || '.';
 const browser = await chromium.launch({args:['--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader','--autoplay-policy=no-user-gesture-required']});
 const page = await browser.newPage({viewport:{width:1280,height:720}});
 const errors = [];
+// CRESTBOUND_QA_CPU_THROTTLE=4 slows the page's CPU like a CI runner, to
+// prove the walk waits on the game rather than on timing.
+const throttle = Number(process.env.CRESTBOUND_QA_CPU_THROTTLE || 1);
+if (throttle > 1) {
+  const cdp = await page.context().newCDPSession(page);
+  await cdp.send('Emulation.setCPUThrottlingRate', {rate: throttle});
+}
 page.on('pageerror', error => errors.push(String(error)));
 await page.addInitScript(() => {
   // Record every sound Godot starts: Web Audio buffers (sample playback)
@@ -38,6 +45,36 @@ const audio = async () => page.evaluate(() => ({
 const since = (log, from) => log.starts.filter(s => s.at >= from);
 const now = () => page.evaluate(() => performance.now());
 const hold = async (key, ms) => { await page.keyboard.down(key); await page.waitForTimeout(ms); await page.keyboard.up(key); };
+// Poll the audio log until `test` passes; CI runners are slow and scene
+// loads take seconds, so the walk waits on what the game reports, never on
+// fixed delays.
+const until = async (test, ms, label) => {
+  const end = Date.now() + ms;
+  while (Date.now() < end) {
+    const current = await audio();
+    if (test(current)) return current;
+    await page.waitForTimeout(250);
+  }
+  assert.fail(`timed out after ${ms} ms waiting for ${label}`);
+};
+// Hold a direction until `test` passes, pressing it afresh every few seconds:
+// a key already held when a new area loads is not a new press there.
+const holdUntil = async (key, test, ms, label) => {
+  const end = Date.now() + ms;
+  while (Date.now() < end) {
+    await page.keyboard.down(key);
+    const until_press = Math.min(end, Date.now() + 3000);
+    while (Date.now() < until_press) {
+      if (test(await audio())) { await page.keyboard.up(key); return; }
+      await page.waitForTimeout(200);
+    }
+    await page.keyboard.up(key);
+    await page.waitForTimeout(150);
+  }
+  assert.fail(`timed out after ${ms} ms holding ${key} for ${label}`);
+};
+const travelTimes = (log, from) => since(log, from).filter(s => s.seconds > 1.0 && s.seconds < 1.4).map(s => s.at);
+const travels = (log, from) => travelTimes(log, from).length;
 
 await page.goto(base);
 await page.locator('canvas[data-ready="true"]').waitFor({timeout:120000});
@@ -75,16 +112,21 @@ assert.ok(narration.length >= 2, `narration lines did not start: ${JSON.stringif
 // above the south road's edge, so holding Down walks off it onto Route 01
 // with no button press; holding Left walks back through the route's west
 // mouth into town.
+let skipped = await now();
 await hold('z', 2600);
-await page.waitForTimeout(3500);
+log = await until(l => since(l, skipped).some(s => s.seconds > 15 && s.seconds < 20), 30000, 'Greymere ambience');
+await page.waitForTimeout(1500);   // the fade into town finishes
 await page.screenshot({path:`${out}/web-greymere.png`});
-log = await audio();
-assert.ok(log.starts.some(s => s.seconds > 15 && s.seconds < 20), 'Greymere ambience did not start');
 mark = await now();
-await hold('ArrowDown', 1400);
+await holdUntil('ArrowDown', l => travels(l, mark) >= 1, 20000, 'the south road exit');
+// Route 01 has loaded once music starts after the crossing; let the fade finish.
+const left = travelTimes(await audio(), mark)[0];
+await until(l => since(l, left).some(s => s.seconds > 30), 30000, 'Route 01 music');
 await page.waitForTimeout(1500);
 await page.screenshot({path:`${out}/web-route-01.png`});
-await hold('ArrowLeft', 1400);
+await holdUntil('ArrowLeft', l => travels(l, mark) >= 2, 25000, 'the route\'s west mouth');
+const back = travelTimes(await audio(), mark)[1];
+await until(l => since(l, back).some(s => s.seconds > 30), 30000, 'Greymere music on return');
 await page.waitForTimeout(1500);
 await page.screenshot({path:`${out}/web-route-return.png`});
 log = await audio();
@@ -92,7 +134,7 @@ const walk = since(log, mark);
 // Footsteps are the 0.26-0.34 s buffers; the road travel sound is 1.2 s.
 const steps = walk.filter(s => s.seconds > 0.2 && s.seconds < 0.4);
 assert.ok(steps.length >= 3, `footsteps did not play: ${steps.length}`);
-assert.equal(walk.filter(s => s.seconds > 1.0 && s.seconds < 1.4).length, 2, 'expected two road crossings (out and back)');
+assert.equal(travels(log, mark), 2, 'expected two road crossings (out and back)');
 await page.keyboard.press('Escape');
 await page.waitForTimeout(300);
 await page.screenshot({path:`${out}/web-menu.png`});

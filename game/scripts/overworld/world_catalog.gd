@@ -33,6 +33,7 @@ static func travel(door: Dictionary) -> bool:
 	if not ResourceLoader.exists(str(destination.scene)):
 		push_error("Missing location scene: " + str(destination.scene))
 		return false
+	GameState.arrived_from = GameState.location_id
 	GameState.location_id = str(door.destination_location)
 	GameState.location_spawn = str(door.destination_spawn)
 	GameState.current_scene = str(destination.scene)
