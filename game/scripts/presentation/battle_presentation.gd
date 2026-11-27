@@ -48,7 +48,9 @@ func play_events(action: Dictionary, events: Array) -> void:
 				target = event.get("target", target)
 				hud.set_message("%s  ·  %s" % [actor.display_name, event.label])
 				if sprites.has(actor): sprites[actor].play("attack")
-				AudioRouter.play_sfx("battle", "heavy_physical" if weight == "gambit" else impact_kind)
+				# A creature's move names its own sound in moves.yaml (sfx); the rest swing.
+				var own_sfx := str(move.get("sfx", ""))
+				AudioRouter.play_sfx("battle", own_sfx if own_sfx != "" else ("heavy_physical" if weight == "gambit" else impact_kind))
 				# Authored attacks land on their contact frame, never mid wind-up.
 				var windup := ANTICIPATION if weight == "basic" else ANTICIPATION_HEAVY
 				if sprites.has(actor):
@@ -114,6 +116,7 @@ func play_events(action: Dictionary, events: Array) -> void:
 				var result: Dictionary = event.get("presentation_result", {})
 				if int(result.get("gained", 0)) >= 10 and sprites.has(event.unit):
 					floats.show_float(event.unit, sprites[event.unit].effect_origin(), "resonance", str(result.gained))
+					AudioRouter.play_sfx("battle", "resonance_gain")
 			_:
 				await play_extra_event(event)
 		for sprite in sprites.values(): sprite.refresh()
@@ -145,7 +148,10 @@ func play_extra_event(event: Dictionary) -> void:
 			_float(event.unit, "resonance", "READY")
 			AudioRouter.play_sfx("battle", "resonance_ready")
 		"resonance":
-			if int(event.get("amount", 0)) >= 5: _float(event.unit, "resonance", str(event.amount))
+			# Gains from one hit arrive together; the router drops repeats within 45 ms.
+			if int(event.get("amount", 0)) >= 5:
+				_float(event.unit, "resonance", str(event.amount))
+				AudioRouter.play_sfx("battle", "resonance_gain")
 		"heal", "revive":
 			_float(event.target, "heal", str(event.amount))
 			AudioRouter.play_sfx("battle", "heal")

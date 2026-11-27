@@ -15,6 +15,9 @@
 #   dispel_buffs    true: strips the target's positive modifiers
 #   aftermath_self_statuses: statuses on the user, hit or miss
 #   status_effects[].value: damage per round for "dot" statuses
+#   sfx             presentation only: a battle sound cue (game/assets/audio/
+#                   sfx/battle/<sfx>.ogg) played as the move starts, in place
+#                   of the generic swing; no combat effect
 # class_id is a class for the six class pools (default kit in
 # classes.yaml move_ids, alternatives in unlockable_moves), or one of:
 # kai (Kai's provisional kits), entity (Bonded Entity granted moves),
@@ -1133,6 +1136,7 @@ moves:
     tags: [beast]
     animation_key: slash
     vfx_key: slash_arc
+    sfx: beast_snarl
     ai_tags: [damage]
     speed: 5
 
@@ -1157,6 +1161,7 @@ moves:
     tags: [beast, debuff]
     animation_key: slash
     vfx_key: quick_flash
+    sfx: beast_snarl
     ai_tags: [damage, debuff]
 
   - id: greymaw_rend
@@ -1180,6 +1185,7 @@ moves:
     tags: [beast, bleed]
     animation_key: heavy_slash
     vfx_key: cripple_slash
+    sfx: beast_claw
     ai_tags: [damage]
 
   - id: greymaw_pounce
@@ -1203,6 +1209,7 @@ moves:
     tags: [beast, telegraph]
     animation_key: charge
     vfx_key: dust_trail
+    sfx: beast_roar
     ai_tags: [damage]
     telegraph: true
     aftermath_self_statuses: [{status: exposed, duration: 1}]
@@ -1228,6 +1235,7 @@ moves:
     tags: [beast, dispel]
     animation_key: buff
     vfx_key: focus_aura
+    sfx: beast_howl
     ai_tags: [dispel]
     dispel_buffs: true
 
@@ -1252,6 +1260,7 @@ moves:
     tags: [beast]
     animation_key: slash
     vfx_key: cripple_slash
+    sfx: beast_claw
     ai_tags: [damage]
     speed: 10
 
@@ -1279,6 +1288,7 @@ moves:
     tags: [riven]
     animation_key: bolt
     vfx_key: arcane_bolt
+    sfx: riven_hum
     ai_tags: [damage]
 
   - id: wisp_chill
@@ -1302,6 +1312,7 @@ moves:
     tags: [riven, debuff]
     animation_key: bolt
     vfx_key: mind_shards
+    sfx: riven_hum
     ai_tags: [damage, debuff]
 
   - id: husk_slam
@@ -1325,6 +1336,7 @@ moves:
     tags: [riven]
     animation_key: bash
     vfx_key: shield_impact
+    sfx: riven_slam
     ai_tags: [damage]
 
   - id: husk_grind
@@ -1348,6 +1360,7 @@ moves:
     tags: [riven, guard_break]
     animation_key: heavy_slash
     vfx_key: avalanche_rocks
+    sfx: riven_slam
     ai_tags: [damage]
 
   - id: anchor_pulse
@@ -1371,6 +1384,7 @@ moves:
     tags: [riven]
     animation_key: bolt
     vfx_key: overload_burst
+    sfx: riven_pulse
     ai_tags: [damage]
 
   - id: anchor_seal
@@ -1394,6 +1408,7 @@ moves:
     tags: [riven, buff]
     animation_key: buff
     vfx_key: fortify_glow
+    sfx: riven_pulse
     ai_tags: [buff]
 
   - id: choir_toll
@@ -1417,6 +1432,7 @@ moves:
     tags: [riven]
     animation_key: bolt
     vfx_key: overload_burst
+    sfx: choir_toll
     ai_tags: [damage]
 
   - id: choir_dirge
@@ -1440,6 +1456,7 @@ moves:
     tags: [riven, curse]
     animation_key: curse
     vfx_key: hex_sigil
+    sfx: choir_chant
     ai_tags: [damage]
 
   - id: choir_requiem
@@ -1463,6 +1480,7 @@ moves:
     tags: [riven, telegraph, area]
     animation_key: burst
     vfx_key: voidfire_pillar
+    sfx: choir_chant
     ai_tags: [damage]
     telegraph: true
 
@@ -1487,6 +1505,7 @@ moves:
     tags: [riven]
     animation_key: heavy_slash
     vfx_key: avalanche_rocks
+    sfx: choir_shatter
     ai_tags: [damage]
 
 

@@ -17,6 +17,7 @@
     "range": 3,
     "resource_cost": 0,
     "self_stat_mods": [],
+    "sfx": "riven_pulse",
     "slot": "basic",
     "status_effects": [],
     "tags": [
@@ -54,6 +55,7 @@
         "stat": "res"
       }
     ],
+    "sfx": "riven_pulse",
     "slot": "signature",
     "status_effects": [],
     "tags": [
@@ -251,6 +253,7 @@
     "range": 1,
     "resource_cost": 0,
     "self_stat_mods": [],
+    "sfx": "choir_shatter",
     "slot": "gambit",
     "status_effects": [],
     "tags": [
@@ -279,6 +282,7 @@
     "range": 3,
     "resource_cost": 0,
     "self_stat_mods": [],
+    "sfx": "choir_chant",
     "slot": "signature",
     "status_effects": [
       {
@@ -314,6 +318,7 @@
     "range": 3,
     "resource_cost": 0,
     "self_stat_mods": [],
+    "sfx": "choir_chant",
     "slot": "gambit",
     "status_effects": [],
     "tags": [
@@ -345,6 +350,7 @@
     "range": 3,
     "resource_cost": 0,
     "self_stat_mods": [],
+    "sfx": "choir_toll",
     "slot": "basic",
     "status_effects": [],
     "tags": [
@@ -656,6 +662,7 @@
         "stat": "spd"
       }
     ],
+    "sfx": "beast_snarl",
     "slot": "signature",
     "status_effects": [],
     "tags": [
@@ -690,6 +697,7 @@
     "range": 1,
     "resource_cost": 0,
     "self_stat_mods": [],
+    "sfx": "beast_claw",
     "slot": "basic",
     "speed": 10,
     "status_effects": [],
@@ -720,6 +728,7 @@
     "range": 1,
     "resource_cost": 0,
     "self_stat_mods": [],
+    "sfx": "beast_howl",
     "slot": "signature",
     "status_effects": [],
     "tags": [
@@ -749,6 +758,7 @@
     "range": 1,
     "resource_cost": 0,
     "self_stat_mods": [],
+    "sfx": "beast_snarl",
     "slot": "basic",
     "speed": 5,
     "status_effects": [],
@@ -784,6 +794,7 @@
     "range": 1,
     "resource_cost": 0,
     "self_stat_mods": [],
+    "sfx": "beast_roar",
     "slot": "gambit",
     "status_effects": [],
     "tags": [
@@ -814,6 +825,7 @@
     "range": 1,
     "resource_cost": 0,
     "self_stat_mods": [],
+    "sfx": "beast_claw",
     "slot": "signature",
     "status_effects": [
       {
@@ -962,6 +974,7 @@
     "range": 1,
     "resource_cost": 0,
     "self_stat_mods": [],
+    "sfx": "riven_slam",
     "slot": "gambit",
     "status_effects": [],
     "tags": [
@@ -991,6 +1004,7 @@
     "range": 1,
     "resource_cost": 0,
     "self_stat_mods": [],
+    "sfx": "riven_slam",
     "slot": "basic",
     "status_effects": [],
     "tags": [
@@ -1991,6 +2005,7 @@
     "range": 3,
     "resource_cost": 0,
     "self_stat_mods": [],
+    "sfx": "riven_hum",
     "slot": "signature",
     "status_effects": [],
     "tags": [
@@ -2025,6 +2040,7 @@
     "range": 3,
     "resource_cost": 0,
     "self_stat_mods": [],
+    "sfx": "riven_hum",
     "slot": "basic",
     "status_effects": [],
     "tags": [

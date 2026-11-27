@@ -58,6 +58,19 @@ def test_every_computed_cue_has_a_sound():
     assert all(f'"{s}"' in surfaces for s in ("cobble", "dirt", "grass", "wood"))
 
 
+def test_every_move_sound_exists():
+    # Creature moves name their own battle cue (moves.yaml `sfx`), played by
+    # BattlePresentation in place of the generic swing.
+    import loaders
+
+    named = {move_id: move["sfx"] for move_id, move in loaders.load_moves().items() if move.get("sfx")}
+    assert {"greymaw_pounce", "wisp_flicker", "husk_slam", "anchor_pulse", "choir_requiem"} <= set(named)
+    missing = sorted(f"{move_id}: battle/{cue}" for move_id, cue in named.items() if not resolves("battle", cue))
+    assert not missing, missing
+    exported = json.loads((GAME / "data/moves.json").read_text(encoding="utf-8"))
+    assert all(exported[move_id].get("sfx") == cue for move_id, cue in named.items()), "re-run export_game_data.py"
+
+
 def test_every_location_ambience_exists():
     locations = json.loads((GAME / "world/locations.json").read_text())["locations"]
     ids = {str(loc.get("ambience_id", "")) for loc in locations.values()}

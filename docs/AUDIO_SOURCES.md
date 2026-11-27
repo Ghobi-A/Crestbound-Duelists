@@ -79,6 +79,17 @@ music's loudest 100 ms sits near −15 dBFS.
 | `battle/block` | A hit on a braced target |
 | `battle/brace`, `hex`, `heal`, `miss`, `ko`, `awakening` | Those battle events |
 | `battle/victory`, `battle/defeat` | The result screen |
+| `battle/beast_snarl`, `beast_claw`, `beast_roar`, `beast_howl` | Old Greymaw's moves (Lunge and Feint, Rend and Frenzied Rend, Pounce, Howl) |
+| `battle/riven_hum`, `riven_slam`, `riven_pulse` | The Riven Wisp, Husk and Anchor's moves |
+| `battle/choir_toll`, `choir_chant`, `choir_shatter` | The Sealed Choir's Toll, Dirge and Requiem, and Collapse |
+| `battle/resonance_gain` | A Resonance gain big enough to show a number (5 or more) |
+| `ui/quest` | A quest starting, moving on or completing; the line shows under the location plate once any conversation has closed |
+
+A move names its own sound with an optional `sfx` key in `data/moves.yaml`,
+which plays as the move starts in place of the generic swing. It is
+presentation data and changes nothing in combat. The creature and Resonance
+cues were generated with ElevenLabs on 2026-11-27, from the prompts in the
+cue list.
 
 ## The opening movie
 
@@ -88,7 +99,9 @@ The narration, the opening theme and the opening's own sound effects
 
 ## Not verified
 
-These levels are measured, not listened to. Judge the mix by ear in the
+These levels are measured, not listened to. That includes the creature
+and Resonance cues: their spectrograms and levels were checked, but nobody
+has heard them yet. Judge the mix by ear in the
 game and the web build, and adjust a cue's `level` in the cue list, then
 rebuild.
 

@@ -19,6 +19,7 @@ deep copies so callers can't mutate the cache.
 from __future__ import annotations
 
 import copy
+import re
 from functools import lru_cache
 from pathlib import Path
 from typing import Any, Callable, Optional
@@ -259,6 +260,9 @@ def _moves() -> dict[str, dict]:
         bonus = record.get("resonance_bonus", 0)
         if not isinstance(bonus, int) or not 0 <= bonus <= 100:
             raise DataValidationError(f"{where}: resonance_bonus must be an integer in [0, 100].")
+        sfx = record.get("sfx")
+        if sfx is not None and (not isinstance(sfx, str) or not re.fullmatch(r"[a-z0-9_]+", sfx)):
+            raise DataValidationError(f"{where}: sfx must be a battle sound cue name (lowercase, e.g. beast_roar).")
 
         # The engine derives cooldowns from the slot (Basic = 0, others = 1).
         # Keep the data honest: an explicit cooldown must match.

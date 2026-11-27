@@ -312,6 +312,83 @@
       "level": -17.0,
       "duration": 3.0,
       "prompt": "a deep earth tremor rumble under a village, stones grinding, a distant crack, the ground shaking then settling, no music"
+    },
+    {
+      "id": "battle/beast_snarl",
+      "kind": "oneshot",
+      "level": -19.0,
+      "duration": 0.9,
+      "prompt": "a huge grey wolf snarling and snapping its jaws as it lunges, a short aggressive growl and a sharp teeth snap, close, dry, no music"
+    },
+    {
+      "id": "battle/beast_claw",
+      "kind": "oneshot",
+      "level": -19.0,
+      "duration": 0.8,
+      "prompt": "a large wolf's claws raking fast through leather and cloth, a vicious tearing swipe with a short low growl, close, dry, no music"
+    },
+    {
+      "id": "battle/beast_roar",
+      "kind": "oneshot",
+      "level": -17.0,
+      "duration": 1.6,
+      "prompt": "a massive ancient wolf roaring as it leaps to pounce, a deep savage animal roar ending in a heavy landing thud, close, no music"
+    },
+    {
+      "id": "battle/beast_howl",
+      "kind": "oneshot",
+      "level": -19.0,
+      "duration": 2.6,
+      "prompt": "one long mournful howl of an enormous old wolf echoing across a misty forest clearing at dusk, eerie, no music"
+    },
+    {
+      "id": "battle/riven_hum",
+      "kind": "oneshot",
+      "level": -22.0,
+      "duration": 1.0,
+      "prompt": "an eerie floating spirit of light flickering, a soft unstable electrical hum with a faint airy shimmer, otherworldly, no music, no voices"
+    },
+    {
+      "id": "battle/riven_slam",
+      "kind": "oneshot",
+      "level": -18.0,
+      "duration": 1.0,
+      "prompt": "a hollow stone construct slamming its arm down, a heavy cracking stone impact with a resonant low hum underneath, no music"
+    },
+    {
+      "id": "battle/riven_pulse",
+      "kind": "oneshot",
+      "level": -20.0,
+      "duration": 1.2,
+      "prompt": "a deep throbbing magical pulse radiating from an ancient anchor stone, a low resonant wub with a glassy shimmering tail, no music"
+    },
+    {
+      "id": "battle/choir_toll",
+      "kind": "oneshot",
+      "level": -18.0,
+      "duration": 2.0,
+      "prompt": "a single deep ancient bronze bell toll in a vast underground stone chamber with a long reverberant tail, ominous, no music"
+    },
+    {
+      "id": "battle/choir_chant",
+      "kind": "oneshot",
+      "level": -20.0,
+      "duration": 2.4,
+      "prompt": "an eerie wordless ghostly choir drone swelling in a vast stone hall, many distant voices holding one low note, ominous, no words, no instruments"
+    },
+    {
+      "id": "battle/choir_shatter",
+      "kind": "oneshot",
+      "level": -17.0,
+      "duration": 1.6,
+      "prompt": "a huge crystal and stone structure shattering, a glassy cracking burst and falling rubble with a ringing tail, no music"
+    },
+    {
+      "id": "battle/resonance_gain",
+      "kind": "oneshot",
+      "level": -26.0,
+      "duration": 0.5,
+      "prompt": "a tiny soft rising magical shimmer tick, a brief bright crystalline sparkle, very short, no music"
     }
   ]
 }
