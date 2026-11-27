@@ -60,7 +60,7 @@ def compile_world():
     # Overlapping edge canopies frame every approach without blocking lanes.
     props += [prop("tree",x,y) for x,y in [(3,6),(3,12),(3,18),(3,31),(30,6),(30,14),(30,20),(30,29),(7,32),(12,33),(23,33),(28,33),(8,3),(13,3),(22,3),(28,3),(25,28),(34,3),(40,3),(44,7),(44,13),(44,20),(44,26),(33,33),(39,33),(44,31),(31,24)]]
     town=dict(id="greymere",name="GREYMERE TOWN",subtitle="Above the Hollow Court",scene="res://scenes/overworld/greymere.tscn",
-              rows=["".join(r) for r in grid], music_id="greymere", interior=False, props=props,
+              rows=["".join(r) for r in grid], music_id="greymere", ambience_id="greymere", interior=False, props=props,
               painted=dict(path_symbols=":^", path_material="cobble"),
               spawn_points=dict(approach=spawn(17,29,(0,-1)),court_return=spawn(17,7),lena_return=spawn(10,22),inn_return=spawn(23,21),silas_return=spawn(10,11),
                             gell_return=spawn(33,16),joey_return=spawn(40,16),kai_return=spawn(36,28)),
@@ -117,7 +117,7 @@ def compile_world():
         grid=[["_" for _ in range(22)] for _ in range(14)]
         rect(grid,left,1,inner,12,"#");rect(grid,left+1,3,inner-2,9,"w")
         rect(grid,10,11,2,1,":")
-        rooms[id]=dict(id=id,name=room["name"],subtitle=room["subtitle"],scene=f"res://scenes/overworld/{id}.tscn",rows=["".join(r) for r in grid],interior=True,music_id="greymere",props=room["props"],npcs=room["npcs"],spawn_points={"entrance":spawn(10,10,(0,-1))},
+        rooms[id]=dict(id=id,name=room["name"],subtitle=room["subtitle"],scene=f"res://scenes/overworld/{id}.tscn",rows=["".join(r) for r in grid],interior=True,music_id="greymere",ambience_id="interior",props=room["props"],npcs=room["npcs"],spawn_points={"entrance":spawn(10,10,(0,-1))},
           doors=[dict(building_id=id,tile=[10,12],destination_location="greymere",destination_scene="res://scenes/overworld/greymere.tscn",destination_spawn=room["return_spawn"],return_spawn="entrance",locked=False,locked_dialogue_id="locked_door",transition_type="fade",verb="Leave")],
           interactions=[dict(tile=list(tile),verb="Browse" if id == "gell_shop" and tile == (9,6) else "Inspect",text=text,
                              **({"kind":"shop"} if id == "gell_shop" and tile == (9,6) else {})) for tile,text in room["inspect"].items()],

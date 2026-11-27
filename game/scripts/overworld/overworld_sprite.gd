@@ -303,6 +303,13 @@ func breathe(amount: float) -> void:
 	_sprite.scale = Vector2(_rest_scale.x * (1.0 - amount * 0.4), _rest_scale.y * (1.0 + amount))
 
 
+func lean(offset: Vector2) -> void:
+	## Shift the drawn body without moving the character (or the camera
+	## locked to it): used for the small reach toward what you interact with.
+	if _sprite != null:
+		_sprite.position = offset
+
+
 func advance() -> void:
 	## Compatibility hook for older callers that advance once per completed step.
 	_frame = (_frame + 1) % walk_frames

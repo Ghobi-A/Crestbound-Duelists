@@ -95,6 +95,10 @@ for key, entries in dialogue.items():
     for entry in entries:
         if "lines" not in entry or not entry["lines"]:
             errors.append(f"dialogue '{key}': entry missing lines")
+    # "staging" marks an authored story scene; only the first entry decides.
+    staging = [entry.get("staging") for entry in entries if "staging" in entry]
+    if staging and (staging != ["scene"] or "staging" not in entries[0]):
+        errors.append(f"dialogue '{key}': staging must be \"scene\" on the first entry only")
 
 # 7. Exported data the client expects must be present in game/data.
 for dataset in ["classes", "moves", "combat_config", "crests", "entities",

@@ -18,7 +18,7 @@ var _cursor := 0
 var _title_label: Label
 var _rows_label: Label
 var _detail_label: Label
-var _hint_label: Label
+var _hints: HintBar
 var _portrait: TextureRect
 var _figure: TextureRect
 var _identity_label: Label
@@ -73,8 +73,7 @@ func _build_ui() -> void:
 	_detail_label.add_theme_constant_override("line_spacing", 1)
 	# Instructions sit on the screen's footer rule rather than in a box.
 	add_child(UiDecor.create("rule", Rect2(20, FOOTER_TOP + 2, 280, 4), UiStyle.NEUTRAL))
-	_hint_label = UiStyle.make_label(self, Rect2(8, FOOTER_TOP + 8, 304, 8), "UP/DOWN SELECT   ·   LEFT/RIGHT ROW   ·   Z CONFIRM   ·   X BACK", UiStyle.FONT_SIZE, UiStyle.TEXT_FAINT)
-	_hint_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_hints = HintBar.create(self, Rect2(8, FOOTER_TOP + 6, 304, 12), [["move_v", "Select"], ["move_h", "Row"], ["interact", "Confirm"], ["cancel", "Back"]])
 	_portrait = TextureRect.new()
 	PresentationLayout.texture_box(_portrait, Rect2(192, 33, 34, 40))
 	add_child(_portrait)

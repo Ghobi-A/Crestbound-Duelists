@@ -1,6 +1,7 @@
 {
   "elara_intro": [
     {
+      "staging": "scene",
       "speaker": "Warden Almyra",
       "portrait": "elara",
       "expression": "determined",
@@ -13,6 +14,7 @@
   ],
   "mira_intro": [
     {
+      "staging": "scene",
       "speaker": "Liora Sen",
       "portrait": "mira",
       "expression": "surprised",
@@ -52,6 +54,7 @@
   ],
   "court_entrance": [
     {
+      "staging": "scene",
       "speaker": "",
       "lines": [
         "The ancient arch stands open. Cold air drifts up from the dark below.",
@@ -84,6 +87,7 @@
   ],
   "post_battle": [
     {
+      "staging": "scene",
       "speaker": "Warden Almyra",
       "portrait": "elara",
       "lines": [

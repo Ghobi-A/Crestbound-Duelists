@@ -43,6 +43,7 @@
         "##############################################"
       ],
       "music_id": "greymere",
+      "ambience_id": "greymere",
       "interior": false,
       "props": [
         {
@@ -520,6 +521,13 @@
             31,
             24
           ]
+        },
+        {
+          "asset": "route_sign",
+          "tile": [
+            20,
+            30
+          ]
         }
       ],
       "painted": {
@@ -723,21 +731,6 @@
           "locked_dialogue_id": "locked_door",
           "transition_type": "fade",
           "verb": "Enter"
-        },
-        {
-          "building_id": "outskirts",
-          "tile": [
-            17,
-            31
-          ],
-          "destination_location": "route_01",
-          "destination_scene": "res://scenes/overworld/route_01.tscn",
-          "destination_spawn": "greymere",
-          "return_spawn": "route_return",
-          "locked": false,
-          "locked_dialogue_id": "",
-          "transition_type": "fade",
-          "verb": "Travel"
         }
       ],
       "interactions": [
@@ -757,6 +750,14 @@
           ],
           "verb": "Read",
           "dialogue": "notice_board"
+        },
+        {
+          "tile": [
+            20,
+            30
+          ],
+          "verb": "Read",
+          "text": "South road: the Greymere Outskirts, and the training grounds beyond."
         }
       ],
       "npcs": [
@@ -923,6 +924,35 @@
           ],
           "color": "violet"
         }
+      ],
+      "exits": [
+        {
+          "building_id": "outskirts",
+          "tiles": [
+            [
+              16,
+              31
+            ],
+            [
+              17,
+              31
+            ],
+            [
+              18,
+              31
+            ]
+          ],
+          "direction": [
+            0,
+            1
+          ],
+          "destination_location": "route_01",
+          "destination_scene": "res://scenes/overworld/route_01.tscn",
+          "destination_spawn": "greymere",
+          "return_spawn": "route_return",
+          "transition_type": "fade",
+          "verb": "Travel"
+        }
       ]
     },
     "lena_house": {
@@ -948,6 +978,7 @@
       ],
       "interior": true,
       "music_id": "greymere",
+      "ambience_id": "interior",
       "props": [
         {
           "asset": "hearth",
@@ -1089,6 +1120,7 @@
       ],
       "interior": true,
       "music_id": "greymere",
+      "ambience_id": "interior",
       "props": [
         {
           "asset": "hearth",
@@ -1263,6 +1295,7 @@
       ],
       "interior": true,
       "music_id": "greymere",
+      "ambience_id": "interior",
       "props": [
         {
           "asset": "books",
@@ -1411,6 +1444,7 @@
       ],
       "interior": true,
       "music_id": "greymere",
+      "ambience_id": "interior",
       "props": [
         {
           "asset": "counter",
@@ -1576,6 +1610,7 @@
       ],
       "interior": true,
       "music_id": "greymere",
+      "ambience_id": "interior",
       "props": [
         {
           "asset": "hearth",
@@ -1726,6 +1761,7 @@
       ],
       "interior": true,
       "music_id": "greymere",
+      "ambience_id": "interior",
       "props": [
         {
           "asset": "hearth",
@@ -1897,6 +1933,7 @@
         "############################################################"
       ],
       "music_id": "greymere_route",
+      "ambience_id": "route",
       "painted": {
         "path_symbols": ",",
         "path_material": "dirt"
@@ -2506,19 +2543,32 @@
           ]
         }
       },
-      "doors": [
+      "doors": [],
+      "exits": [
         {
           "building_id": "greymere_road",
-          "tile": [
-            3,
-            18
+          "tiles": [
+            [
+              3,
+              17
+            ],
+            [
+              3,
+              18
+            ],
+            [
+              3,
+              19
+            ]
+          ],
+          "direction": [
+            -1,
+            0
           ],
           "destination_location": "greymere",
           "destination_scene": "res://scenes/overworld/greymere.tscn",
           "destination_spawn": "route_return",
           "return_spawn": "greymere",
-          "locked": false,
-          "locked_dialogue_id": "",
           "transition_type": "fade",
           "verb": "Travel"
         }
@@ -2625,8 +2675,8 @@
       "encounter_zones": [
         {
           "symbol": "g",
-          "probability": 0.12,
-          "cooldown_steps": 8,
+          "probability": 0.06,
+          "cooldown_steps": 24,
           "encounters": [
             "route01_roadside"
           ]
@@ -2640,13 +2690,13 @@
         "r"
       ],
       "hud_name": "GREYMERE OUTSKIRTS",
-      "arrival_grace_steps": 6,
+      "arrival_grace_steps": 16,
       "encounter_message": "A roadside raider emerges from the tall grass. Prepare your party!",
       "recovery": {
         "location": "greymere",
         "spawn": "route_return"
       },
-      "return_grace_steps": 8,
+      "return_grace_steps": 24,
       "battle_background": {
         "rows": [
           "....................",

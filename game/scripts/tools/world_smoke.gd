@@ -17,6 +17,56 @@ func _ready() -> void:
 	await settled()
 	check(world.location_id == "greymere", "new game location")
 	check(world._player.tile == Vector2i(17,29), "approach spawn")
+	# Every step sounds exactly once, even on frames so long a step begins
+	# past its midpoint (a slow browser tab). Drive the player directly.
+	var walker := world._player
+	var start_tile := walker.tile
+	var heard := walker.footfalls
+	var steps := 0
+	Input.action_press("move_left")
+	for i in 10:
+		var before := walker.tile
+		walker._process(0.13)
+		if walker.tile != before: steps += 1
+		check(not (walker._footfall_due and walker._step_progress >= 0.5), "footstep skipped on a long frame")
+	Input.action_release("move_left")
+	while walker.is_moving(): walker._process(0.13)
+	check(steps >= 3 and walker.footfalls - heard == steps, "footsteps %d for %d steps on long frames" % [walker.footfalls - heard, steps])
+	await walk_to(start_tile)
+	# Interacting leans the drawn body toward the target and settles back,
+	# without moving the tile or the camera.
+	var body: Sprite2D = walker._sprite._sprite
+	var camera_before: Vector2 = world._camera.position
+	walker.reach()
+	var leaned := false
+	for i in 12:
+		await get_tree().process_frame
+		leaned = leaned or body.position.length() > 0.5
+	await get_tree().create_timer(0.3).timeout
+	check(leaned and body.position == Vector2.ZERO and walker.tile == start_tile, "interact anticipation lean")
+	check(world._camera.position == camera_before, "anticipation moved the camera")
+	# The south road leaves town from its left, centre and right lanes, with
+	# a real held key and no button press; the route's west mouth comes back
+	# the same way, and an arrival never bounces straight back.
+	for lane in [0, 1, 2]:
+		await walk_to(Vector2i(16 + lane, 31))
+		await hold("move_down", 0.5)
+		await settled()
+		check(world.location_id == "route_01", "town exit lane %d reaches Route 01" % lane)
+		check(world._player.tile == Vector2i(5,18), "route arrival spawn, lane %d" % lane)
+		await get_tree().create_timer(0.4).timeout
+		check(world.location_id == "route_01", "no bounce back after arriving, lane %d" % lane)
+		await walk_to(Vector2i(3, 17 + lane))
+		await hold("move_left", 0.5)
+		await settled()
+		check(world.location_id == "greymere" and world._player.tile == Vector2i(17,29), "route exit lane %d returns to town" % lane)
+	# Standing on the edge row, or walking along it, never travels: only
+	# pushing outward does.
+	await walk_to(Vector2i(16,31))
+	await hold("move_right", 0.3)
+	await get_tree().create_timer(0.3).timeout
+	check(world.location_id == "greymere", "walking along the edge row does not travel")
+	await walk_to(Vector2i(17,29))
 	# Townsfolk turn to face you from whichever side you talk to them.
 	var faced := 0
 	for tile in world._npc_tiles:
@@ -31,16 +81,19 @@ func _ready() -> void:
 			faced += 1
 			while world._dialogue.active: world._dialogue._advance()
 	check(faced >= 2 * world._npc_tiles.size(), "townsfolk faced from several sides")
-	# They breathe while idle, each on its own phase.
-	var breaths: Array[Vector2] = []
+	# They breathe while idle, each on its own phase. Sampled several times,
+	# since two samples a whole breath apart can land on the same scale.
+	var first: Array[Vector2] = []
 	for npc in world._npc_tiles.values():
-		breaths.append(npc._sprite._sprite.scale)
-	await get_tree().create_timer(0.6).timeout
-	var moved := 0
-	var index := 0
-	for npc in world._npc_tiles.values():
-		if not npc._sprite._sprite.scale.is_equal_approx(breaths[index]): moved += 1
-		index += 1
+		first.append(npc._sprite._sprite.scale)
+	var changed: Dictionary = {}
+	for _sample in 8:
+		await get_tree().create_timer(0.07).timeout
+		var index := 0
+		for npc in world._npc_tiles.values():
+			if not npc._sprite._sprite.scale.is_equal_approx(first[index]): changed[index] = true
+			index += 1
+	var moved := changed.size()
 	check(moved == world._npc_tiles.size(), "townsfolk breathe while idle")
 	await walk_to(Vector2i(17,29))
 	# Every unlocked building in town, including ones added later.
@@ -115,6 +168,18 @@ func settled() -> void:
 	while SceneTransition._busy: await get_tree().process_frame
 	await get_tree().process_frame
 	world = get_tree().current_scene as WorldLocation
+
+func hold(action: String, seconds: float) -> void:
+	## Hold a direction like a player would, letting go as soon as the map
+	## changes (or after `seconds`), so arrival spawns can be checked.
+	var from := world
+	Input.action_press(action)
+	var left := seconds
+	while left > 0.0 and not SceneTransition._busy and is_instance_valid(from) and get_tree().current_scene == from:
+		await get_tree().process_frame
+		left -= get_process_delta_time()
+	Input.action_release(action)
+	while SceneTransition._busy: await get_tree().process_frame
 
 func interact() -> void:
 	var event := InputEventAction.new()

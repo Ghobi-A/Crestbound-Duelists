@@ -13,6 +13,7 @@ var _npc_tiles: Dictionary = {}
 var _blocked: Dictionary = {}
 var _doors: Dictionary = {}
 var _interactions: Dictionary = {}
+var _exits: Dictionary = {}   # edge tile -> exit (walk outward to travel)
 var _camera_follow := Vector2.ZERO
 const CAMERA_LOOK_AHEAD := Vector2(0, -24)
 var _engagement_busy := false
@@ -26,6 +27,7 @@ var _menu_cursor := 0
 var _menu_status := ""
 
 func _ready() -> void:
+	process_priority = 10   # after the player has moved this frame
 	definition = WorldCatalog.location(location_id)
 	if definition.is_empty():
 		push_error("Unknown world location: " + location_id)
@@ -33,7 +35,13 @@ func _ready() -> void:
 	# Returning from an interrupted setup/scene never leaves a stale encounter lock.
 	if not GameState.world_battle.is_empty(): GameState.finish_world_battle("cancel")
 	y_sort_enabled = true
-	_encounter_state = GameState.world_encounters.get(location_id, {"cooldown": int(definition.get("arrival_grace_steps", 0))})
+	# travel() records where we came from; reloads and battle returns don't.
+	var arriving := GameState.arrived_from != "" and GameState.arrived_from != location_id
+	GameState.arrived_from = ""
+	_encounter_state = GameState.world_encounters.get(location_id, {"cooldown": 0})
+	if arriving:
+		# Every entry, not only the first visit, starts with breathing room.
+		_encounter_state.cooldown = maxi(int(_encounter_state.get("cooldown", 0)), int(definition.get("arrival_grace_steps", 0)))
 	_encounter_rng.seed = int(definition.get("encounter_seed", 1901))
 	if _encounter_state.has("rng_state"): _encounter_rng.state = int(str(_encounter_state.rng_state))
 	_build_world()
@@ -51,6 +59,7 @@ func _ready() -> void:
 	GameState.location_revision = 1
 	GameState.player_tile = _player.tile
 	AudioRouter.play_music(str(definition.music_id))
+	AudioRouter.play_ambience(str(definition.get("ambience_id", "")))
 	_location_started()
 	SaveManager.save_game()
 
@@ -96,6 +105,9 @@ func _build_world() -> void:
 		_blocked[tile] = true
 	for item in definition.interactions:
 		_interactions[WorldCatalog.tile(item.tile)] = item
+	for exit in definition.get("exits", []):
+		for edge in exit.tiles:
+			_exits[WorldCatalog.tile(edge)] = exit
 	if definition.has("painted_interior"):
 		return
 	var atmosphere := WorldAtmosphere.new()
@@ -172,19 +184,47 @@ func tile_char(tile: Vector2i) -> String:
 	if tile.x < 0 or tile.y < 0 or tile.x >= map_width() or tile.y >= map_height(): return "#"
 	return definition.rows[tile.y][tile.x]
 
+func surface_at(tile: Vector2i) -> String:
+	## Footstep surface: boards indoors, cobbles on paved paths, dirt outside.
+	if bool(definition.get("interior", false)): return "wood"
+	var path_symbols := str(definition.get("painted", {}).get("path_symbols", ":"))
+	if tile_char(tile) in path_symbols:
+		return "cobble" if str(definition.get("painted", {}).get("path_material", "")) == "cobble" else "dirt"
+	return "grass"
+
 func is_walkable(tile: Vector2i) -> bool:
 	return not tile_char(tile) in definition.get("blocked_symbols", ["#","~","_"]) and not _blocked.has(tile) and not _npc_tiles.has(tile)
 
-func _process(delta: float) -> void:
+func movement_blocked() -> bool:
+	return _dialogue.active or _menu_open or _trade.active or SceneTransition._busy or _engagement_busy
+
+func _process(_delta: float) -> void:
 	if _player == null: return
-	_player.movement_locked = _dialogue.active or _menu_open or _trade.active or SceneTransition._busy or _engagement_busy
-	_camera_follow = _camera_follow.lerp(_player.position + CAMERA_LOOK_AHEAD,1.0-exp(-10.0*delta))
+	_player.movement_locked = movement_blocked()
+	# Locked to the player's whole-pixel position (this node processes after
+	# the player), so the character holds still on screen while the world
+	# scrolls under them; an eased, separately rounded camera made the
+	# player shimmer a pixel back and forth every frame.
+	_camera_follow = _player.position + CAMERA_LOOK_AHEAD
 	_camera.position = _camera_follow.round()
 	_hud.visible = not _dialogue.active
 	_hud.show_context(context_verb())
 
+func try_exit(from: Vector2i, direction: Vector2i) -> bool:
+	## Walking outward off a road mouth travels; anything else is a wall.
+	if not _exits.has(from) or WorldCatalog.tile(_exits[from].direction) != direction: return false
+	if movement_blocked(): return false
+	_remember_position()
+	if WorldCatalog.travel(_exits[from]):
+		_player.movement_locked = true
+		AudioRouter.play_sfx("world", "travel")
+		return true
+	return false
+
 func context_verb() -> String:
 	if _player.is_moving() or _menu_open or _dialogue.active or _trade.active or _engagement_busy: return ""
+	if _exits.has(_player.tile) and WorldCatalog.tile(_exits[_player.tile].direction) == _player.facing:
+		return str(_exits[_player.tile].get("verb", "Travel"))
 	var target := _player.tile + _player.facing
 	if _npc_tiles.has(target): return "Talk"
 	if _doors.has(target): return "Inspect" if _doors[target].locked else str(_doors[target].verb)
@@ -221,6 +261,8 @@ func _unhandled_input(event: InputEvent) -> void:
 
 func _try_interact() -> void:
 	var target := _player.tile + _player.facing
+	if _npc_tiles.has(target) or _doors.has(target) or _interactions.has(target):
+		_player.reach()
 	if _npc_tiles.has(target):
 		# Whoever you talk to turns to face you, whichever side you came from.
 		_npc_tiles[target].face(-_player.facing)
@@ -235,13 +277,18 @@ func _try_interact() -> void:
 			_play_dialogue(_npc_tiles[target].dialogue_key)
 	elif _doors.has(target):
 		var door: Dictionary = _doors[target]
-		if bool(door.locked): _play_dialogue(str(door.locked_dialogue_id))
+		if bool(door.locked):
+			AudioRouter.play_sfx("ui", "denied")
+			_play_dialogue(str(door.locked_dialogue_id))
 		else:
 			_remember_position()
-			if WorldCatalog.travel(door): _player.movement_locked = true
+			if WorldCatalog.travel(door):
+				_player.movement_locked = true
+				AudioRouter.play_sfx("world", "door")
 	elif _interactions.has(target):
 		var interaction: Dictionary = _interactions[target]
 		if interaction.get("kind", "") == "chest":
+			AudioRouter.play_sfx("world", "chest")
 			_show_text(GameState.collect_world_item(interaction))
 			for child in get_children():
 				if child is WorldProp:
@@ -253,7 +300,9 @@ func _try_interact() -> void:
 			_trade.open(true)
 		elif interaction.get("kind", "") == "court":
 			_play_dialogue("court_entrance_cleared" if GameState.has_flag("hollow_court_cleared") else "court_entrance")
-		elif interaction.has("dialogue"): _play_dialogue(str(interaction.dialogue))
+		elif interaction.has("dialogue"):
+			AudioRouter.play_sfx("world", "interact")
+			_play_dialogue(str(interaction.dialogue))
 		else:
 			var inspection_key := "local_inspection"
 			_dialogue._dialogue_data[inspection_key] = [{"speaker":"", "lines":[str(interaction.text)]}]
@@ -302,6 +351,7 @@ func _on_player_stepped(tile: Vector2i) -> void:
 		_pending_world_encounter = encounter
 		_pending_victory_flag = ""
 		_engagement_busy = true
+		AudioRouter.play_sfx("world", "encounter")
 		_show_text(str(definition.get("encounter_message", "A challenger appears. Prepare your party!")))
 
 func encounters_allowed() -> bool:
@@ -318,6 +368,7 @@ func _engage_trainer(trainer: Dictionary, alerted: bool) -> void:
 	_player.movement_locked = true
 	_pending_world_encounter = str(trainer.encounter)
 	_pending_victory_flag = str(trainer.id) + "_defeated"
+	AudioRouter.play_sfx("world", "encounter")
 	if alerted:
 		var marker := Label.new()
 		marker.text = "!"

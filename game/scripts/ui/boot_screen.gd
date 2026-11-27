@@ -11,7 +11,7 @@ const BOOT_SCENE := "res://scenes/boot/boot.tscn"
 # so a recruiter reaches gameplay in one press.
 const QUICK_BATTLE_CLASS := "warrior"
 
-const CONTROLS_TEXT := "MOVE        WASD / Arrow keys\nCONFIRM     Z / Enter / Space\nBACK        X / Escape\n\nObjective: speak to Warden Almyra, then investigate the Hollow Court."
+const CONTROLS_TEXT := "             KEYBOARD                CONTROLLER\nMOVE         WASD / Arrow keys       D-pad / left stick\nCONFIRM      Z / Enter / Space       A\nBACK         X / Escape              B\nObjective: speak to Warden Almyra, then investigate the Hollow Court."
 
 enum Screen { MENU, CLASS_SELECT, CONTROLS }
 
@@ -25,7 +25,7 @@ var _title_label: Label
 var _subtitle_label: Label
 var _list_label: Label
 var _detail_label: Label
-var _hint_label: Label
+var _hints: HintBar
 var _error_label: Label
 var _preview: TextureRect
 var _body_panel: UiPanel
@@ -43,6 +43,7 @@ const MENU_BAND := Rect2(24, 0, 98, 9)
 func _ready() -> void:
 	_build_ui()
 	AudioRouter.play_music("main_theme")
+	AudioRouter.stop_ambience()
 	if not GameData.load_ok:
 		_show_data_error()
 		return
@@ -96,7 +97,7 @@ func _build_ui() -> void:
 		row.visible = false
 		_menu_rows.append(row)
 	_detail_label = _make_label(Vector2(30, 96), 6, UiStyle.TEXT_DIM)
-	_hint_label = _make_label(Vector2(0, 166), 5, UiStyle.TEXT_FAINT, UiStyle.REGULAR, 1)
+	_hints = HintBar.create(self, Rect2(0, 162, 320, 12), [])
 	_error_label = _make_label(Vector2(0, 80), 6, PlaceholderPalette.TEXT_DANGER)
 
 	_preview = TextureRect.new()
@@ -118,7 +119,7 @@ func _show_data_error() -> void:
 	_error_label.text = ("Game data failed to load.\n"
 		+ "\n".join(GameData.load_errors)
 		+ "\nRun `python export_game_data.py` in the repository root.")
-	_hint_label.text = ""
+	_hints.set_items([])
 
 
 func _position_menu_band() -> void:
@@ -160,7 +161,7 @@ func _refresh() -> void:
 			_detail_label.text = ""
 			PresentationLayout.texture_box(_preview, Rect2(168, 54, 140, 106))
 			_update_preview("neutral")
-			_hint_label.text = "ARROWS CHOOSE   ·   Z / ENTER CONFIRM"
+			_hints.set_items([["move_v", "Choose"], ["interact", "Confirm"]])
 		Screen.CLASS_SELECT:
 			_body_panel.custom_minimum_size = Vector2(296, 98)
 			_body_panel.size = Vector2(296, 98)
@@ -183,7 +184,7 @@ func _refresh() -> void:
 					crest.get("name", "—"),
 				]
 			)
-			_hint_label.text = "LEFT / RIGHT CLASS   ·   Z / ENTER BEGIN   ·   X BACK"
+			_hints.set_items([["move_h", "Class"], ["interact", "Begin"], ["cancel", "Back"]])
 			_update_preview(class_id)
 		Screen.CONTROLS:
 			_body_panel.custom_minimum_size = Vector2(296, 98)
@@ -193,7 +194,7 @@ func _refresh() -> void:
 			_detail_label.text = CONTROLS_TEXT
 			_detail_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 			_preview.visible = false
-			_hint_label.text = "X / ESCAPE BACK"
+			_hints.set_items([["cancel", "Back"]])
 
 
 func _update_preview(class_id: String) -> void:
@@ -261,6 +262,7 @@ func _start_quick_battle() -> void:
 
 func _controls_input() -> void:
 	if Input.is_action_just_pressed("cancel") or Input.is_action_just_pressed("interact"):
+		AudioRouter.play_sfx("ui", "cancel")
 		_screen = Screen.MENU
 	_refresh()
 
@@ -268,11 +270,15 @@ func _controls_input() -> void:
 func _class_select_input() -> void:
 	if Input.is_action_just_pressed("move_left"):
 		_class_index = wrapi(_class_index - 1, 0, _class_list.size())
+		AudioRouter.play_sfx("ui", "move")
 	elif Input.is_action_just_pressed("move_right"):
 		_class_index = wrapi(_class_index + 1, 0, _class_list.size())
+		AudioRouter.play_sfx("ui", "move")
 	elif Input.is_action_just_pressed("cancel"):
+		AudioRouter.play_sfx("ui", "cancel")
 		_screen = Screen.MENU
 	elif Input.is_action_just_pressed("interact"):
+		AudioRouter.play_sfx("ui", "confirm")
 		GameState.start_new_game(_class_list[_class_index])
 		# A new story opens on "The Last Accord", then fades into Greymere.
 		CinematicPlayer.return_scene = OVERWORLD_SCENE

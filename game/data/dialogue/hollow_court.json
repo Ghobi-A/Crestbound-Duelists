@@ -1,6 +1,7 @@
 {
   "battle_intro": [
     {
+      "staging": "scene",
       "speaker": "",
       "lines": [
         "The Hollow Court opens into a drowned amphitheatre of broken stone.",

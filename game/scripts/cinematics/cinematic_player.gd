@@ -48,6 +48,7 @@ func _ready() -> void:
 	_camera_viewport.snap_2d_transforms_to_pixel = false
 	_duration = float(timeline.get("duration", 0.0))
 	AudioRouter.stop_music(0.6)
+	AudioRouter.stop_ambience()
 	for shot in timeline.get("shots", []):
 		_shots.append(_build_shot(shot))
 	_overlay = Node2D.new()

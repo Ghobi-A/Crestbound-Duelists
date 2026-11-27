@@ -4,7 +4,7 @@ class_name WorldHud
 ## and the pause menu. Both plates dissolve into the scene instead of
 ## boxing it in, so the authored town stays the focus.
 var location_label: Label
-var prompt: Label
+var prompt: HintBar
 var menu: UiPanel
 var _scrim: ColorRect
 var menu_status: Label
@@ -29,8 +29,7 @@ func _ready() -> void:
 	plate.add_child(mark)
 	location_label = UiStyle.make_label(plate, Rect2(12, 1.8, 136, 9), "", 6, UiStyle.GOLD_BRIGHT, UiStyle.DISPLAY, 1)
 	add_child(UiDecor.create("fade_right", Rect2(canvas.x - 150, canvas.y - HUD_HEIGHT, 150, HUD_HEIGHT)))
-	prompt = UiStyle.make_label(self, Rect2(canvas.x - 146, canvas.y - HUD_HEIGHT + 3, 140, 7), "", 5, UiStyle.TEXT_DIM, UiStyle.REGULAR, 1)
-	prompt.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	prompt = HintBar.create(self, Rect2(canvas.x - 150, canvas.y - HUD_HEIGHT, 144, HUD_HEIGHT), [["cancel", "Menu"]], HORIZONTAL_ALIGNMENT_RIGHT)
 	_scrim = ColorRect.new()
 	_scrim.color = Color(0.02, 0.03, 0.06, 0.62)
 	_scrim.size = canvas
@@ -49,12 +48,14 @@ func _ready() -> void:
 		_menu_rows.append(row)
 	menu_status = UiStyle.make_label(menu, Rect2(MENU_PADDING, 80, MENU_SIZE.x - 2 * MENU_PADDING, 8), "", 5, UiStyle.TEXT_DIM)
 	menu_status.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	var hints := UiStyle.make_label(menu, Rect2(MENU_PADDING, 96, MENU_SIZE.x - 2 * MENU_PADDING, 8), "Z SELECT   ·   ESC RETURN", 5, UiStyle.TEXT_FAINT, UiStyle.REGULAR, 1)
-	hints.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	HintBar.create(menu, Rect2(MENU_PADDING, 95, MENU_SIZE.x - 2 * MENU_PADDING, 10), [["interact", "Select"], ["cancel", "Return"]])
 	menu.visible = false
 
 func show_context(verb: String) -> void:
-	prompt.text = ("Z " + verb + "   ·   ESC MENU" if verb != "" else "ESC MENU").to_upper()
+	# The action you can take right now leads, lit; the menu stays behind it.
+	prompt.colour = UiStyle.TEXT if verb != "" else UiStyle.TEXT_DIM
+	prompt.set_items([["interact", verb], ["cancel", "Menu"]] if verb != "" else [["cancel", "Menu"]])
+	prompt.queue_redraw()
 
 func show_menu(cursor: int, status: String) -> void:
 	_scrim.visible = true

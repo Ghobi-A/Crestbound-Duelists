@@ -7,6 +7,9 @@ class_name ActionMenu
 
 signal cursor_moved
 
+var _refuse_shake: Tween
+var _rest_x := 0.0
+
 const WIDTH := 76.0
 const BANNER_HEIGHT := 9.0
 const ROW_PITCH := 8.5
@@ -39,10 +42,11 @@ func build_for(unit: BattleUnit, allow_flee := false) -> void:
 		if cooldown > 0:
 			entry.enabled = false
 			entry.note = "CD %d" % cooldown
+			entry.description = "Recovering: ready in %d round%s.\n%s" % [cooldown, "" if cooldown == 1 else "s", entry.description]
 		elif unit.is_move_blocked_by_hex(move):
 			entry.enabled = false
 			entry.note = "HEXED"
-			entry.description = "Blocked by Hex."
+			entry.description = "Blocked by Hex.\nUsable again once the Hex fades."
 		entries.append(entry)
 	entries.append({
 		"label": "Brace", "kind": "brace", "move": {}, "enabled": true, "note": "",
@@ -94,8 +98,9 @@ func _describe_move(unit: BattleUnit, move: Dictionary) -> String:
 
 
 func move_cursor(delta: int) -> void:
+	# Unavailable commands can be focused, so the player can read why; only
+	# the opening position skips them (see build_for).
 	cursor = wrapi(cursor + delta, 0, entries.size())
-	_ensure_valid_cursor(delta if delta != 0 else 1)
 	queue_redraw()
 	cursor_moved.emit()
 
@@ -106,6 +111,18 @@ func _ensure_valid_cursor(direction: int) -> void:
 	while not entries[cursor].enabled and guard < entries.size():
 		cursor = wrapi(cursor + signi(direction), 0, entries.size())
 		guard += 1
+
+
+func refuse() -> void:
+	## Shake the menu sideways once: this command can't be used. A repeat
+	## press restarts from the resting place, so the menu never drifts.
+	if _refuse_shake != null and _refuse_shake.is_valid():
+		_refuse_shake.kill()
+		position.x = _rest_x
+	_rest_x = position.x
+	_refuse_shake = create_tween()
+	for offset in [2.0, -2.0, 1.0, 0.0]:
+		_refuse_shake.tween_property(self, "position:x", _rest_x + offset, 0.035)
 
 
 func current_entry() -> Dictionary:
@@ -123,12 +140,17 @@ func _draw() -> void:
 	for i in entries.size():
 		var entry: Dictionary = entries[i]
 		var row := Rect2(4, BANNER_HEIGHT + 1.5 + i * ROW_PITCH, WIDTH - 7, ROW_PITCH - 1)
-		if i == cursor:
+		if i == cursor and entry.enabled:
 			UiStyle.draw_gilded_band(self, row)
+		elif i == cursor:
+			# Focused but unavailable: a muted frame, never the gold band.
+			draw_rect(row, Color(1, 1, 1, 0.04))
+			UiStyle.draw_frame(self, row, Color(UiStyle.TEXT_FAINT, 0.9))
+			UiStyle.draw_pointer(self, Vector2(row.position.x - 1.2, row.position.y + row.size.y / 2.0), UiStyle.TEXT_FAINT)
 		else:
 			draw_rect(Rect2(row.position.x, row.end.y + 0.4, row.size.x, UiStyle.HAIR), Color(1, 1, 1, 0.05))
 		var colour := UiStyle.TEXT if entry.enabled else UiStyle.TEXT_FAINT
-		if i == cursor:
+		if i == cursor and entry.enabled:
 			colour = UiStyle.GOLD_BRIGHT
 		var glyph := "slot_" + str(entry.move.get("slot", "basic"))
 		if entry.kind in ["brace", "flee"]:

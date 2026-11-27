@@ -15,6 +15,8 @@ func _ready() -> void:
 	check(GameData.load_ok, "GameData failed")
 	await check_classes()
 	await check_dialogue()
+	await check_story_dialogue()
+	await check_command_feedback()
 	await check_formations()
 	await check_enemy_hud()
 	await check_world_and_setup()
@@ -93,6 +95,145 @@ func check_dialogue() -> void:
 		advances += 1
 	check(not box.active and advances > 2, "Dialogue did not finish after all pages")
 	box.queue_free()
+	await get_tree().process_frame
+
+
+func press(event: InputEvent) -> void:
+	## A real press and release through Input, as the player makes it.
+	event.pressed = true
+	Input.parse_input_event(event)
+	await get_tree().process_frame
+	var release := event.duplicate()
+	release.pressed = false
+	Input.parse_input_event(release)
+	await get_tree().process_frame
+
+
+func key_event(code: Key) -> InputEventKey:
+	var event := InputEventKey.new()
+	event.physical_keycode = code
+	return event
+
+
+func pad_event(button: JoyButton) -> InputEventJoypadButton:
+	var event := InputEventJoypadButton.new()
+	event.button_index = button
+	return event
+
+
+func check_story_dialogue() -> void:
+	## Staged story scenes: the reveal, Confirm completing it before advancing,
+	## keyboard and controller parity, staging, missing art and long lines.
+	seed_party()
+	var box := DialogueBox.new()
+	add_child(box)
+	await get_tree().process_frame
+	box.load_file("res://data/dialogue/greymere.json")
+	box.play("court_entrance")
+	await get_tree().process_frame
+	check(box.staged and box._stage.visible, "Story key did not stage")
+	check(box._stage.has_figure("elara") and box._stage.has_figure("mira"), "Story cast missing from stage")
+	check(box._stage.has_figure(StoryStage.player_key()), "Kai missing from story stage")
+	check(box._stage.figure_x(StoryStage.player_key()) < 160.0 and box._stage.figure_x("elara") > 160.0, "Story eyelines not opposed")
+	check(box.revealing and box._text_label.visible_characters < box._text_label.get_total_character_count(), "Line did not reveal gradually")
+	check(not box._advance_chevron.visible, "Continue cue shown before the line finished")
+	# Confirm (Z) completes the reveal and stays on the line.
+	var at := [box._entry_index, box._line_index, box._page_index]
+	await press(key_event(KEY_Z))
+	check(not box.revealing and box._text_label.visible_characters == -1, "Confirm did not complete the reveal")
+	check([box._entry_index, box._line_index, box._page_index] == at, "First confirm skipped the line")
+	check(box._advance_chevron.visible, "Continue cue missing after reveal")
+	# The next press advances; a controller A press behaves the same.
+	await press(pad_event(JOY_BUTTON_A))
+	check([box._entry_index, box._line_index, box._page_index] != at and box.revealing, "Second confirm did not advance")
+	await press(pad_event(JOY_BUTTON_A))
+	check(not box.revealing, "Controller confirm did not complete the reveal")
+	# The reveal finishes on its own too.
+	await press(key_event(KEY_Z))
+	for i in 400:
+		if not box.revealing: break
+		await get_tree().process_frame
+	check(not box.revealing, "Reveal never finished on its own")
+	# Walk to Almyra's line: she is lit and forward, the others sink.
+	var guard := 0
+	while box.active and str(box._entries[box._entry_index].get("portrait", "")) != "elara" and guard < 50:
+		box.confirm()
+		guard += 1
+	await get_tree().create_timer(0.3).timeout
+	var almyra: Node2D = box._stage._figures["almyra"]
+	var liora: Node2D = box._stage._figures["liora"]
+	check(almyra.modulate.r > 0.95 and liora.modulate.r < 0.7 and almyra.get_index() > liora.get_index(), "Active speaker not emphasised")
+	check(box._tab.visible and box._tab_label.text == "WARDEN ALMYRA", "Nameplate missing for the speaker")
+	check(box._tab.position.x > 160.0, "Nameplate not on the speaker's side")
+	check(not box._portrait.visible, "Staged speaker also shown as a small portrait")
+	check(box._stage.get_index() < box._panel.get_index() and box._stage.get_index() < box._tab.get_index(), "Story figures drawn over the panel")
+	for holder in box._stage._figures.values():
+		check((holder as Node2D).z_index == 0 and not (holder as Node2D).z_as_relative == false, "Story figure escapes the layer order")
+	guard = 0
+	while box.active and guard < 200:
+		box.confirm()
+		guard += 1
+	check(not box.active and not box._stage.visible and not box._tab.visible, "Story scene did not close cleanly")
+	# Incidental chat keeps the compact box.
+	box.play("toby_flavor")
+	await get_tree().process_frame
+	check(not box.staged and not box._stage.visible and box._panel.size == PresentationLayout.DIALOGUE_RECT.size, "Incidental dialogue was staged")
+	while box.active:
+		box.confirm()
+	# A staged scene with a speaker who has no large art, and a long line.
+	var long_line := "The seal on the Hollow Court was laid by hands older than any banner in Greymere, and it has held. ".repeat(6)
+	box._dialogue_data["staged_test"] = [{"staging": "scene", "speaker": "Joey", "portrait": "townsfolk/farmboy", "lines": [long_line]}]
+	box.play("staged_test")
+	await get_tree().process_frame
+	check(box.staged and not box._stage.has_figure("townsfolk/farmboy"), "Speaker without art got a figure")
+	check(box._portrait.visible, "Speaker without large art lost their portrait")
+	check(box._pages.size() > 1, "Long staged line not paginated")
+	var font: Font = box._text_label.get_theme_font("font")
+	var rows := 0
+	for page in box._pages:
+		rows = maxi(rows, page.split("\n").size())
+	var line_height := font.get_height(DialogueBox.STORY_FONT_SIZE) + PresentationLayout.DIALOGUE_LINE_GAP
+	check(rows * line_height <= DialogueBox.STORY_TEXT_RECT.size.y + PresentationLayout.DIALOGUE_LINE_GAP, "Staged page overflows the panel")
+	var reconstructed := " ".join(box._pages).replace("\n", " ").strip_edges()
+	check(reconstructed == long_line.strip_edges(), "Staged pagination lost words")
+	while box.active:
+		box.confirm()
+	box.queue_free()
+	await get_tree().process_frame
+
+
+func check_command_feedback() -> void:
+	## Unavailable battle commands can be focused, say why, and refuse.
+	seed_party()
+	var unit := BattleUnit.create(GameState.party[0], "player", GameData)
+	var resting: Dictionary = unit.moves[1]
+	unit.cooldowns[unit.move_id_of(resting)] = 2
+	var menu := ActionMenu.new()
+	add_child(menu)
+	menu.build_for(unit)
+	check(menu.current_entry().enabled, "Command menu opened on an unavailable move")
+	var guard := 0
+	while menu.current_entry().move != resting and guard < 10:
+		menu.move_cursor(1)
+		guard += 1
+	check(menu.current_entry().move == resting and not menu.current_entry().enabled, "Cursor cannot focus an unavailable move")
+	check("ready in 2 rounds" in str(menu.current_entry().description), "Unavailable move gives no reason")
+	var rest := menu.position.x
+	menu.refuse()
+	menu.refuse()
+	await get_tree().create_timer(0.3).timeout
+	check(is_equal_approx(menu.position.x, rest), "Refusal shake left the menu displaced")
+	menu.queue_free()
+	# Hint caps follow the device the player last used.
+	var pad := InputEventJoypadButton.new()
+	pad.button_index = JOY_BUTTON_B
+	await press(pad)
+	check(InputDevice.cap("interact") == "A" and InputDevice.cap("cancel") == "B", "Hints did not switch to controller")
+	await press(key_event(KEY_X))
+	check(InputDevice.cap("interact") == "Z" and InputDevice.cap("cancel") == "X", "Hints did not switch back to keys")
+	var bar := HintBar.create(self, Rect2(0, 0, 320, 12), [["move_v", "Choose"], ["interact", "Confirm"], ["cancel", "Back"]])
+	check(bar.content_width() > 40.0 and bar.content_width() < 320.0, "Hint bar does not fit the canvas")
+	bar.queue_free()
 	await get_tree().process_frame
 
 

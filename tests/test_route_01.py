@@ -13,12 +13,30 @@ ROUTE = WORLD["route_01"]
 def test_route_dimensions_and_bidirectional_safe_spawns():
     assert len(ROUTE["rows"]) == 35 and all(len(row) == 60 for row in ROUTE["rows"])
     for source, dest in [("greymere", "route_01"), ("route_01", "greymere")]:
-        door = next(
-            d for d in WORLD[source]["doors"] if d["destination_location"] == dest
+        exit = next(
+            d for d in WORLD[source]["exits"] if d["destination_location"] == dest
         )
-        spawn = tuple(WORLD[dest]["spawn_points"][door["destination_spawn"]]["tile"])
+        spawn = tuple(WORLD[dest]["spawn_points"][exit["destination_spawn"]]["tile"])
         assert spawn in walkable(WORLD[dest])
-        assert spawn not in {tuple(d["tile"]) for d in WORLD[dest]["doors"]}
+        # Arrival is clear of the far side's own exit strip, so walking in
+        # never bounces you straight back.
+        far_tiles = {tuple(t) for d in WORLD[dest]["exits"] for t in d["tiles"]}
+        assert spawn not in far_tiles
+        assert min(abs(spawn[0] - t[0]) + abs(spawn[1] - t[1]) for t in far_tiles) >= 2
+
+
+def test_exits_span_the_full_road_width_and_lead_off_the_map():
+    """Every tile of a road mouth is an exit, each walkable, each facing off
+    the edge into solid ground (so the exit is the only way through)."""
+    for name in ("greymere", "route_01"):
+        world = WORLD[name]
+        for exit in world["exits"]:
+            dx, dy = exit["direction"]
+            for x, y in exit["tiles"]:
+                assert (x, y) in walkable(world), (name, x, y)
+                assert (x + dx, y + dy) not in walkable(world), (name, x, y)
+            road = [world["rows"][y][x] for x, y in exit["tiles"]]
+            assert len(set(road)) == 1 and road[0] in ":,", (name, road)
 
 
 def test_every_trainer_and_grass_uses_valid_existing_combat_and_art():
