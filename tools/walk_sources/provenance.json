@@ -38,25 +38,5 @@
       "seed": 42,
       "no_background": true
     }
-  },
-  {
-    "character": "liora",
-    "direction": "east",
-    "status": "completed",
-    "job_id": "4b6facca-2d6d-4cea-b8bf-30067ae4bce4",
-    "generated_frames": 4,
-    "frame_size": [
-      192,
-      192
-    ],
-    "spritesheet": "liora-east/spritesheet.png",
-    "cost_generations": 3.0,
-    "reference_sha256": "7511d512d67ed5195455a6cf1a74318c88be5aaa5ea5a6170a0201343600e6a8",
-    "settings": {
-      "action": "Seamless walk-in-place cycle. Face RIGHT / EAST in strict profile throughout ALL frames. Fixed camera and fixed position. Alternate left and right foot contact with visible opposing leg strides. Preserve exactly the reference character face, hairstyle, clothing, equipment, colors, proportions and rendering style. Preserve the same hand and side for carried equipment throughout. No turning, rotation, camera motion, or change of outfit.",
-      "frame_count": 4,
-      "seed": 42,
-      "no_background": true
-    }
   }
 ]

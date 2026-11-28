@@ -1,7 +1,7 @@
 {
   "almyra": {
-    "head_ratio": 0.287,
-    "width_ratio": 0.696
+    "head_ratio": 0.279,
+    "width_ratio": 0.625
   },
   "cassian": {
     "head_ratio": 0.378,
@@ -12,24 +12,24 @@
     "width_ratio": 0.689
   },
   "danfor": {
-    "head_ratio": 0.293,
-    "width_ratio": 0.716
+    "head_ratio": 0.308,
+    "width_ratio": 0.645
   },
   "ferris": {
-    "head_ratio": 0.294,
-    "width_ratio": 0.777
+    "head_ratio": 0.314,
+    "width_ratio": 0.695
   },
   "gell": {
-    "head_ratio": 0.318,
-    "width_ratio": 0.559
+    "head_ratio": 0.295,
+    "width_ratio": 0.59
   },
   "hexbound_adept": {
     "head_ratio": 0.273,
     "width_ratio": 0.636
   },
   "joey": {
-    "head_ratio": 0.31,
-    "width_ratio": 0.581
+    "head_ratio": 0.302,
+    "width_ratio": 0.585
   },
   "kai_assassin": {
     "head_ratio": 0.304,
@@ -60,16 +60,16 @@
     "width_ratio": 0.627
   },
   "lena": {
-    "head_ratio": 0.411,
-    "width_ratio": 0.555
+    "head_ratio": 0.327,
+    "width_ratio": 0.577
   },
   "liora": {
-    "head_ratio": 0.346,
-    "width_ratio": 0.704
+    "head_ratio": 0.413,
+    "width_ratio": 0.663
   },
   "orrin": {
-    "head_ratio": 0.197,
-    "width_ratio": 0.714
+    "head_ratio": 0.295,
+    "width_ratio": 0.648
   },
   "record:assessor": {
     "head_ratio": 0.388,
@@ -104,16 +104,16 @@
     "width_ratio": 0.579
   },
   "senna": {
-    "head_ratio": 0.352,
-    "width_ratio": 0.668
+    "head_ratio": 0.299,
+    "width_ratio": 0.598
   },
   "silas": {
-    "head_ratio": 0.348,
-    "width_ratio": 0.622
+    "head_ratio": 0.252,
+    "width_ratio": 0.612
   },
   "stranger": {
-    "head_ratio": 0.29,
-    "width_ratio": 0.6
+    "head_ratio": 0.324,
+    "width_ratio": 0.629
   },
   "unbound_mercenary": {
     "head_ratio": 0.222,
