@@ -1,8 +1,7 @@
 shader_type canvas_item;
 // Screen-space finishing pass for painted outdoor scenes, drawn under the
 // HUD: a warm/cool colour grade, a soft vignette and, on the High preset,
-// a tilt-shift blur toward the top and bottom of the frame and a gentle
-// bloom on bright highlights. Taps are few and bounded for web builds.
+// highlight bloom and optional tilt-shift blur toward the frame edges. Taps are few and bounded for web builds.
 
 uniform sampler2D screen : hint_screen_texture, filter_linear, repeat_disable;
 uniform bool blur_enabled = true;
@@ -28,12 +27,15 @@ void fragment() {
 		vec3 blurred = col;
 		for (int i = 0; i < 8; i++) {
 			vec2 o = DISK[i];
-			vec3 near = texture(screen, uv + o * px * tilt_radius * tilt).rgb;
-			blurred += near;
+			if (tilt_radius > 0.0) {
+				blurred += texture(screen, uv + o * px * tilt_radius * tilt).rgb;
+			}
 			vec3 far = texture(screen, uv + o * px * 5.0).rgb;
 			bright += max(far - vec3(bloom_threshold), vec3(0.0));
 		}
-		col = blurred / 9.0;
+		if (tilt_radius > 0.0) {
+			col = blurred / 9.0;
+		}
 		col += bright / 8.0 * bloom_strength * 2.0;
 	}
 	// Grade: cool shadows, warm highlights, a touch more saturation.
@@ -42,7 +44,7 @@ void fragment() {
 	col = mix(vec3(luma), col, 1.12);
 	col = col * col * (3.0 - 2.0 * col) * 0.22 + col * 0.78;  // gentle S-curve
 	vec2 centred = uv - 0.5;
-	float v = smoothstep(0.85, 0.25, length(centred * vec2(1.0, 0.85)));
+	float v = 1.0 - smoothstep(0.25, 0.85, length(centred * vec2(1.0, 0.85)));
 	col *= mix(1.0 - vignette, 1.0, v);
 	COLOR = vec4(col, 1.0);
 }
