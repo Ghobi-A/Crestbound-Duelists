@@ -31,7 +31,7 @@ vec4 painted_light(vec2 tile_pos, float time, bool additive) {
 		shafts *= smoothstep(0.25, 0.7, texture(noise_tex, tile_pos / 19.0 + vec2(time * 0.004, 0.0)).g);
 		float open = 1.0 - near_forest * 0.6;
 		float highlight = dapple * near_forest * 0.5;
-		float light = (shafts * 0.30 * open + highlight * 0.16 + open * 0.035) * strength;
+		float light = (shafts * 0.10 * open + highlight * 0.08 + open * 0.012) * strength;
 		return vec4(sun_colour * light, 1.0);
 	}
 }

@@ -4,7 +4,7 @@ class_name PaintedAtmosphere
 ## Presentation only. Layers, cheapest first, gated by GraphicsSettings:
 ##   Low    — none (painted terrain and props only)
 ##   Medium — canopy shade, sun shafts, colour grade and vignette
-##   High   — Medium plus tilt-shift, bloom and drifting foreground foliage
+##   High   — Medium plus highlight bloom and interior foreground depth
 
 const DIRECTORY := "res://assets/environment/painted/"
 const PASSES := [preload("res://scripts/overworld/painted_shade.gdshader"), preload("res://scripts/overworld/painted_sun.gdshader")]
@@ -17,14 +17,6 @@ const LANTERN := Vector2(11.8, -5.7)
 const BASIN := Rect2(Vector2(-16.5, -14.0), Vector2(50, 18))
 const SPOUT := Rect2(Vector2(6.5, -39.0), Vector2(3, 24))
 const TILE := 16
-# Screen-space foliage framing the corners: texture, logical position,
-# scale, flip. Kept to the frame edges so the player stays unobstructed.
-const FOREGROUND := [
-	["leaves_blur", Vector2(-22, 118), 0.62, false],
-	["leaves_blur", Vector2(268, 128), 0.56, true],
-	["leaves_blur", Vector2(-30, -26), 0.42, false],
-]
-
 const INTERIOR_FOREGROUND := [
 	["bokeh_warm", Vector2(-24, 128), 0.5, false],
 	["leaves_blur", Vector2(268, 132), 0.46, true],
@@ -62,8 +54,6 @@ func _ready() -> void:
 		add_child(pass_node)
 	_build_prop_lights()
 	_build_grade()
-	if GraphicsSettings.post_blur():
-		_build_foreground()
 
 
 func _build_prop_lights() -> void:
@@ -116,6 +106,11 @@ func _build_grade() -> void:
 	var shader := ShaderMaterial.new()
 	shader.shader = GRADE
 	shader.set_shader_parameter("blur_enabled", GraphicsSettings.post_blur())
+	if not interior:
+		shader.set_shader_parameter("tilt_radius", 0.0)
+		shader.set_shader_parameter("bloom_strength", 0.06)
+		shader.set_shader_parameter("bloom_threshold", 0.86)
+		shader.set_shader_parameter("vignette", 0.08)
 	if interior and cold:
 		# The Hollow Court: cold highlights, heavy corners, the gold glow blooms.
 		shader.set_shader_parameter("warm", Color(1.0, 0.96, 0.9))
@@ -138,7 +133,7 @@ func _build_foreground() -> void:
 	var layer := CanvasLayer.new()
 	layer.layer = 3
 	add_child(layer)
-	for item in (INTERIOR_FOREGROUND if interior else FOREGROUND):
+	for item in INTERIOR_FOREGROUND:
 		var path: String = DIRECTORY + str(item[0]) + ".png"
 		if not ResourceLoader.exists(path):
 			continue
@@ -149,7 +144,7 @@ func _build_foreground() -> void:
 		sprite.scale = Vector2.ONE * float(item[2])
 		sprite.flip_h = bool(item[3])
 		sprite.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
-		# Playtest: the framing foliage hid too much of the town; it frames, faintly.
+		# Keep interior framing translucent so room details remain legible.
 		sprite.modulate.a = 0.55
 		sprite.set_meta("home", item[1])
 		layer.add_child(sprite)
