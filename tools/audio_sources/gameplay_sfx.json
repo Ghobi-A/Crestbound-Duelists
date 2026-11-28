@@ -389,6 +389,48 @@
       "level": -26.0,
       "duration": 0.5,
       "prompt": "a tiny soft rising magical shimmer tick, a brief bright crystalline sparkle, very short, no music"
+    },
+    {
+      "id": "ui/dialogue_blip",
+      "kind": "oneshot",
+      "level": -33,
+      "duration": 0.5,
+      "prompt": "One tiny soft rounded wooden chirp for typewriter dialogue in a fantasy RPG, 70 milliseconds, isolated, dry, no vocal, silence after the single chirp, no speech or music"
+    },
+    {
+      "id": "ui/shop_open",
+      "kind": "oneshot",
+      "level": -24,
+      "duration": 0.65,
+      "prompt": "One soft creak of a small wooden counter drawer opening with a faint brass latch, close and dry, medieval shop interface, no ambience, no speech or music"
+    },
+    {
+      "id": "ui/shop_close",
+      "kind": "oneshot",
+      "level": -24,
+      "duration": 0.65,
+      "prompt": "One small wooden counter drawer closing with a padded knock and a quiet brass latch, close and dry, medieval shop interface, no ambience, no speech or music"
+    },
+    {
+      "id": "ui/shop_buy",
+      "kind": "oneshot",
+      "level": -23,
+      "duration": 0.75,
+      "prompt": "Three small silver coins dropped together onto a felt-lined wooden counter, close and dry, bright clean clink and short tail, fantasy RPG purchase confirmation, no speech or music"
+    },
+    {
+      "id": "world/pickup",
+      "kind": "oneshot",
+      "level": -25,
+      "duration": 0.7,
+      "prompt": "Short light ascending shimmer of glass and a small brass chime for finding a useful item in a fantasy RPG, soft and dry with a clean end, no speech or music"
+    },
+    {
+      "id": "battle/round_start",
+      "kind": "oneshot",
+      "level": -23,
+      "duration": 0.7,
+      "prompt": "One muted low medieval war drum tap with a quiet short brass ring behind it, calm focused next-round signal for a tactical fantasy duel, dry and restrained, no speech or music"
     }
   ]
 }

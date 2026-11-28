@@ -311,7 +311,11 @@ func _try_interact() -> void:
 		var interaction: Dictionary = _interactions[target]
 		if interaction.get("kind", "") == "chest":
 			AudioRouter.play_sfx("world", "chest")
+			var flag := str(interaction.get("flag", ""))
+			var already_collected := GameState.has_flag(flag)
 			_show_text(GameState.collect_world_item(interaction))
+			if not already_collected and GameState.has_flag(flag):
+				AudioRouter.play_sfx("world", "pickup")
 			for child in get_children():
 				if child is WorldProp:
 					var item: Dictionary = child.get_meta("definition", {})

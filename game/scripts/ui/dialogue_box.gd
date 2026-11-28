@@ -70,6 +70,7 @@ var _tab: UiPanel
 var _tab_label: Label
 var _reveal := 0.0
 var _pause := 0.0
+var _next_blip_character := 1
 var _speaker_key := ""
 var _choices: Array = []     # the offered choices while the player decides
 var _choice_index := 0
@@ -237,6 +238,7 @@ func _show_page(text: String) -> void:
 	_text_label.visible_characters = 0
 	_reveal = 0.0
 	_pause = 0.0
+	_next_blip_character = 1
 	revealing = true
 	_advance_chevron.visible = false
 	# Narration reads as a quieter voice than a character's line.
@@ -270,8 +272,12 @@ func _process(delta: float) -> void:
 	var shown := mini(int(_reveal), total)
 	if shown > before:
 		_text_label.visible_characters = shown
+		var character := _text_label.text.substr(shown - 1, 1)
+		if shown >= _next_blip_character and character.strip_edges() != "" and not _speaker_label.text.is_empty():
+			AudioRouter.play_sfx("ui", "dialogue_blip")
+			_next_blip_character = shown + 8
 		# Let a clause land before the next begins.
-		if shown < total and _text_label.text.substr(shown - 1, 1) in [".", ",", "!", "?", ";", ":", "—"]:
+		if shown < total and character in [".", ",", "!", "?", ";", ":", "—"]:
 			_pause = PUNCTUATION_PAUSE
 			_reveal = float(shown)
 	if shown >= total:
