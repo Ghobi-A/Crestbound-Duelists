@@ -210,7 +210,8 @@ def character_frames(registry: dict):
     for key in sorted(registry["characters"]):
         record = registry["characters"][key]
         world = record.get("overworld")
-        if world is None:
+        # Beasts and Riven constructs are drawn at their own height on purpose.
+        if world is None or "display_height" in world:
             continue
         fw, fh = world["frame_size"]
         sheet = Image.open(_res(world["atlas"]))

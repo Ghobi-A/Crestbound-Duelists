@@ -2,7 +2,8 @@ extends RefCounted
 class_name EncounterRuntime
 ## Loads an encounter definition and builds both parties as BattleUnits.
 ## The engine reads encounter structure from data — 1-3 slots per side,
-## symmetric or not — instead of assuming a fixed 3v3.
+## symmetric or not, solo duels and protect battles — instead of assuming
+## a fixed 3v3. Mirrors the queries and objectives of party_combat.Battle.
 
 var encounter: Dictionary = {}
 var player_units: Array = []   # BattleUnit
@@ -10,6 +11,9 @@ var enemy_units: Array = []    # BattleUnit
 var round_number := 1
 var retreat_allowed := false
 var fled := false
+var inventory: Dictionary = {}  # item_id -> count, consumed by the Item command
+var objective_type := "eliminate"
+var objective_params: Dictionary = {}
 
 
 static func start(encounter_id: String, game_data: Node, game_state: Node) -> EncounterRuntime:
@@ -19,20 +23,40 @@ static func start(encounter_id: String, game_data: Node, game_state: Node) -> En
 	if runtime.encounter.is_empty():
 		push_error("Cannot start unknown encounter '%s'." % encounter_id)
 		return runtime
-
-	var player_slots := int(runtime.encounter.get("player_slots", 3))
-	var active_party: Array = game_state.active_party(player_slots)
-	for i in active_party.size():
-		var unit := BattleUnit.create(active_party[i], "player", game_data)
-		unit.slot_index = i
-		runtime.player_units.append(unit)
-
-	var enemy_party: Array = runtime.encounter.get("enemy_party", [])
-	for i in enemy_party.size():
-		var unit := BattleUnit.create(enemy_party[i], "enemy", game_data)
-		unit.slot_index = i
-		runtime.enemy_units.append(unit)
+	runtime.inventory = game_state.inventory.duplicate()
+	runtime.configure_objective(game_data)
+	var builds: Array = game_state.encounter_party(runtime.encounter) if game_state.has_method("encounter_party") \
+		else game_state.active_party(int(runtime.encounter.get("player_slots", 3)))
+	runtime.build_units(builds, runtime.encounter.get("enemy_party", []), game_data)
 	return runtime
+
+
+static func from_data(encounter_: Dictionary, player_builds: Array, game_data: Node, inventory_ := {}) -> EncounterRuntime:
+	## A runtime straight from data (parity replays, Quick Battle).
+	var runtime := EncounterRuntime.new()
+	runtime.encounter = encounter_
+	runtime.inventory = inventory_.duplicate()
+	runtime.configure_objective(game_data)
+	runtime.build_units(player_builds, encounter_.get("enemy_party", []), game_data)
+	return runtime
+
+
+func configure_objective(game_data: Node) -> void:
+	var objective: Dictionary = game_data.get_objective(str(encounter.get("objective", "defeat_all")))
+	objective_type = str(objective.get("objective_type", "eliminate"))
+	objective_params = objective.get("params", {}).duplicate()
+	var overrides: Variant = encounter.get("objective_params", {})
+	if overrides is Dictionary:
+		objective_params.merge(overrides, true)
+
+
+func build_units(player_builds: Array, enemy_builds: Array, game_data: Node) -> void:
+	player_units = []
+	enemy_units = []
+	for i in player_builds.size():
+		player_units.append(BattleUnit.create(player_builds[i], "player", game_data, i))
+	for i in enemy_builds.size():
+		enemy_units.append(BattleUnit.create(enemy_builds[i], "enemy", game_data, i))
 
 
 func all_units() -> Array:
@@ -42,6 +66,10 @@ func all_units() -> Array:
 func living(team: String) -> Array:
 	var source: Array = player_units if team == "player" else enemy_units
 	return source.filter(func(u): return u.is_alive())
+
+
+func opposing(team: String) -> String:
+	return "enemy" if team == "player" else "player"
 
 
 func battlefield_effect() -> Dictionary:
@@ -69,16 +97,51 @@ func has_battlefield_tag(tag: String) -> bool:
 	return battlefield_effect().get("tags", []).has(tag)
 
 
+# ── Objectives ───────────────────────────────────────────────────────
+
+func rounds_completed() -> int:
+	return round_number - 1
+
+
+func outcome() -> String:
+	## "" while the battle continues, else "victory" or "defeat".
+	var tag := str(objective_params.get("unit_tag", "protected"))
+	for unit in player_units:
+		var guarded: bool = unit.tags.has("protected") or (objective_type == "protect" and unit.tags.has(tag))
+		if guarded and not unit.is_alive():
+			return "defeat"
+	var fighters := living("player").filter(func(u): return not u.tags.has("protected"))
+	if living("enemy").is_empty():
+		return "victory"
+	if objective_type == "defeat_target":
+		var marked := str(objective_params.get("unit_tag", "target"))
+		var targets := enemy_units.filter(func(u): return u.tags.has(marked))
+		if not targets.is_empty() and targets.all(func(u): return not u.is_alive()):
+			return "victory"
+	if objective_type == "survive" and rounds_completed() >= int(objective_params.get("turns_required", 1)):
+		return "victory"
+	if fighters.is_empty():
+		return "defeat"
+	return ""
+
+
+func objective_progress() -> String:
+	if objective_type == "survive":
+		var needed := int(objective_params.get("turns_required", 1))
+		return "%d/%d" % [mini(rounds_completed(), needed), needed]
+	return ""
+
+
 func victory() -> bool:
-	return living("enemy").is_empty()
+	return outcome() == "victory"
 
 
 func defeat() -> bool:
-	return living("player").is_empty()
+	return outcome() == "defeat"
 
 
 func can_flee() -> bool:
-	return retreat_allowed and not fled and not victory() and not defeat()
+	return retreat_allowed and not fled and outcome() == ""
 
 
 func flee() -> bool:

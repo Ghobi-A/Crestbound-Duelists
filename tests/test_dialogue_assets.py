@@ -35,9 +35,25 @@ def _portrait_references() -> list[tuple[str, str, str]]:
     return refs
 
 
+CHARACTERS = json.loads((REPO_ROOT / "game/assets/rework/characters.json").read_text())
+
+
+def _record_portrait(portrait: str) -> bool:
+    """CharacterPresentation.portrait: a manifest record (by id or alias)
+    crops its portrait_rect from its atlas, before any portraits/ folder.
+    "player" is Kai as he is now (StoryStage.resolve): Unbonded until Civara."""
+    if portrait == "player":
+        portrait = "kai_unbonded"
+    for record_id, record in CHARACTERS["characters"].items():
+        if portrait == record_id or portrait in record.get("aliases", []):
+            atlas = str(record.get("atlas", CHARACTERS["atlas"])).removeprefix("res://")
+            return "portrait_rect" in record and (REPO_ROOT / "game" / atlas).is_file()
+    return False
+
+
 @pytest.mark.parametrize("file_name,key,portrait", _portrait_references())
 def test_dialogue_portrait_asset_exists(file_name: str, key: str, portrait: str) -> None:
-    assert (PORTRAITS_DIR / portrait / "neutral.png").is_file(), (
+    assert _record_portrait(portrait) or (PORTRAITS_DIR / portrait / "neutral.png").is_file(), (
         f"{file_name}:{key} references portrait '{portrait}', "
         f"but {PORTRAITS_DIR / portrait / 'neutral.png'} does not exist"
     )

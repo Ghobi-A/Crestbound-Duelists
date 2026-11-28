@@ -1,6 +1,77 @@
 {
-  "items": [
-    {"id": "potion", "name": "Potion", "description": "Restores 25 HP to a wounded Duelist between battles.", "price": 18, "heal": 25},
-    {"id": "hi_potion", "name": "Hi-Potion", "description": "Restores 55 HP to a wounded Duelist between battles.", "price": 42, "heal": 55}
-  ]
+  "clearwater": {
+    "battle_effect": {
+      "statuses": [
+        "hexed",
+        "bleed",
+        "scorched"
+      ],
+      "type": "cure"
+    },
+    "category": "consumable",
+    "description": "Rinses away Hex and stops bleeding.",
+    "field_effect": {
+      "statuses": [
+        "hexed",
+        "bleed",
+        "scorched"
+      ],
+      "type": "cure"
+    },
+    "id": "clearwater",
+    "name": "Clearwater",
+    "price": 24
+  },
+  "hi_potion": {
+    "battle_effect": {
+      "amount": 55,
+      "type": "heal"
+    },
+    "category": "consumable",
+    "description": "Restores 55 HP.",
+    "field_effect": {
+      "amount": 55,
+      "type": "heal"
+    },
+    "id": "hi_potion",
+    "name": "Hi-Potion",
+    "price": 42
+  },
+  "potion": {
+    "battle_effect": {
+      "amount": 25,
+      "type": "heal"
+    },
+    "category": "consumable",
+    "description": "Restores 25 HP.",
+    "field_effect": {
+      "amount": 25,
+      "type": "heal"
+    },
+    "id": "potion",
+    "name": "Potion",
+    "price": 18
+  },
+  "resonance_tonic": {
+    "battle_effect": {
+      "amount": 25,
+      "type": "resonance"
+    },
+    "category": "consumable",
+    "description": "A bitter draught that stirs a Crest. +25 Resonance in battle.",
+    "id": "resonance_tonic",
+    "name": "Resonance Tonic",
+    "price": 36
+  },
+  "smelling_salts": {
+    "battle_effect": {
+      "ratio": 0.3,
+      "type": "revive"
+    },
+    "category": "consumable",
+    "description": "Brings a fallen ally back to their feet at 30% HP.",
+    "id": "smelling_salts",
+    "name": "Smelling Salts",
+    "price": 48
+  }
 }

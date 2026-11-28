@@ -314,8 +314,23 @@ func check_world_and_setup() -> void:
 		check(world._player._sprite._sprite.region_rect.size == Vector2(world._player._sprite.frame_width, world._player._sprite.frame_height), "Overworld crop invalid")
 	world._play_dialogue("kassian_flavor")
 	check(world._camera.offset.y > 0, "Dialogue camera safe area not applied")
+	# A quest update during a conversation waits for the HUD, then shows and chimes.
+	GameState.quest_updated.emit("smoke_quest", "Smoke quest updated")
+	await get_tree().process_frame
+	check(world._hud._notice.modulate.a < 0.1, "Quest notice shown behind the dialogue")
 	while world._dialogue.active: world._dialogue._advance()
 	check(world._camera.offset == Vector2.ZERO, "Dialogue camera not restored")
+	for i in 3: await get_tree().process_frame
+	check(world._hud._notice.modulate.a > 0.9 and world._hud._notice_label.text == "Smoke quest updated", "Quest notice not shown after the dialogue")
+	# Creature moves play their own sounds (moves.yaml sfx); each must load.
+	var named := 0
+	for move in GameData.datasets.get("moves", {}).values():
+		if str(move.get("sfx", "")) == "":
+			continue
+		named += 1
+		var paths := AudioRouter.variants("battle", str(move.sfx))
+		check(not paths.is_empty() and load(str(paths[0])) is AudioStream, "No sound for %s (%s)" % [move.id, move.sfx])
+	check(named >= 16, "Creature moves lost their sounds")
 	world.queue_free()
 	await get_tree().process_frame
 	var setup: Node = load("res://scenes/ui/party_setup.tscn").instantiate()

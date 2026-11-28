@@ -15,6 +15,30 @@ static func asset(id: String) -> Dictionary:
 		_assets = JSON.parse_string(FileAccess.get_file_as_string(ASSETS)).get("assets", {})
 	return _assets.get(id, {})
 
+static func present(item: Dictionary) -> bool:
+	## Whether a map object exists right now: every condition in its optional
+	## `show_if` must hold. A condition is a flag ("greymaw_den_won"), a
+	## negated flag ("!greymaw_den_won") or a story-stage bound
+	## ("stage>=incident", "stage<aftermath"). The map never changes state.
+	var conditions = item.get("show_if", [])
+	if conditions is String:
+		conditions = [conditions]
+	for condition in conditions:
+		if not condition_met(str(condition)):
+			return false
+	return true
+
+
+static func condition_met(condition: String) -> bool:
+	if condition.begins_with("stage>="):
+		return GameState.stage_index(GameState.story_stage) >= GameState.stage_index(condition.substr(7))
+	if condition.begins_with("stage<"):
+		return GameState.stage_index(GameState.story_stage) < GameState.stage_index(condition.substr(6))
+	if condition.begins_with("!"):
+		return not GameState.has_flag(condition.substr(1))
+	return GameState.has_flag(condition)
+
+
 static func tile(value: Array) -> Vector2i:
 	return Vector2i(int(value[0]), int(value[1]))
 

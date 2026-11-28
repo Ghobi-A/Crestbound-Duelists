@@ -19,6 +19,12 @@ func close_dialogue() -> void:
 func _ready() -> void:
 	get_tree().current_scene = null
 	GameState.start_new_game("neutral")
+	# Route 01 fights are 1v1 and skip positioning in the data; this smoke
+	# drives the cancel path through party setup, so it asks for setup here.
+	for id in ["route01_rowan", "route01_squire", "route01_challenger", "route01_roadside"]:
+		var authored: Dictionary = GameData.get_encounter(id)
+		check(not bool(authored.get("pre_battle_positioning", true)) and int(authored.player_slots) == 1, "Kai fights alone: " + id)
+		authored["pre_battle_positioning"] = true
 	GameState.set_flag("overworld_onboarding_seen")
 	GameState.set_flag("battle_onboarding_seen")
 	Engine.time_scale = 15
@@ -141,7 +147,7 @@ func _ready() -> void:
 		if battle.state in [battle.State.SELECT_MENU,battle.State.SELECT_TARGET,battle.State.PREVIEW]: battle._unhandled_input(confirm)
 		await get_tree().process_frame
 	check(battle.runtime.victory(), "actual battle resolves player victory")
-	battle._after_result(true)
+	battle._after_result("continue", true)
 	await settled()
 	check(world.location_id == "route_01", "victory returns to route")
 	check(GameState.has_flag("route01_rowan_defeated"), "confirmed victory marks trainer")

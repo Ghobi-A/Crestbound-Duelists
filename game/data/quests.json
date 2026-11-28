@@ -1,0 +1,216 @@
+{
+  "main_classification": {
+    "giver": "Warden Almyra",
+    "id": "main_classification",
+    "kind": "main",
+    "name": "Classification",
+    "start_flag": "custody_choice_made",
+    "steps": [
+      {
+        "flag": "arrived_civara",
+        "id": "civara",
+        "text": "Report to the Classification Hall in Civara."
+      },
+      {
+        "flag": "class_stabilised",
+        "id": "stabilise",
+        "text": "Stabilise a resonance pattern."
+      },
+      {
+        "flag": "civara_assessment_won",
+        "id": "assessment",
+        "text": "Pass the combat assessment."
+      }
+    ],
+    "summary": "Custody or classification. Kai chose the road that keeps a door open, and the road leads to Civara."
+  },
+  "main_greymere_day": {
+    "giver": "Joey",
+    "id": "main_greymere_day",
+    "kind": "main",
+    "name": "A Day in Greymere",
+    "reward": {
+      "crowns": 20
+    },
+    "start_flag": "",
+    "steps": [
+      {
+        "flag": "goats_rounded",
+        "id": "goats",
+        "text": "Round up the goats Joey let loose."
+      },
+      {
+        "flag": "greymere_spar_danfor_won",
+        "id": "spar",
+        "text": "Take Danfor's sparring lesson."
+      },
+      {
+        "flag": "talked_gell_story",
+        "id": "gell",
+        "text": "Hear Gell out at the shop."
+      },
+      {
+        "flag": "talked_lena_story",
+        "id": "lena",
+        "text": "Let Lena see to that scrape."
+      },
+      {
+        "flag": "talked_silas_ridge",
+        "id": "silas",
+        "text": "Answer Elder Silas."
+      }
+    ],
+    "summary": "Joey has a bad idea. Danfor has a lesson. Gell has opinions, Lena has bandages and Silas has a question about the old ridge."
+  },
+  "main_hollow_court": {
+    "giver": "Elder Silas",
+    "id": "main_hollow_court",
+    "kind": "main",
+    "name": "Into the Hollow Court",
+    "start_flag": "incident_started",
+    "steps": [
+      {
+        "flag": "court_stair_pair_won",
+        "id": "stair",
+        "text": "Get down the Collapsed Stair."
+      },
+      {
+        "flag": "court_gallery_pair_won",
+        "id": "almyra",
+        "text": "Free Warden Almyra in the Drowned Gallery."
+      },
+      {
+        "flag": "court_protect_joey_won",
+        "id": "joey",
+        "text": "Reach Joey."
+      },
+      {
+        "flag": "court_anchor_won",
+        "id": "seal",
+        "text": "Break the seal on the passage."
+      },
+      {
+        "flag": "court_sealed_choir_won",
+        "id": "choir",
+        "text": "Silence the Sealed Choir."
+      }
+    ],
+    "summary": "The ridge gave way at dusk and Joey went down after his stash. If you hear something calling, do not answer it."
+  },
+  "main_inspection": {
+    "giver": "Elder Silas",
+    "id": "main_inspection",
+    "kind": "main",
+    "name": "The Inspection",
+    "start_flag": "stage_abnormal",
+    "steps": [
+      {
+        "flag": "almyra_arrived",
+        "id": "arrival",
+        "text": "Meet the inspection party in the square."
+      },
+      {
+        "flag": "cordon_up",
+        "id": "cordon",
+        "text": "Find out what the cordon is for."
+      }
+    ],
+    "summary": "Dogs bark at the hill and the well tastes of iron. Avelan has sent a Warden to inspect the ground under Greymere."
+  },
+  "side_gell_crates": {
+    "giver": "Gell",
+    "id": "side_gell_crates",
+    "kind": "side",
+    "name": "Gell's Delivery",
+    "reward": {
+      "crowns": 30
+    },
+    "start_flag": "gell_crates_asked",
+    "steps": [
+      {
+        "flag": "crates_delivered",
+        "id": "deliver",
+        "text": "Carry the lamp oil to the inn."
+      }
+    ],
+    "summary": "Gell owes the inn a crate of lamp oil and would rather not walk."
+  },
+  "side_grey_wolf": {
+    "giver": "Old Ferris",
+    "id": "side_grey_wolf",
+    "kind": "side",
+    "name": "The Grey Wolf",
+    "reward": {
+      "crowns": 20,
+      "flags": [
+        "greymaw_story_told"
+      ]
+    },
+    "start_flag": "ferris_rumour_heard",
+    "steps": [
+      {
+        "flag": "greymaw_tracks_found",
+        "id": "tracks",
+        "text": "Follow the tracks off the Route 01 road."
+      },
+      {
+        "flag": "greymaw_den_won",
+        "id": "den",
+        "text": "Face Old Greymaw at its den."
+      }
+    ],
+    "summary": "Old Ferris swears Old Greymaw is walking the ridge path again, and that the wolf only comes down before the frost."
+  },
+  "side_joey_wager": {
+    "giver": "Joey",
+    "id": "side_joey_wager",
+    "kind": "side",
+    "name": "Joey's Wager",
+    "reward": {
+      "crowns": 25,
+      "items": {
+        "resonance_tonic": 1
+      }
+    },
+    "start_flag": "joey_wager_offered",
+    "steps": [
+      {
+        "flag": "route01_challenger_won",
+        "id": "first",
+        "text": "Beat the Wandering Challenger on Route 01."
+      },
+      {
+        "flag": "joey_wager_won",
+        "id": "rematch",
+        "text": "Win the rematch Joey arranged."
+      }
+    ],
+    "summary": "Joey has bet a stranger that you can beat the Wandering Challenger twice in one day. He did not ask first."
+  },
+  "side_lena_herbs": {
+    "giver": "Lena",
+    "id": "side_lena_herbs",
+    "kind": "side",
+    "name": "Lena's Errand",
+    "reward": {
+      "crowns": 15,
+      "items": {
+        "clearwater": 2
+      }
+    },
+    "start_flag": "lena_herbs_asked",
+    "steps": [
+      {
+        "flag": "herbs_gathered",
+        "id": "gather",
+        "text": "Gather marshwort by the pond on Route 01."
+      },
+      {
+        "flag": "herbs_delivered",
+        "id": "deliver",
+        "text": "Bring the marshwort to Lena."
+      }
+    ],
+    "summary": "Lena needs marshwort from the reeds by the Route 01 pond."
+  }
+}

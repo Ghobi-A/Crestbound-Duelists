@@ -632,6 +632,430 @@
       },
       "battle_body_height": 549,
       "battle_sheet": "res://assets/battle/cast/route01_challenger.png"
+    },
+    "assessor": {
+      "display_name": "Assessor",
+      "aliases": [],
+      "battle_side": "enemy",
+      "atlas": "res://assets/battle/cast/assessor.png",
+      "colour_key": "alpha",
+      "battle_rect": [
+        0,
+        0,
+        256,
+        224
+      ],
+      "foot_anchor": [
+        149.2,
+        216
+      ],
+      "battle_body_height": 195,
+      "portrait_rect": [
+        132,
+        18,
+        82,
+        82
+      ],
+      "overworld": {
+        "atlas": "res://assets/overworld/figures/assessor.png",
+        "frame_size": [
+          256,
+          224
+        ],
+        "row": 0,
+        "foot_anchor": [
+          144,
+          216
+        ],
+        "body_height": 196
+      },
+      "battle_sheet": "res://assets/battle/cast/assessor.png"
+    },
+    "danfor": {
+      "display_name": "Danfor",
+      "aliases": [],
+      "battle_side": "enemy",
+      "atlas": "res://assets/battle/cast/danfor.png",
+      "colour_key": "alpha",
+      "battle_rect": [
+        0,
+        0,
+        256,
+        224
+      ],
+      "foot_anchor": [
+        146.2,
+        216
+      ],
+      "battle_body_height": 199,
+      "portrait_rect": [
+        91,
+        14,
+        84,
+        84
+      ],
+      "battle_sheet": "res://assets/battle/cast/danfor.png"
+    },
+    "gell": {
+      "display_name": "Gell",
+      "aliases": [],
+      "battle_side": "enemy",
+      "atlas": "res://assets/battle/cast/gell.png",
+      "colour_key": "alpha",
+      "battle_rect": [
+        0,
+        0,
+        256,
+        224
+      ],
+      "foot_anchor": [
+        129.3,
+        216
+      ],
+      "battle_body_height": 196,
+      "portrait_rect": [
+        87,
+        18,
+        82,
+        82
+      ],
+      "battle_sheet": "res://assets/battle/cast/gell.png"
+    },
+    "greymaw": {
+      "display_name": "Old Greymaw",
+      "aliases": [],
+      "battle_side": "enemy",
+      "atlas": "res://assets/battle/cast/greymaw.png",
+      "colour_key": "alpha",
+      "battle_rect": [
+        0,
+        0,
+        256,
+        224
+      ],
+      "foot_anchor": [
+        187.1,
+        211
+      ],
+      "battle_body_height": 178,
+      "portrait_rect": [
+        100,
+        29,
+        75,
+        75
+      ],
+      "overworld": {
+        "atlas": "res://assets/overworld/figures/greymaw.png",
+        "frame_size": [
+          256,
+          224
+        ],
+        "row": 0,
+        "foot_anchor": [
+          126,
+          211
+        ],
+        "body_height": 180,
+        "display_height": 20
+      },
+      "battle_sheet": "res://assets/battle/cast/greymaw.png"
+    },
+    "hale": {
+      "display_name": "Specialist Hale",
+      "aliases": [],
+      "battle_side": "player",
+      "atlas": "res://assets/battle/cast/hale.png",
+      "colour_key": "alpha",
+      "battle_rect": [
+        0,
+        0,
+        256,
+        224
+      ],
+      "foot_anchor": [
+        138.8,
+        216
+      ],
+      "battle_body_height": 195,
+      "portrait_rect": [
+        106,
+        18,
+        82,
+        82
+      ],
+      "class_id": "sorcerer",
+      "overworld": {
+        "atlas": "res://assets/overworld/figures/hale.png",
+        "frame_size": [
+          256,
+          224
+        ],
+        "row": 0,
+        "foot_anchor": [
+          152,
+          216
+        ],
+        "body_height": 196
+      },
+      "battle_sheet": "res://assets/battle/cast/hale.png"
+    },
+    "joey": {
+      "display_name": "Joey",
+      "aliases": [],
+      "battle_side": "player",
+      "atlas": "res://assets/battle/cast/joey.png",
+      "colour_key": "alpha",
+      "battle_rect": [
+        0,
+        0,
+        256,
+        224
+      ],
+      "foot_anchor": [
+        86.0,
+        218
+      ],
+      "battle_body_height": 195,
+      "portrait_rect": [
+        86,
+        19,
+        82,
+        82
+      ],
+      "battle_sheet": "res://assets/battle/cast/joey.png"
+    },
+    "kai_unbonded": {
+      "display_name": "Kai",
+      "aliases": [
+        "kai_unsettled"
+      ],
+      "battle_side": "player",
+      "atlas": "res://assets/battle/cast/kai_unbonded.png",
+      "colour_key": "alpha",
+      "battle_rect": [
+        0,
+        0,
+        256,
+        224
+      ],
+      "foot_anchor": [
+        144.8,
+        216
+      ],
+      "battle_body_height": 194,
+      "portrait_rect": [
+        86,
+        18,
+        82,
+        82
+      ],
+      "battle_sheet": "res://assets/battle/cast/kai_unbonded.png"
+    },
+    "lena": {
+      "display_name": "Lena",
+      "aliases": [],
+      "battle_side": "enemy",
+      "atlas": "res://assets/battle/cast/lena.png",
+      "colour_key": "alpha",
+      "battle_rect": [
+        0,
+        0,
+        256,
+        224
+      ],
+      "foot_anchor": [
+        136.5,
+        218
+      ],
+      "battle_body_height": 199,
+      "portrait_rect": [
+        86,
+        17,
+        83,
+        83
+      ],
+      "battle_sheet": "res://assets/battle/cast/lena.png"
+    },
+    "riven_anchor": {
+      "display_name": "Riven Anchor",
+      "aliases": [],
+      "battle_side": "enemy",
+      "atlas": "res://assets/battle/cast/riven_anchor.png",
+      "colour_key": "alpha",
+      "battle_rect": [
+        0,
+        0,
+        256,
+        224
+      ],
+      "foot_anchor": [
+        132.8,
+        222
+      ],
+      "battle_body_height": 217,
+      "portrait_rect": [
+        92,
+        3,
+        91,
+        91
+      ],
+      "overworld": {
+        "atlas": "res://assets/overworld/figures/riven_anchor.png",
+        "frame_size": [
+          256,
+          224
+        ],
+        "row": 0,
+        "foot_anchor": [
+          130,
+          222
+        ],
+        "body_height": 217,
+        "display_height": 28
+      },
+      "battle_sheet": "res://assets/battle/cast/riven_anchor.png"
+    },
+    "riven_husk": {
+      "display_name": "Riven Husk",
+      "aliases": [],
+      "battle_side": "enemy",
+      "atlas": "res://assets/battle/cast/riven_husk.png",
+      "colour_key": "alpha",
+      "battle_rect": [
+        0,
+        0,
+        256,
+        224
+      ],
+      "foot_anchor": [
+        132.8,
+        216
+      ],
+      "battle_body_height": 194,
+      "portrait_rect": [
+        91,
+        5,
+        87,
+        87
+      ],
+      "overworld": {
+        "atlas": "res://assets/overworld/figures/riven_husk.png",
+        "frame_size": [
+          256,
+          224
+        ],
+        "row": 0,
+        "foot_anchor": [
+          136,
+          216
+        ],
+        "body_height": 202,
+        "display_height": 26
+      },
+      "battle_sheet": "res://assets/battle/cast/riven_husk.png"
+    },
+    "riven_wisp": {
+      "display_name": "Riven Wisp",
+      "aliases": [],
+      "battle_side": "enemy",
+      "atlas": "res://assets/battle/cast/riven_wisp.png",
+      "colour_key": "alpha",
+      "battle_rect": [
+        0,
+        0,
+        256,
+        224
+      ],
+      "foot_anchor": [
+        137.0,
+        212
+      ],
+      "battle_body_height": 185,
+      "portrait_rect": [
+        95,
+        21,
+        79,
+        79
+      ],
+      "overworld": {
+        "atlas": "res://assets/overworld/figures/riven_wisp.png",
+        "frame_size": [
+          256,
+          224
+        ],
+        "row": 0,
+        "foot_anchor": [
+          109,
+          212
+        ],
+        "body_height": 189,
+        "display_height": 18
+      },
+      "battle_sheet": "res://assets/battle/cast/riven_wisp.png"
+    },
+    "sealed_choir": {
+      "display_name": "The Sealed Choir",
+      "aliases": [],
+      "battle_side": "enemy",
+      "atlas": "res://assets/battle/cast/sealed_choir.png",
+      "colour_key": "alpha",
+      "battle_rect": [
+        0,
+        0,
+        256,
+        224
+      ],
+      "foot_anchor": [
+        127.5,
+        224
+      ],
+      "battle_body_height": 217,
+      "portrait_rect": [
+        76,
+        4,
+        91,
+        91
+      ],
+      "overworld": {
+        "atlas": "res://assets/overworld/figures/sealed_choir.png",
+        "frame_size": [
+          256,
+          224
+        ],
+        "row": 0,
+        "foot_anchor": [
+          128,
+          224
+        ],
+        "body_height": 218,
+        "display_height": 46
+      },
+      "battle_sheet": "res://assets/battle/cast/sealed_choir.png"
+    },
+    "silas": {
+      "display_name": "Elder Silas",
+      "aliases": [],
+      "battle_side": "enemy",
+      "atlas": "res://assets/battle/cast/silas.png",
+      "colour_key": "alpha",
+      "battle_rect": [
+        0,
+        0,
+        256,
+        224
+      ],
+      "foot_anchor": [
+        129.4,
+        220
+      ],
+      "battle_body_height": 202,
+      "portrait_rect": [
+        98,
+        14,
+        85,
+        85
+      ],
+      "battle_sheet": "res://assets/battle/cast/silas.png"
     }
   },
   "overworld_body_heights": {

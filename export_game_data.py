@@ -18,21 +18,26 @@ from __future__ import annotations
 import argparse
 import json
 import shutil
+from collections.abc import Callable
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Callable
+from typing import Any
 
 from loaders import (
     DataValidationError,
     load_battle_objectives,
+    load_cast,
     load_characters,
     load_classes,
     load_combat_config,
     load_crests,
-    load_entities,
     load_encounters,
+    load_entities,
+    load_equipment,
+    load_items,
     load_locations,
     load_moves,
+    load_quests,
     load_terrain,
 )
 
@@ -55,6 +60,10 @@ DATASETS: dict[str, Callable[[], dict[str, Any]]] = {
     "encounters": load_encounters,
     "characters": load_characters,
     "locations": load_locations,
+    "items": load_items,
+    "equipment": load_equipment,
+    "cast": load_cast,
+    "quests": load_quests,
 }
 
 

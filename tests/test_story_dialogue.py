@@ -2,8 +2,11 @@
 
 DialogueBox stages a conversation whose first entry sets "staging": "scene"
 (StoryStage: the location as a backdrop and the cast drawn large from their
-battle sheets). The Godot presentation smoke test drives the reveal and
-progression; this checks the data contract that decides what is staged.
+battle sheets). Chapter One conversations hold one variant per point in the
+story ("show_if"); DialogueBox keeps the variants whose conditions hold, so
+staging may also open a variant. The Godot presentation smoke test drives
+the reveal and progression; this checks the data contract that decides what
+is staged.
 """
 from __future__ import annotations
 
@@ -16,14 +19,18 @@ DIALOGUE = {}
 for path in sorted((GAME / "data/dialogue").glob("*.json")):
     DIALOGUE.update(json.loads(path.read_text(encoding="utf-8")))
 CHARACTERS = json.loads((GAME / "assets/rework/characters.json").read_text())["characters"]
-STORY_KEYS = {"elara_intro", "mira_intro", "court_entrance", "post_battle", "battle_intro"}
+CHAPTER = json.loads((GAME / "data/dialogue/chapter_one.json").read_text(encoding="utf-8"))
+LEGACY_KEYS = {"elara_intro", "mira_intro", "court_entrance", "post_battle", "battle_intro"}
+STORY_KEYS = LEGACY_KEYS | {key for key, entries in CHAPTER.items() if any(e.get("staging") for e in entries)}
 
 
 def _staged(key: str) -> bool:
-    return DIALOGUE[key][0].get("staging") == "scene"
+    return any(entry.get("staging") == "scene" for entry in DIALOGUE[key])
 
 
 def _battle_sheet(portrait: str) -> str | None:
+    if portrait == "player":  # Kai as he is now; every class has a sheet too
+        portrait = "kai_unbonded"
     for record_id, record in CHARACTERS.items():
         if portrait == record_id or portrait in record.get("aliases", []):
             return record.get("battle_sheet")
@@ -34,11 +41,16 @@ def test_story_scenes_are_staged_and_incidental_talk_is_not():
     staged = {key for key in DIALOGUE if _staged(key)}
     assert staged == STORY_KEYS
     assert all(not _staged(key) for key in DIALOGUE if key.endswith("_flavor"))
+    # The chapter's main beats are all staged scenes.
+    for key in ("morning_wake", "almyra_arrives", "danfor_cordon", "chamber_bond", "aftermath", "civara_classification"):
+        assert key in STORY_KEYS, key
 
 
-def test_staging_is_only_set_on_the_first_entry():
+def test_staging_is_only_set_where_a_variant_starts():
     for key, entries in DIALOGUE.items():
-        assert all("staging" not in entry for entry in entries[1:]), key
+        for index, entry in enumerate(entries[1:], start=1):
+            if "staging" in entry:
+                assert entry.get("show_if") != entries[index - 1].get("show_if"), (key, index)
 
 
 def test_every_staged_speaker_has_large_art_with_a_sidecar():

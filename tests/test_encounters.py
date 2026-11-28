@@ -60,5 +60,6 @@ def test_resonance_rules_differ_between_crests():
     signatures = {
         tuple(sorted(crest["resonance_gain"].items()))
         for crest in load_crests().values()
+        if crest.get("recognised", True)
     }
     assert len(signatures) == 6

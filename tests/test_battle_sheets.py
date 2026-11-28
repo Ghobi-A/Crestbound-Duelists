@@ -48,7 +48,12 @@ def test_every_state_fits_its_sheet_and_frames_are_not_empty():
         assert set(sidecar["states"]) == set(builder.STATES)
         capacity = (image.shape[0] // sidecar["frame_height"]) * sidecar["columns"]
         for state, info in sidecar["states"].items():
-            assert info["count"] >= 4 and info["start"] + info["count"] <= min(capacity, sidecar["frame_count"]), (name, state)
+            # Story-only figures (and Joey, who never attacks) hold their idle
+            # pose for the states they have no frames for.
+            held = not list((builder.SOURCES / name).glob(f"{state}_*.png"))
+            assert not held or name in builder.NEW_RECORDS, (name, state)
+            assert info["count"] >= (1 if held else 4), (name, state)
+            assert info["start"] + info["count"] <= min(capacity, sidecar["frame_count"]), (name, state)
             for index in range(info["start"], info["start"] + info["count"]):
                 assert (_frame(sidecar, image, index)[:, :, 3] >= 128).sum() > 500, (name, state, index)
         # WebGL-safe texture size.

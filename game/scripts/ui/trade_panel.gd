@@ -77,8 +77,8 @@ func _refresh() -> void:
 	else:
 		_description.text = str(_items[cursor].description)
 	var member: Dictionary = GameState.party[target] if target < GameState.party.size() else {}
-	var maximum := int(GameData.get_class_record(str(member.get("class_id", "neutral"))).get("base_stats", {}).get("hp", 1))
-	_party.text = "USE ON  ◀ %s  %d/%d HP ▶" % [str(member.get("name", "")), int(member.get("current_hp", maximum)), maximum] if not shopping else ""
+	var maximum := GameState.member_max_hp(member) if not member.is_empty() else 1
+	_party.text = "USE ON  ◀ %s  %d/%d HP ▶" % [str(member.get("name", "")), GameState.member_hp(member) if not member.is_empty() else 0, maximum] if not shopping else ""
 
 func _unhandled_input(event: InputEvent) -> void:
 	if not active or not event.is_pressed() or event.is_echo():

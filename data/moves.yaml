@@ -5,12 +5,31 @@
 # swing under the real compressed formula; repeated same-direction riders
 # refresh rather than stack.
 
+# Combat System 3.0 fields (all optional, read by party_combat.py and
+# the Godot runtime):
+#   property        impact | edge | arcane — checked against affinities
+#   speed           initiative modifier for this move (−20..+20)
+#   telegraph       true: one round winding up, released the next round
+#   target_rule     enemy (default) | all_enemies | self
+#   resonance_bonus Resonance the user gains when the move is used
+#   dispel_buffs    true: strips the target's positive modifiers
+#   aftermath_self_statuses: statuses on the user, hit or miss
+#   status_effects[].value: damage per round for "dot" statuses
+#   sfx             presentation only: a battle sound cue (game/assets/audio/
+#                   sfx/battle/<sfx>.ogg) played as the move starts, in place
+#                   of the generic swing; no combat effect
+# class_id is a class for the six class pools (default kit in
+# classes.yaml move_ids, alternatives in unlockable_moves), or one of:
+# kai (Kai's provisional kits), entity (Bonded Entity granted moves),
+# enemy (beasts, Riven manifestations and other non-Duelist foes).
+
 moves:
   # ── Warrior ────────────────────────────────────────────────────────
   - id: power_slash
     name: Power Slash
     class_id: warrior
     move_type: physical
+    property: edge
     slot: basic
     power: 16
     accuracy: 1.0
@@ -33,6 +52,7 @@ moves:
     name: Armor Break
     class_id: warrior
     move_type: physical
+    property: impact
     slot: signature
     power: 13
     accuracy: 1.0
@@ -55,6 +75,7 @@ moves:
     name: Reckless Charge
     class_id: warrior
     move_type: physical
+    property: impact
     slot: gambit
     power: 24
     accuracy: 0.75
@@ -78,6 +99,7 @@ moves:
     name: Arcane Bolt
     class_id: mage
     move_type: magical
+    property: arcane
     slot: basic
     power: 16
     accuracy: 1.0
@@ -100,6 +122,7 @@ moves:
     name: Mind Pierce
     class_id: mage
     move_type: magical
+    property: arcane
     slot: signature
     power: 13
     accuracy: 1.0
@@ -122,6 +145,7 @@ moves:
     name: Overload
     class_id: mage
     move_type: magical
+    property: arcane
     slot: gambit
     power: 24
     accuracy: 0.75
@@ -145,6 +169,7 @@ moves:
     name: Quick Strike
     class_id: assassin
     move_type: physical
+    property: edge
     slot: basic
     power: 16
     accuracy: 1.0
@@ -167,6 +192,7 @@ moves:
     name: Cripple
     class_id: assassin
     move_type: physical
+    property: edge
     slot: signature
     power: 13
     accuracy: 1.0
@@ -191,6 +217,7 @@ moves:
     name: Lethal Edge
     class_id: assassin
     move_type: physical
+    property: edge
     slot: gambit
     power: 25
     accuracy: 0.70
@@ -214,6 +241,7 @@ moves:
     name: Shield Bash
     class_id: guardian
     move_type: adaptive
+    property: impact
     slot: basic
     power: 15
     accuracy: 1.0
@@ -236,6 +264,7 @@ moves:
     name: Fortify
     class_id: guardian
     move_type: adaptive
+    property: impact
     slot: signature
     power: 13
     accuracy: 1.0
@@ -258,6 +287,7 @@ moves:
     name: Avalanche
     class_id: guardian
     move_type: physical
+    property: impact
     slot: gambit
     power: 22
     accuracy: 0.80
@@ -281,6 +311,7 @@ moves:
     name: Hybrid Strike
     class_id: neutral
     move_type: adaptive
+    property: edge
     slot: basic
     power: 16
     accuracy: 1.0
@@ -303,6 +334,7 @@ moves:
     name: Focus Shift
     class_id: neutral
     move_type: adaptive
+    property: arcane
     slot: signature
     power: 13
     accuracy: 1.0
@@ -329,6 +361,7 @@ moves:
     name: Wild Card
     class_id: neutral
     move_type: adaptive
+    property: impact
     slot: gambit
     power: 24
     accuracy: 0.75
@@ -352,6 +385,7 @@ moves:
     name: Flame
     class_id: sorcerer
     move_type: magical
+    property: arcane
     slot: basic
     power: 16
     accuracy: 1.0
@@ -374,6 +408,7 @@ moves:
     name: Hex
     class_id: sorcerer
     move_type: magical
+    property: arcane
     slot: signature
     power: 13
     accuracy: 1.0
@@ -398,6 +433,7 @@ moves:
     name: Voidfire
     class_id: sorcerer
     move_type: magical
+    property: arcane
     slot: gambit
     power: 24
     accuracy: 0.75
@@ -415,3 +451,1086 @@ moves:
     animation_key: cast_heavy
     vfx_key: voidfire_pillar
     ai_tags: [damage, risky]
+
+  # ── Class alternatives (unlockable_moves) ─────────────────────────
+
+  - id: hilt_strike
+    name: Hilt Strike
+    class_id: warrior
+    move_type: physical
+    property: impact
+    slot: basic
+    power: 14
+    accuracy: 1.0
+    cooldown_turns: 0
+    range: 1
+    area_shape: single
+    target_rule: enemy
+    resource_cost: 0
+    target_stat_mods: []
+    self_stat_mods: []
+    is_buff_move: false
+    status_effects: []
+    terrain_effects: []
+    tags: [reliable, quick]
+    animation_key: slash
+    vfx_key: shield_impact
+    ai_tags: [damage]
+    speed: 10
+
+  - id: rallying_roar
+    name: Rallying Roar
+    class_id: warrior
+    move_type: physical
+    property: impact
+    slot: signature
+    power: 0
+    accuracy: 1.0
+    cooldown_turns: 1
+    range: 1
+    area_shape: single
+    target_rule: self
+    resource_cost: 0
+    target_stat_mods: []
+    self_stat_mods: [{stat: atk, amount: 8}, {stat: spd, amount: 4}]
+    is_buff_move: true
+    status_effects: []
+    terrain_effects: []
+    tags: [buff]
+    animation_key: buff
+    vfx_key: focus_aura
+    ai_tags: [buff]
+
+  - id: sundering_blow
+    name: Sundering Blow
+    class_id: warrior
+    move_type: physical
+    property: edge
+    slot: gambit
+    power: 26
+    accuracy: 0.7
+    cooldown_turns: 1
+    range: 1
+    area_shape: single
+    target_rule: enemy
+    resource_cost: 0
+    target_stat_mods: []
+    self_stat_mods: []
+    is_buff_move: false
+    status_effects: []
+    terrain_effects: []
+    tags: [risky, guard_break]
+    animation_key: heavy_slash
+    vfx_key: armor_shatter
+    ai_tags: [damage]
+    speed: -15
+
+  - id: stone_lance
+    name: Stone Lance
+    class_id: mage
+    move_type: magical
+    property: impact
+    slot: basic
+    power: 14
+    accuracy: 1.0
+    cooldown_turns: 0
+    range: 3
+    area_shape: single
+    target_rule: enemy
+    resource_cost: 0
+    target_stat_mods: []
+    self_stat_mods: []
+    is_buff_move: false
+    status_effects: []
+    terrain_effects: []
+    tags: [reliable, ranged]
+    animation_key: bolt
+    vfx_key: avalanche_rocks
+    ai_tags: [damage]
+
+  - id: binding_glyph
+    name: Binding Glyph
+    class_id: mage
+    move_type: magical
+    property: arcane
+    slot: signature
+    power: 10
+    accuracy: 1.0
+    cooldown_turns: 1
+    range: 3
+    area_shape: single
+    target_rule: enemy
+    resource_cost: 0
+    target_stat_mods: [{stat: spd, amount: -12}]
+    self_stat_mods: []
+    is_buff_move: false
+    status_effects: []
+    terrain_effects: []
+    tags: [debuff, control, ranged]
+    animation_key: bolt
+    vfx_key: mind_shards
+    ai_tags: [damage, debuff]
+
+  - id: starfall
+    name: Starfall
+    class_id: mage
+    move_type: magical
+    property: arcane
+    slot: gambit
+    power: 15
+    accuracy: 0.8
+    cooldown_turns: 1
+    range: 3
+    area_shape: single
+    target_rule: all_enemies
+    resource_cost: 0
+    target_stat_mods: []
+    self_stat_mods: []
+    is_buff_move: false
+    status_effects: []
+    terrain_effects: []
+    tags: [risky, area]
+    animation_key: burst
+    vfx_key: overload_burst
+    ai_tags: [damage]
+
+  - id: feint_cut
+    name: Feint Cut
+    class_id: assassin
+    move_type: physical
+    property: edge
+    slot: basic
+    power: 13
+    accuracy: 1.0
+    cooldown_turns: 0
+    range: 1
+    area_shape: single
+    target_rule: enemy
+    resource_cost: 0
+    target_stat_mods: []
+    self_stat_mods: []
+    is_buff_move: false
+    status_effects: []
+    terrain_effects: []
+    tags: [reliable, quick]
+    animation_key: slash
+    vfx_key: quick_flash
+    ai_tags: [damage]
+    speed: 15
+    resonance_bonus: 4
+
+  - id: smoke_step
+    name: Smoke Step
+    class_id: assassin
+    move_type: physical
+    property: edge
+    slot: signature
+    power: 0
+    accuracy: 1.0
+    cooldown_turns: 1
+    range: 1
+    area_shape: single
+    target_rule: self
+    resource_cost: 0
+    target_stat_mods: []
+    self_stat_mods: [{stat: def, amount: 6}, {stat: spd, amount: 10}]
+    is_buff_move: true
+    status_effects: []
+    terrain_effects: []
+    tags: [buff, evasive]
+    animation_key: buff
+    vfx_key: quick_flash
+    ai_tags: [buff]
+
+  - id: throat_strike
+    name: Throat Strike
+    class_id: assassin
+    move_type: physical
+    property: edge
+    slot: gambit
+    power: 21
+    accuracy: 0.85
+    cooldown_turns: 1
+    range: 1
+    area_shape: single
+    target_rule: enemy
+    resource_cost: 0
+    target_stat_mods: []
+    self_stat_mods: []
+    is_buff_move: false
+    status_effects: [{status: bleed, duration: 2, value: 4, target: enemy}]
+    terrain_effects: []
+    tags: [risky, bleed]
+    animation_key: heavy_slash
+    vfx_key: cripple_slash
+    ai_tags: [damage]
+
+  - id: guard_strike
+    name: Guard Strike
+    class_id: guardian
+    move_type: physical
+    property: impact
+    slot: basic
+    power: 13
+    accuracy: 1.0
+    cooldown_turns: 0
+    range: 1
+    area_shape: single
+    target_rule: enemy
+    resource_cost: 0
+    target_stat_mods: []
+    self_stat_mods: [{stat: def, amount: 4}]
+    is_buff_move: false
+    status_effects: []
+    terrain_effects: []
+    tags: [reliable, defensive]
+    animation_key: bash
+    vfx_key: shield_impact
+    ai_tags: [damage]
+
+  - id: shield_toss
+    name: Shield Toss
+    class_id: guardian
+    move_type: physical
+    property: impact
+    slot: signature
+    power: 13
+    accuracy: 1.0
+    cooldown_turns: 1
+    range: 3
+    area_shape: single
+    target_rule: enemy
+    resource_cost: 0
+    target_stat_mods: [{stat: def, amount: -6}]
+    self_stat_mods: []
+    is_buff_move: false
+    status_effects: []
+    terrain_effects: []
+    tags: [ranged, debuff]
+    animation_key: bash
+    vfx_key: shield_impact
+    ai_tags: [damage, debuff]
+
+  - id: earthbreaker
+    name: Earthbreaker
+    class_id: guardian
+    move_type: physical
+    property: impact
+    slot: gambit
+    power: 16
+    accuracy: 0.8
+    cooldown_turns: 1
+    range: 1
+    area_shape: single
+    target_rule: all_enemies
+    resource_cost: 0
+    target_stat_mods: []
+    self_stat_mods: []
+    is_buff_move: false
+    status_effects: []
+    terrain_effects: []
+    tags: [risky, area]
+    animation_key: heavy_slash
+    vfx_key: avalanche_rocks
+    ai_tags: [damage]
+
+  - id: steady_palm
+    name: Steady Palm
+    class_id: neutral
+    move_type: adaptive
+    property: impact
+    slot: basic
+    power: 15
+    accuracy: 1.0
+    cooldown_turns: 0
+    range: 1
+    area_shape: single
+    target_rule: enemy
+    resource_cost: 0
+    target_stat_mods: []
+    self_stat_mods: []
+    is_buff_move: false
+    status_effects: []
+    terrain_effects: []
+    tags: [reliable]
+    animation_key: slash
+    vfx_key: hybrid_spark
+    ai_tags: [damage]
+    resonance_bonus: 3
+
+  - id: mirror_stance
+    name: Mirror Stance
+    class_id: neutral
+    move_type: adaptive
+    property: arcane
+    slot: signature
+    power: 0
+    accuracy: 1.0
+    cooldown_turns: 1
+    range: 1
+    area_shape: single
+    target_rule: self
+    resource_cost: 0
+    target_stat_mods: []
+    self_stat_mods: [{stat: atk, amount: 6}, {stat: mag, amount: 6}]
+    is_buff_move: true
+    status_effects: []
+    terrain_effects: []
+    tags: [buff, stance]
+    animation_key: buff
+    vfx_key: wild_shimmer
+    ai_tags: [buff]
+
+  - id: turning_point
+    name: Turning Point
+    class_id: neutral
+    move_type: adaptive
+    property: edge
+    slot: gambit
+    power: 22
+    accuracy: 0.85
+    cooldown_turns: 1
+    range: 1
+    area_shape: single
+    target_rule: enemy
+    resource_cost: 0
+    target_stat_mods: []
+    self_stat_mods: []
+    is_buff_move: false
+    status_effects: []
+    terrain_effects: []
+    tags: [risky, adaptive]
+    animation_key: burst
+    vfx_key: wild_shimmer
+    ai_tags: [damage]
+
+  - id: shadow_lash
+    name: Shadow Lash
+    class_id: sorcerer
+    move_type: magical
+    property: edge
+    slot: basic
+    power: 14
+    accuracy: 1.0
+    cooldown_turns: 0
+    range: 3
+    area_shape: single
+    target_rule: enemy
+    resource_cost: 0
+    target_stat_mods: []
+    self_stat_mods: []
+    is_buff_move: false
+    status_effects: []
+    terrain_effects: []
+    tags: [reliable, ranged]
+    animation_key: bolt
+    vfx_key: hex_sigil
+    ai_tags: [damage]
+
+  - id: withering_curse
+    name: Withering Curse
+    class_id: sorcerer
+    move_type: magical
+    property: arcane
+    slot: signature
+    power: 11
+    accuracy: 1.0
+    cooldown_turns: 1
+    range: 3
+    area_shape: single
+    target_rule: enemy
+    resource_cost: 0
+    target_stat_mods: [{stat: def, amount: -6}, {stat: res, amount: -6}]
+    self_stat_mods: []
+    is_buff_move: false
+    status_effects: []
+    terrain_effects: []
+    tags: [debuff, ranged]
+    animation_key: curse
+    vfx_key: hex_sigil
+    ai_tags: [damage, debuff]
+
+  - id: null_burst
+    name: Null Burst
+    class_id: sorcerer
+    move_type: magical
+    property: impact
+    slot: gambit
+    power: 23
+    accuracy: 0.75
+    cooldown_turns: 1
+    range: 3
+    area_shape: single
+    target_rule: enemy
+    resource_cost: 0
+    target_stat_mods: []
+    self_stat_mods: []
+    is_buff_move: false
+    status_effects: []
+    terrain_effects: []
+    tags: [risky, dispel]
+    animation_key: burst
+    vfx_key: voidfire_pillar
+    ai_tags: [damage]
+    dispel_buffs: true
+
+
+  # ── Kai: Unbonded (before the bond) and Unsettled (after) ─────────
+
+  - id: kai_strike
+    name: Strike
+    class_id: kai
+    move_type: physical
+    property: edge
+    slot: basic
+    power: 15
+    accuracy: 1.0
+    cooldown_turns: 0
+    range: 1
+    area_shape: single
+    target_rule: enemy
+    resource_cost: 0
+    target_stat_mods: []
+    self_stat_mods: []
+    is_buff_move: false
+    status_effects: []
+    terrain_effects: []
+    tags: [reliable]
+    animation_key: slash
+    vfx_key: slash_arc
+    ai_tags: [damage]
+
+  - id: shoulder_check
+    name: Shoulder Check
+    class_id: kai
+    move_type: physical
+    property: impact
+    slot: signature
+    power: 12
+    accuracy: 1.0
+    cooldown_turns: 1
+    range: 1
+    area_shape: single
+    target_rule: enemy
+    resource_cost: 0
+    target_stat_mods: [{stat: def, amount: -6}]
+    self_stat_mods: []
+    is_buff_move: false
+    status_effects: []
+    terrain_effects: []
+    tags: [debuff]
+    animation_key: bash
+    vfx_key: shield_impact
+    ai_tags: [damage, debuff]
+
+  - id: wild_swing
+    name: Wild Swing
+    class_id: kai
+    move_type: physical
+    property: impact
+    slot: gambit
+    power: 20
+    accuracy: 0.75
+    cooldown_turns: 1
+    range: 1
+    area_shape: single
+    target_rule: enemy
+    resource_cost: 0
+    target_stat_mods: []
+    self_stat_mods: []
+    is_buff_move: false
+    status_effects: []
+    terrain_effects: []
+    tags: [risky]
+    animation_key: heavy_slash
+    vfx_key: dust_trail
+    ai_tags: [damage]
+
+  - id: steady_footing
+    name: Steady Footing
+    class_id: kai
+    move_type: physical
+    property: impact
+    slot: signature
+    power: 0
+    accuracy: 1.0
+    cooldown_turns: 1
+    range: 1
+    area_shape: single
+    target_rule: self
+    resource_cost: 0
+    target_stat_mods: []
+    self_stat_mods: [{stat: def, amount: 8}, {stat: res, amount: 6}]
+    is_buff_move: true
+    status_effects: []
+    terrain_effects: []
+    tags: [buff, defensive]
+    animation_key: buff
+    vfx_key: fortify_glow
+    ai_tags: [buff]
+
+  - id: crest_flare
+    name: Crest Flare
+    class_id: kai
+    move_type: adaptive
+    property: arcane
+    slot: signature
+    power: 14
+    accuracy: 1.0
+    cooldown_turns: 1
+    range: 3
+    area_shape: single
+    target_rule: enemy
+    resource_cost: 0
+    target_stat_mods: []
+    self_stat_mods: []
+    is_buff_move: false
+    status_effects: []
+    terrain_effects: []
+    tags: [resonance]
+    animation_key: burst
+    vfx_key: hybrid_spark
+    ai_tags: [damage]
+    resonance_bonus: 10
+
+  - id: overflow
+    name: Overflow
+    class_id: kai
+    move_type: adaptive
+    property: arcane
+    slot: gambit
+    power: 26
+    accuracy: 0.8
+    cooldown_turns: 1
+    range: 3
+    area_shape: single
+    target_rule: enemy
+    resource_cost: 0
+    target_stat_mods: []
+    self_stat_mods: [{stat: def, amount: -4}, {stat: res, amount: -4}]
+    is_buff_move: false
+    status_effects: []
+    terrain_effects: []
+    tags: [risky, resonance]
+    animation_key: burst
+    vfx_key: overload_burst
+    ai_tags: [damage]
+
+
+  # ── Bonded Entity granted moves ───────────────────────────────────
+
+  - id: lionfall_verdict
+    name: Lionfall Verdict
+    class_id: entity
+    move_type: physical
+    property: impact
+    slot: signature
+    power: 16
+    accuracy: 1.0
+    cooldown_turns: 1
+    range: 1
+    area_shape: single
+    target_rule: enemy
+    resource_cost: 0
+    target_stat_mods: []
+    self_stat_mods: []
+    is_buff_move: false
+    status_effects: []
+    terrain_effects: []
+    tags: [guard_break, entity]
+    animation_key: heavy_slash
+    vfx_key: shield_impact
+    ai_tags: [damage]
+
+  - id: bulwark_protocol
+    name: Bulwark Protocol
+    class_id: entity
+    move_type: physical
+    property: impact
+    slot: signature
+    power: 0
+    accuracy: 1.0
+    cooldown_turns: 1
+    range: 1
+    area_shape: single
+    target_rule: self
+    resource_cost: 0
+    target_stat_mods: []
+    self_stat_mods: [{stat: def, amount: 10}, {stat: res, amount: 10}]
+    is_buff_move: true
+    status_effects: []
+    terrain_effects: []
+    tags: [buff, entity]
+    animation_key: buff
+    vfx_key: fortify_glow
+    ai_tags: [buff]
+
+  - id: procession_of_antlers
+    name: Procession of Antlers
+    class_id: entity
+    move_type: magical
+    property: arcane
+    slot: signature
+    power: 10
+    accuracy: 1.0
+    cooldown_turns: 1
+    range: 3
+    area_shape: single
+    target_rule: enemy
+    resource_cost: 0
+    target_stat_mods: [{stat: atk, amount: -6}, {stat: mag, amount: -6}]
+    self_stat_mods: []
+    is_buff_move: false
+    status_effects: []
+    terrain_effects: []
+    tags: [debuff, entity]
+    animation_key: curse
+    vfx_key: hex_sigil
+    ai_tags: [damage, debuff]
+
+  - id: prism_severance
+    name: Prism Severance
+    class_id: entity
+    move_type: physical
+    property: edge
+    slot: gambit
+    power: 20
+    accuracy: 0.9
+    cooldown_turns: 1
+    range: 1
+    area_shape: single
+    target_rule: enemy
+    resource_cost: 0
+    target_stat_mods: []
+    self_stat_mods: []
+    is_buff_move: false
+    status_effects: []
+    terrain_effects: []
+    tags: [risky, entity, quick]
+    animation_key: heavy_slash
+    vfx_key: lethal_gleam
+    ai_tags: [damage]
+    speed: 20
+
+
+  # ── Enemies: Old Greymaw ─────────────────────────────────────────
+
+  - id: greymaw_lunge
+    name: Lunge
+    class_id: enemy
+    move_type: physical
+    property: edge
+    slot: basic
+    power: 13
+    accuracy: 1.0
+    cooldown_turns: 0
+    range: 1
+    area_shape: single
+    target_rule: enemy
+    resource_cost: 0
+    target_stat_mods: []
+    self_stat_mods: []
+    is_buff_move: false
+    status_effects: []
+    terrain_effects: []
+    tags: [beast]
+    animation_key: slash
+    vfx_key: slash_arc
+    sfx: beast_snarl
+    ai_tags: [damage]
+    speed: 5
+
+  - id: greymaw_feint
+    name: Feint
+    class_id: enemy
+    move_type: physical
+    property: impact
+    slot: signature
+    power: 8
+    accuracy: 1.0
+    cooldown_turns: 1
+    range: 1
+    area_shape: single
+    target_rule: enemy
+    resource_cost: 0
+    target_stat_mods: [{stat: def, amount: -8}]
+    self_stat_mods: [{stat: spd, amount: 10}]
+    is_buff_move: false
+    status_effects: []
+    terrain_effects: []
+    tags: [beast, debuff]
+    animation_key: slash
+    vfx_key: quick_flash
+    sfx: beast_snarl
+    ai_tags: [damage, debuff]
+
+  - id: greymaw_rend
+    name: Rend
+    class_id: enemy
+    move_type: physical
+    property: edge
+    slot: signature
+    power: 12
+    accuracy: 1.0
+    cooldown_turns: 1
+    range: 1
+    area_shape: single
+    target_rule: enemy
+    resource_cost: 0
+    target_stat_mods: []
+    self_stat_mods: []
+    is_buff_move: false
+    status_effects: [{status: bleed, duration: 2, value: 4, target: enemy}]
+    terrain_effects: []
+    tags: [beast, bleed]
+    animation_key: heavy_slash
+    vfx_key: cripple_slash
+    sfx: beast_claw
+    ai_tags: [damage]
+
+  - id: greymaw_pounce
+    name: Pounce
+    class_id: enemy
+    move_type: physical
+    property: impact
+    slot: gambit
+    power: 26
+    accuracy: 0.9
+    cooldown_turns: 1
+    range: 1
+    area_shape: single
+    target_rule: enemy
+    resource_cost: 0
+    target_stat_mods: []
+    self_stat_mods: []
+    is_buff_move: false
+    status_effects: []
+    terrain_effects: []
+    tags: [beast, telegraph]
+    animation_key: charge
+    vfx_key: dust_trail
+    sfx: beast_roar
+    ai_tags: [damage]
+    telegraph: true
+    aftermath_self_statuses: [{status: exposed, duration: 1}]
+
+  - id: greymaw_howl
+    name: Howl
+    class_id: enemy
+    move_type: physical
+    property: impact
+    slot: signature
+    power: 0
+    accuracy: 1.0
+    cooldown_turns: 1
+    range: 1
+    area_shape: single
+    target_rule: all_enemies
+    resource_cost: 0
+    target_stat_mods: []
+    self_stat_mods: []
+    is_buff_move: false
+    status_effects: []
+    terrain_effects: []
+    tags: [beast, dispel]
+    animation_key: buff
+    vfx_key: focus_aura
+    sfx: beast_howl
+    ai_tags: [dispel]
+    dispel_buffs: true
+
+  - id: greymaw_frenzy
+    name: Frenzied Rend
+    class_id: enemy
+    move_type: physical
+    property: edge
+    slot: basic
+    power: 14
+    accuracy: 1.0
+    cooldown_turns: 0
+    range: 1
+    area_shape: single
+    target_rule: enemy
+    resource_cost: 0
+    target_stat_mods: []
+    self_stat_mods: []
+    is_buff_move: false
+    status_effects: []
+    terrain_effects: []
+    tags: [beast]
+    animation_key: slash
+    vfx_key: cripple_slash
+    sfx: beast_claw
+    ai_tags: [damage]
+    speed: 10
+
+
+  # ── Enemies: Riven manifestations and the Sealed Choir ───────────
+
+  - id: wisp_flicker
+    name: Flicker
+    class_id: enemy
+    move_type: magical
+    property: arcane
+    slot: basic
+    power: 13
+    accuracy: 1.0
+    cooldown_turns: 0
+    range: 3
+    area_shape: single
+    target_rule: enemy
+    resource_cost: 0
+    target_stat_mods: []
+    self_stat_mods: []
+    is_buff_move: false
+    status_effects: []
+    terrain_effects: []
+    tags: [riven]
+    animation_key: bolt
+    vfx_key: arcane_bolt
+    sfx: riven_hum
+    ai_tags: [damage]
+
+  - id: wisp_chill
+    name: Chill
+    class_id: enemy
+    move_type: magical
+    property: arcane
+    slot: signature
+    power: 9
+    accuracy: 1.0
+    cooldown_turns: 1
+    range: 3
+    area_shape: single
+    target_rule: enemy
+    resource_cost: 0
+    target_stat_mods: [{stat: spd, amount: -8}]
+    self_stat_mods: []
+    is_buff_move: false
+    status_effects: []
+    terrain_effects: []
+    tags: [riven, debuff]
+    animation_key: bolt
+    vfx_key: mind_shards
+    sfx: riven_hum
+    ai_tags: [damage, debuff]
+
+  - id: husk_slam
+    name: Slam
+    class_id: enemy
+    move_type: physical
+    property: impact
+    slot: basic
+    power: 15
+    accuracy: 1.0
+    cooldown_turns: 0
+    range: 1
+    area_shape: single
+    target_rule: enemy
+    resource_cost: 0
+    target_stat_mods: []
+    self_stat_mods: []
+    is_buff_move: false
+    status_effects: []
+    terrain_effects: []
+    tags: [riven]
+    animation_key: bash
+    vfx_key: shield_impact
+    sfx: riven_slam
+    ai_tags: [damage]
+
+  - id: husk_grind
+    name: Grind
+    class_id: enemy
+    move_type: physical
+    property: impact
+    slot: gambit
+    power: 22
+    accuracy: 0.8
+    cooldown_turns: 1
+    range: 1
+    area_shape: single
+    target_rule: enemy
+    resource_cost: 0
+    target_stat_mods: []
+    self_stat_mods: []
+    is_buff_move: false
+    status_effects: []
+    terrain_effects: []
+    tags: [riven, guard_break]
+    animation_key: heavy_slash
+    vfx_key: avalanche_rocks
+    sfx: riven_slam
+    ai_tags: [damage]
+
+  - id: anchor_pulse
+    name: Pulse
+    class_id: enemy
+    move_type: magical
+    property: arcane
+    slot: basic
+    power: 12
+    accuracy: 1.0
+    cooldown_turns: 0
+    range: 3
+    area_shape: single
+    target_rule: enemy
+    resource_cost: 0
+    target_stat_mods: []
+    self_stat_mods: []
+    is_buff_move: false
+    status_effects: []
+    terrain_effects: []
+    tags: [riven]
+    animation_key: bolt
+    vfx_key: overload_burst
+    sfx: riven_pulse
+    ai_tags: [damage]
+
+  - id: anchor_seal
+    name: Seal
+    class_id: enemy
+    move_type: magical
+    property: arcane
+    slot: signature
+    power: 0
+    accuracy: 1.0
+    cooldown_turns: 1
+    range: 1
+    area_shape: single
+    target_rule: self
+    resource_cost: 0
+    target_stat_mods: []
+    self_stat_mods: [{stat: def, amount: 8}, {stat: res, amount: 8}]
+    is_buff_move: true
+    status_effects: []
+    terrain_effects: []
+    tags: [riven, buff]
+    animation_key: buff
+    vfx_key: fortify_glow
+    sfx: riven_pulse
+    ai_tags: [buff]
+
+  - id: choir_toll
+    name: Toll
+    class_id: enemy
+    move_type: magical
+    property: impact
+    slot: basic
+    power: 15
+    accuracy: 1.0
+    cooldown_turns: 0
+    range: 3
+    area_shape: single
+    target_rule: enemy
+    resource_cost: 0
+    target_stat_mods: []
+    self_stat_mods: []
+    is_buff_move: false
+    status_effects: []
+    terrain_effects: []
+    tags: [riven]
+    animation_key: bolt
+    vfx_key: overload_burst
+    sfx: choir_toll
+    ai_tags: [damage]
+
+  - id: choir_dirge
+    name: Dirge
+    class_id: enemy
+    move_type: magical
+    property: arcane
+    slot: signature
+    power: 11
+    accuracy: 1.0
+    cooldown_turns: 1
+    range: 3
+    area_shape: single
+    target_rule: enemy
+    resource_cost: 0
+    target_stat_mods: []
+    self_stat_mods: []
+    is_buff_move: false
+    status_effects: [{status: hexed, duration: 2, target: enemy}]
+    terrain_effects: []
+    tags: [riven, curse]
+    animation_key: curse
+    vfx_key: hex_sigil
+    sfx: choir_chant
+    ai_tags: [damage]
+
+  - id: choir_requiem
+    name: Requiem
+    class_id: enemy
+    move_type: magical
+    property: arcane
+    slot: gambit
+    power: 23
+    accuracy: 1.0
+    cooldown_turns: 1
+    range: 3
+    area_shape: single
+    target_rule: all_enemies
+    resource_cost: 0
+    target_stat_mods: []
+    self_stat_mods: []
+    is_buff_move: false
+    status_effects: []
+    terrain_effects: []
+    tags: [riven, telegraph, area]
+    animation_key: burst
+    vfx_key: voidfire_pillar
+    sfx: choir_chant
+    ai_tags: [damage]
+    telegraph: true
+
+  - id: choir_collapse
+    name: Collapse
+    class_id: enemy
+    move_type: physical
+    property: impact
+    slot: gambit
+    power: 24
+    accuracy: 0.85
+    cooldown_turns: 1
+    range: 1
+    area_shape: single
+    target_rule: enemy
+    resource_cost: 0
+    target_stat_mods: []
+    self_stat_mods: []
+    is_buff_move: false
+    status_effects: []
+    terrain_effects: []
+    tags: [riven]
+    animation_key: heavy_slash
+    vfx_key: avalanche_rocks
+    sfx: choir_shatter
+    ai_tags: [damage]
+
+
+  # ── Enemies: Danfor's sparring lesson ────────────────────────────
+
+  - id: danfor_shield_rush
+    name: Shield Rush
+    class_id: enemy
+    move_type: physical
+    property: impact
+    slot: gambit
+    power: 18
+    accuracy: 1.0
+    cooldown_turns: 1
+    range: 1
+    area_shape: single
+    target_rule: enemy
+    resource_cost: 0
+    target_stat_mods: []
+    self_stat_mods: []
+    is_buff_move: false
+    status_effects: []
+    terrain_effects: []
+    tags: [telegraph, lesson]
+    animation_key: charge
+    vfx_key: shield_impact
+    ai_tags: [damage]
+    telegraph: true

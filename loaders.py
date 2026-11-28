@@ -9,6 +9,7 @@ Public API:
     load_classes() / load_moves() / load_combat_config()
     load_crests() / load_entities() / load_terrain()
     load_battle_objectives() / load_characters() / load_locations()
+    load_items() / load_equipment() / load_cast() / load_quests()
     create_unit_from_data(class_id, name=None)
 
 All loaders cache parsed data. Functions returning raw records hand out
@@ -18,6 +19,7 @@ deep copies so callers can't mutate the cache.
 from __future__ import annotations
 
 import copy
+import re
 from functools import lru_cache
 from pathlib import Path
 from typing import Any, Callable, Optional
@@ -42,6 +44,10 @@ _MOVE_SLOTS = {
     "gambit": MoveSlot.GAMBIT,
 }
 _CLASS_BY_ID = {c.value.lower(): c for c in ClassName}
+# Move owners that are not one of the six classes (Combat System 3.0).
+NON_CLASS_MOVE_OWNERS = ("kai", "entity", "enemy")
+PROPERTIES = ("impact", "edge", "arcane")
+TARGET_RULES = ("enemy", "all_enemies", "self")
 
 
 class DataValidationError(Exception):
@@ -127,6 +133,20 @@ _CONFIG_KEYS = (
 )
 
 
+# Party-battle settings (Combat System 3.0), read by party_combat.py and
+# the Godot runtime. The classic 1v1 duel model ignores them.
+_PARTY_NUMBER_KEYS = (
+    "melee_range",
+    "back_row_melee_multiplier",
+    "priority_bonus",
+    "low_hp_threshold",
+    "weakness_multiplier",
+    "resist_multiplier",
+    "telegraph_brace_multiplier",
+)
+_PARTY_MAPPING_KEYS = ("generic_resonance", "statuses", "ai_profiles")
+
+
 @lru_cache(maxsize=1)
 def _combat_config() -> dict[str, float]:
     raw = _read_yaml("combat_config.yaml")
@@ -150,12 +170,35 @@ def _combat_config() -> dict[str, float]:
         raise DataValidationError(
             "combat_config.yaml: max_turns and stat_decay_duration must be >= 1."
         )
-    return {key: raw[key] for key in _CONFIG_KEYS}
+    config = {key: raw[key] for key in _CONFIG_KEYS}
+    for key in _PARTY_NUMBER_KEYS:
+        if not isinstance(raw.get(key), (int, float)) or isinstance(raw.get(key), bool):
+            raise DataValidationError(
+                f"combat_config.yaml: party-battle key '{key}' must be a number, got {raw.get(key)!r}."
+            )
+        config[key] = raw[key]
+    for key in _PARTY_MAPPING_KEYS:
+        if not isinstance(raw.get(key), dict) or not raw[key]:
+            raise DataValidationError(f"combat_config.yaml: '{key}' must be a non-empty mapping.")
+        config[key] = raw[key]
+    if "legacy" not in raw["ai_profiles"]:
+        raise DataValidationError("combat_config.yaml: ai_profiles must define 'legacy'.")
+    for name, profile in raw["ai_profiles"].items():
+        if not isinstance(profile, dict) or any(
+            not isinstance(v, (int, float)) or isinstance(v, bool) for v in profile.values()
+        ):
+            raise DataValidationError(f"combat_config.yaml: ai profile '{name}' must map weights to numbers.")
+    for name, status in raw["statuses"].items():
+        if not isinstance(status, dict) or status.get("kind") not in ("control", "dot", "mark"):
+            raise DataValidationError(
+                f"combat_config.yaml: status '{name}' needs kind control, dot or mark."
+            )
+    return config
 
 
-def load_combat_config() -> dict[str, float]:
+def load_combat_config() -> dict[str, Any]:
     """Return the validated global combat constants."""
-    return dict(_combat_config())
+    return copy.deepcopy(_combat_config())
 
 
 # ── Moves ────────────────────────────────────────────────────────────
@@ -184,7 +227,8 @@ def _moves() -> dict[str, dict]:
         _validate_stat_mods(where, record.get("target_stat_mods", []))
         _validate_stat_mods(where, record.get("self_stat_mods", []))
 
-        for effect in record.get("status_effects", []):
+        statuses = _combat_config()["statuses"]
+        for effect in record.get("status_effects", []) + record.get("aftermath_self_statuses", []):
             if (
                 not isinstance(effect, dict)
                 or not isinstance(effect.get("status"), str)
@@ -194,6 +238,31 @@ def _moves() -> dict[str, dict]:
                     f"{where}: status effects need string 'status' and "
                     f"integer 'duration'; got {effect!r}."
                 )
+            if effect["status"] not in statuses:
+                raise DataValidationError(
+                    f"{where}: unknown status '{effect['status']}' (define it in combat_config.yaml statuses)."
+                )
+        owner = record["class_id"]
+        if owner not in _CLASS_BY_ID and owner not in NON_CLASS_MOVE_OWNERS:
+            raise DataValidationError(
+                f"{where}: class_id must be a class or one of {NON_CLASS_MOVE_OWNERS}."
+            )
+        if record.get("property") not in PROPERTIES:
+            raise DataValidationError(f"{where}: property must be one of {PROPERTIES}.")
+        if record.get("target_rule", "enemy") not in TARGET_RULES:
+            raise DataValidationError(f"{where}: target_rule must be one of {TARGET_RULES}.")
+        speed = record.get("speed", 0)
+        if not isinstance(speed, int) or not -30 <= speed <= 30:
+            raise DataValidationError(f"{where}: speed must be an integer in [-30, 30].")
+        for flag in ("telegraph", "dispel_buffs", "is_buff_move"):
+            if not isinstance(record.get(flag, False), bool):
+                raise DataValidationError(f"{where}: {flag} must be true or false.")
+        bonus = record.get("resonance_bonus", 0)
+        if not isinstance(bonus, int) or not 0 <= bonus <= 100:
+            raise DataValidationError(f"{where}: resonance_bonus must be an integer in [0, 100].")
+        sfx = record.get("sfx")
+        if sfx is not None and (not isinstance(sfx, str) or not re.fullmatch(r"[a-z0-9_]+", sfx)):
+            raise DataValidationError(f"{where}: sfx must be a battle sound cue name (lowercase, e.g. beast_roar).")
 
         # The engine derives cooldowns from the slot (Basic = 0, others = 1).
         # Keep the data honest: an explicit cooldown must match.
@@ -273,6 +342,19 @@ def _classes() -> dict[str, dict]:
                 f"{where}: moves must cover exactly one basic, one signature "
                 f"and one gambit slot; got {slots}."
             )
+        unlockable = record.get("unlockable_moves", [])
+        if not isinstance(unlockable, list):
+            raise DataValidationError(f"{where}: unlockable_moves must be a list.")
+        for move_id in unlockable:
+            if move_id not in moves or moves[move_id]["class_id"] != class_id:
+                raise DataValidationError(
+                    f"{where}: unlockable move '{move_id}' must exist and belong to the class."
+                )
+            if move_id in move_ids:
+                raise DataValidationError(f"{where}: '{move_id}' is already in the default kit.")
+        for move_id in move_ids:
+            if moves[move_id]["class_id"] != class_id:
+                raise DataValidationError(f"{where}: default move '{move_id}' belongs to another class.")
     if set(records) != set(_CLASS_BY_ID):
         missing = set(_CLASS_BY_ID) - set(records)
         raise DataValidationError(
@@ -372,6 +454,7 @@ RESONANCE_EVENTS = (
     "hit_landed", "gambit_used", "gambit_hit", "magical_hit",
     "damage_taken", "braced", "ally_protected", "status_applied",
     "hit_debuffed_target", "hit_hexed_target", "low_hp_action", "varied_move",
+    "weakness_hit", "telegraph_braced",
 )
 
 
@@ -398,6 +481,14 @@ def _crests() -> dict[str, dict]:
                     f"{where}: resonance gain for '{event}' must be an "
                     f"integer in (0, 100]."
                 )
+        profile = record.get("affinity_profile")
+        if not isinstance(profile, dict) or any(
+            not isinstance(profile.get(key), list) or any(p not in PROPERTIES for p in profile.get(key))
+            for key in ("weak", "resist")
+        ):
+            raise DataValidationError(
+                f"{where}: affinity_profile needs 'weak' and 'resist' lists of {PROPERTIES}."
+            )
         min_resonance = record.get("awakening_condition", {}).get("min_resonance", 0)
         if not isinstance(min_resonance, int) or not 0 <= min_resonance <= 100:
             raise DataValidationError(
@@ -483,7 +574,24 @@ _POSITIONS = ("front", "back")
 
 @lru_cache(maxsize=1)
 def _encounters() -> dict[str, dict]:
-    records = _load_records("encounters.yaml", "encounters", _ENCOUNTER_REQUIRED)
+    records = copy.deepcopy(_load_records("encounters.yaml", "encounters", _ENCOUNTER_REQUIRED))
+    cast = _cast()
+    for encounter_id, record in records.items():
+        # `build: <cast id>` pulls a named build in; fields beside it override.
+        resolved = []
+        for build in record.get("enemy_party", []):
+            if isinstance(build, dict) and "build" in build:
+                if build["build"] not in cast:
+                    raise DataValidationError(
+                        f"encounters.yaml encounter '{encounter_id}': unknown cast build '{build['build']}'."
+                    )
+                merged = copy.deepcopy(cast[build["build"]])
+                merged.pop("id", None)
+                merged.update({k: v for k, v in build.items() if k != "build"})
+                merged["build"] = build["build"]
+                build = merged
+            resolved.append(build)
+        record["enemy_party"] = resolved
     classes = _classes()
     crests = _crests()
     entities = _entities()
@@ -524,7 +632,106 @@ def _encounters() -> dict[str, dict]:
                 raise DataValidationError(
                     f"{where}: enemy build position must be one of {_POSITIONS}."
                 )
+            validate_build(f"{where} enemy '{build.get('name', '?')}'", build)
+        player_party = record.get("player_party")
+        if player_party is not None:
+            if not isinstance(player_party, list) or len(player_party) != record["player_slots"]:
+                raise DataValidationError(
+                    f"{where}: player_party must list exactly player_slots ({record['player_slots']}) members."
+                )
+            for member in player_party:
+                if isinstance(member, dict):
+                    validate_build(f"{where} player member", member)
+                elif not isinstance(member, str) or not member:
+                    raise DataValidationError(f"{where}: player_party entries are cast ids or builds.")
+        params = record.get("objective_params", {})
+        if not isinstance(params, dict):
+            raise DataValidationError(f"{where}: objective_params must be a mapping.")
+        validate_reward(where, record.get("rewards", {}))
+        after = record.get("return", {})
+        if not isinstance(after, dict) or not isinstance(after.get("flags", []), list):
+            raise DataValidationError(f"{where}: return needs location/spawn strings and a flags list.")
+        for key in ("retry",):
+            if not isinstance(record.get(key, True), bool):
+                raise DataValidationError(f"{where}: {key} must be true or false.")
     return records
+
+
+def validate_reward(where: str, reward: Any) -> None:
+    """Rewards: {crowns, items: {id: count}, equipment: [ids], unlocks: [move ids], flags, once}."""
+    if not isinstance(reward, dict):
+        raise DataValidationError(f"{where}: rewards must be a mapping.")
+    if not isinstance(reward.get("crowns", 0), int) or reward.get("crowns", 0) < 0:
+        raise DataValidationError(f"{where}: reward crowns must be a non-negative integer.")
+    for item_id, count in (reward.get("items") or {}).items():
+        if item_id not in _items() or not isinstance(count, int) or count < 1:
+            raise DataValidationError(f"{where}: reward item '{item_id}' must exist with a positive count.")
+    for charm_id in reward.get("equipment", []):
+        if charm_id not in _equipment():
+            raise DataValidationError(f"{where}: reward charm '{charm_id}' is unknown.")
+    for move_id in reward.get("unlocks", []):
+        if move_id not in _moves():
+            raise DataValidationError(f"{where}: reward unlock '{move_id}' is unknown.")
+    if not isinstance(reward.get("flags", []), list) or not isinstance(reward.get("once", True), bool):
+        raise DataValidationError(f"{where}: reward flags must be a list and once a boolean.")
+
+
+_PHASE_TRIGGERS = ("hp_below", "round")
+
+
+def validate_build(where: str, build: dict) -> None:
+    """Validate the Combat System 3.0 fields of a unit build."""
+    moves = _moves()
+    config = _combat_config()
+    move_ids = build.get("move_ids")
+    if move_ids is not None:
+        if not isinstance(move_ids, list) or not move_ids:
+            raise DataValidationError(f"{where}: move_ids must be a non-empty list.")
+        unknown = [m for m in move_ids if m not in moves]
+        if unknown:
+            raise DataValidationError(f"{where}: unknown move id(s): {', '.join(unknown)}.")
+    stats = build.get("stats")
+    if stats is not None and (
+        not isinstance(stats, dict) or any(not isinstance(stats.get(k), int) or stats[k] < 1 for k in STAT_KEYS)
+    ):
+        raise DataValidationError(f"{where}: stats must give a positive integer for each of {STAT_KEYS}.")
+    for stat_name, scale in (build.get("stat_scale") or {}).items():
+        if stat_name not in STAT_KEYS or not isinstance(scale, (int, float)) or scale <= 0:
+            raise DataValidationError(f"{where}: stat_scale entries must be positive numbers for {STAT_KEYS}.")
+    affinity = build.get("affinity")
+    if affinity is not None and (
+        not isinstance(affinity, dict)
+        or any(p not in PROPERTIES for key in ("weak", "resist") for p in affinity.get(key, []))
+    ):
+        raise DataValidationError(f"{where}: affinity needs weak/resist lists of {PROPERTIES}.")
+    profile = build.get("ai_profile")
+    if profile is not None and profile not in config["ai_profiles"]:
+        raise DataValidationError(f"{where}: unknown ai_profile '{profile}'.")
+    if not isinstance(build.get("tags", []), list):
+        raise DataValidationError(f"{where}: tags must be a list.")
+    equipment = build.get("equipment", "")
+    if equipment and equipment not in _equipment():
+        raise DataValidationError(f"{where}: unknown equipment '{equipment}'.")
+    phases = build.get("phases", [])
+    if not isinstance(phases, list):
+        raise DataValidationError(f"{where}: phases must be a list.")
+    for index, phase in enumerate(phases):
+        here = f"{where} phase {index + 1}"
+        if not isinstance(phase, dict):
+            raise DataValidationError(f"{here}: must be a mapping.")
+        if index > 0 and phase.get("trigger", {}).get("type") not in _PHASE_TRIGGERS:
+            raise DataValidationError(f"{here}: trigger type must be one of {_PHASE_TRIGGERS}.")
+        for move_id in phase.get("move_ids", []) + [phase.get("entry_move")] * bool(phase.get("entry_move")):
+            if move_id not in moves:
+                raise DataValidationError(f"{here}: unknown move '{move_id}'.")
+        for step in phase.get("rotation", []):
+            wanted = [step["move"]] if "move" in step else step.get("pick", [])
+            if not wanted or any(m not in moves for m in wanted):
+                raise DataValidationError(f"{here}: rotation steps need a known 'move' or 'pick' list.")
+        if phase.get("ai_profile") and phase["ai_profile"] not in config["ai_profiles"]:
+            raise DataValidationError(f"{here}: unknown ai_profile '{phase['ai_profile']}'.")
+        if phase.get("summon"):
+            validate_build(f"{here} summon", phase["summon"])
 
 
 def load_encounters() -> dict[str, dict]:
@@ -532,11 +739,121 @@ def load_encounters() -> dict[str, dict]:
     return copy.deepcopy(_encounters())
 
 
+# ── Items and equipment ──────────────────────────────────────────────
+
+_ITEM_EFFECTS = ("heal", "cure", "resonance", "revive")
+_EQUIPMENT_EFFECTS = (
+    "affinity", "stat_bonus", "initiative_bonus", "property_bonus",
+    "resonance_on_event", "resonance_vs_status", "brace_pierce",
+)
+
+
+@lru_cache(maxsize=1)
+def _items() -> dict[str, dict]:
+    records = _load_records("items.yaml", "items", ("name", "description", "price", "category"))
+    for item_id, record in records.items():
+        where = f"items.yaml item '{item_id}'"
+        if not isinstance(record["price"], int) or record["price"] < 0:
+            raise DataValidationError(f"{where}: price must be a non-negative integer.")
+        effects = [record.get(k) for k in ("field_effect", "battle_effect") if record.get(k) is not None]
+        if not effects:
+            raise DataValidationError(f"{where}: needs a field_effect or battle_effect.")
+        for effect in effects:
+            if not isinstance(effect, dict) or effect.get("type") not in _ITEM_EFFECTS:
+                raise DataValidationError(f"{where}: effect type must be one of {_ITEM_EFFECTS}.")
+    return records
+
+
+def load_items() -> dict[str, dict]:
+    """Return all consumable item records keyed by id (deep copy)."""
+    return copy.deepcopy(_items())
+
+
+@lru_cache(maxsize=1)
+def _equipment() -> dict[str, dict]:
+    records = _load_records("equipment.yaml", "equipment", ("name", "description", "price", "effects"))
+    for charm_id, record in records.items():
+        where = f"equipment.yaml charm '{charm_id}'"
+        if not isinstance(record["effects"], list) or not record["effects"]:
+            raise DataValidationError(f"{where}: effects must be a non-empty list.")
+        for effect in record["effects"]:
+            if not isinstance(effect, dict) or effect.get("type") not in _EQUIPMENT_EFFECTS:
+                raise DataValidationError(f"{where}: effect type must be one of {_EQUIPMENT_EFFECTS}.")
+            if effect["type"] == "affinity":
+                for key in ("add_weak", "add_resist", "remove_weak", "remove_resist"):
+                    if any(p not in PROPERTIES for p in effect.get(key, [])):
+                        raise DataValidationError(f"{where}: affinity changes must name {PROPERTIES}.")
+    return records
+
+
+def load_equipment() -> dict[str, dict]:
+    """Return all equipment (charm) records keyed by id (deep copy)."""
+    return copy.deepcopy(_equipment())
+
+
+# ── Cast (named builds) ──────────────────────────────────────────────
+
+@lru_cache(maxsize=1)
+def _cast() -> dict[str, dict]:
+    records = _load_records("cast.yaml", "cast", ("name",))
+    classes = _classes()
+    crests = _crests()
+    entities = _entities()
+    for cast_id, record in records.items():
+        where = f"cast.yaml '{cast_id}'"
+        class_id = record.get("class_id", "")
+        if class_id and class_id not in classes:
+            raise DataValidationError(f"{where}: unknown class '{class_id}'.")
+        if not class_id and not record.get("stats"):
+            raise DataValidationError(f"{where}: a build without a class needs explicit stats.")
+        if record.get("crest_id") and record["crest_id"] not in crests:
+            raise DataValidationError(f"{where}: unknown crest '{record['crest_id']}'.")
+        if record.get("entity_id") and record["entity_id"] not in entities:
+            raise DataValidationError(f"{where}: unknown entity '{record['entity_id']}'.")
+        validate_build(where, record)
+    return records
+
+
+def load_cast() -> dict[str, dict]:
+    """Return all named battle builds keyed by id (deep copy)."""
+    return copy.deepcopy(_cast())
+
+
+# ── Quests ───────────────────────────────────────────────────────────
+
+@lru_cache(maxsize=1)
+def _quests() -> dict[str, dict]:
+    records = _load_records("quests.yaml", "quests", ("name", "kind", "summary", "steps"))
+    seen_flags: dict[str, str] = {}
+    for quest_id, record in records.items():
+        where = f"quests.yaml quest '{quest_id}'"
+        if record["kind"] not in ("main", "side"):
+            raise DataValidationError(f"{where}: kind must be main or side.")
+        if not isinstance(record.get("start_flag", ""), str):
+            raise DataValidationError(f"{where}: start_flag must be a string.")
+        steps = record["steps"]
+        if not isinstance(steps, list) or not steps:
+            raise DataValidationError(f"{where}: steps must be a non-empty list.")
+        for step in steps:
+            if not isinstance(step, dict) or not all(isinstance(step.get(k), str) and step.get(k) for k in ("id", "text", "flag")):
+                raise DataValidationError(f"{where}: each step needs id, text and flag.")
+            if step["flag"] in seen_flags:
+                raise DataValidationError(f"{where}: step flag '{step['flag']}' is already used by {seen_flags[step['flag']]}.")
+            seen_flags[step["flag"]] = quest_id
+        validate_reward(where, record.get("reward", {}))
+    return records
+
+
+def load_quests() -> dict[str, dict]:
+    """Return all journal quests keyed by id (deep copy)."""
+    return copy.deepcopy(_quests())
+
+
 def clear_caches() -> None:
     """Drop all cached data (useful in tests that write temp data)."""
     for cached in (
         _load_records, _combat_config, _moves, _classes,
         _crests, _entities, _terrain, _battle_objectives,
-        _characters, _locations,
+        _characters, _locations, _encounters, _items, _equipment, _cast, _quests,
     ):
         cached.cache_clear()

@@ -77,4 +77,8 @@ jobs:
         run: |
           set -o pipefail
           ~/godot/Godot --headless --path game --script res://scripts/tools/combat_parity_smoke.gd 2>&1 | tee /tmp/combat-parity.log
-          grep -q 'COMBAT_PARITY: 216 damage cases, 0 failures' /tmp/combat-parity.log
+          # The counts come from the fixtures: every classic damage case and
+          # every recorded party-battle replay must run, with no failures.
+          cases=$(python -c "import json; print(len(json.load(open('game/data/combat_parity_cases.json'))['damage']))")
+          replays=$(python -c "import json; print(len(json.load(open('game/data/combat_replays.json'))['scenarios']))")
+          grep -q "COMBAT_PARITY: ${cases} damage cases, ${replays} replays, 0 failures" /tmp/combat-parity.log

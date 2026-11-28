@@ -21,6 +21,11 @@
       "flanker",
       "physical",
       "debuff_finisher"
+    ],
+    "unlockable_moves": [
+      "feint_cut",
+      "smoke_step",
+      "throat_strike"
     ]
   },
   "guardian": {
@@ -45,6 +50,11 @@
       "frontline",
       "tank",
       "brace_synergy"
+    ],
+    "unlockable_moves": [
+      "guard_strike",
+      "shield_toss",
+      "earthbreaker"
     ]
   },
   "mage": {
@@ -69,6 +79,11 @@
       "backline",
       "magical",
       "resistance_break"
+    ],
+    "unlockable_moves": [
+      "stone_lance",
+      "binding_glyph",
+      "starfall"
     ]
   },
   "neutral": {
@@ -93,6 +108,11 @@
       "flexible",
       "adaptive",
       "stance_shift"
+    ],
+    "unlockable_moves": [
+      "steady_palm",
+      "mirror_stance",
+      "turning_point"
     ]
   },
   "sorcerer": {
@@ -118,6 +138,11 @@
       "magical",
       "status_control",
       "anti_buff"
+    ],
+    "unlockable_moves": [
+      "shadow_lash",
+      "withering_curse",
+      "null_burst"
     ]
   },
   "warrior": {
@@ -142,6 +167,11 @@
       "frontline",
       "physical",
       "guard_break"
+    ],
+    "unlockable_moves": [
+      "hilt_strike",
+      "rallying_roar",
+      "sundering_blow"
     ]
   }
 }

@@ -9,10 +9,14 @@ Writes results/recruiter_snapshot.json:
   - Ranked average win rate per class
   - Policy comparison (greedy / lookahead / random, mirror matches)
   - Stateful Nash/maximin analysis for all 15 unique matchups
+  - vertical_slice: every Chapter One encounter under every player policy,
+    with the party engine (tools/slice_balance.py, party_combat.py)
 
 Usage:
     python tools/generate_snapshot.py                 # 100k per matchup
     python tools/generate_snapshot.py --sims 5000     # quick local run
+    python tools/generate_snapshot.py --only vertical_slice   # refresh that
+        section in the existing snapshot, keeping the classic sections
 """
 
 from __future__ import annotations
@@ -34,8 +38,12 @@ from models import ClassName  # noqa: E402
 from simulation import ALL_CLASSES, run_matchup, compute_averages  # noqa: E402
 import nash  # noqa: E402
 
+sys.path.insert(0, str(REPO_ROOT / "tools"))
+import slice_balance  # noqa: E402
+
 DEFAULT_MATRIX_SIMS = 100_000
 DEFAULT_POLICY_SIMS = 20_000
+DEFAULT_SLICE_SIMS = 200
 POLICY_PAIRS = [
     ("greedy", "random"),
     ("lookahead", "random"),
@@ -162,11 +170,27 @@ def main() -> None:
         default=42,
         help="Random seed for reproducible Monte Carlo results",
     )
+    parser.add_argument("--slice-sims", type=int, default=DEFAULT_SLICE_SIMS,
+                        help="battles per policy for each Chapter One encounter")
+    parser.add_argument("--only", choices=["vertical_slice"],
+                        help="recompute one section into the existing --output snapshot")
     parser.add_argument("--quiet", action="store_true")
     args = parser.parse_args()
 
     verbose = not args.quiet
     start = time.time()
+
+    if args.only == "vertical_slice":
+        snapshot = json.loads(args.output.read_text(encoding="utf-8"))
+        if verbose:
+            print(f"Chapter One encounters — {args.slice_sims} battles per policy...")
+        snapshot["vertical_slice"] = slice_balance.report(args.slice_sims, args.seed)
+        snapshot["generated_at"] = datetime.now(timezone.utc).isoformat(timespec="seconds")
+        snapshot["git_commit"] = _git_commit()
+        args.output.write_text(json.dumps(snapshot, indent=2) + "\n", encoding="utf-8")
+        if verbose:
+            print(f"Updated vertical_slice in {args.output} in {round(time.time() - start, 1)}s")
+        return
 
     random.seed(args.seed)
 
@@ -184,6 +208,10 @@ def main() -> None:
         print("\nStateful Nash/maximin analysis...")
     nash_results = build_nash(args.seed)
 
+    if verbose:
+        print(f"\nChapter One encounters — {args.slice_sims} battles per policy...")
+    vertical_slice = slice_balance.report(args.slice_sims, args.seed)
+
     snapshot = {
         "generated_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "git_commit": _git_commit(),
@@ -197,6 +225,7 @@ def main() -> None:
         "class_averages": averages,
         "policy_comparison": policy_comparison,
         "nash": nash_results,
+        "vertical_slice": vertical_slice,
         "runtime_seconds": round(time.time() - start, 1),
     }
 

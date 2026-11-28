@@ -28,6 +28,12 @@ var footfalls := 0           # steps that have sounded (QA counter)
 var _reach_tween: Tween
 var _sprite: OverworldSprite
 var _has_sheet := false
+
+
+static func sprite_key() -> String:
+	## Kai in his village clothes until Civara stabilises a class.
+	var class_id := str(GameState.player_class_id)
+	return "aren/%s" % class_id if class_id != "" else "kai_unbonded"
 var _stride := 0  # alternates per tile so the feet take turns
 var _held: Array[String] = []     # held move actions, most recent first
 var _hold_time := 0.0
@@ -47,7 +53,7 @@ func setup(map: Node, start_tile: Vector2i) -> void:
 
 func _setup_sprite() -> void:
 	_sprite = OverworldSprite.new()
-	_has_sheet = _sprite.attach(self, "aren/%s" % GameState.player_class_id)
+	_has_sheet = _sprite.attach(self, sprite_key())
 	if _has_sheet:
 		_sprite.set_facing(facing)
 

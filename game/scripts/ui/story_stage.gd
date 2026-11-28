@@ -23,7 +23,6 @@ var _order: Array[String] = []
 
 
 func _ready() -> void:
-	set_anchors_preset(Control.PRESET_FULL_RECT)
 	position = Vector2.ZERO
 	size = PresentationLayout.CANVAS
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -37,10 +36,17 @@ func _ready() -> void:
 	visible = false
 
 
+const PLAYER := "player"  # Kai's lines: his figure as he is now (class or Unbonded)
+
+
+static func resolve(portrait_key: String) -> String:
+	return player_key() if portrait_key == PLAYER else portrait_key
+
+
 static func figure_record(portrait_key: String) -> Dictionary:
 	## The manifest record whose battle sheet can stand in a story scene, or
 	## {} when the speaker has no large art (townsfolk keep their portrait).
-	var record := CharacterPresentation.record_for(portrait_key)
+	var record := CharacterPresentation.record_for(resolve(portrait_key))
 	var path := str(record.get("battle_sheet", ""))
 	if path == "" or not ResourceLoader.exists(path) or VisualAsset.sidecar_for(path).is_empty():
 		return {}
@@ -48,18 +54,21 @@ static func figure_record(portrait_key: String) -> Dictionary:
 
 
 static func player_key() -> String:
+	## Kai in his village clothes until Civara stabilises a class.
 	var class_id := str(GameState.player_class_id)
-	return "aren/%s" % class_id if class_id != "" else "kai_neutral"
+	return "aren/%s" % class_id if class_id != "" else "kai_unbonded"
 
 
 static func cast_for(entries: Array) -> Array[String]:
 	## Canonical ids of the speakers with large art, in order of first line,
 	## at most two (the right-hand slots). Kai is added by begin().
 	var cast: Array[String] = []
+	# Kai always stands on the left; his own lines never add him again.
+	var player := str(figure_record(player_key()).get("canonical_id", ""))
 	for entry in entries:
 		var record := figure_record(str(entry.get("portrait", "")))
 		var id := str(record.get("canonical_id", ""))
-		if id != "" and not cast.has(id) and cast.size() < 2:
+		if id != "" and id != player and not cast.has(id) and cast.size() < 2:
 			cast.append(id)
 	return cast
 

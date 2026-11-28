@@ -35,7 +35,8 @@ func refresh() -> void:
 func status_tag() -> String:
 	## The single most important state, so it always fits under the portrait.
 	if not unit.is_alive(): return "DOWN"
-	if unit.awakened: return "AWAKE"
+	if unit.awakened and unit.awakening_rounds_left > 0: return "AWAKE"
+	if not unit.pending.is_empty(): return "WIND-UP"  # a telegraph lands next round: Brace
 	if unit.has_status("hexed"): return "HEX"
 	if unit.is_braced(): return "BRACE"
 	if acted_marker: return "READY"

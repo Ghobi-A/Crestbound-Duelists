@@ -11,6 +11,10 @@ generated). For every record this writes, deterministically:
   start/count/fps/loop;
 
 and points the record's `battle_sheet` in characters.json at the sheet.
+Records listed in NEW_RECORDS that the manifest does not have yet are
+created from their sheet: the sheet doubles as their atlas, with a head
+crop of the idle pose as the dialogue portrait. A story-only figure may
+ship idle frames alone; its other states hold the idle pose.
 
 Frames are never re-centred one by one, so a lunge or a fall keeps its
 motion. Each state is shifted once so its first frame's feet land on the
@@ -50,11 +54,39 @@ CONTACT = {
     "kai_assassin": 4, "kai_neutral": 3, "almyra": 2, "liora": 5,
     "riven_raider": 7, "unbound_mercenary": 6, "hexbound_adept": 3,
     "route01_rowan": 7, "route01_squire": 3, "route01_challenger": 7,
+    "kai_unbonded": 4, "danfor": 5, "hale": 2, "assessor": 5,
+    "greymaw": 4, "riven_wisp": 3, "riven_husk": 4, "riven_anchor": 3, "sealed_choir": 3,
 }
+# Vertical slice cast (docs/VERTICAL_SLICE_SPEC.md): display name, side,
+# aliases, and a battle size relative to a standing Duelist (beasts and
+# Riven constructs are not person-sized).
+NEW_RECORDS = {
+    "kai_unbonded": {"display_name": "Kai", "battle_side": "player", "aliases": ["kai_unsettled"]},
+    "danfor": {"display_name": "Danfor", "battle_side": "enemy"},
+    "joey": {"display_name": "Joey", "battle_side": "player"},
+    "lena": {"display_name": "Lena", "battle_side": "enemy"},
+    "silas": {"display_name": "Elder Silas", "battle_side": "enemy"},
+    "gell": {"display_name": "Gell", "battle_side": "enemy"},
+    "hale": {"display_name": "Specialist Hale", "battle_side": "player", "class_id": "sorcerer", "overworld": "person"},
+    "assessor": {"display_name": "Assessor", "battle_side": "enemy", "overworld": "person"},
+    "greymaw": {"display_name": "Old Greymaw", "battle_side": "enemy", "size": 1.25, "overworld": 20},
+    "riven_wisp": {"display_name": "Riven Wisp", "battle_side": "enemy", "size": 0.8, "overworld": 18},
+    "riven_husk": {"display_name": "Riven Husk", "battle_side": "enemy", "size": 1.15, "overworld": 26},
+    "riven_anchor": {"display_name": "Riven Anchor", "battle_side": "enemy", "size": 1.2, "overworld": 28},
+    "sealed_choir": {"display_name": "The Sealed Choir", "battle_side": "enemy", "size": 1.6, "overworld": 46},
+}
+# Map sprites for figures without an authored overworld sheet: the idle
+# battle pose. People are drawn at the shared overworld height (like every
+# resident); a beast or Riven construct at its own "display_height" px,
+# which tools/audit_character_scale.py leaves out of the person check.
+OVERWORLD = ROOT / "game/assets/overworld/figures"
 
 
 def _frames(folder: Path, state: str) -> list[np.ndarray]:
     paths = sorted(folder.glob(f"{state}_*.png"))
+    if not paths and state != "idle" and folder.name in NEW_RECORDS:
+        # Story-only figures (and Joey, who never attacks) hold their pose.
+        paths = sorted(folder.glob("idle_*.png"))[:1] * 2
     if not paths:
         raise FileNotFoundError(f"{folder.name}: no {state} frames")
     return [np.asarray(Image.open(p).convert("RGBA")) for p in paths]
@@ -112,15 +144,82 @@ def build(name: str) -> dict:
     sidecar = {"frame_width": w, "frame_height": h, "columns": COLUMNS, "frame_count": len(frames),
                "anchor": [round(anchor_x, 1), anchor_y + 1], "body_height": body_height(idle[0]),
                "native_facing": "right", "states": states}
+    if "size" in NEW_RECORDS.get(name, {}):
+        sidecar["size"] = NEW_RECORDS[name]["size"]
     (OUT / f"{name}.json").write_text(json.dumps(sidecar, indent=2) + "\n")
     return sidecar
+
+
+def measured_height(rgba: np.ndarray, foot_y: int) -> int:
+    """Body height exactly as tools/audit_character_scale.py measures it."""
+    import sys
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    from audit_character_scale import body_top, opaque_mask
+    return foot_y - body_top(opaque_mask(Image.fromarray(rgba, "RGBA"), "alpha"), foot_y)
+
+
+def map_height(rgba: np.ndarray, foot: tuple[float, int]) -> int:
+    """Map body height exactly as the audit measures a standing map frame."""
+    import sys
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    from audit_character_scale import measure, opaque_mask
+    return measure(opaque_mask(Image.fromarray(rgba, "RGBA"), "alpha"), foot)["body_height"]
+
+
+def portrait_rect(rgba: np.ndarray) -> list[int]:
+    """A square head-and-shoulders crop at the top of the idle pose."""
+    opaque = rgba[:, :, 3] >= 128
+    rows = np.flatnonzero(opaque.any(axis=1))
+    top, bottom = int(rows[0]), int(rows[-1])
+    side = max(24, round((bottom - top) * 0.42))
+    band = opaque[top: top + max(4, side // 2)]
+    centre = float(np.flatnonzero(band.any(axis=0)).mean())
+    x = int(min(max(0, round(centre - side / 2)), rgba.shape[1] - side))
+    return [x, max(0, top - 2), side, side]
+
+
+def overworld_strip(name: str, display) -> dict:
+    """Map sprite from the idle pose: down/up/east as drawn, mirrored west."""
+    idle = np.asarray(Image.open(SOURCES / name / "idle_00.png").convert("RGBA"))
+    pose = Image.fromarray(idle, "RGBA")
+    w, h = pose.size
+    strip = Image.new("RGBA", (w * 4, h))
+    for column, image in enumerate([pose, pose, pose, pose.transpose(Image.FLIP_LEFT_RIGHT)]):
+        strip.paste(image, (column * w, 0))
+    OVERWORLD.mkdir(parents=True, exist_ok=True)
+    strip.save(OVERWORLD / f"{name}.png", optimize=True)
+    _, fy = feet(idle)
+    # A four-legged body stands centred on its tile, not on its front paws.
+    columns = np.flatnonzero((idle[:, :, 3] >= 128).any(axis=0))
+    centre = (int(columns[0]) + int(columns[-1])) / 2
+    height = map_height(idle, (round(centre), fy + 1))
+    world = {"atlas": f"res://assets/overworld/figures/{name}.png", "frame_size": [w, h], "row": 0,
+             "foot_anchor": [round(centre), fy + 1], "body_height": height}
+    if display != "person":
+        world["display_height"] = int(display)
+    return world
 
 
 def main() -> None:
     characters = json.loads(CHARACTERS.read_text())
     for folder in sorted(p for p in SOURCES.iterdir() if p.is_dir()):
         build(folder.name)
-        characters["characters"][folder.name]["battle_sheet"] = f"res://assets/battle/cast/{folder.name}.png"
+        sheet = f"res://assets/battle/cast/{folder.name}.png"
+        meta = NEW_RECORDS.get(folder.name)
+        if meta is not None:
+            idle = np.asarray(Image.open(folder / "idle_00.png").convert("RGBA"))
+            fx, fy = feet(idle)
+            record = {"display_name": meta["display_name"], "aliases": meta.get("aliases", []),
+                      "battle_side": meta["battle_side"], "atlas": sheet, "colour_key": "alpha",
+                      # Frame 0 of the sheet is the idle pose: the measured combat body.
+                      "battle_rect": [0, 0, idle.shape[1], idle.shape[0]], "foot_anchor": [round(fx, 1), fy + 1],
+                      "battle_body_height": measured_height(idle, fy + 1), "portrait_rect": portrait_rect(idle)}
+            if "class_id" in meta:
+                record["class_id"] = meta["class_id"]
+            if meta.get("overworld"):
+                record["overworld"] = overworld_strip(folder.name, meta["overworld"])
+            characters["characters"][folder.name] = record
+        characters["characters"][folder.name]["battle_sheet"] = sheet
     CHARACTERS.write_text(json.dumps(characters, indent=2) + "\n")
 
 

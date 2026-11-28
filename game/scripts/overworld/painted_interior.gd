@@ -20,20 +20,25 @@ var floor_rect := Rect2i()
 var door_rect := Rect2i()
 var windows: Array[float] = []
 var sconces: Array[Vector2] = []
+## "candlelit" (Greymere homes) or "court": the Hollow Court's cold
+## underground stone, no furnishings, still black water on "~" tiles.
+var style := "candlelit"
+const COURT_TINT := Color(0.56, 0.6, 0.78)
 
 
 func setup(location: Dictionary) -> void:
 	rows = location.rows
 	props = location.props
 	lights = location.lights
-	floor_rect = _bounds(["w", ":"])
+	floor_rect = _bounds(["w", ":", "~"])
 	door_rect = _bounds([":"])
+	style = str(location.get("painted_interior", {}).get("style", "candlelit"))
 
 
 func _ready() -> void:
 	var room := ShaderMaterial.new()
 	room.shader = ROOM
-	room.set_shader_parameter("floor_tex", load(DIRECTORY + "wood_floor.png"))
+	room.set_shader_parameter("floor_tex", load(DIRECTORY + ("cobble.png" if style == "court" else "wood_floor.png")))
 	room.set_shader_parameter("wall_tex", load(DIRECTORY + "stone_wall.png"))
 	room.set_shader_parameter("stone_tex", load(DIRECTORY + "cobble.png"))
 	room.set_shader_parameter("noise_tex", load(DIRECTORY + "noise.png"))
@@ -41,10 +46,31 @@ func _ready() -> void:
 	room.set_shader_parameter("door_rect", _vec4(door_rect))
 	room.set_shader_parameter("wall_rows", float(WALL_ROWS))
 	material = room
-	_dress_back_wall()
-	_dress_floor()
+	if style == "court":
+		modulate = COURT_TINT
+		_build_water()
+	else:
+		_dress_back_wall()
+		_dress_floor()
 	if GraphicsSettings.lighting():
 		_build_light()
+
+
+func _build_water() -> void:
+	## Still black water over the "~" tiles, with a faint cold sheen.
+	var water := Node2D.new()
+	water.z_as_relative = false
+	water.z_index = -17
+	var texture: Texture2D = load(DIRECTORY + "water.png")
+	water.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
+	water.draw.connect(func() -> void:
+		for y in rows.size():
+			for x in str(rows[y]).length():
+				if str(rows[y])[x] == "~":
+					var cell := Rect2(Vector2(x, y) * TILE, Vector2.ONE * TILE)
+					water.draw_texture_rect(texture, cell, true, Color(0.16, 0.2, 0.3, 1.0))
+					water.draw_rect(cell, Color(0.02, 0.03, 0.06, 0.55)))
+	add_child(water)
 
 
 func _draw() -> void:

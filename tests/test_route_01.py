@@ -46,8 +46,10 @@ def test_every_trainer_and_grass_uses_valid_existing_combat_and_art():
         "characters"
     ]
     known = set(art) | {a for r in art.values() for a in r.get("aliases", [])}
+    # Three trainers and the optional boss, Old Greymaw, in its hidden den.
     trainers = [n for n in ROUTE["npcs"] if "encounter" in n]
-    assert len(trainers) == 3 and len({n["id"] for n in trainers}) == 3
+    assert len(trainers) == 4 and len({n["id"] for n in trainers}) == 4
+    assert [n["id"] for n in trainers if n["id"] == "greymaw_den"] == ["greymaw_den"]
     ids = [n["encounter"] for n in trainers] + [
         e for z in ROUTE["encounter_zones"] for e in z["encounters"]
     ]
@@ -73,8 +75,8 @@ def test_optional_clearing_chest_and_encounter_terrain_are_reachable():
         0 <= z["probability"] <= 1 and z["cooldown_steps"] >= 5
         for z in ROUTE["encounter_zones"]
     )
-    items = json.loads((ROOT / "game/data/items.json").read_text())["items"]
-    assert chest["item"] in {i["id"] for i in items} and chest["quantity"] > 0
+    items = json.loads((ROOT / "game/data/items.json").read_text())
+    assert chest["item"] in items and chest["quantity"] > 0
 
 
 def test_world_builder_is_reproducible():

@@ -48,17 +48,20 @@ def compile_world():
     rect(grid,25,16,18,3,":")
     rect(grid,40,19,3,10,":")
     rect(grid,33,28,10,2,":")
+    # Playtest: Kai's door had only the long way round to the square. A
+    # short lane runs west from it, and a link turns north past the spring.
+    rect(grid,19,28,14,2,":")
+    rect(grid,25,21,2,7,":")
     buildings = [prop("study",10,10),prop("guardhouse",24,10),prop("herbalist",10,21),prop("inn",23,20),
                  prop("gell_shop",33,15),prop("joey_home",40,15),prop("kai_house",36,27)]
     props = buildings + [prop("gate",17,5),prop("spring",22,24),prop("notice",20,12)]
     props += [prop("wall",x,8) for x in [12,22]]
-    props += [prop("wall",x,29) for x in [10,24]]
+    props += [prop("wall",x,29) for x in [10]]
     props += [prop("crates",x,y) for x,y in [(7,22),(28,21),(28,11),(5,11),(27,14),(43,18)]]
-    props += [prop("hedge",x,y) for x,y in [(13,23),(28,24),(13,9),(21,9),(28,15),(6,15),(23,28),(11,28)]]
-    props += [prop("lamp",x,y) for x,y in [(13,21),(26,20),(13,10),(27,10),(15,7),(19,7),(15,28),(19,28),(32,19),(37,19),(39,27)]]
-    props += [prop("hedge",x,y) for x,y in [(32,22),(32,26)]]
+    props += [prop("hedge",x,y) for x,y in [(13,23),(13,9),(21,9),(28,15),(6,15),(11,28)]]
+    props += [prop("lamp",x,y) for x,y in [(13,21),(26,20),(13,10),(27,10),(15,7),(19,7),(15,28),(20,27),(32,19),(37,19),(39,27)]]
     # Overlapping edge canopies frame every approach without blocking lanes.
-    props += [prop("tree",x,y) for x,y in [(3,6),(3,12),(3,18),(3,31),(30,6),(30,14),(30,20),(30,29),(7,32),(12,33),(23,33),(28,33),(8,3),(13,3),(22,3),(28,3),(25,28),(34,3),(40,3),(44,7),(44,13),(44,20),(44,26),(33,33),(39,33),(44,31),(31,24)]]
+    props += [prop("tree",x,y) for x,y in [(3,6),(3,12),(3,18),(3,31),(30,6),(30,14),(30,20),(7,32),(12,33),(23,33),(28,33),(8,3),(13,3),(22,3),(28,3),(34,3),(40,3),(44,7),(44,13),(44,20),(44,26),(33,33),(39,33),(44,31)]]
     town=dict(id="greymere",name="GREYMERE TOWN",subtitle="Above the Hollow Court",scene="res://scenes/overworld/greymere.tscn",
               rows=["".join(r) for r in grid], music_id="greymere", ambience_id="greymere", interior=False, props=props,
               painted=dict(path_symbols=":^", path_material="cobble"),
@@ -68,7 +71,7 @@ def compile_world():
                      entrance("gell",33,15,"gell_shop","gell_return"),entrance("joey",40,15,"joey_home","joey_return"),entrance("kai",36,27,"kai_house","kai_return"),entrance("guard",24,10,"greymere","approach",True)],
               interactions=[dict(tile=[17,5],verb="Inspect",dialogue="court_entrance",kind="court"),dict(tile=[20,12],verb="Read",dialogue="notice_board")],
               npcs=[npc("Warden Almyra","elara","elara_intro",19,9),npc("Liora Sen","mira","mira_intro",14,13,(1,0)),npc("Joey","townsfolk/farmboy","toby_flavor",15,20),npc("Danfor","townsfolk/guard_sword","guard_flavor",25,12),npc("Watchman Orrin","townsfolk/guard_spear","watchman_flavor",20,6),npc("Old Ferris","townsfolk/torch_bearer","ferris_flavor",14,27),npc("Hooded Stranger","townsfolk/hooded_stranger","stranger_flavor",6,27)],
-              lights=[dict(tile=[x,y],color="warm") for x,y in [(10,21),(23,20),(10,10),(24,10),(15,28),(19,28),(33,15),(40,15),(36,27)]]+[dict(tile=[17,5],color="violet")])
+              lights=[dict(tile=[x,y],color="warm") for x,y in [(10,21),(23,20),(10,10),(24,10),(15,28),(20,27),(33,15),(40,15),(36,27)]]+[dict(tile=[17,5],color="violet")])
     rooms={}
     # Interiors share the 22x14 canvas; each room sets its own wall box so
     # a cottage reads smaller than a shop. The doormat and exit stay at x=10.
@@ -124,8 +127,14 @@ def compile_world():
           lights=[dict(tile=list(tile),color="warm") for tile in room["lights"]],
           painted_interior=dict(style="candlelit"))
     from route_01_world import add_route
+    from hollow_court_world import add_court
+    from greymere_story_world import add_story
+    from civara_world import add_civara
     locations = {"greymere":town, **rooms}
     add_route(locations)
+    add_court(locations)
+    add_story(locations)
+    add_civara(locations)
     OUT.mkdir(exist_ok=True)
     (OUT/"locations.json").write_text(json.dumps({"revision":1,"locations":locations},indent=2)+"\n")
 

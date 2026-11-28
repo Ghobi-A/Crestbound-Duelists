@@ -21,8 +21,19 @@ const NARRATION_VOLUME_DB := -2.0
 ## Where the movie leads when it ends or is skipped. The boot screen sets
 ## it to itself for "Watch Opening"; a new story game goes to Greymere.
 static var return_scene := OVERWORLD_SCENE
+## The timeline the next instance plays; story beats (the bond memory, the
+## ending) point it at their own timeline, then it resets to the opening.
+static var timeline_path := TIMELINE
+
+
+static func play_next(id: String, then_scene := "") -> void:
+	## Queue a story cinematic (game/data/cinematics/<id>.json). It returns
+	## to `then_scene`, or to the scene Kai is in.
+	timeline_path = "res://data/cinematics/%s.json" % id
+	return_scene = then_scene if then_scene != "" else GameState.current_scene
 
 var timeline: Dictionary = {}
+var assets := ASSETS              # the timeline's image folder ("assets")
 var time := 0.0
 var finished := false
 var _duration := 0.0
@@ -38,7 +49,9 @@ var _previous_transform_snap := false
 
 func _ready() -> void:
 	RenderingServer.set_default_clear_color(Color.BLACK)
-	timeline = load_timeline(TIMELINE)
+	timeline = load_timeline(timeline_path)
+	timeline_path = TIMELINE
+	assets = str(timeline.get("assets", ASSETS))
 	if timeline.is_empty():
 		_finish()
 		return
@@ -127,7 +140,7 @@ func _build_shot(data: Dictionary) -> Dictionary:
 	add_child(node)
 	var size := Vector2(VIEW)
 	if data.has("image"):
-		var path: String = ASSETS + str(data.image) + ".png"
+		var path: String = assets + str(data.image) + ".png"
 		if ResourceLoader.exists(path):
 			var sprite := Sprite2D.new()
 			sprite.texture = load(path)
@@ -197,7 +210,7 @@ func _place_camera(node: Node2D, size: Vector2, camera: Dictionary, u: float) ->
 func _build_element(element: Dictionary) -> Node2D:
 	match str(element.type):
 		"sprite", "dissolve":
-			var path: String = ASSETS + str(element.key) + ".png"
+			var path: String = assets + str(element.key) + ".png"
 			if not ResourceLoader.exists(path):
 				return null
 			var sprite := Sprite2D.new()
@@ -400,7 +413,7 @@ func _draw_overlay() -> void:
 			Color(str(title.get("color", "#e9dcb8")), a), VIEW.x, HORIZONTAL_ALIGNMENT_CENTER, UiStyle.DISPLAY, tracking)
 	if _hint_left > 0.0:
 		var a := minf(1.0, _hint_left / 0.5)
-		var hint := "Hold Z to skip  ·  X skip now"
+		var hint := "Hold %s to skip  ·  %s skip now" % [InputDevice.cap("interact"), InputDevice.cap("cancel")]
 		UiStyle.draw_text(canvas, Vector2(0, VIEW.y - 5.0), hint, 5, Color(0.75, 0.72, 0.66, a * 0.85), VIEW.x - 6.0, HORIZONTAL_ALIGNMENT_RIGHT)
 		if _hold > 0.0:
 			canvas.draw_rect(Rect2(VIEW.x - 66.0, VIEW.y - 3.0, 60.0 * clampf(_hold / SKIP_HOLD, 0.0, 1.0), 0.8), Color(0.9, 0.82, 0.6, a))

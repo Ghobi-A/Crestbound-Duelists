@@ -4,6 +4,11 @@
 # so points are reallocated within that fixed budget while preserving each
 # archetype. HP remains separate and is tuned for the 6–8 round horizon.
 
+# move_ids is each class's default loadout (Basic, Signature, Gambit) and
+# the kit the classic 1v1 duel model uses. unlockable_moves are the
+# alternatives a Duelist of the class can earn and equip (one per slot);
+# the Flex loadout slot takes any unlocked move not already equipped.
+
 classes:
   - id: warrior
     name: Warrior
@@ -13,6 +18,7 @@ classes:
     role: physical_bruiser
     base_stats: {hp: 96, atk: 70, def: 68, mag: 34, res: 40, spd: 48}
     move_ids: [power_slash, armor_break, reckless_charge]
+    unlockable_moves: [hilt_strike, rallying_roar, sundering_blow]
     tags: [frontline, physical, guard_break]
 
   - id: mage
@@ -23,6 +29,7 @@ classes:
     role: magical_specialist
     base_stats: {hp: 96, atk: 30, def: 38, mag: 78, res: 66, spd: 48}
     move_ids: [arcane_bolt, mind_pierce, overload]
+    unlockable_moves: [stone_lance, binding_glyph, starfall]
     tags: [backline, magical, resistance_break]
 
   - id: assassin
@@ -33,6 +40,7 @@ classes:
     role: fast_striker
     base_stats: {hp: 94, atk: 70, def: 46, mag: 28, res: 48, spd: 68}
     move_ids: [quick_strike, cripple, lethal_edge]
+    unlockable_moves: [feint_cut, smoke_step, throat_strike]
     tags: [flanker, physical, debuff_finisher]
 
   - id: guardian
@@ -43,6 +51,7 @@ classes:
     role: defensive_tank
     base_stats: {hp: 104, atk: 44, def: 70, mag: 44, res: 66, spd: 36}
     move_ids: [shield_bash, fortify, avalanche]
+    unlockable_moves: [guard_strike, shield_toss, earthbreaker]
     tags: [frontline, tank, brace_synergy]
 
   - id: neutral
@@ -53,6 +62,7 @@ classes:
     role: adaptive_generalist
     base_stats: {hp: 100, atk: 56, def: 46, mag: 56, res: 50, spd: 52}
     move_ids: [hybrid_strike, focus_shift, wild_card]
+    unlockable_moves: [steady_palm, mirror_stance, turning_point]
     tags: [flexible, adaptive, stance_shift]
 
   - id: sorcerer
@@ -63,4 +73,5 @@ classes:
     role: curse_specialist
     base_stats: {hp: 94, atk: 32, def: 44, mag: 76, res: 48, spd: 60}
     move_ids: [flame, hex, voidfire]
+    unlockable_moves: [shadow_lash, withering_curse, null_burst]
     tags: [backline, magical, status_control, anti_buff]

@@ -6,6 +6,15 @@
     "objective_type": "eliminate",
     "params": {}
   },
+  "defeat_target": {
+    "description": "The battle is won when the marked enemy falls.",
+    "id": "defeat_target",
+    "name": "Defeat the Marked Foe",
+    "objective_type": "defeat_target",
+    "params": {
+      "unit_tag": "target"
+    }
+  },
   "hold_crest_node": {
     "description": "Keep a friendly unit on the dormant Crest node for the required number of consecutive turns.",
     "id": "hold_crest_node",

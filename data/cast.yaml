@@ -1,0 +1,182 @@
+# Crestbound Duelists — named battle builds for the opening chapter.
+#
+# A cast entry is a unit build (Combat System 3.0): the same fields an
+# encounter's enemy_party entry takes. Encounters reference them with
+# `build: <id>` (any fields beside it override the cast entry), and the
+# game resolves player-side ids ("kai", "almyra", ...) from these.
+#
+#   class_id     a class chassis ("" for people who are not Duelists)
+#   stats        explicit base stats (replaces the class's)
+#   stat_scale   multipliers on base stats (bosses, minor foes)
+#   move_ids     the equipped moves (default: the class kit + Entity move)
+#   affinity     {weak, resist} (default: the Crest's affinity_profile)
+#   ai_profile   enemy decision profile (combat_config.yaml ai_profiles)
+#   phases       boss phases: trigger, moves, rotation, affinity, banner
+#   tags         e.g. protected (losing them loses), target (defeat_target)
+#
+# Kai's provisional kits follow docs/rework/CHAPTER_ONE_PROVISIONAL_CANON.md:
+# Unbonded before the Hollow Court, Unsettled after the bond, and his
+# stabilised class (a normal class build) after Civara.
+
+cast:
+  # ── Kai ───────────────────────────────────────────────────────────
+  - id: kai_unbonded
+    name: Kai
+    class_id: ""
+    stats: {hp: 94, atk: 62, def: 54, mag: 40, res: 46, spd: 54}
+    move_ids: [kai_strike, shoulder_check, wild_swing]
+    position: front
+    sprite_key: kai_unbonded
+
+  - id: kai_unsettled
+    name: Kai
+    class_id: ""
+    crest_id: unsettled_crest
+    stats: {hp: 96, atk: 60, def: 50, mag: 56, res: 48, spd: 54}
+    move_ids: [kai_strike, crest_flare, overflow, shoulder_check]
+    position: front
+    sprite_key: kai_unbonded
+
+  # ── Allies ────────────────────────────────────────────────────────
+  - id: almyra
+    name: Warden Almyra
+    class_id: guardian
+    crest_id: azure_crest
+    entity_id: storm_lion
+    move_ids: [shield_bash, fortify, avalanche, lionfall_verdict]
+    position: front
+    sprite_key: elara
+
+  - id: hale
+    name: Specialist Hale
+    class_id: sorcerer
+    crest_id: eclipse_crest
+    entity_id: grave_stag
+    move_ids: [flame, hex, voidfire, procession_of_antlers]
+    position: back
+    sprite_key: hale
+
+  - id: joey
+    name: Joey
+    class_id: ""
+    stats: {hp: 74, atk: 30, def: 38, mag: 20, res: 34, spd: 44}
+    position: back
+    tags: [protected]
+    sprite_key: joey
+
+  # ── Greymere and Route 01 ─────────────────────────────────────────
+  - id: danfor
+    name: Danfor
+    class_id: guardian
+    move_ids: [shield_bash, fortify, danfor_shield_rush]
+    stat_scale: {hp: 0.85}
+    ai_profile: defensive
+    position: front
+    sprite_key: danfor
+
+  - id: roadside_tough
+    name: Roadside Tough
+    class_id: warrior
+    stat_scale: {hp: 0.3, atk: 0.5}
+    ai_profile: aggressive
+    position: front
+    sprite_key: riven_raider
+
+  - id: greymaw
+    name: Old Greymaw
+    class_id: assassin
+    stat_scale: {hp: 2.0, atk: 1.0, def: 1.05}
+    position: front
+    sprite_key: greymaw
+    phases:
+      - name: Stalking
+        move_ids: [greymaw_lunge, greymaw_feint, greymaw_rend, greymaw_pounce]
+        ai_profile: boss
+        affinity: {weak: [impact], resist: [edge]}
+        rotation:
+          - {pick: [greymaw_lunge, greymaw_feint, greymaw_rend]}
+          - {pick: [greymaw_lunge, greymaw_feint, greymaw_rend]}
+          - {move: greymaw_pounce}
+      - name: Enraged
+        trigger: {type: hp_below, threshold: 0.4}
+        banner: OLD GREYMAW IS ENRAGED
+        move_ids: [greymaw_frenzy, greymaw_rend, greymaw_pounce, greymaw_howl]
+        entry_move: greymaw_howl
+        affinity: {weak: [edge], resist: [impact]}
+        rotation:
+          - {pick: [greymaw_frenzy, greymaw_rend]}
+          - {move: greymaw_pounce}
+
+  # ── The Hollow Court: Riven manifestations ────────────────────────
+  - id: riven_wisp
+    name: Riven Wisp
+    class_id: sorcerer
+    stat_scale: {hp: 0.55, mag: 0.9}
+    move_ids: [wisp_flicker, wisp_chill]
+    affinity: {weak: [edge], resist: [arcane]}
+    ai_profile: disruptive
+    position: back
+    sprite_key: riven_wisp
+
+  - id: riven_husk
+    name: Riven Husk
+    class_id: guardian
+    stat_scale: {hp: 0.9}
+    move_ids: [husk_slam, husk_grind]
+    affinity: {weak: [arcane], resist: [impact]}
+    ai_profile: aggressive
+    position: front
+    sprite_key: riven_husk
+
+  - id: riven_anchor
+    name: Riven Anchor
+    class_id: mage
+    stat_scale: {hp: 0.8, spd: 0.6}
+    move_ids: [anchor_pulse, anchor_seal]
+    affinity: {weak: [impact], resist: [edge]}
+    ai_profile: defensive
+    tags: [target]
+    position: back
+    sprite_key: riven_anchor
+
+  - id: sealed_choir
+    name: The Sealed Choir
+    class_id: neutral
+    stat_scale: {hp: 4.4, mag: 1.65, res: 1.1}
+    position: front
+    sprite_key: sealed_choir
+    phases:
+      - name: Ward
+        move_ids: [choir_toll, choir_dirge, choir_requiem]
+        ai_profile: boss
+        affinity: {weak: [arcane], resist: [impact, edge]}
+        rotation:
+          - {pick: [choir_toll, choir_dirge]}
+          - {pick: [choir_toll, choir_dirge]}
+          - {move: choir_requiem}
+      - name: Fracture
+        trigger: {type: hp_below, threshold: 0.66}
+        banner: THE CHOIR FRACTURES
+        affinity: {weak: [arcane, edge], resist: [impact]}
+        summon:
+          name: Riven Wisp
+          class_id: sorcerer
+          stat_scale: {hp: 0.55, mag: 0.9}
+          move_ids: [wisp_flicker, wisp_chill]
+          affinity: {weak: [edge], resist: [arcane]}
+          ai_profile: disruptive
+          position: back
+          sprite_key: riven_wisp
+        rotation:
+          - {pick: [choir_dirge, choir_toll]}
+          - {pick: [choir_toll, choir_dirge]}
+          - {move: choir_requiem}
+      - name: Collapse
+        trigger: {type: hp_below, threshold: 0.33}
+        banner: THE SEAL IS COLLAPSING
+        move_ids: [choir_toll, choir_collapse, choir_requiem]
+        entry_statuses: [{status: exposed, duration: 1}]
+        affinity: {weak: [arcane, edge, impact], resist: []}
+        rotation:
+          - {pick: [choir_collapse, choir_toll]}
+          - {move: choir_requiem}

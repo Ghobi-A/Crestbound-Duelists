@@ -43,6 +43,1019 @@
     "pre_battle_positioning": true,
     "victory_dialogue": ""
   },
+  "civara_assessment_assassin": {
+    "battlefield_effect": {},
+    "defeat_dialogue": "",
+    "enemy_party": [
+      {
+        "ai_profile": "opportunistic",
+        "class_id": "assassin",
+        "crest_id": "glass_crest",
+        "entity_id": "mirror_fox",
+        "move_ids": [
+          "feint_cut",
+          "smoke_step",
+          "throat_strike"
+        ],
+        "name": "Avelan Assessor",
+        "position": "front",
+        "sprite_key": "assessor",
+        "stat_scale": {
+          "atk": 0.8,
+          "hp": 0.8,
+          "mag": 0.8
+        }
+      }
+    ],
+    "enemy_slots": 1,
+    "id": "civara_assessment_assassin",
+    "intro_dialogue": "",
+    "location": "civara_hall",
+    "name": "Combat Assessment",
+    "objective": "defeat_all",
+    "player_party": [
+      "kai"
+    ],
+    "player_slots": 1,
+    "pre_battle_positioning": false,
+    "retry": true,
+    "rewards": {
+      "crowns": 30,
+      "flags": [
+        "civara_assessment_won"
+      ]
+    },
+    "victory_dialogue": ""
+  },
+  "civara_assessment_guardian": {
+    "battlefield_effect": {},
+    "defeat_dialogue": "",
+    "enemy_party": [
+      {
+        "ai_profile": "opportunistic",
+        "class_id": "guardian",
+        "crest_id": "azure_crest",
+        "entity_id": "glass_mantis",
+        "move_ids": [
+          "guard_strike",
+          "shield_toss",
+          "earthbreaker",
+          "prism_severance"
+        ],
+        "name": "Avelan Assessor",
+        "position": "front",
+        "sprite_key": "assessor",
+        "stat_scale": {
+          "atk": 0.8,
+          "hp": 0.82,
+          "mag": 0.8
+        }
+      }
+    ],
+    "enemy_slots": 1,
+    "id": "civara_assessment_guardian",
+    "intro_dialogue": "",
+    "location": "civara_hall",
+    "name": "Combat Assessment",
+    "objective": "defeat_all",
+    "player_party": [
+      "kai"
+    ],
+    "player_slots": 1,
+    "pre_battle_positioning": false,
+    "retry": true,
+    "rewards": {
+      "crowns": 30,
+      "flags": [
+        "civara_assessment_won"
+      ]
+    },
+    "victory_dialogue": ""
+  },
+  "civara_assessment_mage": {
+    "battlefield_effect": {},
+    "defeat_dialogue": "",
+    "enemy_party": [
+      {
+        "ai_profile": "opportunistic",
+        "class_id": "mage",
+        "crest_id": "ember_crest",
+        "entity_id": "grave_stag",
+        "move_ids": [
+          "stone_lance",
+          "binding_glyph",
+          "starfall",
+          "procession_of_antlers"
+        ],
+        "name": "Avelan Assessor",
+        "position": "front",
+        "sprite_key": "assessor",
+        "stat_scale": {
+          "atk": 0.7,
+          "hp": 0.68,
+          "mag": 0.66
+        }
+      }
+    ],
+    "enemy_slots": 1,
+    "id": "civara_assessment_mage",
+    "intro_dialogue": "",
+    "location": "civara_hall",
+    "name": "Combat Assessment",
+    "objective": "defeat_all",
+    "player_party": [
+      "kai"
+    ],
+    "player_slots": 1,
+    "pre_battle_positioning": false,
+    "retry": true,
+    "rewards": {
+      "crowns": 30,
+      "flags": [
+        "civara_assessment_won"
+      ]
+    },
+    "victory_dialogue": ""
+  },
+  "civara_assessment_neutral": {
+    "battlefield_effect": {},
+    "defeat_dialogue": "",
+    "enemy_party": [
+      {
+        "ai_profile": "opportunistic",
+        "class_id": "neutral",
+        "crest_id": "verdant_crest",
+        "entity_id": "ash_seraph",
+        "move_ids": [
+          "steady_palm",
+          "mirror_stance",
+          "turning_point"
+        ],
+        "name": "Avelan Assessor",
+        "position": "front",
+        "sprite_key": "assessor",
+        "stat_scale": {
+          "atk": 0.85,
+          "hp": 0.88,
+          "mag": 0.85
+        }
+      }
+    ],
+    "enemy_slots": 1,
+    "id": "civara_assessment_neutral",
+    "intro_dialogue": "",
+    "location": "civara_hall",
+    "name": "Combat Assessment",
+    "objective": "defeat_all",
+    "player_party": [
+      "kai"
+    ],
+    "player_slots": 1,
+    "pre_battle_positioning": false,
+    "retry": true,
+    "rewards": {
+      "crowns": 30,
+      "flags": [
+        "civara_assessment_won"
+      ]
+    },
+    "victory_dialogue": ""
+  },
+  "civara_assessment_sorcerer": {
+    "battlefield_effect": {},
+    "defeat_dialogue": "",
+    "enemy_party": [
+      {
+        "ai_profile": "opportunistic",
+        "class_id": "sorcerer",
+        "crest_id": "eclipse_crest",
+        "entity_id": "storm_lion",
+        "move_ids": [
+          "shadow_lash",
+          "withering_curse",
+          "null_burst",
+          "lionfall_verdict"
+        ],
+        "name": "Avelan Assessor",
+        "position": "front",
+        "sprite_key": "assessor",
+        "stat_scale": {
+          "atk": 0.7,
+          "hp": 0.66,
+          "mag": 0.62
+        }
+      }
+    ],
+    "enemy_slots": 1,
+    "id": "civara_assessment_sorcerer",
+    "intro_dialogue": "",
+    "location": "civara_hall",
+    "name": "Combat Assessment",
+    "objective": "defeat_all",
+    "player_party": [
+      "kai"
+    ],
+    "player_slots": 1,
+    "pre_battle_positioning": false,
+    "retry": true,
+    "rewards": {
+      "crowns": 30,
+      "flags": [
+        "civara_assessment_won"
+      ]
+    },
+    "victory_dialogue": ""
+  },
+  "civara_assessment_warrior": {
+    "battlefield_effect": {},
+    "defeat_dialogue": "",
+    "enemy_party": [
+      {
+        "ai_profile": "opportunistic",
+        "class_id": "warrior",
+        "crest_id": "crimson_crest",
+        "entity_id": "iron_tortoise",
+        "move_ids": [
+          "hilt_strike",
+          "rallying_roar",
+          "sundering_blow",
+          "bulwark_protocol"
+        ],
+        "name": "Avelan Assessor",
+        "position": "front",
+        "sprite_key": "assessor",
+        "stat_scale": {
+          "atk": 0.85,
+          "hp": 0.9,
+          "mag": 0.85
+        }
+      }
+    ],
+    "enemy_slots": 1,
+    "id": "civara_assessment_warrior",
+    "intro_dialogue": "",
+    "location": "civara_hall",
+    "name": "Combat Assessment",
+    "objective": "defeat_all",
+    "player_party": [
+      "kai"
+    ],
+    "player_slots": 1,
+    "pre_battle_positioning": false,
+    "retry": true,
+    "rewards": {
+      "crowns": 30,
+      "flags": [
+        "civara_assessment_won"
+      ]
+    },
+    "victory_dialogue": ""
+  },
+  "court_anchor": {
+    "battlefield_effect": {},
+    "defeat_dialogue": "",
+    "enemy_party": [
+      {
+        "affinity": {
+          "resist": [
+            "edge"
+          ],
+          "weak": [
+            "impact"
+          ]
+        },
+        "ai_profile": "defensive",
+        "build": "riven_anchor",
+        "class_id": "mage",
+        "move_ids": [
+          "anchor_pulse",
+          "anchor_seal"
+        ],
+        "name": "Riven Anchor",
+        "position": "front",
+        "sprite_key": "riven_anchor",
+        "stat_scale": {
+          "hp": 0.6,
+          "mag": 0.7,
+          "spd": 0.6
+        },
+        "tags": [
+          "target"
+        ]
+      },
+      {
+        "affinity": {
+          "resist": [
+            "arcane"
+          ],
+          "weak": [
+            "edge"
+          ]
+        },
+        "ai_profile": "disruptive",
+        "build": "riven_wisp",
+        "class_id": "sorcerer",
+        "move_ids": [
+          "wisp_flicker",
+          "wisp_chill"
+        ],
+        "name": "Riven Wisp",
+        "position": "back",
+        "sprite_key": "riven_wisp",
+        "stat_scale": {
+          "hp": 0.35,
+          "mag": 0.55
+        }
+      }
+    ],
+    "enemy_slots": 2,
+    "id": "court_anchor",
+    "intro_dialogue": "",
+    "location": "court_chamber",
+    "music": "court_battle",
+    "name": "The Anchor",
+    "objective": "defeat_target",
+    "player_party": [
+      "kai"
+    ],
+    "player_slots": 1,
+    "pre_battle_positioning": false,
+    "retry": true,
+    "rewards": {},
+    "victory_dialogue": ""
+  },
+  "court_gallery_husk": {
+    "battlefield_effect": {},
+    "defeat_dialogue": "",
+    "enemy_party": [
+      {
+        "affinity": {
+          "resist": [
+            "impact"
+          ],
+          "weak": [
+            "arcane"
+          ]
+        },
+        "ai_profile": "aggressive",
+        "build": "riven_husk",
+        "class_id": "guardian",
+        "move_ids": [
+          "husk_slam",
+          "husk_grind"
+        ],
+        "name": "Riven Husk",
+        "position": "front",
+        "sprite_key": "riven_husk",
+        "stat_scale": {
+          "atk": 1.15,
+          "hp": 1.7
+        }
+      }
+    ],
+    "enemy_slots": 1,
+    "id": "court_gallery_husk",
+    "intro_dialogue": "",
+    "location": "court_gallery",
+    "music": "court_battle",
+    "name": "A Riven Husk",
+    "objective": "defeat_all",
+    "player_party": [
+      "kai",
+      "almyra"
+    ],
+    "player_slots": 2,
+    "pre_battle_positioning": false,
+    "retry": true,
+    "rewards": {
+      "crowns": 8
+    },
+    "victory_dialogue": ""
+  },
+  "court_gallery_pair": {
+    "battlefield_effect": {},
+    "defeat_dialogue": "",
+    "enemy_party": [
+      {
+        "affinity": {
+          "resist": [
+            "impact"
+          ],
+          "weak": [
+            "arcane"
+          ]
+        },
+        "ai_profile": "aggressive",
+        "build": "riven_husk",
+        "class_id": "guardian",
+        "move_ids": [
+          "husk_slam",
+          "husk_grind"
+        ],
+        "name": "Riven Husk",
+        "position": "front",
+        "sprite_key": "riven_husk",
+        "stat_scale": {
+          "atk": 1.1,
+          "hp": 1.1
+        }
+      },
+      {
+        "affinity": {
+          "resist": [
+            "arcane"
+          ],
+          "weak": [
+            "edge"
+          ]
+        },
+        "ai_profile": "disruptive",
+        "build": "riven_wisp",
+        "class_id": "sorcerer",
+        "move_ids": [
+          "wisp_flicker",
+          "wisp_chill"
+        ],
+        "name": "Riven Wisp",
+        "position": "back",
+        "sprite_key": "riven_wisp",
+        "stat_scale": {
+          "hp": 0.55,
+          "mag": 0.9
+        }
+      }
+    ],
+    "enemy_slots": 2,
+    "id": "court_gallery_pair",
+    "intro_dialogue": "",
+    "location": "court_gallery",
+    "music": "court_battle",
+    "name": "The Drowned Gallery",
+    "objective": "defeat_all",
+    "player_party": [
+      "kai",
+      "almyra"
+    ],
+    "player_slots": 2,
+    "pre_battle_positioning": true,
+    "retry": true,
+    "rewards": {
+      "crowns": 10,
+      "items": {
+        "clearwater": 1
+      }
+    },
+    "victory_dialogue": ""
+  },
+  "court_protect_joey": {
+    "battlefield_effect": {},
+    "defeat_dialogue": "",
+    "enemy_party": [
+      {
+        "affinity": {
+          "resist": [
+            "arcane"
+          ],
+          "weak": [
+            "edge"
+          ]
+        },
+        "ai_profile": "disruptive",
+        "build": "riven_wisp",
+        "class_id": "sorcerer",
+        "move_ids": [
+          "wisp_flicker",
+          "wisp_chill"
+        ],
+        "name": "Riven Wisp",
+        "position": "front",
+        "sprite_key": "riven_wisp",
+        "stat_scale": {
+          "hp": 0.55,
+          "mag": 0.9
+        }
+      },
+      {
+        "affinity": {
+          "resist": [
+            "arcane"
+          ],
+          "weak": [
+            "edge"
+          ]
+        },
+        "ai_profile": "disruptive",
+        "build": "riven_wisp",
+        "class_id": "sorcerer",
+        "move_ids": [
+          "wisp_flicker",
+          "wisp_chill"
+        ],
+        "name": "Riven Wisp",
+        "position": "back",
+        "sprite_key": "riven_wisp",
+        "stat_scale": {
+          "hp": 0.5,
+          "mag": 0.8
+        }
+      }
+    ],
+    "enemy_slots": 2,
+    "id": "court_protect_joey",
+    "intro_dialogue": "",
+    "location": "court_chamber",
+    "music": "court_battle",
+    "name": "Hold the Line",
+    "objective": "survive_assault",
+    "objective_params": {
+      "turns_required": 4
+    },
+    "player_party": [
+      "kai",
+      "joey"
+    ],
+    "player_slots": 2,
+    "pre_battle_positioning": false,
+    "retry": true,
+    "rewards": {},
+    "victory_dialogue": ""
+  },
+  "court_sealed_choir": {
+    "battlefield_effect": {
+      "after_round": 0,
+      "description": "The Court's old rite is still singing. Resonance answers quickly here.",
+      "multiplier": 1.25,
+      "name": "The Radial Chamber",
+      "tags": [
+        "ruin"
+      ],
+      "type": "resonance_surge"
+    },
+    "defeat_dialogue": "",
+    "enemy_party": [
+      {
+        "build": "sealed_choir",
+        "class_id": "neutral",
+        "name": "The Sealed Choir",
+        "phases": [
+          {
+            "affinity": {
+              "resist": [
+                "impact",
+                "edge"
+              ],
+              "weak": [
+                "arcane"
+              ]
+            },
+            "ai_profile": "boss",
+            "move_ids": [
+              "choir_toll",
+              "choir_dirge",
+              "choir_requiem"
+            ],
+            "name": "Ward",
+            "rotation": [
+              {
+                "pick": [
+                  "choir_toll",
+                  "choir_dirge"
+                ]
+              },
+              {
+                "pick": [
+                  "choir_toll",
+                  "choir_dirge"
+                ]
+              },
+              {
+                "move": "choir_requiem"
+              }
+            ]
+          },
+          {
+            "affinity": {
+              "resist": [
+                "impact"
+              ],
+              "weak": [
+                "arcane",
+                "edge"
+              ]
+            },
+            "banner": "THE CHOIR FRACTURES",
+            "name": "Fracture",
+            "rotation": [
+              {
+                "pick": [
+                  "choir_dirge",
+                  "choir_toll"
+                ]
+              },
+              {
+                "pick": [
+                  "choir_toll",
+                  "choir_dirge"
+                ]
+              },
+              {
+                "move": "choir_requiem"
+              }
+            ],
+            "summon": {
+              "affinity": {
+                "resist": [
+                  "arcane"
+                ],
+                "weak": [
+                  "edge"
+                ]
+              },
+              "ai_profile": "disruptive",
+              "class_id": "sorcerer",
+              "move_ids": [
+                "wisp_flicker",
+                "wisp_chill"
+              ],
+              "name": "Riven Wisp",
+              "position": "back",
+              "sprite_key": "riven_wisp",
+              "stat_scale": {
+                "hp": 0.55,
+                "mag": 0.9
+              }
+            },
+            "trigger": {
+              "threshold": 0.66,
+              "type": "hp_below"
+            }
+          },
+          {
+            "affinity": {
+              "resist": [],
+              "weak": [
+                "arcane",
+                "edge",
+                "impact"
+              ]
+            },
+            "banner": "THE SEAL IS COLLAPSING",
+            "entry_statuses": [
+              {
+                "duration": 1,
+                "status": "exposed"
+              }
+            ],
+            "move_ids": [
+              "choir_toll",
+              "choir_collapse",
+              "choir_requiem"
+            ],
+            "name": "Collapse",
+            "rotation": [
+              {
+                "pick": [
+                  "choir_collapse",
+                  "choir_toll"
+                ]
+              },
+              {
+                "move": "choir_requiem"
+              }
+            ],
+            "trigger": {
+              "threshold": 0.33,
+              "type": "hp_below"
+            }
+          }
+        ],
+        "position": "front",
+        "sprite_key": "sealed_choir",
+        "stat_scale": {
+          "hp": 4.4,
+          "mag": 1.65,
+          "res": 1.1
+        }
+      }
+    ],
+    "enemy_slots": 1,
+    "id": "court_sealed_choir",
+    "intro_dialogue": "",
+    "location": "court_chamber",
+    "music": "choir_boss",
+    "name": "The Sealed Choir",
+    "objective": "defeat_all",
+    "player_party": [
+      "kai",
+      "almyra",
+      "hale"
+    ],
+    "player_slots": 3,
+    "pre_battle_positioning": true,
+    "retry": true,
+    "return": {
+      "flags": [
+        "hollow_court_cleared"
+      ],
+      "location": "greymere",
+      "spawn": "aftermath"
+    },
+    "rewards": {
+      "flags": [
+        "choir_defeated"
+      ]
+    },
+    "victory_dialogue": ""
+  },
+  "court_stair_pair": {
+    "battlefield_effect": {},
+    "defeat_dialogue": "",
+    "enemy_party": [
+      {
+        "affinity": {
+          "resist": [
+            "arcane"
+          ],
+          "weak": [
+            "edge"
+          ]
+        },
+        "ai_profile": "disruptive",
+        "build": "riven_wisp",
+        "class_id": "sorcerer",
+        "move_ids": [
+          "wisp_flicker",
+          "wisp_chill"
+        ],
+        "name": "Riven Wisp",
+        "position": "front",
+        "sprite_key": "riven_wisp",
+        "stat_scale": {
+          "hp": 0.5,
+          "mag": 0.7
+        }
+      },
+      {
+        "affinity": {
+          "resist": [
+            "arcane"
+          ],
+          "weak": [
+            "edge"
+          ]
+        },
+        "ai_profile": "disruptive",
+        "build": "riven_wisp",
+        "class_id": "sorcerer",
+        "move_ids": [
+          "wisp_flicker",
+          "wisp_chill"
+        ],
+        "name": "Riven Wisp",
+        "position": "back",
+        "sprite_key": "riven_wisp",
+        "stat_scale": {
+          "hp": 0.35,
+          "mag": 0.55
+        }
+      }
+    ],
+    "enemy_slots": 2,
+    "id": "court_stair_pair",
+    "intro_dialogue": "",
+    "location": "court_stair",
+    "music": "court_battle",
+    "name": "Riven Wisps",
+    "objective": "defeat_all",
+    "player_party": [
+      "kai"
+    ],
+    "player_slots": 1,
+    "pre_battle_positioning": false,
+    "retry": true,
+    "rewards": {
+      "crowns": 8,
+      "items": {
+        "potion": 1
+      }
+    },
+    "victory_dialogue": ""
+  },
+  "court_stair_wisp": {
+    "battlefield_effect": {},
+    "defeat_dialogue": "",
+    "enemy_party": [
+      {
+        "affinity": {
+          "resist": [
+            "arcane"
+          ],
+          "weak": [
+            "edge"
+          ]
+        },
+        "ai_profile": "disruptive",
+        "build": "riven_wisp",
+        "class_id": "sorcerer",
+        "move_ids": [
+          "wisp_flicker",
+          "wisp_chill"
+        ],
+        "name": "Riven Wisp",
+        "position": "back",
+        "sprite_key": "riven_wisp",
+        "stat_scale": {
+          "hp": 0.55,
+          "mag": 0.9
+        }
+      }
+    ],
+    "enemy_slots": 1,
+    "id": "court_stair_wisp",
+    "intro_dialogue": "",
+    "location": "court_stair",
+    "music": "court_battle",
+    "name": "A Riven Wisp",
+    "objective": "defeat_all",
+    "player_party": [
+      "kai"
+    ],
+    "player_slots": 1,
+    "pre_battle_positioning": false,
+    "retry": true,
+    "rewards": {
+      "crowns": 6
+    },
+    "victory_dialogue": ""
+  },
+  "greymaw_den": {
+    "battlefield_effect": {
+      "after_round": 0,
+      "description": "Something under the ridge hums. Resonance runs a little faster here.",
+      "multiplier": 1.25,
+      "name": "The Old Ridge",
+      "tags": [
+        "ruin"
+      ],
+      "type": "resonance_surge"
+    },
+    "defeat_dialogue": "",
+    "enemy_party": [
+      {
+        "build": "greymaw",
+        "class_id": "assassin",
+        "name": "Old Greymaw",
+        "phases": [
+          {
+            "affinity": {
+              "resist": [
+                "edge"
+              ],
+              "weak": [
+                "impact"
+              ]
+            },
+            "ai_profile": "boss",
+            "move_ids": [
+              "greymaw_lunge",
+              "greymaw_feint",
+              "greymaw_rend",
+              "greymaw_pounce"
+            ],
+            "name": "Stalking",
+            "rotation": [
+              {
+                "pick": [
+                  "greymaw_lunge",
+                  "greymaw_feint",
+                  "greymaw_rend"
+                ]
+              },
+              {
+                "pick": [
+                  "greymaw_lunge",
+                  "greymaw_feint",
+                  "greymaw_rend"
+                ]
+              },
+              {
+                "move": "greymaw_pounce"
+              }
+            ]
+          },
+          {
+            "affinity": {
+              "resist": [
+                "impact"
+              ],
+              "weak": [
+                "edge"
+              ]
+            },
+            "banner": "OLD GREYMAW IS ENRAGED",
+            "entry_move": "greymaw_howl",
+            "move_ids": [
+              "greymaw_frenzy",
+              "greymaw_rend",
+              "greymaw_pounce",
+              "greymaw_howl"
+            ],
+            "name": "Enraged",
+            "rotation": [
+              {
+                "pick": [
+                  "greymaw_frenzy",
+                  "greymaw_rend"
+                ]
+              },
+              {
+                "move": "greymaw_pounce"
+              }
+            ],
+            "trigger": {
+              "threshold": 0.4,
+              "type": "hp_below"
+            }
+          }
+        ],
+        "position": "front",
+        "sprite_key": "greymaw",
+        "stat_scale": {
+          "atk": 1.0,
+          "def": 1.05,
+          "hp": 2.0
+        }
+      }
+    ],
+    "enemy_slots": 1,
+    "id": "greymaw_den",
+    "intro_dialogue": "",
+    "location": "route_01",
+    "music": "greymaw_boss",
+    "name": "Old Greymaw",
+    "objective": "defeat_all",
+    "player_party": [
+      "kai"
+    ],
+    "player_slots": 1,
+    "pre_battle_positioning": false,
+    "retry": true,
+    "rewards": {
+      "crowns": 40,
+      "equipment": [
+        "greymaw_fang"
+      ],
+      "flags": [
+        "greymaw_den_won"
+      ]
+    },
+    "victory_dialogue": ""
+  },
+  "greymere_spar_danfor": {
+    "battlefield_effect": {},
+    "defeat_dialogue": "",
+    "enemy_party": [
+      {
+        "ai_profile": "defensive",
+        "build": "danfor",
+        "class_id": "guardian",
+        "move_ids": [
+          "shield_bash",
+          "fortify",
+          "danfor_shield_rush"
+        ],
+        "name": "Danfor",
+        "position": "front",
+        "sprite_key": "danfor",
+        "stat_scale": {
+          "hp": 0.85
+        }
+      }
+    ],
+    "enemy_slots": 1,
+    "id": "greymere_spar_danfor",
+    "intro_dialogue": "",
+    "location": "greymere",
+    "name": "Sparring with Danfor",
+    "objective": "defeat_all",
+    "player_party": [
+      "kai"
+    ],
+    "player_slots": 1,
+    "pre_battle_positioning": false,
+    "retry": true,
+    "rewards": {
+      "crowns": 10,
+      "flags": [
+        "spar_won"
+      ],
+      "items": {
+        "potion": 1
+      }
+    },
+    "tutorial": true,
+    "victory_dialogue": ""
+  },
   "hollow_court_battle": {
     "battlefield_effect": {
       "after_round": 3,
@@ -92,17 +1105,73 @@
     "pre_battle_positioning": true,
     "victory_dialogue": "battle_victory"
   },
-  "route01_challenger": {
+  "joey_wager": {
     "battlefield_effect": {},
     "defeat_dialogue": "",
     "enemy_party": [
       {
+        "affinity": {
+          "resist": [
+            "edge"
+          ],
+          "weak": [
+            "impact"
+          ]
+        },
+        "ai_profile": "opportunistic",
         "class_id": "warrior",
         "crest_id": "",
         "entity_id": "",
         "name": "Wandering Challenger",
         "position": "front",
-        "sprite_key": "route01_challenger"
+        "sprite_key": "route01_challenger",
+        "stat_scale": {
+          "atk": 0.8,
+          "hp": 0.85
+        }
+      }
+    ],
+    "enemy_slots": 1,
+    "id": "joey_wager",
+    "intro_dialogue": "",
+    "location": "greymere",
+    "name": "Joey's Wager",
+    "objective": "defeat_all",
+    "player_party": [
+      "kai"
+    ],
+    "player_slots": 1,
+    "pre_battle_positioning": false,
+    "retry": true,
+    "rewards": {
+      "crowns": 10
+    },
+    "victory_dialogue": ""
+  },
+  "route01_challenger": {
+    "battlefield_effect": {},
+    "defeat_dialogue": "",
+    "enemy_party": [
+      {
+        "affinity": {
+          "resist": [
+            "edge"
+          ],
+          "weak": [
+            "impact"
+          ]
+        },
+        "ai_profile": "aggressive",
+        "class_id": "warrior",
+        "crest_id": "",
+        "entity_id": "",
+        "name": "Wandering Challenger",
+        "position": "front",
+        "sprite_key": "route01_challenger",
+        "stat_scale": {
+          "atk": 0.75,
+          "hp": 0.8
+        }
       }
     ],
     "enemy_slots": 1,
@@ -111,8 +1180,14 @@
     "location": "route_01",
     "name": "Wandering Challenger",
     "objective": "defeat_all",
-    "player_slots": 2,
-    "pre_battle_positioning": true,
+    "player_party": [
+      "kai"
+    ],
+    "player_slots": 1,
+    "pre_battle_positioning": false,
+    "rewards": {
+      "crowns": 16
+    },
     "victory_dialogue": ""
   },
   "route01_roadside": {
@@ -120,22 +1195,46 @@
     "defeat_dialogue": "",
     "enemy_party": [
       {
+        "ai_profile": "aggressive",
+        "build": "roadside_tough",
         "class_id": "warrior",
-        "crest_id": "",
-        "entity_id": "",
-        "name": "Roadside Raider",
+        "name": "Roadside Tough",
         "position": "front",
-        "sprite_key": "riven_raider"
+        "sprite_key": "riven_raider",
+        "stat_scale": {
+          "atk": 0.5,
+          "hp": 0.3
+        }
+      },
+      {
+        "ai_profile": "disruptive",
+        "build": "roadside_tough",
+        "class_id": "neutral",
+        "name": "Roadside Lookout",
+        "position": "back",
+        "sprite_key": "riven_raider",
+        "stat_scale": {
+          "atk": 0.42,
+          "hp": 0.3,
+          "mag": 0.42
+        }
       }
     ],
-    "enemy_slots": 1,
+    "enemy_slots": 2,
     "id": "route01_roadside",
     "intro_dialogue": "",
     "location": "route_01",
-    "name": "Roadside Raider",
+    "name": "Roadside Toughs",
     "objective": "defeat_all",
-    "player_slots": 2,
-    "pre_battle_positioning": true,
+    "player_party": [
+      "kai"
+    ],
+    "player_slots": 1,
+    "pre_battle_positioning": false,
+    "rewards": {
+      "crowns": 8,
+      "once": false
+    },
     "victory_dialogue": ""
   },
   "route01_rowan": {
@@ -143,12 +1242,24 @@
     "defeat_dialogue": "",
     "enemy_party": [
       {
+        "affinity": {
+          "resist": [],
+          "weak": [
+            "impact"
+          ]
+        },
+        "ai_profile": "legacy",
         "class_id": "neutral",
         "crest_id": "",
         "entity_id": "",
         "name": "Apprentice Rowan",
         "position": "front",
-        "sprite_key": "route01_rowan"
+        "sprite_key": "route01_rowan",
+        "stat_scale": {
+          "atk": 0.85,
+          "hp": 0.8,
+          "mag": 0.85
+        }
       }
     ],
     "enemy_slots": 1,
@@ -157,8 +1268,14 @@
     "location": "route_01",
     "name": "Apprentice Rowan",
     "objective": "defeat_all",
-    "player_slots": 2,
-    "pre_battle_positioning": true,
+    "player_party": [
+      "kai"
+    ],
+    "player_slots": 1,
+    "pre_battle_positioning": false,
+    "rewards": {
+      "crowns": 12
+    },
     "victory_dialogue": ""
   },
   "route01_squire": {
@@ -166,12 +1283,25 @@
     "defeat_dialogue": "",
     "enemy_party": [
       {
+        "affinity": {
+          "resist": [
+            "impact"
+          ],
+          "weak": [
+            "edge"
+          ]
+        },
+        "ai_profile": "defensive",
         "class_id": "guardian",
         "crest_id": "",
         "entity_id": "",
         "name": "Travelling Squire",
         "position": "front",
-        "sprite_key": "route01_squire"
+        "sprite_key": "route01_squire",
+        "stat_scale": {
+          "atk": 1.0,
+          "hp": 0.8
+        }
       }
     ],
     "enemy_slots": 1,
@@ -180,8 +1310,17 @@
     "location": "route_01",
     "name": "Travelling Squire",
     "objective": "defeat_all",
-    "player_slots": 2,
-    "pre_battle_positioning": true,
+    "player_party": [
+      "kai"
+    ],
+    "player_slots": 1,
+    "pre_battle_positioning": false,
+    "rewards": {
+      "crowns": 14,
+      "items": {
+        "potion": 1
+      }
+    },
     "victory_dialogue": ""
   },
   "serin_first_duel": {

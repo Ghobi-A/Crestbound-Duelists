@@ -1,0 +1,114 @@
+# Crestbound Duelists — Chapter One journal: main beats and optional quests.
+#
+# A quest is derived only from story flags, so it can never fall out of
+# step with the game: it is hidden until start_flag is set (always shown
+# when start_flag is empty), each step is done when its flag is set, and
+# the quest is complete when every step is done. The reward is granted
+# once, on completion: crowns, items, charms (equipment), move unlocks for
+# Kai, and flags.
+
+quests:
+  # ── Main ──────────────────────────────────────────────────────────
+  - id: main_greymere_day
+    name: A Day in Greymere
+    kind: main
+    giver: Joey
+    summary: >-
+      Joey has a bad idea. Danfor has a lesson. Gell has opinions, Lena has
+      bandages and Silas has a question about the old ridge.
+    start_flag: ""
+    steps:
+      - {id: goats, text: Round up the goats Joey let loose., flag: goats_rounded}
+      - {id: spar, text: Take Danfor's sparring lesson., flag: greymere_spar_danfor_won}
+      - {id: gell, text: Hear Gell out at the shop., flag: talked_gell_story}
+      - {id: lena, text: Let Lena see to that scrape., flag: talked_lena_story}
+      - {id: silas, text: Answer Elder Silas., flag: talked_silas_ridge}
+    reward: {crowns: 20}
+
+  - id: main_inspection
+    name: The Inspection
+    kind: main
+    giver: Elder Silas
+    summary: >-
+      Dogs bark at the hill and the well tastes of iron. Avelan has sent a
+      Warden to inspect the ground under Greymere.
+    start_flag: stage_abnormal
+    steps:
+      - {id: arrival, text: Meet the inspection party in the square., flag: almyra_arrived}
+      - {id: cordon, text: Find out what the cordon is for., flag: cordon_up}
+
+  - id: main_hollow_court
+    name: Into the Hollow Court
+    kind: main
+    giver: Elder Silas
+    summary: >-
+      The ridge gave way at dusk and Joey went down after his stash. If you
+      hear something calling, do not answer it.
+    start_flag: incident_started
+    steps:
+      - {id: stair, text: Get down the Collapsed Stair., flag: court_stair_pair_won}
+      - {id: almyra, text: Free Warden Almyra in the Drowned Gallery., flag: court_gallery_pair_won}
+      - {id: joey, text: Reach Joey., flag: court_protect_joey_won}
+      - {id: seal, text: Break the seal on the passage., flag: court_anchor_won}
+      - {id: choir, text: Silence the Sealed Choir., flag: court_sealed_choir_won}
+
+  - id: main_classification
+    name: Classification
+    kind: main
+    giver: Warden Almyra
+    summary: >-
+      Custody or classification. Kai chose the road that keeps a door open,
+      and the road leads to Civara.
+    start_flag: custody_choice_made
+    steps:
+      - {id: civara, text: Report to the Classification Hall in Civara., flag: arrived_civara}
+      - {id: stabilise, text: Stabilise a resonance pattern., flag: class_stabilised}
+      - {id: assessment, text: Pass the combat assessment., flag: civara_assessment_won}
+
+  # ── Optional ──────────────────────────────────────────────────────
+  - id: side_lena_herbs
+    name: Lena's Errand
+    kind: side
+    giver: Lena
+    summary: Lena needs marshwort from the reeds by the Route 01 pond.
+    start_flag: lena_herbs_asked
+    steps:
+      - {id: gather, text: Gather marshwort by the pond on Route 01., flag: herbs_gathered}
+      - {id: deliver, text: Bring the marshwort to Lena., flag: herbs_delivered}
+    reward: {crowns: 15, items: {clearwater: 2}}
+
+  - id: side_gell_crates
+    name: Gell's Delivery
+    kind: side
+    giver: Gell
+    summary: Gell owes the inn a crate of lamp oil and would rather not walk.
+    start_flag: gell_crates_asked
+    steps:
+      - {id: deliver, text: Carry the lamp oil to the inn., flag: crates_delivered}
+    reward: {crowns: 30}
+
+  - id: side_joey_wager
+    name: Joey's Wager
+    kind: side
+    giver: Joey
+    summary: >-
+      Joey has bet a stranger that you can beat the Wandering Challenger
+      twice in one day. He did not ask first.
+    start_flag: joey_wager_offered
+    steps:
+      - {id: first, text: Beat the Wandering Challenger on Route 01., flag: route01_challenger_won}
+      - {id: rematch, text: Win the rematch Joey arranged., flag: joey_wager_won}
+    reward: {crowns: 25, items: {resonance_tonic: 1}}
+
+  - id: side_grey_wolf
+    name: The Grey Wolf
+    kind: side
+    giver: Old Ferris
+    summary: >-
+      Old Ferris swears Old Greymaw is walking the ridge path again, and
+      that the wolf only comes down before the frost.
+    start_flag: ferris_rumour_heard
+    steps:
+      - {id: tracks, text: Follow the tracks off the Route 01 road., flag: greymaw_tracks_found}
+      - {id: den, text: Face Old Greymaw at its den., flag: greymaw_den_won}
+    reward: {crowns: 20, flags: [greymaw_story_told]}

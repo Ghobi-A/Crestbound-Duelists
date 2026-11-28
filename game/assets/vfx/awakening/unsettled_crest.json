@@ -1,0 +1,16 @@
+{
+  "frame_width": 53,
+  "frame_height": 93,
+  "frame_count": 13,
+  "fps": 14,
+  "loop": false,
+  "anchor": [
+    26,
+    83
+  ],
+  "anchor_to": "feet",
+  "scale": 0.5,
+  "impact": 0.143,
+  "glow": "#ff813b",
+  "behind": "unsettled_crest_behind.png"
+}

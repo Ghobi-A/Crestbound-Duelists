@@ -20,7 +20,7 @@ def painted_locations():
 
 
 def test_greymere_town_and_outskirts_are_painted():
-    assert set(painted_locations()) == {"greymere", "route_01"}
+    assert set(painted_locations()) == {"greymere", "route_01", "civara_forecourt"}
     for location in painted_locations().values():
         assert (PAINTED / f"{location['painted']['path_material']}.png").exists()
         assert not location["interior"]
@@ -84,6 +84,7 @@ def test_every_interior_is_painted_with_its_assets():
         assert (PAINTED / f"{asset}.png").exists(), asset
     for room in interiors.values():
         # The room shader derives everything from one floor rectangle.
-        floor = [(x, y) for y, row in enumerate(room["rows"]) for x, c in enumerate(row) if c in "w:"]
+        # Still water ("~", the Hollow Court) is floor the room paints over.
+        floor = [(x, y) for y, row in enumerate(room["rows"]) for x, c in enumerate(row) if c in "w:~"]
         xs, ys = {x for x, _ in floor}, {y for _, y in floor}
         assert len(floor) == len(xs) * len(ys), room["id"]

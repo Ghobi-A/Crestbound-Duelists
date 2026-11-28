@@ -8,6 +8,8 @@ var _player: OverworldPlayer
 var _camera: Camera2D
 var _dialogue: DialogueBox
 var _hud: WorldHud
+var _last_trigger := ""  # the trigger whose line is playing or just played
+var _turn_back := Vector2i.ZERO  # its step_back, applied when the line closes
 var _trade: TradePanel
 var _npc_tiles: Dictionary = {}
 var _blocked: Dictionary = {}
@@ -16,6 +18,8 @@ var _interactions: Dictionary = {}
 var _exits: Dictionary = {}   # edge tile -> exit (walk outward to travel)
 var _camera_follow := Vector2.ZERO
 const CAMERA_LOOK_AHEAD := Vector2(0, -24)
+const CHAPTER_DIALOGUE := "res://data/dialogue/chapter_one.json"
+const CINEMATIC_SCENE := "res://scenes/cinematics/opening.tscn"
 var _engagement_busy := false
 var _pending_world_encounter := ""
 var _pending_victory_flag := ""
@@ -23,8 +27,7 @@ var _encounter_rng := RandomNumberGenerator.new()
 var _encounter_state: Dictionary = {}
 var _trainers: Dictionary = {}
 var _menu_open := false
-var _menu_cursor := 0
-var _menu_status := ""
+var _pause: PauseMenu
 
 func _ready() -> void:
 	process_priority = 10   # after the player has moved this frame
@@ -53,6 +56,11 @@ func _ready() -> void:
 	add_child(_hud)
 	_trade = TradePanel.new()
 	add_child(_trade)
+	_pause = PauseMenu.new()
+	add_child(_pause)
+	_pause.closed.connect(_on_menu_closed)
+	_pause.save_requested.connect(_on_menu_save)
+	_pause.title_requested.connect(func() -> void: SceneTransition.change_scene("res://scenes/boot/boot.tscn"))
 	_hud.location_label.text = str(definition.get("hud_name", definition.name)).to_upper()
 	GameState.current_scene = str(definition.scene)
 	GameState.location_id = location_id
@@ -62,6 +70,8 @@ func _ready() -> void:
 	AudioRouter.play_ambience(str(definition.get("ambience_id", "")))
 	_location_started()
 	SaveManager.save_game()
+	# Story beats that start as Kai arrives (authored "triggers" with no area).
+	_arrival_triggers()
 
 func _build_world() -> void:
 	if definition.has("painted"):
@@ -83,6 +93,7 @@ func _build_world() -> void:
 		add_child(room)
 		var finish := PaintedAtmosphere.new()
 		finish.interior = true
+		finish.cold = str(definition.painted_interior.get("style", "")) == "court"
 		finish.map_tiles = Vector2(map_width(), map_height())
 		add_child(finish)
 	else:
@@ -92,6 +103,7 @@ func _build_world() -> void:
 		terrain.z_index = -20
 		add_child(terrain)
 	for item in definition.props:
+		if not WorldCatalog.present(item): continue
 		add_child(WorldProp.create(item))
 		var footprint := WorldCatalog.footprint(item)
 		for y in range(footprint.position.y, footprint.end.y):
@@ -101,11 +113,16 @@ func _build_world() -> void:
 		PaintedDressing.build(self, definition.rows, _blocked)
 	for door in definition.doors:
 		var tile := WorldCatalog.tile(door.tile)
+		if not WorldCatalog.present(door):
+			door = door.duplicate()
+			door["locked"] = true
 		_doors[tile] = door
 		_blocked[tile] = true
 	for item in definition.interactions:
+		if not WorldCatalog.present(item): continue
 		_interactions[WorldCatalog.tile(item.tile)] = item
 	for exit in definition.get("exits", []):
+		if not WorldCatalog.present(exit): continue
 		for edge in exit.tiles:
 			_exits[WorldCatalog.tile(edge)] = exit
 	if definition.has("painted_interior"):
@@ -120,11 +137,14 @@ func _build_world() -> void:
 func _build_dialogue() -> void:
 	_dialogue = DialogueBox.new()
 	_dialogue.load_file("res://data/dialogue/greymere.json")
+	# Chapter One's story scenes (StoryDirector effects, choices, staging).
+	_dialogue.merge_file(CHAPTER_DIALOGUE)
 	_dialogue.dialogue_finished.connect(_on_dialogue_finished)
 	add_child(_dialogue)
 
 func _build_npcs() -> void:
 	for item in definition.npcs:
+		if not WorldCatalog.present(item): continue
 		var npc := OverworldNPC.new()
 		add_child(npc)
 		npc.setup(str(item.name),WorldCatalog.tile(item.tile),str(item.dialogue),PlaceholderPalette.NPC_COLOR,str(item.sprite_key),WorldCatalog.tile(item.facing))
@@ -207,7 +227,7 @@ func _process(_delta: float) -> void:
 	# player shimmer a pixel back and forth every frame.
 	_camera_follow = _player.position + CAMERA_LOOK_AHEAD
 	_camera.position = _camera_follow.round()
-	_hud.visible = not _dialogue.active
+	_hud.visible = not (_dialogue.active or _menu_open)
 	_hud.show_context(context_verb())
 
 func try_exit(from: Vector2i, direction: Vector2i) -> bool:
@@ -233,31 +253,31 @@ func context_verb() -> String:
 
 func _unhandled_input(event: InputEvent) -> void:
 	if not event.is_pressed() or event.is_echo() or _dialogue.active or _trade.active or SceneTransition._busy or _player.is_moving() or _engagement_busy: return
+	if _menu_open: return  # the pause menu handles its own input
 	if event.is_action_pressed("cancel"):
-		_menu_open = not _menu_open
-		_menu_status = ""
-		if not _menu_open: _hud.hide_menu()
-	elif _menu_open:
-		if event.is_action_pressed("move_up"): _menu_cursor = wrapi(_menu_cursor-1,0,WorldHud.CHOICES.size())
-		elif event.is_action_pressed("move_down"): _menu_cursor = wrapi(_menu_cursor+1,0,WorldHud.CHOICES.size())
-		elif event.is_action_pressed("interact"):
-			match _menu_cursor:
-				0:
-					_menu_open = false
-					_hud.hide_menu()
-				1:
-					_remember_position()
-					_menu_status = "Saved." if SaveManager.save_game() else "Save failed."
-				2:
-					_menu_open = false
-					_hud.hide_menu()
-					_trade.open(false)
-				WorldHud.GRAPHICS_ROW:
-					_menu_status = "%s preset — applies on entering an area." % GraphicsSettings.cycle().capitalize()
-				4: SceneTransition.change_scene("res://scenes/boot/boot.tscn")
+		get_viewport().set_input_as_handled()
+		open_menu()
 	elif event.is_action_pressed("interact"):
 		_try_interact()
-	if _menu_open: _hud.show_menu(_menu_cursor,_menu_status)
+
+
+func open_menu() -> void:
+	## The field menu (PauseMenu): party, status, loadouts, Crests, Entities,
+	## the bag, the journal, settings, saving and the title screen.
+	_menu_open = true
+	_remember_position()
+	_pause.open()
+
+
+func _on_menu_closed() -> void:
+	_menu_open = false
+
+
+func _on_menu_save() -> void:
+	_remember_position()
+	var saved := SaveManager.save_game()
+	if saved: AudioRouter.play_sfx("ui", "save")
+	_pause.set_status("Saved." if saved else "Save failed.")
 
 func _try_interact() -> void:
 	var target := _player.tile + _player.facing
@@ -271,7 +291,9 @@ func _try_interact() -> void:
 			if GameState.has_flag(str(trainer.id) + "_defeated"):
 				_show_text(str(trainer.after), str(trainer.name))
 			else: _engage_trainer(trainer, false)
-		elif location_id == "gell_shop" and _npc_tiles[target].npc_name == "Gell":
+		elif location_id == "gell_shop" and _npc_tiles[target].npc_name == "Gell" \
+				and (GameState.story_stage == "legacy" or GameState.has_flag("talked_gell_story")):
+			# Gell has his say once; after that, talking to him is shopping.
 			_trade.open(true)
 		else:
 			_play_dialogue(_npc_tiles[target].dialogue_key)
@@ -298,12 +320,22 @@ func _try_interact() -> void:
 						child.queue_free()
 		elif interaction.get("kind", "") == "shop":
 			_trade.open(true)
+		elif interaction.get("kind", "") == "recovery":
+			# A recovery point: the party rests, and play resumes here.
+			GameState.recover_party()
+			GameState.set_checkpoint(location_id, str(interaction.get("spawn", "entrance")))
+			SaveManager.save_game()
+			AudioRouter.play_sfx("world", "recovery")
+			_show_text(str(interaction.get("text", "You rest a while. Everyone is back on their feet.")))
 		elif interaction.get("kind", "") == "court":
 			_play_dialogue("court_entrance_cleared" if GameState.has_flag("hollow_court_cleared") else "court_entrance")
 		elif interaction.has("dialogue"):
 			AudioRouter.play_sfx("world", "interact")
 			_play_dialogue(str(interaction.dialogue))
 		else:
+			# Reading a sign or clue can mark progress (a quest step, a rumour).
+			if str(interaction.get("flag", "")) != "" and not GameState.has_flag(str(interaction.flag)):
+				GameState.set_flag(str(interaction.flag))
 			var inspection_key := "local_inspection"
 			_dialogue._dialogue_data[inspection_key] = [{"speaker":"", "lines":[str(interaction.text)]}]
 			_play_dialogue(inspection_key)
@@ -317,6 +349,32 @@ func _play_dialogue(key: String) -> void:
 func _on_dialogue_finished(_key: String) -> void:
 	_camera.offset = Vector2.ZERO
 	_player.movement_locked = false
+	# What the conversation set in motion (StoryDirector), once it has closed.
+	var next := StoryDirector.take_pending()
+	if next.has("battle"):
+		_pending_world_encounter = str(next.battle)
+		_pending_victory_flag = str(next.battle) + "_won"
+	elif next.has("travel"):
+		_player.movement_locked = true
+		_remember_position()
+		if not StoryDirector.travel(next.travel):
+			_player.movement_locked = false
+		return
+	elif next.has("cinematic") or next.has("scene"):
+		_player.movement_locked = true
+		_remember_position()
+		SaveManager.save_game()
+		if next.has("cinematic"):
+			CinematicPlayer.play_next(str(next.cinematic), str(next.get("scene", "")))
+		SceneTransition.change_scene(CINEMATIC_SCENE if next.has("cinematic") else str(next.scene), "fade")
+		return
+	elif _turn_back != Vector2i.ZERO:
+		# A closed way (a guard's "not yet"): step Kai back out of it, so the
+		# same line cannot fire again while he stands there.
+		_step_player_back(_turn_back)
+		_turn_back = Vector2i.ZERO
+	elif not _dialogue.active and _run_triggers(_player.tile, false, _last_trigger):
+		return
 	if _pending_world_encounter != "":
 		var encounter := _pending_world_encounter
 		_pending_world_encounter = ""
@@ -336,6 +394,7 @@ func _remember_position() -> void:
 func _on_player_stepped(tile: Vector2i) -> void:
 	_remember_position()
 	if not encounters_allowed(): return
+	if _run_triggers(tile, false): return
 	var grace := int(_encounter_state.get("cooldown", 0)) > 0
 	if not grace:
 		for origin in _trainers:
@@ -383,3 +442,57 @@ func _engage_trainer(trainer: Dictionary, alerted: bool) -> void:
 
 func _location_started() -> void:
 	pass
+
+
+func _arrival_triggers() -> void:
+	## Arrival beats wait for the fade into this location to finish, so the
+	## scene opens on the conversation rather than during the transition.
+	await get_tree().process_frame
+	while SceneTransition._busy:
+		if not is_inside_tree(): return
+		await get_tree().process_frame
+	if is_inside_tree():
+		_run_triggers(_player.tile, true)
+
+
+func _step_player_back(direction: Vector2i) -> void:
+	var to := _player.tile + direction
+	_player.tile = to
+	_player.position = Vector2(to * _player.TILE) + Vector2(_player.TILE / 2.0, _player.TILE / 2.0)
+	_player.facing = direction
+	if _player._has_sheet:
+		_player._sprite.set_facing(direction)
+	_remember_position()
+
+
+func _run_triggers(tile: Vector2i, entering: bool, skip_id := "") -> bool:
+	## Authored story beats: {id, dialogue, show_if?, area?: [x, y, w, h],
+	## once?: true}. Without an area a trigger fires on arriving; with one,
+	## on stepping into it. A one-shot trigger records "seen_<id>"; a battle
+	## beat stays repeatable (once: false, gated on its own win flag) so a
+	## lost fight can always be taken up again.
+	if _dialogue.active or SceneTransition._busy or not GameState.world_battle.is_empty():
+		return false
+	for trigger in definition.get("triggers", []):
+		# The beat that just played does not fire again from where it fired.
+		if skip_id != "" and str(trigger.id) == skip_id:
+			continue
+		var once := bool(trigger.get("once", true))
+		if once and GameState.has_flag("seen_" + str(trigger.id)):
+			continue
+		if not WorldCatalog.present(trigger) or not _dialogue.has_key(str(trigger.dialogue)):
+			continue
+		var area: Array = trigger.get("area", [])
+		if area.is_empty():
+			if not entering:
+				continue
+		elif not Rect2i(int(area[0]), int(area[1]), int(area[2]), int(area[3])).has_point(tile):
+			continue
+		if once:
+			GameState.set_flag("seen_" + str(trigger.id))
+		_last_trigger = str(trigger.id)
+		var back: Array = trigger.get("step_back", [])
+		_turn_back = Vector2i(int(back[0]), int(back[1])) if back.size() == 2 else Vector2i.ZERO
+		_play_dialogue(str(trigger.dialogue))
+		return true
+	return false

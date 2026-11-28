@@ -116,8 +116,8 @@ func _refresh() -> void:
 		var details: Array[String] = []
 		_identity_label.text = "%s\n%s" % [str(class_record.get("name", "?")).to_upper(), str(crest.get("name", "No Crest"))]
 		details.append("BOND: %s" % str(entity.get("name", "None")))
-		var full_hp := int(class_record.get("base_stats", {}).get("hp", 1))
-		details.append("HP: %d/%d" % [int(build.get("current_hp", full_hp)), full_hp])
+		var full_hp := GameState.member_max_hp(build)
+		details.append("HP: %d/%d" % [GameState.member_hp(build), full_hp])
 		details.append("")
 		# Two lines is the whole budget left in this box at native font
 		# size: 70px holds six 9px lines at the theme's 3px spacing, and
@@ -223,6 +223,8 @@ func _unhandled_input(event: InputEvent) -> void:
 	elif event.is_action_pressed("cancel"):
 		AudioRouter.play_sfx("ui", "cancel")
 		var destination := GameState.finish_world_battle("cancel") if not GameState.world_battle.is_empty() else OVERWORLD_SCENE
+		if GameState.mode == "quick":
+			destination = "res://scenes/ui/quick_battle.tscn"  # Quick Battle never enters the story
 		SceneTransition.change_scene(destination)
 		return
 	_refresh()

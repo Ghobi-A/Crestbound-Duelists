@@ -38,6 +38,8 @@ const SCENE_PATHS := {
 	"route_clearing": "res://scenes/overworld/route_01.tscn",
 	"battle_route": "res://scenes/battle/party_battle.tscn",
 	"boot": "res://scenes/boot/boot.tscn",
+	"title_settings": "res://scenes/boot/boot.tscn",
+	"quick_battle": "res://scenes/ui/quick_battle.tscn",
 	"class_select": "res://scenes/boot/boot.tscn",
 	"controls": "res://scenes/boot/boot.tscn",
 	"party_setup": "res://scenes/ui/party_setup.tscn",
@@ -54,6 +56,15 @@ const SCENE_PATHS := {
 	"inventory_open": "res://scenes/overworld/greymere.tscn",
 	"inventory_used": "res://scenes/overworld/greymere.tscn",
 	"pause_menu": "res://scenes/overworld/greymere.tscn",
+	# menu_<tab>: the field menu open on one tab (PauseMenu.TABS).
+	"menu_party": "res://scenes/overworld/greymere.tscn",
+	"menu_status": "res://scenes/overworld/greymere.tscn",
+	"menu_abilities": "res://scenes/overworld/greymere.tscn",
+	"menu_crests": "res://scenes/overworld/greymere.tscn",
+	"menu_entities": "res://scenes/overworld/greymere.tscn",
+	"menu_inventory": "res://scenes/overworld/greymere.tscn",
+	"menu_journal": "res://scenes/overworld/greymere.tscn",
+	"menu_settings": "res://scenes/overworld/greymere.tscn",
 	"joey_home": "res://scenes/overworld/joey_home.tscn",
 	"kai_house": "res://scenes/overworld/kai_house.tscn",
 	"east_lane": "res://scenes/overworld/greymere.tscn",
@@ -72,6 +83,28 @@ const SCENE_PATHS := {
 	"battle_2v2": "res://scenes/battle/party_battle.tscn",
 	"battle_3v1": "res://scenes/battle/party_battle.tscn",
 }
+# Chapter One in its real story state: the place, the stage and flags that
+# put the right people there, and where Kai stands (arrival scenes play).
+const STORY_SHOTS := {
+	"story_kai_house": {"location": "kai_house", "spawn": "bed"},
+	"story_spar": {"location": "greymere", "tile": [15, 21], "facing": [0, -1], "dialogue": "joey_talk"},
+	"story_cordon": {"location": "greymere", "tile": [17, 11], "facing": [0, -1], "stage": "cordon", "flags": ["almyra_arrived", "cordon_up", "seen_almyra_arrives"], "dialogue": "danfor_cordon"},
+	"story_greymaw_den": {"location": "route_01", "tile": [6, 28], "stage": "village", "facing": [1, 0]},
+	"story_court_stair": {"location": "court_stair", "spawn": "entrance", "stage": "incident"},
+	"story_court_gallery": {"location": "court_gallery", "spawn": "almyra", "stage": "incident", "flags": ["seen_court_stair_arrive"]},
+	"story_court_chamber": {"location": "court_chamber", "spawn": "entrance", "stage": "incident"},
+	"story_aftermath": {"location": "greymere", "spawn": "aftermath", "stage": "incident", "flags": ["court_sealed_choir_won", "kai_bonded"], "profile": "kai_unsettled"},
+	"story_civara": {"location": "civara_forecourt", "spawn": "entrance", "stage": "civara"},
+	"story_classification": {"location": "civara_hall", "spawn": "entrance", "stage": "civara", "flags": ["arrived_civara", "seen_civara_arrive"]},
+}
+# Chapter One battles as the story fights them (round-1 command menu).
+const STORY_BATTLES := {
+	"battle_spar": {"encounter": "greymere_spar_danfor"},
+	"battle_greymaw": {"encounter": "greymaw_den"},
+	"battle_protect_joey": {"encounter": "court_protect_joey"},
+	"battle_choir": {"encounter": "court_sealed_choir", "profile": "kai_unsettled"},
+	"battle_assessment": {"encounter": "civara_assessment_mage", "class": "mage"},
+}
 const LOGICAL := Vector2i(320, 180)
 
 const SETTLE_FRAMES := 30
@@ -84,7 +117,8 @@ var out_dir := ""
 
 func _ready() -> void:
 	_parse_args()
-	if not SCENE_PATHS.has(target) and not (target.begins_with("class_") and target.trim_prefix("class_") in REVIEW_CLASSES) or out_dir == "":
+	if not SCENE_PATHS.has(target) and not (target.begins_with("class_") and target.trim_prefix("class_") in REVIEW_CLASSES) \
+			and not STORY_SHOTS.has(target) and not STORY_BATTLES.has(target) or out_dir == "":
 		push_error("Usage: -- --target=<%s> --out=<dir>" % "|".join(SCENE_PATHS.keys()))
 		get_tree().quit(2)
 		return
@@ -92,10 +126,14 @@ func _ready() -> void:
 	_seed_state()
 	await get_tree().process_frame
 	var scene_path: String = str(SCENE_PATHS.get(target, SCENE_PATHS.town_square))
+	if STORY_SHOTS.has(target):
+		scene_path = str(WorldCatalog.location(str(STORY_SHOTS[target].location)).scene)
+	elif STORY_BATTLES.has(target):
+		scene_path = SCENE_PATHS.battle
 	var scene: Node = load(scene_path).instantiate()
 	get_tree().root.add_child(scene)
 	await _frames(SETTLE_FRAMES)
-	if target in ["battle", "battle_target", "battle_1v1", "battle_2v2", "battle_3v1", "battle_route"]:
+	if target in ["battle", "battle_target", "battle_1v1", "battle_2v2", "battle_3v1", "battle_route"] or STORY_BATTLES.has(target):
 		# battle_intro is 3 entries totalling 6 lines; one press per line
 		# leaves the round-1 command menu open.
 		for _page in 100:
@@ -109,6 +147,10 @@ func _ready() -> void:
 			await _press_times(1)
 	elif target in ["battle_preview", "victory", "defeat"]:
 		await _drive_battle(scene)
+	elif target == "title_settings":
+		scene._screen = scene.Screen.SETTINGS
+		scene._settings.active = true
+		scene._refresh()
 	elif target in ["class_select", "controls"]:
 		scene._screen = scene.Screen.CLASS_SELECT if target == "class_select" else scene.Screen.CONTROLS
 		scene._refresh()
@@ -130,9 +172,17 @@ func _ready() -> void:
 		scene._trade.open(false)
 		if target == "inventory_used": _press_trade(scene._trade)
 	elif target == "pause_menu":
-		scene._menu_open = true
-		scene._hud.show_menu(2, "")
+		scene.open_menu()
+	elif target.begins_with("menu_"):
+		scene.open_menu()
+		scene._pause.select_tab(target.trim_prefix("menu_").capitalize())
+	if STORY_SHOTS.has(target) and STORY_SHOTS[target].has("dialogue"):
+		scene._play_dialogue(str(STORY_SHOTS[target].dialogue))
 	await _frames(SETTLE_FRAMES)
+	# A story scene is shown with its line fully revealed.
+	if STORY_SHOTS.has(target) and scene._dialogue.active:
+		scene._dialogue.complete_reveal()
+		await _frames(4)
 	await _capture("baseline_%s" % target)
 	get_tree().quit(0)
 
@@ -180,7 +230,33 @@ func _press_trade(panel: TradePanel) -> void:
 	panel._unhandled_input(event)
 
 
+func _seed_story(shot: Dictionary) -> void:
+	GameState.start_story()
+	GameState.advance_stage(str(shot.get("stage", "morning")))
+	for flag in shot.get("flags", []):
+		GameState.set_flag(str(flag))
+	if shot.has("profile"):
+		GameState.set_kai_profile(str(shot.profile))
+	if shot.has("class"):
+		GameState.stabilise_class(str(shot["class"]))
+	if shot.has("location"):
+		GameState.location_id = str(shot.location)
+		GameState.current_scene = str(WorldCatalog.location(GameState.location_id).scene)
+		GameState.location_spawn = str(shot.get("spawn", ""))
+		if shot.has("tile"):
+			GameState.player_tile = Vector2i(int(shot.tile[0]), int(shot.tile[1]))
+		if shot.has("facing"):
+			GameState.player_facing = Vector2i(int(shot.facing[0]), int(shot.facing[1]))
+	if shot.has("encounter"):
+		GameState.pending_encounter = str(shot.encounter)
+
+
 func _seed_state() -> void:
+	if STORY_SHOTS.has(target) or STORY_BATTLES.has(target):
+		_seed_story(STORY_SHOTS.get(target, STORY_BATTLES.get(target)))
+		GameState.set_flag("overworld_onboarding_seen")
+		GameState.set_flag("battle_onboarding_seen")
+		return
 	GameState.start_new_game(target.trim_prefix("class_") if target.begins_with("class_") else "warrior")
 	if target.begins_with("battle_") and target in ["battle_1v1", "battle_2v2", "battle_3v1"]:
 		var sides := target.trim_prefix("battle_").split("v")

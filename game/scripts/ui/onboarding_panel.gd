@@ -39,8 +39,8 @@ func _build(title: String, body: String) -> void:
 	body_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	body_label.add_theme_constant_override("line_spacing", 2)
 
-	var hint_label := UiStyle.make_label(panel, Rect2(0, 96, 240, 7), "Z / ENTER / SPACE   ·   DISMISS", 5, UiStyle.TEXT_FAINT, UiStyle.REGULAR, 1)
-	hint_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	# Names the button on the device in hand (Z, A on a pad or the touch pad).
+	HintBar.create(panel, Rect2(0, 95, 240, 9), [["interact", "Dismiss"]])
 
 
 func _unhandled_input(event: InputEvent) -> void:

@@ -165,6 +165,8 @@ func _setup_animated_sprite(record: Dictionary) -> bool:
 	_anchor = Vector2(sidecar.anchor[0], sidecar.anchor[1])
 	var manifest := CharacterPresentation.manifest()
 	_display_scale = float(manifest.get("battle_body_display", 39)) / maxf(1.0, float(sidecar.body_height))
+	# Beasts and Riven constructs are drawn at their own size, not a person's.
+	_display_scale *= float(sidecar.get("size", 1.0))
 	_sprite = Sprite2D.new()
 	_sprite.texture = load(path)
 	_sprite.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS

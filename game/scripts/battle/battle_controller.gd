@@ -11,6 +11,8 @@ extends Node2D
 
 const OVERWORLD_SCENE := "res://scenes/overworld/greymere.tscn"
 const BOOT_SCENE := "res://scenes/boot/boot.tscn"
+const QUICK_BATTLE_SCENE := "res://scenes/ui/quick_battle.tscn"
+const BATTLE_SCENE := "res://scenes/battle/party_battle.tscn"
 
 ## Where the floating party cards begin (battle_hud.gd); combatants stand
 ## above it. The background itself covers the whole canvas.
@@ -32,7 +34,6 @@ enum State { INTRO, SELECT_MENU, SELECT_TARGET, PREVIEW, RESOLVING, RESULT }
 
 var runtime: EncounterRuntime
 var resolver: BattleResolver
-var crest_runtime: CrestRuntime
 var hud: BattleHud
 var dialogue: DialogueBox
 var target_selector := TargetSelector.new()
@@ -43,6 +44,8 @@ var selection_order: Array = []   # living player units, selection sequence
 var selection_index := 0
 var planned_actions: Array = []
 var pending_move: Dictionary = {}
+var pending_item := ""          # item chosen from the bag, awaiting a target
+var menu_mode := "commands"     # "commands" | "items"
 var stage: Node2D                 # background + unit sprites (shakeable)
 var onboarding: OnboardingPanel
 var presentation: BattlePresentation
@@ -51,8 +54,8 @@ var result_presentation: ResultPresentation
 
 func _ready() -> void:
 	runtime = EncounterRuntime.start(GameState.pending_encounter, GameData, GameState)
+	GameState.snapshot_for_retry()
 	resolver = BattleResolver.new(runtime, GameData)
-	crest_runtime = CrestRuntime.new(runtime)
 	stage = BattleStage.new()
 	add_child(stage)
 	_stage_background()
@@ -61,12 +64,15 @@ func _ready() -> void:
 	presentation = BattlePresentation.new()
 	add_child(presentation)
 	presentation.configure(stage, hud, sprites)
-	AudioRouter.play_music("battle")
+	presentation.summoned.connect(_on_summoned)
+	# Bosses name their own theme; one not delivered yet plays its fallback
+	# (AudioRouter.MUSIC_FALLBACK). The map's track resumes afterwards.
+	AudioRouter.remember_music()
+	AudioRouter.play_music(str(runtime.encounter.get("music", "battle")), 0.5)
 	AudioRouter.stop_ambience()
 	_build_dialogue()
 	_build_onboarding()
-	var objective: Dictionary = GameData.get_objective(runtime.encounter.get("objective", "defeat_all"))
-	hud.set_objective(objective.get("name", "Defeat all enemies"))
+	_show_objective()
 	hud.set_title(str(runtime.encounter.get("name", "Battle")).trim_prefix("The "))
 	hud.set_phase("ROUND %d" % runtime.round_number)
 	hud.set_footer_note(str(runtime.encounter.get("battlefield_effect", {}).get("name", "")))
@@ -137,7 +143,7 @@ func _on_dialogue_finished(key: String) -> void:
 	elif key == runtime.encounter.get("victory_dialogue", "__none__"):
 		_leave_after_victory()
 	elif key == runtime.encounter.get("defeat_dialogue", "__none__"):
-		SceneTransition.change_scene(BOOT_SCENE, "defeat")
+		_leave_after_defeat()
 
 
 # ── Action selection ─────────────────────────────────────────────────
@@ -165,7 +171,9 @@ func _open_menu_for_current() -> void:
 	_clear_all_highlights()
 	var unit := _current_unit()
 	hud.highlight_unit(unit)
-	hud.show_menu(unit, runtime.can_flee())
+	menu_mode = "commands"
+	pending_item = ""
+	hud.show_menu(unit, runtime.can_flee(), available_inventory())
 	if sprites.has(unit):
 		sprites[unit].set_highlighted("selected")
 	queue_redraw()
@@ -268,7 +276,10 @@ func _menu_input(event: InputEvent) -> void:
 		hud.action_menu.move_cursor(1)
 		AudioRouter.play_sfx("ui", "move")
 	elif event.is_action_pressed("cancel"):
-		if selection_index > 0:
+		if menu_mode == "items":
+			AudioRouter.play_sfx("ui", "cancel")
+			_open_menu_for_current()
+		elif selection_index > 0:
 			AudioRouter.play_sfx("ui", "cancel")
 			_reopen_last_selection()
 	elif event.is_action_pressed("interact"):
@@ -284,6 +295,29 @@ func _menu_input(event: InputEvent) -> void:
 		var unit := _current_unit()
 		if entry.kind == "brace":
 			_commit_action({"actor": unit, "kind": "brace", "move": {}, "target": null})
+			return
+		if entry.kind == "awaken":
+			_commit_action({"actor": unit, "kind": "awaken", "move": {}, "target": null})
+			return
+		if entry.kind == "items":
+			menu_mode = "items"
+			hud.action_menu.build_items(unit, available_inventory())
+			return
+		if entry.kind == "back":
+			_open_menu_for_current()
+			return
+		if entry.kind == "item":
+			pending_item = str(entry.item_id)
+			pending_move = {}
+			var revive := str(GameData.get_item(pending_item).get("battle_effect", {}).get("type", "")) == "revive"
+			if target_selector.open_allies(unit, runtime, revive):
+				state = State.SELECT_TARGET
+				_refresh_target_info()
+				_refresh_target_highlights()
+				queue_redraw()
+			else:
+				AudioRouter.play_sfx("ui", "denied")
+				hud.action_menu.refuse()
 			return
 		pending_move = entry.move
 		if target_selector.open(unit, runtime):
@@ -310,6 +344,14 @@ func _target_input(event: InputEvent) -> void:
 		AudioRouter.play_sfx("ui", "cancel")
 		hud.hide_info()
 		_clear_target_side()
+		if pending_item != "":
+			# Back to the bag, not all the way to the commands.
+			pending_item = ""
+			state = State.SELECT_MENU
+			hud.show_menu(_current_unit(), runtime.can_flee(), available_inventory())
+			menu_mode = "items"
+			hud.action_menu.build_items(_current_unit(), available_inventory())
+			return
 		_open_menu_for_current()
 	elif event.is_action_pressed("interact"):
 		AudioRouter.play_sfx("ui", "confirm")
@@ -317,6 +359,10 @@ func _target_input(event: InputEvent) -> void:
 		var target := target_selector.current()
 		if sprites.has(target):
 			sprites[target].flash_confirm()
+		if pending_item != "":
+			_commit_action({"actor": unit, "kind": "item", "move": {}, "target": target, "item_id": pending_item})
+			pending_item = ""
+			return
 		_commit_action({
 			"actor": unit, "kind": "move",
 			"move": pending_move, "target": target,
@@ -325,7 +371,21 @@ func _target_input(event: InputEvent) -> void:
 
 
 func _refresh_target_info() -> void:
+	if pending_item != "":
+		var target := target_selector.current()
+		var item := GameData.get_item(pending_item)
+		hud.show_info("%s\n%s  HP %d/%d\n%s" % [str(item.get("name", "")), target.display_name, target.hp, target.max_hp, str(item.get("description", ""))])
+		return
 	hud.show_info(target_selector.estimate_text(_current_unit(), pending_move, resolver))
+
+
+func available_inventory() -> Dictionary:
+	## The bag minus items already committed this round.
+	var bag := runtime.inventory.duplicate()
+	for action in planned_actions:
+		if action.kind == "item":
+			bag[action.item_id] = int(bag.get(action.item_id, 0)) - 1
+	return bag
 
 
 func _preview_input(event: InputEvent) -> void:
@@ -350,48 +410,43 @@ func _resolve_round() -> void:
 	_clear_all_highlights()
 	queue_redraw()
 
+	# The resolver owns every rule (Resonance, phases, telegraphs, damage
+	# over time); presentation only plays back the authoritative events.
 	var all_actions := planned_actions.duplicate()
-	for enemy in runtime.living("enemy"):
-		all_actions.append(EnemyAI.choose_action(enemy, resolver, runtime))
-
+	all_actions.append_array(resolver.plan_enemy_actions())
 	var ordered := resolver.order_actions(all_actions)
 	for action in ordered:
-		if runtime.victory() or runtime.defeat():
+		if runtime.outcome() != "":
 			break
 		if not action.actor.is_alive():
 			continue
 		var events := resolver.execute(action)
-		# Resolve all Crest state immediately from authoritative events; presentation
-		# receives only the result and cannot decide combat state.
-		var awakenings: Array[BattleUnit] = []
-		for event in events:
-			if event.type == "crest":
-				var crest_result: Dictionary = crest_runtime.process_event(event.unit, event.event)
-				event["presentation_result"] = crest_result
-				if crest_result.awakened:
-					awakenings.append(event.unit)
 		await presentation.play_events(action, events)
-		for awakened_unit in awakenings:
-			await _play_awakening(awakened_unit)
 		hud.refresh_rows()
 
-	resolver.end_round()
-	await _after_round_tick()
+	var round_end := resolver.end_round()
+	await presentation.play_round_end(round_end)
+	_show_objective()
 	hud.refresh_rows()
 	for sprite in sprites.values():
 		sprite.refresh()
 
-	if runtime.victory():
-		_finish(true)
-	elif runtime.defeat():
-		_finish(false)
-	else:
-		_start_selection()
+	match runtime.outcome():
+		"victory":
+			_finish(true)
+		"defeat":
+			_finish(false)
+		_:
+			_start_selection()
 
 
-func _after_round_tick() -> void:
-	for unit in crest_runtime.end_of_round_awakenings():
-		await _play_awakening(unit)
+func _on_summoned(unit: BattleUnit) -> void:
+	## A boss phase brought a new enemy onto the field.
+	for existing in runtime.all_units():
+		if not sprites.has(existing):
+			sprites[existing] = (stage as BattleStage).add_combatant(existing, runtime.enemy_units.size(), runtime.player_units.size())
+	hud.build_turn_rail(runtime.all_units())
+	hud.refresh_rows()
 
 
 func _play_events(action: Dictionary, events: Array) -> void:
@@ -399,31 +454,12 @@ func _play_events(action: Dictionary, events: Array) -> void:
 	await presentation.play_events(action, events)
 
 
-func _play_awakening(unit: BattleUnit) -> void:
-	var theme: Dictionary = unit.crest_record.get("visual_theme", {})
-	var accent := _palette_accent(theme.get("palette", ""))
-	hud.set_message("%s's Crest answers!" % unit.display_name)
-	hud.refresh_rows()
-	await presentation.play_awakening(unit, CrestRuntime.awakening_banner_text(unit), accent)
 
-
-func _palette_accent(palette: String) -> Color:
-	match palette:
-		"crimson":
-			return Color("c94f4f")
-		"azure":
-			return Color("4a9eff")
-		"ember":
-			return Color("d3743f")
-		"violet_black":
-			return Color("7c5fd3")
-		"pale_glass":
-			return Color("cfe6ef")
-		"verdant":
-			return Color("57c26b")
-		_:
-			return Color(1.0, 0.85, 0.3)
-
+func _show_objective() -> void:
+	## The objective and, where it counts, its progress ("Survive the Assault 2/4").
+	var objective: Dictionary = GameData.get_objective(runtime.encounter.get("objective", "defeat_all"))
+	var progress := runtime.objective_progress()
+	hud.set_objective(str(objective.get("name", "Defeat all enemies")) + ("  " + progress if progress != "" else ""))
 
 
 # ── Battle end ───────────────────────────────────────────────────────
@@ -434,13 +470,29 @@ func _finish(player_won: bool) -> void:
 	hud.hide_info()
 	hud.set_phase("VICTORY" if player_won else "DEFEAT")
 	hud.set_message("")
+	var rewards: Array = []
+	if player_won:
+		GameState.store_battle_results(runtime.player_units, runtime.inventory)
+		rewards = GameState.grant_encounter_rewards(runtime.encounter)
+	# Story battles offer Retry unless data says otherwise; field battles only
+	# when they opt in (an optional boss), so roadside losses still send you home.
+	var can_retry := not player_won and bool(runtime.encounter.get("retry", GameState.world_battle.is_empty()))
 	result_presentation = ResultPresentation.new()
 	add_child(result_presentation)
-	result_presentation.acknowledged.connect(_after_result.bind(player_won))
-	result_presentation.show_result(player_won)
+	result_presentation.chose.connect(_after_result.bind(player_won))
+	result_presentation.show_result(player_won, rewards, can_retry)
 
 
-func _after_result(player_won: bool) -> void:
+func _after_result(choice: String, player_won: bool) -> void:
+	if choice == "retry":
+		# Same battle, same HP and supplies as when it began.
+		GameState.restore_retry_snapshot()
+		SceneTransition.change_scene(BATTLE_SCENE, "spectral")
+		return
+	if GameState.mode == "quick":
+		# Quick Battle never enters the story: back to its own screen.
+		SceneTransition.change_scene(QUICK_BATTLE_SCENE, "gold" if player_won else "defeat")
+		return
 	if not GameState.world_battle.is_empty():
 		if player_won:
 			_leave_after_victory()
@@ -453,7 +505,21 @@ func _after_result(player_won: bool) -> void:
 	elif player_won:
 		_leave_after_victory()
 	else:
+		_leave_after_defeat()
+
+
+func _leave_after_defeat() -> void:
+	## Giving up a story battle: back to the last recovery point, rested.
+	GameState.restore_retry_snapshot()
+	if GameState.checkpoint.is_empty():
 		SceneTransition.change_scene(BOOT_SCENE, "defeat")
+		return
+	GameState.recover_party()
+	GameState.location_id = str(GameState.checkpoint.location)
+	GameState.location_spawn = str(GameState.checkpoint.spawn)
+	GameState.current_scene = str(WorldCatalog.location(GameState.location_id).scene)
+	SaveManager.save_game()
+	SceneTransition.change_scene(GameState.current_scene, "defeat")
 
 
 func _try_flee() -> void:
@@ -462,27 +528,31 @@ func _try_flee() -> void:
 	state = State.RESULT
 	hud.hide_menu()
 	hud.hide_info()
-	_store_field_health()
+	# Carry damage and spent supplies into the field.
+	GameState.store_battle_results(runtime.player_units, runtime.inventory)
 	SceneTransition.change_scene(GameState.finish_world_battle("fled"), "travel")
 
 
-func _store_field_health() -> void:
-	# Carry damage into the field so purchased supplies have a meaningful use.
-	# The roster keeps its original order even when party setup selects a subset.
-	for unit in runtime.player_units:
-		for member in GameState.party:
-			if str(member.get("name", "")) == unit.display_name:
-				member["current_hp"] = maxi(1, unit.hp)
-				break
-
-
 func _leave_after_victory() -> void:
-	_store_field_health()
-	if not GameState.world_battle.is_empty():
-		SceneTransition.change_scene(GameState.finish_world_battle("victory"), "gold")
-		return
 	var encounter_id: String = runtime.encounter.get("id", GameState.pending_encounter)
+	# Every won encounter is recorded the same way, wherever it was fought.
 	GameState.set_flag("%s_won" % encounter_id)
+	var after: Dictionary = runtime.encounter.get("return", {})
+	if not GameState.world_battle.is_empty():
+		var scene := GameState.finish_world_battle("victory")
+		if after.is_empty():
+			SceneTransition.change_scene(scene, "gold")
+			return
+	# Story battles say in data where play resumes and what they unlock.
+	for flag_name in after.get("flags", []):
+		GameState.set_flag(str(flag_name))
+	if not after.is_empty():
+		GameState.location_id = str(after.get("location", GameState.location_id))
+		GameState.location_spawn = str(after.get("spawn", ""))
+		GameState.current_scene = str(WorldCatalog.location(GameState.location_id).get("scene", GameState.current_scene))
+		SaveManager.save_game()
+		SceneTransition.change_scene(GameState.current_scene, "gold")
+		return
 	if GameState.pending_encounter == "hollow_court_battle":
 		GameState.set_flag("hollow_court_cleared")
 		GameState.set_flag("post_battle_scene_pending")

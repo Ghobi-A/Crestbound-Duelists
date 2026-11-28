@@ -23,7 +23,10 @@ func build_background(location: String) -> void:
 			prop.z_index = -19
 			add_child(prop)
 		return
-	var path := "res://assets/rework/hollow_court.png" if location == "hollow_court" else "res://assets/battle/backgrounds/%s.png" % location
+	# A room can name its painted backdrop (the Hollow Court rooms share the
+	# Court's painting; the Classification Hall uses the opening's hall plate).
+	var backdrop := str(WorldCatalog.location(location).get("battle_backdrop", ""))
+	var path := backdrop if backdrop != "" else ("res://assets/rework/hollow_court.png" if location == "hollow_court" else "res://assets/battle/backgrounds/%s.png" % location)
 	if not ResourceLoader.exists(path):
 		push_error("BattleStage: required background missing: " + path)
 		return
@@ -33,6 +36,8 @@ func build_background(location: String) -> void:
 	background.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
 	background.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	background.z_index = -20
+	# A busy painted plate can be dimmed so the combatants read first.
+	background.modulate = Color(str(WorldCatalog.location(location).get("battle_backdrop_tint", "#ffffff")))
 	add_child(background)
 
 
