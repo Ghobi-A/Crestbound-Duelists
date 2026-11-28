@@ -54,9 +54,12 @@ func open(as_shop: bool) -> void:
 	_message.text = "Z buy · X leave" if shopping else "Left/Right choose Duelist · Z use · X leave"
 	active = true
 	visible = true
+	AudioRouter.play_sfx("ui", "shop_open" if shopping else "confirm")
 	_refresh()
 
 func close() -> void:
+	if active:
+		AudioRouter.play_sfx("ui", "shop_close" if shopping else "cancel")
 	active = false
 	visible = false
 	closed.emit()
@@ -86,14 +89,25 @@ func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("cancel"):
 		close()
 	elif event.is_action_pressed("move_up"):
+		AudioRouter.play_sfx("ui", "move")
 		cursor = wrapi(cursor - 1, 0, maxi(1, _items.size()))
 	elif event.is_action_pressed("move_down"):
+		AudioRouter.play_sfx("ui", "move")
 		cursor = wrapi(cursor + 1, 0, maxi(1, _items.size()))
 	elif not shopping and (event.is_action_pressed("move_left") or event.is_action_pressed("move_right")):
+		AudioRouter.play_sfx("ui", "move")
 		target = wrapi(target + (-1 if event.is_action_pressed("move_left") else 1), 0, maxi(1, GameState.party.size()))
 	elif event.is_action_pressed("interact") and not _items.is_empty():
 		var id := str(_items[cursor].id)
+		var before := int(GameState.inventory.get(id, 0))
 		_message.text = GameState.purchase_item(id) if shopping else GameState.use_item(id, target)
+		var after := int(GameState.inventory.get(id, 0))
+		if before == after:
+			AudioRouter.play_sfx("ui", "denied")
+		elif shopping:
+			AudioRouter.play_sfx("ui", "shop_buy")
+		else:
+			AudioRouter.play_sfx("battle", "item")
 		SaveManager.save_game()
 	_refresh()
 	get_viewport().set_input_as_handled()

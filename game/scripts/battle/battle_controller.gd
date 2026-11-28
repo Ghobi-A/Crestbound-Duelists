@@ -150,6 +150,7 @@ func _on_dialogue_finished(key: String) -> void:
 
 func _start_selection() -> void:
 	state = State.SELECT_MENU
+	AudioRouter.play_sfx("battle", "round_start")
 	selection_order = runtime.living("player")
 	selection_index = 0
 	planned_actions = []
